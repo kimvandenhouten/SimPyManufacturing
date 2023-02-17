@@ -51,9 +51,7 @@ plan = ProductionPlan(ID=1, PRODUCT_IDS=[1, 1, 2, 0, 0, 2, 1], DEADLINES=[10, 11
 plan.list_products()
 
 sequence = [0, 1, 2, 3, 4, 5, 6]
-for iteration in range(0, 10):
-    random.shuffle(sequence)
-    plan.set_sequence(sequence)
-    simulator = Simulator(plan)
-    for SEED in [243674]:
-        makespan, tardiness = simulator.simulate(SIM_TIME=1000, RANDOM_SEED=SEED, write=False)
+plan.set_sequence(sequence)
+simulator = Simulator(plan, printing=True)
+for SEED in [243674]:
+    makespan, tardiness = simulator.simulate(SIM_TIME=1000, RANDOM_SEED=SEED, write=False)

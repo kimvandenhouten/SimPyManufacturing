@@ -84,7 +84,7 @@ class ProductionPlan:
 
 
 class Simulator:
-    def __init__(self, plan):
+    def __init__(self, plan, printing=False):
         self.plan = plan
         self.RESOURCE_NAMES = plan.FACTORY.RESOURCE_NAMES
         self.NR_RESOURCES = len(self.RESOURCE_NAMES)
@@ -97,7 +97,7 @@ class Simulator:
         self.RESOURCES = []
         self.env = simpy.Environment()
         self.resource_usage = []
-        self.printing = False
+        self.printing = printing
 
     def activity(self, activity, p, delay=0):
         """An activity arrives at the factory for processing
