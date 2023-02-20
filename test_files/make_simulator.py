@@ -1,6 +1,10 @@
+"""
+For running this script set working directory to ~/SimPyManufacturing
+"""
+
 from classes import Activity, Product, ProductionPlan, Factory, Simulator
 import random
-# TODO: read input from CSV files ?
+
 
 random.seed(1)
 # MAKE FACTORY

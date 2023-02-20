@@ -26,6 +26,6 @@ for instance_size in [10, 20, 40, 60, 120, 240]:
         plan.list_products()
         file_name = f'factory_data/instances/instance_{plan.NAME}.pkl'
         with open(file_name, 'wb') as file:
-            pickle.dump(factory, file)
+            pickle.dump(plan, file)
             print(f'Object successfully saved to "{file_name}"')
         general_id += 1
