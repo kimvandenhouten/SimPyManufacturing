@@ -9,7 +9,7 @@ factory = Factory(NAME="RepresentativeFactory", RESOURCE_NAMES=resource_groups["
 
 
 # TO DO: add a product to the factory, using the recipes table
-recipes = pd.read_csv("factory_data/recipes.csv")
+recipes = pd.read_csv("factory_data/recipes.csv", delimiter=";")
 unique_products = recipes.drop_duplicates(subset=["Enzyme name", "Fermenter"])
 
 for index, row in unique_products.iterrows():
