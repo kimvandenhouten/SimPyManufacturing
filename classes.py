@@ -15,12 +15,12 @@ class Activity:
 
 
 class Product:
-    def __init__(self, ID, NAME, TEMPORAL_RELATIONS):
+    def __init__(self, ID, NAME):
         self.ID = ID
         self.NAME = NAME
         self.DEADLINE = int()
         self.ACTIVITIES = []
-        self.TEMPORAL_RELATIONS = TEMPORAL_RELATIONS
+        self.TEMPORAL_RELATIONS = {}
 
     def add_activity(self, activity):
         """
@@ -29,7 +29,8 @@ class Product:
         """
         self.ACTIVITIES.append(activity)
 
-    def set_temporal_relations(self):
+    def set_temporal_relations(self, TEMPORAL_RELATIONS):
+        self.TEMPORAL_RELATIONS = TEMPORAL_RELATIONS
         self.PREDECESSORS = [[] for _ in self.ACTIVITIES]
         self.SUCCESSORS = [[] for _ in self.ACTIVITIES]
         for (i, j) in self.TEMPORAL_RELATIONS.keys():
