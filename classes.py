@@ -176,7 +176,7 @@ class Simulator:
             self.env.process(self.product(p))
             yield self.env.timeout(0)
 
-    def simulate(self, SIM_TIME, RANDOM_SEED, write=False):
+    def simulate(self, SIM_TIME, RANDOM_SEED, write=False, output_location="Results.csv"):
         print(f'START Factory simulation for seed {RANDOM_SEED}')
         random.seed(RANDOM_SEED)
         # Reset environment
@@ -205,7 +205,7 @@ class Simulator:
         print(f"The makespan corresponding to this schedule is {makespan}")
         print(f"The tardiness corresponding to this schedule is {tardiness}")
         if write:
-            self.resource_usage.to_csv(f"Schedule_seed={RANDOM_SEED}.csv")
+            self.resource_usage.to_csv(output_location)
 
         return makespan, tardiness
 
