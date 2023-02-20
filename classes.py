@@ -54,8 +54,10 @@ class Factory:
 
 
 class ProductionPlan:
-    def __init__(self, ID, FACTORY, PRODUCT_IDS, DEADLINES):
+    def __init__(self, ID, SIZE, NAME, FACTORY, PRODUCT_IDS, DEADLINES):
         self.ID = ID
+        self.SIZE = SIZE
+        self.NAME = NAME
         self.FACTORY = FACTORY
         self.PRODUCT_IDS = PRODUCT_IDS
         self.DEADLINES = DEADLINES
