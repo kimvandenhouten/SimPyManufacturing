@@ -11,24 +11,21 @@ from methods.iterated_greedy import iterated_greedy
 if __name__ == '__main__':
     printing = False
     settings_list = []
-    for size in [120, 240]:
-        for id in range(1, 10):
-            for method in ["random_search"]:
+    for seed in range(0, 10):
+        for size in [120, 240]:
+            for id in range(1, 10):
                 for objective in ["Makespan_Lateness", "Makespan_Average_Lateness"]:
-                    for seed in range(0, 10):
-                        setting = Settings(method=method, stop_criterium="Budget", budget=200*size, instance=f'{size}_{id}', size=size, simulator="SimPy",
-                                           objective=objective, init="random", seed=seed)
+                    for method in ["random_search"]:
+                        setting = Settings(method=method, stop_criterium="Budget", budget=200*size, instance=f'{size}_{id}',
+                                           size=size, simulator="SimPy", objective=objective, init="random", seed=seed)
                         settings_list.append(setting)
 
-    for size in [120, 240]:
-        for id in range(1, 10):
-            for method in ["local_search"]:
-                for objective in ["Makespan_Lateness", "Makespan_Average_Lateness"]:
-                    for init in ["random", "sorted"]:
-                        for seed in range(0, 10):
-                            setting = Settings(method=method, stop_criterium="Budget", budget=200*size, instance=f'{size}_{id}', size=size, simulator="SimPy",
-                                               objective=objective, init=init, seed=seed)
-                            settings_list.append(setting)
+                    for method in ["local_search"]:
+                            for init in ["random", "sorted"]:
+                                    setting = Settings(method=method, stop_criterium="Budget", budget=1*size,
+                                                       instance=f'{size}_{id}', size=200*size, simulator="SimPy",
+                                                       objective=objective, init=init, seed=seed)
+                                    settings_list.append(setting)
 
     for setting in settings_list:
         print(f"Start new instance {setting.instance}")
