@@ -32,14 +32,14 @@ def local_search(n, f_eval, time_limit=200, stop_criterium="Time", budget=400,
     fitness = f_eval(sequence, iteration)
     start = time.time()
     print(f'Initial fitness is {fitness}')
-
+    print(f'Initial sequence is {sequence}')
     # best sequence
     best_sequence = copy.copy(sequence)
     best_fitness = copy.copy(fitness)
     print(f"best fitness is {best_fitness}")
-    sequences.append(sequence.copy())
+    sequences.append(list(sequence.copy()))
     fitnesses.append(fitness)
-    best_sequences.append(best_sequence.copy())
+    best_sequences.append(list(best_sequence.copy()))
     best_fitnesses.append(best_fitness)
     runtime.append(time.time() - start)
 
@@ -56,9 +56,9 @@ def local_search(n, f_eval, time_limit=200, stop_criterium="Time", budget=400,
         if printing:
             print(f"Candidate fitness {candidate_fitness}")
 
-        sequences.append(sequence.copy())
+        sequences.append(list(sequence.copy()))
         fitnesses.append(fitness)
-        best_sequences.append(best_sequence.copy())
+        best_sequences.append(list(best_sequence.copy()))
         best_fitnesses.append(best_fitness)
         runtime.append(time.time() - start)
 

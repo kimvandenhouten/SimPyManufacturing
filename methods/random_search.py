@@ -28,14 +28,12 @@ def random_search(n, f_eval, time_limit=200, stop_criterium="Time", budget=400,
     best_fitness = fitness
 
     # Store data
-    best_sequences.append(best_sequence.copy())
+    best_sequences.append(list(best_sequence.copy()))
     best_fitnesses.append(best_fitness)
-    sequences.append(sequence.copy())
+    sequences.append(list(sequence.copy()))
     fitnesses.append(fitness)
     runtime.append(time.time() - start)
-
     print(f"best fitness is {best_fitness}")
-
     stop = False
     it = 1
     while stop == False:
@@ -51,9 +49,9 @@ def random_search(n, f_eval, time_limit=200, stop_criterium="Time", budget=400,
             print(f"New sequence is {sequence} with fitness {fitness}")
 
         # Store data
-        best_sequences.append(best_sequence.copy())
+        best_sequences.append(list(best_sequence.copy()))
         best_fitnesses.append(best_fitness)
-        sequences.append(sequence.copy())
+        sequences.append(list(sequence.copy()))
         fitnesses.append(fitness)
         runtime.append(time.time() - start)
 

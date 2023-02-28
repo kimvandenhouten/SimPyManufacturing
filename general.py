@@ -5,8 +5,9 @@ import numpy as np
 
 class Settings:
     def __init__(self, size=5, method="local_search", time_limit=180, budget=400, stop_criterium="Time",
-                 simulator="Seclin", seed=1, instance="5_1", objective="makespan"):
+                 simulator="Seclin", seed=1, instance="5_1", objective="makespan", init="random"):
         self.method = method
+        self.init = init
         self.time_limit = time_limit
         self.budget = budget
         self.stop_criterium = stop_criterium
@@ -19,17 +20,17 @@ class Settings:
     def make_file_name(self):
         if self.stop_criterium == "Time":
             return f'{self.method}_simulator={self.simulator}_time_limit={self.time_limit}_seed={self.seed}_instance_' \
-                   f'{self.instance}_objective={self.objective}'
+                   f'{self.instance}_objective={self.objective}_init={self.init}'
 
         else:
             return f'{self.method}_simulator={self.simulator}_budget={self.budget}_seed={self.seed}_instance_' \
-                   f'{self.instance}_objective={self.objective}'
+                   f'{self.instance}_objective={self.objective}_init={self.init}'
 
 
 def evaluator_simpy(plan, sequence, seed, objective="Makespan", printing=False):
     plan.set_sequence(sequence)
     simulator = Simulator(plan, printing=printing)
-    makespan, tardiness = simulator.simulate(SIM_TIME=100000, RANDOM_SEED=seed, write=False)
+    makespan, tardiness = simulator.simulate(SIM_TIME=1000000, RANDOM_SEED=seed, write=False)
     if printing:
         print(f"Makespan is {makespan}")
         print(f"Tardiness is {tardiness}")

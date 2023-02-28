@@ -9,15 +9,26 @@ from methods.iterated_greedy import iterated_greedy
 
 
 if __name__ == '__main__':
-    printing = True
+    printing = False
     settings_list = []
     for size in [120, 240]:
-        for id in range(1, 11):
-            for method in ["local_search", "random_search"]:
+        for id in range(1, 10):
+            for method in ["random_search"]:
                 for objective in ["Makespan_Lateness", "Makespan_Average_Lateness"]:
-                    setting = Settings(method=method, stop_criterium="Budget", time_limit=200*size, instance=f'{size}_{id}', size=size, simulator="SimPy",
-                                       objective=objective)
-                    settings_list.append(setting)
+                    for seed in range(0, 10):
+                        setting = Settings(method=method, stop_criterium="Budget", budget=200*size, instance=f'{size}_{id}', size=size, simulator="SimPy",
+                                           objective=objective, init="random", seed=seed)
+                        settings_list.append(setting)
+
+    for size in [120, 240]:
+        for id in range(1, 10):
+            for method in ["local_search"]:
+                for objective in ["Makespan_Lateness", "Makespan_Average_Lateness"]:
+                    for init in ["random", "sorted"]:
+                        for seed in range(0, 10):
+                            setting = Settings(method=method, stop_criterium="Budget", budget=200*size, instance=f'{size}_{id}', size=size, simulator="SimPy",
+                                               objective=objective, init=init, seed=seed)
+                            settings_list.append(setting)
 
     for setting in settings_list:
         print(f"Start new instance {setting.instance}")
@@ -29,10 +40,15 @@ if __name__ == '__main__':
 
         f_eval = lambda x, i: evaluator_simpy(plan=instance, sequence=x, seed=setting.seed, objective=setting.objective)
 
+        if setting.init == "random":
+            init = None
+        elif setting.init == "sorted":
+            init = [i for i in range(0, setting.size)]
+
         if setting.method == "local_search":
             nr_iterations, best_sequence = local_search(n=setting.size, stop_criterium=setting.stop_criterium, budget=setting.budget, f_eval=f_eval,
                                                         time_limit=setting.time_limit, output_file=f'results/{file_name}.txt', write=True,
-                                                        printing=printing)
+                                                        printing=printing, init=init)
         elif setting.method == "random_search":
             nr_iterations, best_sequence = random_search(n=setting.size, stop_criterium=setting.stop_criterium,
                                                         budget=setting.budget, f_eval=f_eval,
