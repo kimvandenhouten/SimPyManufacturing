@@ -1,6 +1,6 @@
 import pandas as pd
 import random
-from classes import ProductionPlan
+from dump.classes_v2 import ProductionPlan
 import pickle
 
 factory = pd.read_pickle("factory_data/RepresentativeFactory.pkl")
@@ -13,7 +13,7 @@ month_assignment = [month for month in months for _ in range(0, 20)]
 
 general_id = 0
 for instance_size in [10, 20, 40, 60, 120, 240]:
-    for id in range(1, 10):
+    for id in range(1, 100):
         product_list = []
         for i in range(0, instance_size):
             product_type = random.choice(rowIDS)

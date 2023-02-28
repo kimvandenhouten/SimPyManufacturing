@@ -2,6 +2,7 @@ import copy
 import simpy
 import random
 import pandas as pd
+import numpy as np
 
 
 class Activity:
@@ -62,21 +63,19 @@ class ProductionPlan:
         self.PRODUCT_IDS = PRODUCT_IDS
         self.DEADLINES = DEADLINES
         self.SEQUENCE = []
-        self.ACTIVITIES = []
-        self.TEMPORAL_RELATIONS = {}
         self.PRODUCTS = []
-        self.PREDECESSORS = []
-        self.SUCCESSORS = []
 
     def list_products(self):
         """
         Add a product to the production plan
         :param product: Class Product
         """
+        self.PRODUCTS = []
         for i in range(0, len(self.PRODUCT_IDS)):
             product = copy.copy(self.FACTORY.PRODUCTS[self.PRODUCT_IDS[i]])
             product.DEADLINE = self.DEADLINES[i]
             self.PRODUCTS.append(product)
+        self.SIZE = len(self.PRODUCT_IDS)
 
     def set_sequence(self, sequence):
         """
@@ -85,6 +84,12 @@ class ProductionPlan:
         """
         self.SEQUENCE = sequence
 
+    def convert_to_dataframe(self):
+        df = pd.DataFrame()
+        df["Product_ID"] = self.PRODUCT_IDS
+        df["Deadlines"] = self.DEADLINES
+        return df
+
 
 class Simulator:
     def __init__(self, plan, printing=False):
@@ -92,92 +97,93 @@ class Simulator:
         self.RESOURCE_NAMES = plan.FACTORY.RESOURCE_NAMES
         self.NR_RESOURCES = len(self.RESOURCE_NAMES)
         self.CAPACITY = plan.FACTORY.CAPACITY
-        self.ACTIVITIES = range(0, len(plan.ACTIVITIES))
-        self.TEMPORAL_RELATIONS = plan.TEMPORAL_RELATIONS
-        self.PREDECESSORS = plan.PREDECESSORS
-        self.SUCCESSORS = plan.SUCCESSORS
-        self.TEMPORAL_RELATIONS = plan.TEMPORAL_RELATIONS
         self.RESOURCES = []
         self.env = simpy.Environment()
         self.resource_usage = []
         self.printing = printing
 
-    def activity(self, activity, p, delay=0):
-        """An activity arrives at the factory for processing
-        It requests one of the resources. If this resource is
-        occupied it has to wait.
-
-        """
-        resources_required = []
-        resources_names = []
-        needs = activity.NEEDS
-        name = f'{p}_{activity.ID}'
-        duration = random.randint(*activity.PROCESSING_TIME)
-        yield self.env.timeout(delay)
-        for r in range(0, self.NR_RESOURCES):
-            need = needs[r]
-            if need > 0:
-                for _ in range(0, need):
-                    resource = self.RESOURCES[r]
-                    resource_name = self.RESOURCE_NAMES[r]
-                    resources_required.append(resource.request())
-                    resources_names.append(resource_name)
+    def product(self, p, priority):
+        # FIRST DO THE REQUESTING
+        activities = self.plan.PRODUCTS[p].ACTIVITIES
+        durations = []
+        resources_required = {}
+        resources_names = {}
+        for i in range(0, len(activities)):
+            activity = activities[i]
+            needs = activity.NEEDS
+            duration = random.randint(*activity.PROCESSING_TIME)
+            durations.append(duration)
+            resources_required_act = []
+            resources_names_act = []
+            for r in range(0, self.NR_RESOURCES):
+                need = needs[r]
+                if need > 0:
+                    for _ in range(0, need):
+                        resource = self.RESOURCES[r]
+                        resource_name = self.RESOURCE_NAMES[r]
+                        resources_required_act.append(resource.request(priority=priority))
+                        resources_names_act.append(resource_name)
+            resources_required[i] = resources_required_act
+            resources_names[i] = resources_names_act
         request_time = self.env.now
         if self.printing:
-            print(f'activity: {name} requested resources: {resources_names} at time: {request_time}')
-        yield self.env.all_of(resources_required)
+            print(f'Product {p} requested resources: {resources_names} at time: {request_time}')
+
+        for i in range(0, len(activities)):
+            yield self.env.all_of(resources_required[i])
+            retrieve_time = self.env.now
+            if self.printing:
+                print(f'Product {p}, activity {i}, retrieved resources: {resources_names[i]} at time: {retrieve_time}')
+
+        for i in range(0, len(activities)):
+            if i == 0:
+                delay_factor = 0
+            else:
+                delay_factor = self.plan.PRODUCTS[p].TEMPORAL_RELATIONS[(0, i)]
+            self.env.process(self.activity_processing(i=i, p=p, delay=delay_factor, duration=duration, resources_required=resources_required[i],
+                                                      resources_names=resources_names[i], request_time=request_time,
+                                                      retrieve_time=retrieve_time))
+
+    def activity_processing(self, i, p, delay, duration, resources_required, resources_names, request_time, retrieve_time):
+
+        yield self.env.timeout(delay)
         start_time = self.env.now
-        if self.printing:
-            print(f'activity: {name} retrieved resources: {resources_names} at time: {start_time}')
+        # NOW START WITH THE ACTUAL PROCESSING
         yield self.env.timeout(duration)
         end_time = self.env.now
-        for r in resources_required:
-            r.resource.release(r)
-        if self.printing:
-            print(f'activity: {name} released resources: {resources_names} at time: {end_time}')
 
-        for resource_name in resources_names:
-            self.resource_usage.append({"Activity": name,
+        # NOW RELEASE ALL RESOURCES THAT WERE NEEDED
+        for j in range(0, len(resources_required)):
+            r = resources_required[j]
+            r.resource.release(r)
+            resource_name = resources_names[j]
+            if self.printing:
+                print(f'Product {p} released resources: {resource_name} at time: {end_time}')
+
+            self.resource_usage.append({"Activity": i,
                                         "Product": p,
                                         "Resource": resource_name,
                                         "Request moment": request_time,
+                                        "Retrieve moment": retrieve_time,
                                         "Start": start_time,
                                         "Finish": end_time})
-
-    def product(self, p):
-        # Iterate through activites needed for this product
-        activities = self.plan.PRODUCTS[p].ACTIVITIES
-        temp_relations = self.plan.PRODUCTS[p].TEMPORAL_RELATIONS
-        successors = self.plan.PRODUCTS[p].SUCCESSORS
-
-        # Keep track of which activities are still unscheduled
-        UNSCHEDULED = [0 for _ in activities]
-
-        for i in range(0, len(activities)):
-            # Activate activity process
-            if UNSCHEDULED[i] == 0:
-                self.env.process(self.activity(activities[i], p))
-                UNSCHEDULED[i] = 1
-
-                # Schedule successors for this activity according to temporal relations
-                for j in successors[i]:
-                    if UNSCHEDULED[j] == 0:
-                        self.env.process(self.activity(activities[j], p, delay=temp_relations[(i, j)]))
-                    UNSCHEDULED[j] = 1
-
-        yield self.env.timeout(0)
 
     def product_generator(self):
         """Generate activities that arrive at the factory. For certain activities there are temporal relations,
         this means that there are fixed time intervals between the request times for the two activities."""
-        print(f"The products are processed according to the production sequence {self.plan.SEQUENCE}.")
+        if self.printing:
+            print(f"The products are processed according to the production sequence {self.plan.SEQUENCE}.")
         # Schedule activities with priority ordering
+        priority = 0
         for p in self.plan.SEQUENCE:
-            self.env.process(self.product(p))
-            yield self.env.timeout(0)
+
+            self.env.process(self.product(p, priority=priority))
+            priority += 1
+            yield self.env.timeout(3)
 
     def simulate(self, SIM_TIME, RANDOM_SEED, write=False, output_location="Results.csv"):
-        print(f'START Factory simulation for seed {RANDOM_SEED}')
+        if self.printing:
+            print(f'START Factory simulation for seed {RANDOM_SEED}')
         random.seed(RANDOM_SEED)
         # Reset environment
         self.env = simpy.Environment()
@@ -195,6 +201,7 @@ class Simulator:
         self.resource_usage = pd.DataFrame(self.resource_usage)
         makespan = max(self.resource_usage["Finish"])
         tardiness = 0
+
         for p in self.plan.SEQUENCE:
             schedule = self.resource_usage[self.resource_usage["Product"] == p]
             finish = max(schedule["Finish"])
@@ -202,8 +209,9 @@ class Simulator:
                 print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
             tardiness += max(0, finish - self.plan.PRODUCTS[p].DEADLINE)
 
-        print(f"The makespan corresponding to this schedule is {makespan}")
-        print(f"The tardiness corresponding to this schedule is {tardiness}")
+        if self.printing:
+            print(f"The makespan corresponding to this schedule is {makespan}")
+            print(f"The tardiness corresponding to this schedule is {tardiness}")
         if write:
             self.resource_usage.to_csv(output_location)
 
