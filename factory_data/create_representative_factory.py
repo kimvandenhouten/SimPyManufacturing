@@ -54,6 +54,7 @@ for index, row in unique_products.iterrows():
     machines = df_downstream["Machine"].tolist()
     durations = df_downstream["Duration claim"].tolist()
     durations = [round(i) for i in durations]
+    print(durations)
     release_time = df_downstream["Release time"].tolist()
     start_claim = df_downstream["Claim time"].tolist()
 
@@ -67,6 +68,7 @@ for index, row in unique_products.iterrows():
         release = release_time[i]
 
         duration = round(release - claim)
+        print(duration)
         temp_rel = claim - start_fermentation
         activity = Activity(ID=task_id, PRODUCT=f'{enzyme_name}_{fermenter}', PRODUCT_ID="0",
                             PROCESSING_TIME=[duration, duration], NEEDS=resource_use)

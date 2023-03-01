@@ -140,7 +140,7 @@ class Simulator:
                 delay_factor = 0
             else:
                 delay_factor = self.plan.PRODUCTS[p].TEMPORAL_RELATIONS[(0, i)]
-            self.env.process(self.activity_processing(i=i, p=p, delay=delay_factor, duration=duration, resources_required=resources_required[i],
+            self.env.process(self.activity_processing(i=i, p=p, delay=delay_factor, duration=durations[i], resources_required=resources_required[i],
                                                       resources_names=resources_names[i], request_time=request_time,
                                                       retrieve_time=retrieve_time))
 
@@ -176,7 +176,6 @@ class Simulator:
         # Schedule activities with priority ordering
         priority = 0
         for p in self.plan.SEQUENCE:
-
             self.env.process(self.product(p, priority=priority))
             priority += 1
             yield self.env.timeout(3)

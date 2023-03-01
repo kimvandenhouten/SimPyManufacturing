@@ -27,10 +27,10 @@ class Settings:
                    f'{self.instance}_objective={self.objective}_init={self.init}'
 
 
-def evaluator_simpy(plan, sequence, seed, objective="Makespan", printing=False):
+def evaluator_simpy(plan, sequence, seed, sim_time=10000000, objective="Makespan", printing=False):
     plan.set_sequence(sequence)
     simulator = Simulator(plan, printing=printing)
-    makespan, tardiness = simulator.simulate(SIM_TIME=1000000, RANDOM_SEED=seed, write=False)
+    makespan, tardiness = simulator.simulate(SIM_TIME=sim_time, RANDOM_SEED=seed, write=False)
     if printing:
         print(f"Makespan is {makespan}")
         print(f"Tardiness is {tardiness}")

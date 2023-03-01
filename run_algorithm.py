@@ -15,17 +15,19 @@ if __name__ == '__main__':
         for size in [120, 240]:
             for id in range(1, 10):
                 for objective in ["Makespan_Lateness", "Makespan_Average_Lateness"]:
+                    for method in ["local_search"]:
+                            for init in ["random", "sorted"]:
+                                    setting = Settings(method=method, stop_criterium="Budget", budget=100*size,
+                                                       instance=f'{size}_{id}', size=size, simulator="SimPy",
+                                                       objective=objective, init=init, seed=seed)
+                                    settings_list.append(setting)
+
                     for method in ["random_search"]:
                         setting = Settings(method=method, stop_criterium="Budget", budget=200*size, instance=f'{size}_{id}',
                                            size=size, simulator="SimPy", objective=objective, init="random", seed=seed)
                         settings_list.append(setting)
 
-                    for method in ["local_search"]:
-                            for init in ["random", "sorted"]:
-                                    setting = Settings(method=method, stop_criterium="Budget", budget=1*size,
-                                                       instance=f'{size}_{id}', size=200*size, simulator="SimPy",
-                                                       objective=objective, init=init, seed=seed)
-                                    settings_list.append(setting)
+
 
     for setting in settings_list:
         print(f"Start new instance {setting.instance}")
@@ -35,7 +37,8 @@ if __name__ == '__main__':
         instance = pd.read_pickle(f"factory_data/instances/instance_{setting.instance}.pkl")
         file_name = setting.make_file_name()
 
-        f_eval = lambda x, i: evaluator_simpy(plan=instance, sequence=x, seed=setting.seed, objective=setting.objective)
+        f_eval = lambda x, i: evaluator_simpy(plan=instance, sequence=x, seed=setting.seed, objective=setting.objective,
+                                              sim_time=size*1000000)
 
         if setting.init == "random":
             init = None

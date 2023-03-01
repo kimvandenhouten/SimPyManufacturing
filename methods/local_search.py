@@ -25,9 +25,9 @@ def local_search(n, f_eval, time_limit=200, stop_criterium="Time", budget=400,
     # Start algorithm
     if init is None:
         sequence = np.random.permutation(np.arange(n))
-        print(sequence)
     else:
         sequence = copy.copy(init)
+
     # Write first sequence to output file
     fitness = f_eval(sequence, iteration)
     start = time.time()
