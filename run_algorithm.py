@@ -17,13 +17,13 @@ if __name__ == '__main__':
                 for objective in ["Makespan_Lateness", "Makespan_Average_Lateness"]:
                     for method in ["local_search"]:
                             for init in ["random", "sorted"]:
-                                    setting = Settings(method=method, stop_criterium="Budget", budget=100*size,
+                                    setting = Settings(method=method, stop_criterium="Budget", budget=100*(size/20),
                                                        instance=f'{size}_{id}', size=size, simulator="SimPy",
                                                        objective=objective, init=init, seed=seed)
                                     settings_list.append(setting)
 
                     for method in ["random_search"]:
-                        setting = Settings(method=method, stop_criterium="Budget", budget=200*size, instance=f'{size}_{id}',
+                        setting = Settings(method=method, stop_criterium="Budget", budget=100*(size/20), instance=f'{size}_{id}',
                                            size=size, simulator="SimPy", objective=objective, init="random", seed=seed)
                         settings_list.append(setting)
 
