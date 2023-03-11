@@ -1,0 +1,455 @@
+,Activity,Product,Resource,Check_resource_type,Machine_id,Request moment,Retrieve moment,Start,Finish
+0,1,15,Harvesting tanks A,Harvesting tanks A,0,45,45,45,69
+1,1,10,Harvesting tanks A,Harvesting tanks A,2,67,67,67,84
+2,0,16,Fermenter_2,Fermenter_2,0,0,0,0,102
+3,2,15,Harvesting tanks A,Harvesting tanks A,1,45,45,45,103
+4,0,3,Fermenter_1,Fermenter_1,0,6,6,6,118
+5,2,3,Harvesting tanks B,Harvesting tanks B,2,93,93,93,118
+6,0,22,Fermenter_5,Fermenter_5,0,27,27,27,123
+7,2,10,Harvesting tanks A,Harvesting tanks A,3,67,67,67,128
+8,2,22,Harvesting tanks B,Harvesting tanks B,5,108,108,108,129
+9,4,10,Harvesting tanks B,Harvesting tanks B,3,67,67,67,140
+10,3,10,Filters A,Filters A,1,101,101,101,140
+11,0,10,Fermenter_4,Fermenter_4,0,15,15,15,143
+12,1,22,Filters A,Filters A,1,117,140,140,152
+13,0,15,Fermenter_3,Fermenter_3,0,3,3,3,153
+14,8,10,Harvesting tanks B,Harvesting tanks B,4,67,67,67,160
+15,7,10,Filters A,Filters A,2,136,136,136,160
+16,3,15,Microfilter,Microfilter,2,134,134,134,171
+17,1,11,Harvesting tanks A,Harvesting tanks A,0,145,145,145,185
+18,1,16,Buffer tanks,Buffer tanks,0,128,128,128,186
+19,2,16,Microfilter,Microfilter,0,131,131,131,186
+20,4,16,Harvesting tanks B,Harvesting tanks B,0,71,71,71,192
+21,3,16,Filters A,Filters A,0,128,128,128,192
+22,4,15,Buffer tanks,Buffer tanks,2,124,124,124,195
+23,0,5,Fermenter_2,Fermenter_2,0,12,102,102,204
+24,6,15,Microfilter,Microfilter,3,124,124,124,208
+25,5,15,Buffer tanks,Buffer tanks,3,134,134,134,208
+26,8,15,Harvesting tanks B,Harvesting tanks B,1,45,45,45,212
+27,7,15,Filters B,Filters B,0,103,103,103,212
+28,2,11,Harvesting tanks A,Harvesting tanks A,2,145,145,145,213
+29,5,16,Buffer tanks,Buffer tanks,1,161,161,161,216
+30,6,16,Microfilter,Microfilter,1,161,161,161,216
+31,9,3,Stabilization tanks,Stabilization tanks,3,122,122,122,219
+32,3,3,Buffer tanks,Buffer tanks,3,103,208,208,227
+33,4,3,Microfilter,Microfilter,3,103,208,208,227
+34,1,3,Filters B,Filters B,0,103,212,212,227
+35,5,3,Buffer tanks,Buffer tanks,1,108,216,216,234
+36,6,3,Microfilter,Microfilter,1,108,216,216,234
+37,5,22,Stabilization tanks,Stabilization tanks,5,146,146,146,235
+38,5,10,Buffer tanks,Buffer tanks,1,138,234,234,239
+39,0,11,Fermenter_1,Fermenter_1,0,30,118,118,241
+40,7,3,Buffer tanks,Buffer tanks,3,113,227,227,244
+41,8,3,Microfilter,Microfilter,3,113,227,227,244
+42,0,13,Fermenter_4,Fermenter_4,0,18,143,143,249
+43,4,11,Harvesting tanks B,Harvesting tanks B,5,145,145,145,258
+44,3,11,Filters A,Filters A,2,235,235,235,258
+45,13,10,Stabilization tanks,Stabilization tanks,4,122,122,122,260
+46,6,11,Harvesting tanks B,Harvesting tanks B,3,226,226,226,266
+47,5,11,Filters A,Filters A,0,248,248,248,266
+48,1,2,Harvesting tanks A,Harvesting tanks A,1,243,243,243,267
+49,6,10,Microfilter,Microfilter,1,114,234,234,268
+50,13,15,Stabilization tanks,Stabilization tanks,1,134,134,134,283
+51,9,10,Buffer tanks,Buffer tanks,1,114,239,239,286
+52,2,13,Harvesting tanks B,Harvesting tanks B,4,229,229,229,288
+53,1,13,Filters A,Filters A,2,260,260,260,288
+54,4,5,Harvesting tanks B,Harvesting tanks B,2,173,173,173,294
+55,3,5,Filters A,Filters A,1,230,230,230,294
+56,10,15,Microfilter,Microfilter,2,103,171,171,296
+57,6,13,Harvesting tanks B,Harvesting tanks B,0,229,229,229,297
+58,12,10,Microfilter,Microfilter,1,138,268,268,301
+59,5,13,Filters A,Filters A,0,260,266,266,303
+60,10,10,Microfilter,Microfilter,3,101,244,244,304
+61,7,16,Stabilization tanks,Stabilization tanks,0,186,186,186,305
+62,9,15,Buffer tanks,Buffer tanks,0,103,186,186,311
+63,0,2,Fermenter_3,Fermenter_3,0,9,153,153,312
+64,12,15,Microfilter,Microfilter,0,113,186,186,312
+65,5,2,Harvesting tanks B,Harvesting tanks B,1,243,243,243,313
+66,11,10,Buffer tanks,Buffer tanks,3,101,244,244,314
+67,3,22,Buffer tanks,Buffer tanks,1,117,286,286,315
+68,0,4,Fermenter_2,Fermenter_2,0,24,204,204,316
+69,11,15,Buffer tanks,Buffer tanks,2,113,195,195,321
+70,4,22,Microfilter,Microfilter,2,117,296,296,325
+71,14,15,Stabilization tanks,Stabilization tanks,2,195,195,195,332
+72,4,2,Filters A,Filters A,2,267,288,288,334
+73,2,4,Harvesting tanks B,Harvesting tanks B,5,289,289,289,339
+74,1,4,Filters A,Filters A,1,298,298,298,339
+75,8,11,Microfilter,Microfilter,0,237,312,312,346
+76,9,11,Buffer tanks,Buffer tanks,2,249,321,321,346
+77,7,11,Buffer tanks,Buffer tanks,1,235,315,315,351
+78,2,5,Microfilter,Microfilter,1,233,301,301,356
+79,11,11,Microfilter,Microfilter,2,249,325,325,358
+80,6,5,Microfilter,Microfilter,3,263,304,304,359
+81,10,11,Buffer tanks,Buffer tanks,2,263,346,346,365
+82,1,5,Buffer tanks,Buffer tanks,0,230,311,311,369
+83,5,5,Buffer tanks,Buffer tanks,3,263,314,314,369
+84,14,11,Stabilization tanks,Stabilization tanks,7,271,271,271,374
+85,1,7,Harvesting tanks A,Harvesting tanks A,0,346,346,346,374
+86,13,11,Microfilter,Microfilter,0,250,346,346,381
+87,12,11,Buffer tanks,Buffer tanks,1,248,351,351,388
+88,7,13,Microfilter,Microfilter,1,261,356,356,392
+89,10,13,Microfilter,Microfilter,3,272,359,359,393
+90,8,13,Microfilter,Microfilter,2,261,358,358,394
+91,13,13,Stabilization tanks,Stabilization tanks,8,272,272,272,397
+92,3,13,Buffer tanks,Buffer tanks,2,260,365,365,402
+93,0,18,Fermenter_1,Fermenter_1,0,33,241,241,403
+94,9,13,Buffer tanks,Buffer tanks,3,272,369,369,403
+95,4,13,Buffer tanks,Buffer tanks,0,260,369,369,406
+96,7,5,Stabilization tanks,Stabilization tanks,6,288,288,288,407
+97,0,1,Fermenter_4,Fermenter_4,0,48,249,249,411
+98,12,13,Microfilter,Microfilter,0,272,381,381,417
+99,2,7,Harvesting tanks A,Harvesting tanks A,2,346,346,346,418
+100,1,6,Harvesting tanks B,Harvesting tanks B,0,366,366,366,424
+101,11,13,Buffer tanks,Buffer tanks,1,272,388,388,424
+102,8,2,Stabilization tanks,Stabilization tanks,9,288,288,288,425
+103,2,18,Harvesting tanks B,Harvesting tanks B,3,380,380,380,425
+104,1,18,Filters B,Filters B,0,395,395,395,425
+105,2,6,Harvesting tanks A,Harvesting tanks A,3,366,366,366,427
+106,7,2,Microfilter,Microfilter,3,297,393,393,432
+107,3,2,Microfilter,Microfilter,1,267,392,392,436
+108,0,6,Fermenter_3,Fermenter_3,0,21,312,312,437
+109,0,7,Fermenter_2,Fermenter_2,0,36,316,316,438
+110,1,1,Harvesting tanks B,Harvesting tanks B,4,388,388,388,438
+111,6,2,Buffer tanks,Buffer tanks,3,297,403,403,442
+112,2,2,Buffer tanks,Buffer tanks,2,267,402,402,446
+113,5,4,Stabilization tanks,Stabilization tanks,10,363,363,363,456
+114,4,6,Harvesting tanks B,Harvesting tanks B,1,419,419,419,458
+115,3,6,Filters A,Filters A,0,440,440,440,458
+116,4,4,Microfilter,Microfilter,2,298,394,394,459
+117,4,18,Microfilter,Microfilter,0,395,417,417,470
+118,3,4,Buffer tanks,Buffer tanks,0,298,406,406,471
+119,5,1,Harvesting tanks B,Harvesting tanks B,2,388,388,388,472
+120,9,6,Harvesting tanks B,Harvesting tanks B,5,419,419,419,473
+121,8,6,Filters A,Filters A,2,440,440,440,473
+122,3,18,Buffer tanks,Buffer tanks,1,395,424,424,477
+123,4,7,Harvesting tanks B,Harvesting tanks B,3,412,425,425,481
+124,3,7,Filters A,Filters A,0,445,458,458,481
+125,11,6,Filters A,Filters A,1,404,404,404,485
+126,3,1,Microfilter,Microfilter,3,403,432,432,490
+127,4,1,Filters B,Filters B,0,403,425,425,494
+128,7,1,Microfilter,Microfilter,1,438,438,438,495
+129,2,1,Buffer tanks,Buffer tanks,3,403,442,442,500
+130,6,1,Buffer tanks,Buffer tanks,2,438,446,446,503
+131,7,6,Buffer tanks,Buffer tanks,1,440,477,477,505
+132,5,7,Filters A,Filters A,2,440,473,473,507
+133,6,6,Microfilter,Microfilter,2,405,459,459,513
+134,14,6,Microfilter,Microfilter,0,441,470,470,519
+135,5,6,Buffer tanks,Buffer tanks,0,404,471,471,526
+136,1,21,Harvesting tanks A,Harvesting tanks A,1,486,486,486,527
+137,8,7,Microfilter,Microfilter,3,442,490,490,536
+138,5,18,Stabilization tanks,Stabilization tanks,3,448,448,448,541
+139,11,7,Microfilter,Microfilter,1,447,495,495,541
+140,10,6,Buffer tanks,Buffer tanks,3,440,500,500,542
+141,12,6,Harvesting tanks B,Harvesting tanks B,0,366,424,424,543
+142,13,6,Buffer tanks,Buffer tanks,2,450,503,503,543
+143,0,14,Fermenter_1,Fermenter_1,0,42,403,403,547
+144,0,9,Fermenter_2,Fermenter_2,0,54,438,438,550
+145,7,7,Buffer tanks,Buffer tanks,1,440,505,505,553
+146,0,12,Fermenter_3,Fermenter_3,0,39,437,437,556
+147,13,7,Microfilter,Microfilter,2,459,513,513,558
+148,6,7,Harvesting tanks B,Harvesting tanks B,4,346,438,438,566
+149,2,21,Harvesting tanks A,Harvesting tanks A,0,486,486,486,567
+150,9,7,Buffer tanks,Buffer tanks,0,445,526,526,574
+151,10,7,Buffer tanks,Buffer tanks,3,459,542,542,576
+152,2,14,Harvesting tanks B,Harvesting tanks B,1,519,519,519,580
+153,1,14,Filters A,Filters A,0,550,550,550,580
+154,15,6,Stabilization tanks,Stabilization tanks,4,435,435,435,583
+155,12,7,Buffer tanks,Buffer tanks,2,464,543,543,583
+156,8,1,Stabilization tanks,Stabilization tanks,5,461,461,461,588
+157,0,21,Fermenter_4,Fermenter_4,0,66,411,411,591
+158,14,7,Stabilization tanks,Stabilization tanks,1,488,488,488,593
+159,4,14,Microfilter,Microfilter,0,552,552,552,595
+160,3,14,Buffer tanks,Buffer tanks,1,550,553,553,598
+161,4,21,Harvesting tanks B,Harvesting tanks B,2,486,486,486,603
+162,3,12,Harvesting tanks B,Harvesting tanks B,0,537,543,543,603
+163,3,21,Filters A,Filters A,1,580,580,580,603
+164,6,14,Microfilter,Microfilter,3,566,566,566,609
+165,0,19,Fermenter_2,Fermenter_2,0,57,550,550,611
+166,5,21,Buffer tanks,Buffer tanks,3,580,580,580,616
+167,5,14,Buffer tanks,Buffer tanks,0,566,574,574,617
+168,1,20,Harvesting tanks A,Harvesting tanks A,2,598,598,598,622
+169,4,12,Harvesting tanks B,Harvesting tanks B,4,537,566,566,626
+170,7,21,Microfilter,Microfilter,1,581,581,581,627
+171,6,21,Buffer tanks,Buffer tanks,2,596,596,596,627
+172,1,12,Filters A,Filters A,1,571,603,603,629
+173,2,9,Harvesting tanks B,Harvesting tanks B,1,523,580,580,630
+174,9,21,Harvesting tanks B,Harvesting tanks B,5,566,566,566,636
+175,8,21,Filters A,Filters A,2,596,596,596,636
+176,10,21,Buffer tanks,Buffer tanks,1,596,598,598,645
+177,7,12,Microfilter,Microfilter,0,571,595,595,649
+178,2,19,Harvesting tanks B,Harvesting tanks B,0,598,603,603,654
+179,12,21,Harvesting tanks B,Harvesting tanks B,3,566,566,566,655
+180,11,21,Filters A,Filters A,0,596,596,596,655
+181,2,12,Filters A,Filters A,1,571,629,629,655
+182,2,20,Harvesting tanks A,Harvesting tanks A,3,598,598,598,656
+183,0,0,Fermenter_1,Fermenter_1,0,45,547,547,659
+184,14,21,Microfilter,Microfilter,2,616,616,616,659
+185,1,30,Harvesting tanks A,Harvesting tanks A,1,643,643,643,660
+186,8,12,Microfilter,Microfilter,3,571,609,609,663
+187,13,21,Buffer tanks,Buffer tanks,3,605,616,616,670
+188,5,12,Buffer tanks,Buffer tanks,0,571,617,617,671
+189,1,19,Filters A,Filters A,1,632,655,655,672
+190,1,9,Filters A,Filters A,2,532,636,636,677
+191,6,12,Buffer tanks,Buffer tanks,2,571,627,627,681
+192,2,0,Harvesting tanks B,Harvesting tanks B,2,641,641,641,683
+193,1,0,Filters A,Filters A,0,660,660,660,683
+194,4,19,Microfilter,Microfilter,3,634,663,663,683
+195,4,0,Microfilter,Microfilter,0,661,661,661,686
+196,5,9,Stabilization tanks,Stabilization tanks,8,597,597,597,690
+197,4,9,Microfilter,Microfilter,1,532,627,627,692
+198,3,0,Buffer tanks,Buffer tanks,3,660,670,670,696
+199,5,0,Buffer tanks,Buffer tanks,0,672,672,672,696
+200,6,0,Microfilter,Microfilter,2,672,672,672,696
+201,7,14,Stabilization tanks,Stabilization tanks,0,595,595,595,698
+202,6,19,Microfilter,Microfilter,3,642,683,683,702
+203,3,19,Buffer tanks,Buffer tanks,2,632,681,681,703
+204,2,30,Harvesting tanks A,Harvesting tanks A,0,643,643,643,704
+205,0,20,Fermenter_3,Fermenter_3,0,51,556,556,706
+206,3,9,Buffer tanks,Buffer tanks,1,532,645,645,710
+207,9,12,Stabilization tanks,Stabilization tanks,7,625,625,625,714
+208,5,19,Buffer tanks,Buffer tanks,3,642,696,696,715
+209,4,30,Harvesting tanks B,Harvesting tanks B,1,643,643,643,716
+210,3,30,Filters A,Filters A,1,677,677,677,716
+211,0,30,Fermenter_4,Fermenter_4,0,81,591,591,719
+212,3,20,Microfilter,Microfilter,0,687,687,687,724
+213,1,17,Harvesting tanks A,Harvesting tanks A,2,706,706,706,735
+214,8,30,Harvesting tanks B,Harvesting tanks B,5,643,643,643,736
+215,7,30,Filters A,Filters A,2,712,712,712,736
+216,15,21,Stabilization tanks,Stabilization tanks,2,616,616,616,748
+217,7,19,Stabilization tanks,Stabilization tanks,9,654,654,654,750
+218,6,30,Microfilter,Microfilter,0,690,724,724,758
+219,7,20,Filters B,Filters B,0,656,656,656,765
+220,4,20,Buffer tanks,Buffer tanks,0,677,696,696,767
+221,5,30,Buffer tanks,Buffer tanks,0,714,767,767,772
+222,6,20,Microfilter,Microfilter,1,677,692,692,776
+223,5,20,Buffer tanks,Buffer tanks,2,687,703,703,777
+224,2,17,Harvesting tanks A,Harvesting tanks A,3,706,706,706,778
+225,1,8,Harvesting tanks A,Harvesting tanks A,1,717,717,717,781
+226,3,17,Harvesting tanks B,Harvesting tanks B,0,706,706,706,784
+227,7,0,Stabilization tanks,Stabilization tanks,6,686,686,686,789
+228,8,20,Harvesting tanks B,Harvesting tanks B,4,598,626,626,793
+229,0,23,Fermenter_3,Fermenter_3,0,63,706,706,808
+230,12,30,Microfilter,Microfilter,1,714,776,776,809
+231,0,17,Fermenter_2,Fermenter_2,0,69,611,611,810
+232,10,30,Microfilter,Microfilter,0,677,758,758,818
+233,9,30,Buffer tanks,Buffer tanks,0,690,772,772,819
+234,10,20,Microfilter,Microfilter,2,656,696,696,821
+235,5,17,Harvesting tanks B,Harvesting tanks B,3,706,706,706,821
+236,4,17,Filters A,Filters A,0,767,767,767,821
+237,12,20,Microfilter,Microfilter,3,666,702,702,828
+238,2,8,Harvesting tanks A,Harvesting tanks A,0,717,717,717,829
+239,9,20,Buffer tanks,Buffer tanks,1,656,710,710,835
+240,13,20,Stabilization tanks,Stabilization tanks,10,687,687,687,836
+241,13,30,Stabilization tanks,Stabilization tanks,4,698,698,698,836
+242,0,8,Fermenter_1,Fermenter_1,0,60,659,659,840
+243,11,20,Buffer tanks,Buffer tanks,3,666,715,715,841
+244,11,30,Buffer tanks,Buffer tanks,2,677,777,777,847
+245,8,17,Harvesting tanks B,Harvesting tanks B,2,745,745,745,850
+246,7,17,Filters A,Filters A,1,815,815,815,850
+247,4,8,Harvesting tanks B,Harvesting tanks B,1,717,717,717,853
+248,3,8,Filters A,Filters A,2,835,835,835,853
+249,10,17,Microfilter,Microfilter,1,813,813,813,854
+250,6,17,Buffer tanks,Buffer tanks,0,803,819,819,855
+251,6,8,Harvesting tanks B,Harvesting tanks B,5,816,816,816,857
+252,5,8,Filters A,Filters A,0,839,839,839,857
+253,4,23,Harvesting tanks B,Harvesting tanks B,0,777,784,784,863
+254,8,8,Microfilter,Microfilter,2,836,836,836,869
+255,10,8,Microfilter,Microfilter,3,840,840,840,873
+256,9,23,Harvesting tanks B,Harvesting tanks B,4,777,793,793,880
+257,0,28,Fermenter_4,Fermenter_4,0,84,719,719,881
+258,7,8,Buffer tanks,Buffer tanks,2,835,847,847,881
+259,2,23,Microfilter,Microfilter,1,825,854,854,881
+260,3,23,Filters A,Filters A,1,823,850,850,883
+261,14,20,Stabilization tanks,Stabilization tanks,3,748,748,748,885
+262,9,8,Buffer tanks,Buffer tanks,0,839,855,855,889
+263,8,23,Filters A,Filters A,2,823,853,853,894
+264,6,23,Microfilter,Microfilter,2,837,869,869,894
+265,10,23,Microfilter,Microfilter,3,837,873,873,900
+266,1,27,Harvesting tanks A,Harvesting tanks A,2,872,872,872,904
+267,1,28,Harvesting tanks B,Harvesting tanks B,3,858,858,858,908
+268,1,23,Buffer tanks,Buffer tanks,2,823,881,881,910
+269,0,32,Fermenter_2,Fermenter_2,0,75,810,810,912
+270,0,26,Fermenter_3,Fermenter_3,0,78,808,808,914
+271,5,23,Buffer tanks,Buffer tanks,0,837,889,889,914
+272,9,17,Buffer tanks,Buffer tanks,1,767,835,835,922
+273,11,17,Buffer tanks,Buffer tanks,3,800,841,841,922
+274,12,17,Microfilter,Microfilter,0,769,818,818,930
+275,2,27,Harvesting tanks A,Harvesting tanks A,3,872,872,872,935
+276,12,23,Microfilter,Microfilter,1,825,881,881,935
+277,7,23,Buffer tanks,Buffer tanks,2,837,910,910,937
+278,5,28,Harvesting tanks B,Harvesting tanks B,2,858,858,858,942
+279,4,28,Filters B,Filters B,0,873,873,873,942
+280,3,28,Microfilter,Microfilter,2,873,894,894,952
+281,2,26,Harvesting tanks B,Harvesting tanks B,1,894,894,894,953
+282,1,26,Filters A,Filters A,0,925,925,925,953
+283,6,26,Harvesting tanks B,Harvesting tanks B,5,894,894,894,962
+284,5,26,Filters A,Filters A,1,925,925,925,962
+285,0,27,Fermenter_1,Fermenter_1,0,72,840,840,965
+286,7,28,Microfilter,Microfilter,3,908,908,908,965
+287,11,8,Stabilization tanks,Stabilization tanks,1,869,869,869,966
+288,7,26,Microfilter,Microfilter,0,926,930,930,966
+289,13,17,Stabilization tanks,Stabilization tanks,5,813,813,813,970
+290,11,23,Buffer tanks,Buffer tanks,0,823,914,914,970
+291,8,26,Microfilter,Microfilter,1,926,935,935,971
+292,13,23,Stabilization tanks,Stabilization tanks,8,837,837,837,972
+293,3,26,Buffer tanks,Buffer tanks,2,925,937,937,974
+294,6,28,Buffer tanks,Buffer tanks,3,908,922,922,979
+295,2,28,Buffer tanks,Buffer tanks,1,873,922,922,980
+296,3,27,Filters A,Filters A,0,957,957,957,983
+297,10,26,Microfilter,Microfilter,2,937,952,952,986
+298,4,27,Harvesting tanks B,Harvesting tanks B,4,872,880,880,991
+299,6,27,Harvesting tanks B,Harvesting tanks B,3,948,948,948,991
+300,5,27,Filters A,Filters A,1,972,972,972,991
+301,12,26,Microfilter,Microfilter,3,937,965,965,1001
+302,4,32,Harvesting tanks B,Harvesting tanks B,0,881,881,881,1002
+303,3,32,Filters A,Filters A,2,938,938,938,1002
+304,4,26,Buffer tanks,Buffer tanks,0,925,970,970,1007
+305,9,26,Buffer tanks,Buffer tanks,2,937,974,974,1008
+306,0,29,Fermenter_2,Fermenter_2,0,87,912,912,1014
+307,1,34,Harvesting tanks B,Harvesting tanks B,1,959,959,959,1015
+308,11,26,Buffer tanks,Buffer tanks,3,937,979,979,1015
+309,2,34,Harvesting tanks A,Harvesting tanks A,1,959,959,959,1020
+310,2,32,Microfilter,Microfilter,0,941,966,966,1021
+311,8,27,Microfilter,Microfilter,2,959,986,986,1022
+312,6,32,Microfilter,Microfilter,1,971,971,971,1026
+313,0,34,Fermenter_3,Fermenter_3,0,102,914,914,1031
+314,11,27,Microfilter,Microfilter,3,973,1001,1001,1034
+315,1,32,Buffer tanks,Buffer tanks,1,938,980,980,1038
+316,9,27,Buffer tanks,Buffer tanks,3,973,1015,1015,1041
+317,7,27,Buffer tanks,Buffer tanks,2,957,1008,1008,1046
+318,3,34,Filters A,Filters A,1,995,995,995,1047
+319,4,34,Harvesting tanks B,Harvesting tanks B,5,959,962,962,1050
+320,10,27,Buffer tanks,Buffer tanks,1,988,1038,1038,1056
+321,13,27,Microfilter,Microfilter,0,974,1021,1021,1057
+322,8,28,Stabilization tanks,Stabilization tanks,0,931,931,931,1058
+323,13,26,Stabilization tanks,Stabilization tanks,7,937,937,937,1062
+324,5,32,Buffer tanks,Buffer tanks,0,971,1007,1007,1062
+325,7,34,Microfilter,Microfilter,3,1030,1034,1034,1068
+326,9,34,Harvesting tanks B,Harvesting tanks B,4,1013,1013,1013,1070
+327,8,34,Filters A,Filters A,2,1031,1031,1031,1070
+328,12,27,Buffer tanks,Buffer tanks,3,972,1041,1041,1079
+329,2,29,Microfilter,Microfilter,2,1043,1043,1043,1098
+330,14,27,Stabilization tanks,Stabilization tanks,9,995,995,995,1099
+331,4,29,Harvesting tanks B,Harvesting tanks B,2,983,983,983,1104
+332,3,29,Filters A,Filters A,0,1040,1040,1040,1104
+333,1,29,Buffer tanks,Buffer tanks,2,1040,1046,1046,1104
+334,6,34,Buffer tanks,Buffer tanks,3,1031,1079,1079,1112
+335,7,32,Stabilization tanks,Stabilization tanks,2,996,996,996,1115
+336,0,38,Fermenter_2,Fermenter_2,0,90,1014,1014,1116
+337,5,34,Buffer tanks,Buffer tanks,0,995,1062,1062,1126
+338,5,29,Buffer tanks,Buffer tanks,1,1073,1073,1073,1128
+339,6,29,Microfilter,Microfilter,1,1073,1073,1073,1128
+340,1,25,Harvesting tanks B,Harvesting tanks B,0,1076,1076,1076,1132
+341,2,25,Harvesting tanks A,Harvesting tanks A,0,1076,1076,1076,1137
+342,0,25,Fermenter_3,Fermenter_3,0,105,1031,1031,1148
+343,11,34,Microfilter,Microfilter,0,996,1057,1057,1150
+344,4,25,Harvesting tanks B,Harvesting tanks B,1,1076,1076,1076,1164
+345,3,25,Filters A,Filters A,2,1112,1112,1112,1164
+346,10,34,Buffer tanks,Buffer tanks,2,1027,1104,1104,1166
+347,7,25,Microfilter,Microfilter,1,1147,1147,1147,1181
+348,12,34,Stabilization tanks,Stabilization tanks,10,1028,1028,1028,1182
+349,9,25,Harvesting tanks B,Harvesting tanks B,5,1130,1130,1130,1187
+350,8,25,Filters A,Filters A,0,1148,1148,1148,1187
+351,5,25,Buffer tanks,Buffer tanks,1,1112,1128,1128,1192
+352,6,25,Buffer tanks,Buffer tanks,2,1148,1166,1166,1199
+353,1,38,Buffer tanks,Buffer tanks,3,1142,1142,1142,1200
+354,2,38,Microfilter,Microfilter,3,1145,1145,1145,1200
+355,4,38,Harvesting tanks B,Harvesting tanks B,3,1085,1085,1085,1206
+356,3,38,Filters A,Filters A,1,1142,1142,1142,1206
+357,7,29,Stabilization tanks,Stabilization tanks,6,1098,1098,1098,1217
+358,0,35,Fermenter_2,Fermenter_2,0,93,1116,1116,1218
+359,5,38,Buffer tanks,Buffer tanks,0,1175,1175,1175,1230
+360,6,38,Microfilter,Microfilter,2,1175,1175,1175,1230
+361,11,25,Microfilter,Microfilter,0,1113,1150,1150,1243
+362,0,39,Fermenter_3,Fermenter_3,0,108,1148,1148,1250
+363,10,25,Buffer tanks,Buffer tanks,1,1144,1192,1192,1254
+364,1,35,Buffer tanks,Buffer tanks,2,1233,1233,1233,1264
+365,2,35,Microfilter,Microfilter,1,1235,1235,1235,1264
+366,4,35,Harvesting tanks B,Harvesting tanks B,4,1187,1187,1187,1274
+367,3,35,Filters A,Filters A,2,1233,1233,1233,1274
+368,5,35,Buffer tanks,Buffer tanks,3,1248,1248,1248,1276
+369,6,35,Microfilter,Microfilter,3,1248,1248,1248,1276
+370,1,31,Harvesting tanks A,Harvesting tanks A,2,1248,1248,1248,1276
+371,7,35,Buffer tanks,Buffer tanks,0,1261,1261,1261,1287
+372,8,35,Microfilter,Microfilter,2,1261,1261,1261,1287
+373,1,39,Buffer tanks,Buffer tanks,1,1265,1265,1265,1294
+374,2,39,Microfilter,Microfilter,0,1267,1267,1267,1294
+375,4,39,Harvesting tanks B,Harvesting tanks B,2,1219,1219,1219,1298
+376,3,39,Filters A,Filters A,0,1265,1265,1265,1298
+377,12,25,Stabilization tanks,Stabilization tanks,3,1145,1145,1145,1299
+378,5,39,Buffer tanks,Buffer tanks,2,1279,1279,1279,1304
+379,6,39,Microfilter,Microfilter,1,1279,1279,1279,1304
+380,9,39,Harvesting tanks B,Harvesting tanks B,0,1219,1219,1219,1306
+381,8,39,Filters A,Filters A,1,1265,1265,1265,1306
+382,7,39,Buffer tanks,Buffer tanks,3,1279,1279,1279,1306
+383,10,39,Microfilter,Microfilter,3,1279,1279,1279,1306
+384,7,38,Stabilization tanks,Stabilization tanks,4,1200,1200,1200,1319
+385,2,31,Harvesting tanks A,Harvesting tanks A,3,1248,1248,1248,1320
+386,0,31,Fermenter_2,Fermenter_2,0,96,1218,1218,1340
+387,12,39,Microfilter,Microfilter,2,1267,1287,1287,1341
+388,11,39,Buffer tanks,Buffer tanks,0,1265,1287,1287,1343
+389,1,36,Harvesting tanks B,Harvesting tanks B,3,1295,1295,1295,1351
+390,2,36,Harvesting tanks A,Harvesting tanks A,1,1295,1295,1295,1356
+391,0,36,Fermenter_3,Fermenter_3,0,111,1250,1250,1367
+392,4,31,Harvesting tanks B,Harvesting tanks B,1,1314,1314,1314,1370
+393,3,31,Filters A,Filters A,2,1347,1347,1347,1370
+394,6,31,Harvesting tanks B,Harvesting tanks B,5,1248,1248,1248,1376
+395,5,31,Filters A,Filters A,0,1342,1342,1342,1376
+396,9,35,Stabilization tanks,Stabilization tanks,1,1264,1264,1264,1380
+397,4,36,Harvesting tanks B,Harvesting tanks B,4,1295,1295,1295,1383
+398,3,36,Filters A,Filters A,1,1331,1331,1331,1383
+399,7,31,Buffer tanks,Buffer tanks,1,1342,1342,1342,1390
+400,8,31,Microfilter,Microfilter,0,1344,1344,1344,1390
+401,9,31,Buffer tanks,Buffer tanks,2,1347,1347,1347,1395
+402,11,31,Microfilter,Microfilter,1,1349,1349,1349,1395
+403,10,31,Buffer tanks,Buffer tanks,3,1361,1361,1361,1395
+404,7,36,Microfilter,Microfilter,2,1366,1366,1366,1400
+405,9,36,Harvesting tanks B,Harvesting tanks B,2,1349,1349,1349,1406
+406,13,31,Microfilter,Microfilter,3,1361,1361,1361,1406
+407,12,31,Buffer tanks,Buffer tanks,0,1366,1366,1366,1406
+408,1,33,Harvesting tanks A,Harvesting tanks A,0,1367,1367,1367,1407
+409,8,36,Filters A,Filters A,2,1367,1370,1370,1409
+410,13,39,Stabilization tanks,Stabilization tanks,5,1279,1279,1279,1414
+411,6,36,Buffer tanks,Buffer tanks,2,1367,1395,1395,1428
+412,2,33,Harvesting tanks A,Harvesting tanks A,2,1367,1367,1367,1435
+413,5,36,Buffer tanks,Buffer tanks,1,1331,1390,1390,1454
+414,10,36,Buffer tanks,Buffer tanks,3,1363,1395,1395,1457
+415,0,33,Fermenter_2,Fermenter_2,0,99,1340,1340,1462
+416,4,33,Harvesting tanks B,Harvesting tanks B,0,1367,1367,1367,1480
+417,3,33,Filters A,Filters A,0,1457,1457,1457,1480
+418,11,36,Microfilter,Microfilter,0,1332,1390,1390,1483
+419,6,33,Harvesting tanks B,Harvesting tanks B,3,1436,1436,1436,1486
+420,5,33,Filters A,Filters A,1,1469,1469,1469,1486
+421,7,33,Buffer tanks,Buffer tanks,0,1457,1457,1457,1493
+422,8,33,Microfilter,Microfilter,1,1459,1459,1459,1493
+423,14,31,Stabilization tanks,Stabilization tanks,8,1390,1390,1390,1495
+424,9,33,Buffer tanks,Buffer tanks,2,1471,1471,1471,1496
+425,11,33,Microfilter,Microfilter,2,1471,1471,1471,1504
+426,10,33,Buffer tanks,Buffer tanks,1,1483,1483,1483,1504
+427,12,33,Buffer tanks,Buffer tanks,3,1469,1469,1469,1505
+428,13,33,Microfilter,Microfilter,3,1471,1471,1471,1505
+429,12,36,Stabilization tanks,Stabilization tanks,0,1364,1364,1364,1518
+430,1,24,Harvesting tanks A,Harvesting tanks A,3,1489,1489,1489,1529
+431,2,24,Harvesting tanks A,Harvesting tanks A,1,1489,1489,1489,1557
+432,0,24,Fermenter_2,Fermenter_2,0,114,1462,1462,1584
+433,14,33,Stabilization tanks,Stabilization tanks,7,1493,1493,1493,1594
+434,4,24,Harvesting tanks B,Harvesting tanks B,1,1489,1489,1489,1602
+435,3,24,Filters A,Filters A,2,1579,1579,1579,1602
+436,6,24,Harvesting tanks B,Harvesting tanks B,5,1558,1558,1558,1608
+437,5,24,Filters A,Filters A,0,1591,1591,1591,1608
+438,7,24,Buffer tanks,Buffer tanks,0,1579,1579,1579,1615
+439,8,24,Microfilter,Microfilter,0,1581,1581,1581,1615
+440,9,24,Buffer tanks,Buffer tanks,2,1593,1593,1593,1618
+441,11,24,Microfilter,Microfilter,1,1593,1593,1593,1626
+442,10,24,Buffer tanks,Buffer tanks,1,1605,1605,1605,1626
+443,12,24,Buffer tanks,Buffer tanks,3,1591,1591,1591,1627
+444,13,24,Microfilter,Microfilter,2,1593,1593,1593,1627
+445,14,24,Stabilization tanks,Stabilization tanks,9,1615,1615,1615,1716
+446,0,37,Fermenter_2,Fermenter_2,0,117,1584,1584,1755
+447,2,37,Harvesting tanks B,Harvesting tanks B,4,1731,1731,1731,1792
+448,1,37,Filters A,Filters A,1,1756,1756,1756,1792
+449,3,37,Buffer tanks,Buffer tanks,0,1756,1756,1756,1800
+450,4,37,Microfilter,Microfilter,3,1756,1756,1756,1800
+451,5,37,Buffer tanks,Buffer tanks,2,1774,1774,1774,1818
+452,6,37,Microfilter,Microfilter,0,1774,1774,1774,1818
+453,7,37,Stabilization tanks,Stabilization tanks,2,1800,1800,1800,1907

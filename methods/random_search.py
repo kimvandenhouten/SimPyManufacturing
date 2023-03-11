@@ -39,7 +39,7 @@ def random_search(n, f_eval, time_limit=200, stop_criterium="Time", budget=400,
     while stop == False:
         it += 1
 
-        # Mutation: swap two items in permutation
+        # Random new sequence
         sequence = np.random.permutation(np.arange(n))
 
         # write new sequence to output file

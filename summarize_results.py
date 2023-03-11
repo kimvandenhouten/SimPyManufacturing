@@ -1,30 +1,40 @@
 from general import Settings
 import pandas as pd
-from classes import Simulator
-import numpy as np
 
 results = []
 settings_list = []
-for size in [120, 240]:
-    for id in range(1, 10):
-        for method in ["random_search"]:
-            for objective in ["Makespan_Lateness", "Makespan_Average_Lateness"]:
-                for seed in range(0, 10):
-                    setting = Settings(method=method, stop_criterium="Budget", budget=2*size, instance=f'{size}_{id}', size=size, simulator="SimPy",
-                                       objective=objective, init="random", seed=seed)
-                    settings_list.append(setting)
 
-for size in [120, 240]:
-    for id in range(1, 10):
-        for method in ["local_search"]:
-            for objective in ["Makespan_Lateness", "Makespan_Average_Lateness"]:
-                for init in ["random", "sorted"]:
-                    for seed in range(0, 10):
-                        setting = Settings(method=method, stop_criterium="Budget", budget=200*size, instance=f'{size}_{id}', size=size, simulator="SimPy",
-                                           objective=objective, init=init, seed=seed)
-                        settings_list.append(setting)
+for factory_name in ["factory_1"]:
+    for seed in range(1, 2):
+        for size in [20, 40, 60]:
+            for id in range(1, 5):
+                for method in ["random_search", "local_search"]:
+                    for init in ["random"]:
+                        for (l1, l2) in [(1, 0), (0, 1), (1, 1)]:
+                            setting = Settings(method=method, stop_criterium="Budget", budget=100 * (size / 20),
+                                               instance=f'{size}_{id}_{factory_name}', size=size,
+                                               simulator="SimPyClaimOneByOneWithDelay",
+                                               objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2)
+                            settings_list.append(setting)
+                        for method in ["local_search"]:
+                            for init in ["sorted"]:
+                                for (l1, l2) in [(1, 0), (0, 1), (1, 1)]:
+                                    setting = Settings(method=method, stop_criterium="Budget",
+                                                       budget=400 * (size / 20),
+                                                       instance=f'{size}_{id}_{factory_name}', size=size,
+                                                       simulator="SimPyClaimOneByOneWithDelay",
+                                                       objective=f'l1={l1}_l2={l2}', init=init, seed=seed,
+                                                       l1=l1, l2=l2)
+                                    settings_list.append(setting)
 
 for setting in settings_list:
+    if setting.simulator == "SimPyClaimFromBegin":
+        from classes.simulator_1 import Simulator
+    elif setting.simulator == "SimPyClaimeOneByOne":
+        from classes.simulator_2 import Simulator
+    elif setting.simulator == "SimPyClaimOneByOneWithDelay":
+        from classes.simulator_3 import Simulator
+
     # determine file name
     file_name = setting.make_file_name()
     print(file_name)
@@ -70,6 +80,6 @@ for setting in settings_list:
                     "fitness": data_y})
 
 results = pd.DataFrame(results)
-results.to_csv("results/summary_table.csv")
+results.to_csv("results/summary_table_latest_version_simpy.csv")
 
 

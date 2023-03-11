@@ -1,11 +1,10 @@
-from classes import Simulator
 import copy
 import numpy as np
 
 
 class Settings:
     def __init__(self, size=5, method="local_search", time_limit=180, budget=400, stop_criterium="Time",
-                 simulator="Seclin", seed=1, instance="5_1", objective="makespan", init="random"):
+                 simulator="Seclin", seed=1, instance="5_1", objective="makespan", init="random", l1=1, l2=1):
         self.method = method
         self.init = init
         self.time_limit = time_limit
@@ -16,6 +15,8 @@ class Settings:
         self.instance = instance
         self.size = size
         self.objective = objective
+        self.l1 = l1
+        self.l2= l2
 
     def make_file_name(self):
         if self.stop_criterium == "Time":
@@ -27,31 +28,26 @@ class Settings:
                    f'{self.instance}_objective={self.objective}_init={self.init}'
 
 
-def evaluator_simpy(plan, sequence, seed, sim_time=10000000, objective="Makespan", printing=False):
+def evaluator_simpy(plan, setting, sequence, sim_time=10000000, printing=False):
+
+    if setting.simulator == "simulator_1":
+        from classes.simulator_1 import Simulator
+    if setting.simulator == "simulator_2":
+        from classes.simulator_2 import Simulator
+    if setting.simulator == "simulator_3":
+        from classes.simulator_3 import Simulator
+
     plan.set_sequence(sequence)
     simulator = Simulator(plan, printing=printing)
-    makespan, tardiness = simulator.simulate(SIM_TIME=sim_time, RANDOM_SEED=seed, write=False)
+    makespan, lateness = simulator.simulate(SIM_TIME=sim_time, RANDOM_SEED=setting.seed, write=False)
+    fitness = setting.l1 * makespan + setting.l2 * lateness
+
     if printing:
         print(f"Makespan is {makespan}")
-        print(f"Tardiness is {tardiness}")
-        print(f"Average tardiness is {tardiness/plan.SIZE}")
+        print(f"Lateness is {lateness}")
+        print(f"Fitness {fitness}")
 
-    if objective == "Makespan":
-        if printing:
-            print(f'Fitness is {makespan}')
-        return makespan
-    elif objective == "Tardiness":
-        if printing:
-            print(f'Fitness is {tardiness / plan.SIZE}')
-        return tardiness / plan.SIZE
-    elif objective == "Makespan_Lateness":
-        if printing:
-            print(f'Fitness is {makespan + tardiness}')
-        return makespan + tardiness
-    elif objective == "Makespan_Average_Lateness":
-        if printing:
-            print(f'Fitness is {makespan + tardiness / plan.SIZE}')
-        return makespan + tardiness / plan.SIZE
+    return fitness
 
 
 def combine_sequences(best_sequences, x=None):
@@ -61,7 +57,7 @@ def combine_sequences(best_sequences, x=None):
     counter = 0
     for month_id in range(0, len(unique_months)):
         best_seq = best_sequences[unique_months[month_id]]
-        best_seq= best_seq + counter
+        best_seq = best_seq + counter
         fermentation_sequence.append(best_seq)
         counter += len(best_sequences[unique_months[month_id]])
     if x is not None:

@@ -24,6 +24,7 @@ def IterativeImprovementInsertion(x, fitness_x, count_eval, f_eval, budget=1000)
     print("Start iterated improvement")
     n = len(x)
     improve = True
+    stop_loop = False
     while improve:
         improve = False
         # FIXME: do this in random order
@@ -40,16 +41,24 @@ def IterativeImprovementInsertion(x, fitness_x, count_eval, f_eval, budget=1000)
                 if test_fitness < best_insert_fitness:
                     best_insert_fitness = copy.copy(test_fitness)
                     best_insert_x = copy.copy(test_x)
+
+                if count_eval >= budget:
+                    stop_loop = True
+                    break
+
             if best_insert_fitness < fitness_x:
                 fitness_x = copy.copy(best_insert_fitness)
                 x = copy.copy(best_insert_x)
                 improve = True
-            if count_eval >= budget:
+
+            if stop_loop:
                 break
+
+
     return x, fitness_x, count_eval
 
 
-def iterated_greedy(n, f_eval, d=3, seed=1, time_limit=200, output_file="results_random_search.txt", printing=True,
+def iterated_greedy(n, f_eval, d=20, seed=1, time_limit=200, output_file="results_random_search.txt", printing=True,
                      write=True, stop_criterium="Time", budget=400):
     random.seed(seed)
     np.random.seed(seed)
@@ -80,7 +89,7 @@ def iterated_greedy(n, f_eval, d=3, seed=1, time_limit=200, output_file="results
     stop = False
 
     # First iterative improvement
-    x, fitness_x, count_eval = IterativeImprovementInsertion(x, fitness_x, count_eval, f_eval)
+    x, fitness_x, count_eval = IterativeImprovementInsertion(x, fitness_x, count_eval, f_eval, budget=budget)
 
     # Save results
     if fitness_x < fitness_best:
@@ -90,10 +99,10 @@ def iterated_greedy(n, f_eval, d=3, seed=1, time_limit=200, output_file="results
     print(f'After first IterativeImprovement, sequence is {x} with fitness {fitness_x}')
     print("Best so far", x_best, fitness_best)
 
-    sequences.append(x)
+    sequences.append(list(x))
     runtime.append(time.time() - start)
     fitnesses.append(fitness_x)
-    best_sequences.append(x_best)
+    best_sequences.append(list(x_best))
     best_fitnesses.append(fitness_best)
     count_evaluations.append(count_eval)
 
@@ -136,7 +145,7 @@ def iterated_greedy(n, f_eval, d=3, seed=1, time_limit=200, output_file="results
                     fitness_best = copy.copy(fitness_x)
 
         else:
-            x_, fitness_x_, count_eval = IterativeImprovementInsertion(x_, fitness_x_, count_eval, f_eval)
+            x_, fitness_x_, count_eval = IterativeImprovementInsertion(x_, fitness_x_, count_eval, f_eval, budget=budget)
             if fitness_x_ < fitness_x:
                 x = copy.copy(x_)
                 fitness_x = copy.copy(fitness_x_)
@@ -144,10 +153,10 @@ def iterated_greedy(n, f_eval, d=3, seed=1, time_limit=200, output_file="results
                     x_best = copy.copy(x)
                     fitness_best = copy.copy(fitness_x)
 
-        sequences.append(x)
+        sequences.append(list(x))
         runtime.append(time.time() - start)
         fitnesses.append(fitness_x)
-        best_sequences.append(x_best)
+        best_sequences.append(list(x_best))
         best_fitnesses.append(fitness_best)
         count_evaluations.append(count_eval)
         print("Best so far", x_best, fitness_best, count_eval)
