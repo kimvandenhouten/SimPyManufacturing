@@ -15,12 +15,12 @@ seed = 0
 for size in [120, 240]:
     for id in range(1, 6):
         for search_method in ["local_search"]:
-            for l1 in [0, 0.01, 0.1, 0.25, 0.5, 0.9, 0.99, 1]:
+            for l1 in [0.01, 0.1, 0.25, 0.5, 0.75, 0.9, 0.99]:
                 l2 = 1 - l1
                 instance_name = f'{size}_{id}'
                 setting = Settings(method=f"{decompose}_{search_method}",  instance=f'{size}_{id}_{factory_name}',
-                                   size=size, simulator=simulator, budget=(size/20)*200,
-                                   objective=f'l1={l1}_l2={l2}', init= init, seed=seed, l1=l1, l2=l2)
+                                   size=size, simulator=simulator, stop_criterium="Budget", budget=(size/20)*200,
+                                   objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2)
                 settings_list.append(setting)
 
 for setting in settings_list:
@@ -73,9 +73,11 @@ for setting in settings_list:
                     "makespan": makespan,
                     "tardiness": tardiness,
                     "average_tardiness": tardiness/setting.size,
-                    "fitness": data_y})
+                    "fitness": data_y,
+                    "lambda 1 ": setting.l1,
+                    "lambda 2": setting.l2})
 
 results = pd.DataFrame(results)
-results.to_csv("results/summary_table_latest_version_simpy.csv")
+results.to_csv("results/tuning lambda rolling horizon.csv")
 
 
