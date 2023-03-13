@@ -22,7 +22,7 @@ seed = 0
 for size in [120, 240]:
     for id in range(1, 6):
         for search_method in ["local_search"]:
-            for l1 in [0, 0.01, 0.1, 0.25, 0.5, 0.9, 0.99, 1]:
+            for l1 in [0.75]:
                 l2 = 1 - l1
                 instance_name = f'{size}_{id}'
                 setting = Settings(method=f"{decompose}_{search_method}",  instance=f'{size}_{id}_{factory_name}',
