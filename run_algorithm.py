@@ -12,14 +12,15 @@ if __name__ == '__main__':
     printing = False
     settings_list = []
     factory_name = "factory_1"
-    for simulator in ["simulator_1", "simulator_2", "simulator_3"]:
+    for simulator in ["simulator_3"]:
         for seed in range(1, 2):
             for size in [20]:
                 for id in range(1, 2):
-                    for method in ["iterated_greedy"]:
+                    for method in ["random_search", "local_search"]:
                         for init in ["random"]:
-                            for (l1, l2) in [(1, 0)]:
-                                setting = Settings(method=method, stop_criterium="Budget", budget=10000 * (size / 20),
+                            for l1 in [0, 0.5, 1]:
+                                l2 = 1 - l1
+                                setting = Settings(method=method, stop_criterium="Budget", budget=200 * (size / 20),
                                                    instance=f'{size}_{id}_{factory_name}', size=size, simulator=simulator,
                                                    objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2)
                                 settings_list.append(setting)
