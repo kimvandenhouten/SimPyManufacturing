@@ -19,15 +19,16 @@ decompose = f'rolling_horizon_k={k}_m={m}'
 init = "random"
 seed = 0
 
-for search_method in ["local_search"]:
-    for l1 in (0, 1):
-        l2 = 1 - l1
-    for id in range (1, 2):
-        instance_name = f'{size}_{id}'
-        setting = Settings(method=f"{decompose}_{search_method}",  instance=f'{size}_{id}_{factory_name}',
-                           size=size, simulator=simulator, budget=(size/20)*200,
-                           objective=f'l1={l1}_l2={l2}', init= init, seed=seed, l1=l1, l2=l2)
-        setting_list.append(setting)
+for size in [120, 240]:
+    for id in range(1, 6):
+        for search_method in ["local_search"]:
+            for l1 in [0.75]:
+                l2 = 1 - l1
+                instance_name = f'{size}_{id}'
+                setting = Settings(method=f"{decompose}_{search_method}",  instance=f'{size}_{id}_{factory_name}',
+                                   size=size, simulator=simulator, stop_criterium="Budget", budget=(size/20)*200,
+                                   objective=f'l1={l1}_l2={l2}', init= init, seed=seed, l1=l1, l2=l2)
+                setting_list.append(setting)
 
 for setting in setting_list:
     start = time.time()

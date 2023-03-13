@@ -10,16 +10,21 @@ import time
 
 # Algorithm settings
 decompose = "per_month_rolling"
+after_optimization = False
 setting_list = []
-for search_method in ["local_search"]:
-    for instance_name in ['120_1', '120_2', '120_3', '120_4', '120_5']:
-        setting = Settings(method=f"{decompose}_{search_method}", time_limit=300, stop_criterium="Time", simulator="SimPy",
-                           instance=instance_name, objective="Combined")
-        setting_list.append(setting)
+for seed in range(0, 10):
+    for size in [120, 240]:
+        for id in range(1, 10):
+            instance_name =f'{size}_{id}'
+            for objective in ["Makespan_Lateness", "Makespan_Average_Lateness"]:
+                for search_method in ["local_search"]:
+                    setting = Settings(method=f"{decompose}_{search_method}", time_limit=100, stop_criterium="Budget", simulator="SimPy",
+                                       instance=instance_name, budget=(size/20)*100, objective=objective)
+                    setting_list.append(setting)
 
 for setting in setting_list:
     file_name = setting.make_file_name()
-    instance = pd.read_pickle(f"factory_data/instances_v3/instance_{setting.instance}.pkl")
+    instance = pd.read_pickle(f"factory_data/instances/instance_{setting.instance}.pkl")
     instance_df = instance.convert_to_dataframe()
 
     start = time.time()
@@ -50,7 +55,7 @@ for setting in setting_list:
 
         if setting.method == f"{decompose}_local_search":
             nr_iterations, best_sequence = local_search(n=n, f_eval=f_eval, stop_criterium=setting.stop_criterium,
-                                                        budget=setting.budget, time_limit=600, printing=False, write=False)
+                                                        budget=setting.budget, time_limit=setting.time_limit, printing=False, write=False)
             print(best_sequence)
         elif setting.method == f"{decompose}_random_search":
             nr_iterations, best_sequence = random_search(n=n, f_eval=f_eval, stop_criterium=setting.stop_criterium,
@@ -77,28 +82,34 @@ for setting in setting_list:
     fitness = evaluator_simpy(plan=plan_for_evaluation, sequence=final_sequence, objective=setting.objective,
                               seed=setting.seed, printing=True)
     print(f' after rolling horizon fitness is {fitness}')
-    f_eval = lambda x, i: evaluator_simpy(plan=plan_for_evaluation, sequence=x, seed=setting.seed, objective=setting.objective)
 
-    if setting.method == f"{decompose}_local_search":
-        nr_iterations, best_sequence = local_search(n=n, f_eval=f_eval, stop_criterium=setting.stop_criterium, budget=setting.time_limit,
-                                                    time_limit=600, printing=False, write=False, init=final_sequence)
-    elif setting.method == f"{decompose}_random_search":
-        nr_iterations, best_sequence = random_search(n=n, f_eval=f_eval, stop_criterium=setting.stop_criterium,
-                                                     budget=setting.budget, time_limit=600,
-                                                     printing=False, write=False)
+    if after_optimization:
+        f_eval = lambda x, i: evaluator_simpy(plan=plan_for_evaluation, sequence=x, seed=setting.seed, objective=setting.objective)
 
-    elif setting.method == f"{decompose}_iterated_greedy":
-        nr_iterations, best_sequence = iterated_greedy(n=n, f_eval=f_eval, stop_criterium=setting.stop_criterium,
-                                                       budget=setting.budget, time_limit=600,
-                                                       printing=False, write=False)
-    fitness = evaluator_simpy(plan=plan_for_evaluation, sequence=best_sequence, objective=setting.objective,
-                              seed=setting.seed, printing=True)
+        if setting.method == f"{decompose}_local_search":
+            nr_iterations, best_sequence = local_search(n=n, f_eval=f_eval, stop_criterium=setting.stop_criterium, budget=setting.time_limit,
+                                                        time_limit=setting.time_limit, printing=False, write=False, init=final_sequence)
+        elif setting.method == f"{decompose}_random_search":
+            nr_iterations, best_sequence = random_search(n=n, f_eval=f_eval, stop_criterium=setting.stop_criterium,
+                                                         budget=setting.budget, time_limit=600,
+                                                         printing=False, write=False)
+
+        elif setting.method == f"{decompose}_iterated_greedy":
+            nr_iterations, best_sequence = iterated_greedy(n=n, f_eval=f_eval, stop_criterium=setting.stop_criterium,
+                                                           budget=setting.budget, time_limit=600,
+                                                           printing=False, write=False)
+        fitness = evaluator_simpy(plan=plan_for_evaluation, sequence=best_sequence, objective=setting.objective,
+                                  seed=setting.seed, printing=True)
+
+        final_sequence = best_sequence
 
     print(f'after final global search fitness is {fitness}')
     results = pd.DataFrame()
     results['Fitness'] = [fitness]
     results['Time'] = [time.time() - start]
-    results['Sequence'] = [best_sequence]
-    results.to_csv(f'results/{file_name}.csv', header=True, index=False)
+    results['Sequence'] = [list(final_sequence)]
+    results['Best_sequence'] = [list(final_sequence)]
+    results['Best_fitness'] = [fitness]
+    results.to_csv(f'results/{file_name}.txt', header=True, index=False)
 
 
