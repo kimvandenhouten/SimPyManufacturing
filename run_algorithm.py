@@ -15,27 +15,39 @@ if __name__ == '__main__':
     factory_name = "factory_1"
     for simulator in ["simulator_3"]:
         for seed in range(1, 2):
-            for size in [20, 40]:
-                for id in range(1, 5):
+            for size in [240]:
+                budget = (size/20)*200
+                for id in range(3, 6):
                     for l1 in [0.5]:
                         l2 = 1 - l1
-                        for budget in [100, 200, 400, 800, 1000]:
+                        for method in ["local_search", "random_search"]:
+                            for init in ["random"]:
+                                setting = Settings(method=method, stop_criterium="Budget", budget=budget,
+                                                   instance=f'{size}_{id}_{factory_name}', size=size, simulator=simulator,
+                                                   objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2)
+                                settings_list.append(setting)
+
+                            for method in ["local_search"]:
+                                for init in ["sorted"]:
+                                    setting = Settings(method=method, stop_criterium="Budget",
+                                                       budget=budget,
+                                                       instance=f'{size}_{id}_{factory_name}', size=size,
+                                                       simulator=simulator,
+                                                       objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1,
+                                                       l2=l2)
+                                    settings_list.append(setting)
+
+                    for id in range(2, 3):
+                        for l1 in [0.5]:
+                            l2 = 1 - l1
                             for method in ["local_search"]:
                                 for init in ["random"]:
                                     setting = Settings(method=method, stop_criterium="Budget", budget=budget,
-                                                       instance=f'{size}_{id}_{factory_name}', size=size, simulator=simulator,
+                                                       instance=f'{size}_{id}_{factory_name}', size=size,
+                                                       simulator=simulator,
                                                        objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2)
                                     settings_list.append(setting)
 
-                                for method in ["local_search"]:
-                                    for init in ["sorted"]:
-                                            setting = Settings(method=method, stop_criterium="Budget",
-                                                               budget=budget,
-                                                               instance=f'{size}_{id}_{factory_name}', size=size,
-                                                               simulator=simulator,
-                                                               objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1,
-                                                               l2=l2)
-                                            settings_list.append(setting)
 
     for setting in settings_list:
         print(f"Start new instance {setting.instance}")
