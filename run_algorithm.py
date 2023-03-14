@@ -10,30 +10,32 @@ from methods.iterated_greedy import iterated_greedy
 
 if __name__ == '__main__':
     printing = False
+    save_resource_usage = False
     settings_list = []
     factory_name = "factory_1"
     for simulator in ["simulator_3"]:
         for seed in range(1, 2):
-            for size in [120, 240]:
-                for id in range(1, 6):
+            for size in [20, 40]:
+                for id in range(1, 5):
                     for l1 in [0.5]:
                         l2 = 1 - l1
-                        for method in ["random_search", "local_search"]:
-                            for init in ["random"]:
-                                setting = Settings(method=method, stop_criterium="Budget", budget=200 * (size / 20),
-                                                   instance=f'{size}_{id}_{factory_name}', size=size, simulator=simulator,
-                                                   objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2)
-                                settings_list.append(setting)
-
+                        for budget in [100, 200, 400, 800, 1000]:
                             for method in ["local_search"]:
-                                for init in ["sorted"]:
-                                        setting = Settings(method=method, stop_criterium="Budget",
-                                                           budget=200 * (size / 20),
-                                                           instance=f'{size}_{id}_{factory_name}', size=size,
-                                                           simulator=simulator,
-                                                           objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1,
-                                                           l2=l2)
-                                        settings_list.append(setting)
+                                for init in ["random"]:
+                                    setting = Settings(method=method, stop_criterium="Budget", budget=budget,
+                                                       instance=f'{size}_{id}_{factory_name}', size=size, simulator=simulator,
+                                                       objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2)
+                                    settings_list.append(setting)
+
+                                for method in ["local_search"]:
+                                    for init in ["sorted"]:
+                                            setting = Settings(method=method, stop_criterium="Budget",
+                                                               budget=budget,
+                                                               instance=f'{size}_{id}_{factory_name}', size=size,
+                                                               simulator=simulator,
+                                                               objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1,
+                                                               l2=l2)
+                                            settings_list.append(setting)
 
     for setting in settings_list:
         print(f"Start new instance {setting.instance}")
@@ -80,13 +82,14 @@ if __name__ == '__main__':
         else:
             print('WARNING: simulator not defined')
 
-        plan = pd.read_pickle(f"factory_data/instances/instance_{setting.instance}.pkl")
-        sequence = best_sequence
-        for SEED in range(1, 2):
-            plan.set_sequence(sequence)
-            simulator = Simulator(plan, printing=False)
-            makespan, lateness = simulator.simulate(SIM_TIME=300000, RANDOM_SEED=SEED, write=True,
-                                                     output_location=f"results/resource_usage/{file_name}.csv")
+        if save_resource_usage:
+            plan = pd.read_pickle(f"factory_data/instances/instance_{setting.instance}.pkl")
+            sequence = best_sequence
+            for SEED in range(1, 2):
+                plan.set_sequence(sequence)
+                simulator = Simulator(plan, printing=False)
+                makespan, lateness = simulator.simulate(SIM_TIME=300000, RANDOM_SEED=SEED, write=True,
+                                                         output_location=f"results/resource_usage/{file_name}.csv")
 
 
 
