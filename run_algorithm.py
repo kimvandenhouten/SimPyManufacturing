@@ -14,16 +14,26 @@ if __name__ == '__main__':
     factory_name = "factory_1"
     for simulator in ["simulator_3"]:
         for seed in range(1, 2):
-            for size in [20]:
-                for id in range(1, 2):
-                    for method in ["random_search", "local_search"]:
-                        for init in ["random"]:
-                            for l1 in [0, 0.5, 1]:
-                                l2 = 1 - l1
+            for size in [120, 240]:
+                for id in range(1, 6):
+                    for l1 in [0.5]:
+                        l2 = 1 - l1
+                        for method in ["random_search", "local_search"]:
+                            for init in ["random"]:
                                 setting = Settings(method=method, stop_criterium="Budget", budget=200 * (size / 20),
                                                    instance=f'{size}_{id}_{factory_name}', size=size, simulator=simulator,
                                                    objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2)
                                 settings_list.append(setting)
+
+                            for method in ["local_search"]:
+                                for init in ["sorted"]:
+                                        setting = Settings(method=method, stop_criterium="Budget",
+                                                           budget=200 * (size / 20),
+                                                           instance=f'{size}_{id}_{factory_name}', size=size,
+                                                           simulator=simulator,
+                                                           objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1,
+                                                           l2=l2)
+                                        settings_list.append(setting)
 
     for setting in settings_list:
         print(f"Start new instance {setting.instance}")
@@ -61,18 +71,21 @@ if __name__ == '__main__':
                                            time_limit=setting.time_limit, writing=True, output_file=f'results/{file_name}.txt')
 
         # Save output in resource usage table
-        if setting.simulator == "SimPyClaimFromBegin":
+        if setting.simulator == "simulator_1":
             from classes import Simulator
-        elif setting.simulator == "SimPyClaimOneByOneWithDelay":
+        elif setting.simulator == "simulator_2":
+            from classes.simulator_2 import Simulator
+        elif setting.simulator == "simulator_3":
             from classes.simulator_3 import Simulator
         else:
-            from classes.simulator_2 import Simulator
+            print('WARNING: simulator not defined')
+
         plan = pd.read_pickle(f"factory_data/instances/instance_{setting.instance}.pkl")
         sequence = best_sequence
         for SEED in range(1, 2):
             plan.set_sequence(sequence)
             simulator = Simulator(plan, printing=False)
-            makespan, tardiness = simulator.simulate(SIM_TIME=300000, RANDOM_SEED=SEED, write=True,
+            makespan, lateness = simulator.simulate(SIM_TIME=300000, RANDOM_SEED=SEED, write=True,
                                                      output_location=f"results/resource_usage/{file_name}.csv")
 
 
