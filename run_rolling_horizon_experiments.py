@@ -16,19 +16,19 @@ setting_list = []
 simulator = "simulator_3"
 factory_name = "factory_1"
 init = "random"
-seed = 0
-for id in range(1, 6):
-    for size in [120, 240]:
-        for l1 in [0.5]:
-            l2 = 1 - l1
-            for (k, m) in [(60, 30), (60, 20), (60, 10), (40, 30), (40, 20), (40, 10), (20, 10)]:
-                for search_method in ["local_search"]:
-                    decompose = f'rolling_horizon_k={k}_m={m}'
-                    instance_name = f'{size}_{id}'
-                    setting = Settings(method=f"{decompose}_{search_method}",  instance=f'{size}_{id}_{factory_name}',
-                                       size=size, simulator=simulator, stop_criterium="Budget", budget=(size/20)*100,
-                                       objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2, k=k, m=m)
-                    setting_list.append(setting)
+for seed in range(1, 4):
+    for id in range(1, 10):
+        for size in [120, 240]:
+            for l1 in [0.5]:
+                l2 = 1 - l1
+                for (k, m) in [(40, 10)]:
+                    for search_method in ["local_search"]:
+                        decompose = f'rolling_horizon_k={k}_m={m}'
+                        instance_name = f'{size}_{id}'
+                        setting = Settings(method=f"{decompose}_{search_method}",  instance=f'{size}_{id}_{factory_name}',
+                                           size=size, simulator=simulator, stop_criterium="Budget", budget=(size/20)*100,
+                                           objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2, k=k, m=m)
+                        setting_list.append(setting)
 
 for setting in setting_list:
     start = time.time()
@@ -38,7 +38,7 @@ for setting in setting_list:
     fixed = []
     # Important, the f_eval considers the previously solved subinstances
     f_eval = lambda x, i: evaluator_simpy(plan=instance, sequence=combine_sequences(fixed, x), setting=setting,
-                                          sim_time=size*300000, printing=False)
+                                          sim_time=setting.size*300000, printing=False)
 
     k = setting.k
     m = setting.m
@@ -64,7 +64,7 @@ for setting in setting_list:
     if setting.simulator == "simulator_3":
         from classes.simulator_3 import Simulator
     simulator = Simulator(instance, printing=False)
-    makespan, lateness = simulator.simulate(SIM_TIME=300000, RANDOM_SEED=setting.seed, write=True,
+    makespan, lateness = simulator.simulate(SIM_TIME=setting.size*300000, RANDOM_SEED=setting.seed, write=True,
                                              output_location=f"results/resource_usage/{file_name}.csv")
     results = pd.DataFrame()
     results['Makespan'] = [makespan]
