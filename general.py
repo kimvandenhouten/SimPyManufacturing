@@ -4,7 +4,7 @@ import numpy as np
 
 class Settings:
     def __init__(self, size=5, method="local_search", time_limit=180, budget=400, stop_criterium="Time",
-                 simulator="Seclin", seed=1, instance="5_1", objective="makespan", init="random", l1=1, l2=1):
+                 simulator="Seclin", seed=1, instance="5_1", objective="makespan", init="random", l1=1, l2=1, k=40, m=20):
         self.method = method
         self.init = init
         self.time_limit = time_limit
@@ -16,7 +16,9 @@ class Settings:
         self.size = size
         self.objective = objective
         self.l1 = l1
-        self.l2= l2
+        self.l2 = l2
+        self.k = k
+        self.m = m
 
     def make_file_name(self):
         if self.stop_criterium == "Time":

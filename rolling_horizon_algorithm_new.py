@@ -6,29 +6,29 @@ from general import evaluator_simpy, Settings
 import pandas as pd
 import time
 
+
 def combine_sequences(fixed, i):
     return list(np.concatenate([fixed, i]))
 
+
 setting_list = []
-k=40
-m=20
+
 simulator = "simulator_3"
 factory_name = "factory_1"
-size = 120
-decompose = f'rolling_horizon_k={k}_m={m}'
 init = "random"
 seed = 0
-
-for size in [120, 240]:
-    for id in range(1, 6):
-        for search_method in ["local_search"]:
-            for l1 in [0.75]:
-                l2 = 1 - l1
-                instance_name = f'{size}_{id}'
-                setting = Settings(method=f"{decompose}_{search_method}",  instance=f'{size}_{id}_{factory_name}',
-                                   size=size, simulator=simulator, stop_criterium="Budget", budget=(size/20)*200,
-                                   objective=f'l1={l1}_l2={l2}', init= init, seed=seed, l1=l1, l2=l2)
-                setting_list.append(setting)
+for id in range(1, 6):
+    for size in [120, 240]:
+        for l1 in [0.5]:
+            l2 = 1 - l1
+            for (k, m) in [(60, 30), (60, 20), (60, 10), (40, 30), (40, 20), (40, 10), (20, 10)]:
+                for search_method in ["local_search"]:
+                    decompose = f'rolling_horizon_k={k}_m={m}'
+                    instance_name = f'{size}_{id}'
+                    setting = Settings(method=f"{decompose}_{search_method}",  instance=f'{size}_{id}_{factory_name}',
+                                       size=size, simulator=simulator, stop_criterium="Budget", budget=(size/20)*100,
+                                       objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2, k=k, m=m)
+                    setting_list.append(setting)
 
 for setting in setting_list:
     start = time.time()
@@ -38,8 +38,10 @@ for setting in setting_list:
     fixed = []
     # Important, the f_eval considers the previously solved subinstances
     f_eval = lambda x, i: evaluator_simpy(plan=instance, sequence=combine_sequences(fixed, x), setting=setting,
-                                          sim_time=size*1000000, printing=False)
+                                          sim_time=size*300000, printing=False)
 
+    k = setting.k
+    m = setting.m
     n = setting.size
     productionplan = list(range(0, n))
     nr_iterations = n/m
@@ -72,6 +74,6 @@ for setting in setting_list:
     results['Sequence'] = [productionplan]
     results['Best_fitness'] = [setting.l1 * makespan + setting.l2 * lateness]
     results['Best_sequence'] = [productionplan]
-    results.to_csv(f'results/{file_name}.csv', header=True, index=False)
+    results.to_csv(f'results/{file_name}.txt', header=True, index=False)
 
 
