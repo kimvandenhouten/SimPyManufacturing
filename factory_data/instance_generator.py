@@ -18,7 +18,7 @@ month_assignment = [month for month in months for _ in range(0, 20)]
 
 general_id = 0
 for instance_size in [10, 20, 40, 60, 120, 240]:
-    for id in range(1, 6):
+    for id in range(6, 11):
         product_list = []
         for i in range(0, instance_size):
             product_type = random.choice(rowIDS)

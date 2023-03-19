@@ -16,7 +16,21 @@ setting_list = []
 simulator = "simulator_3"
 factory_name = "factory_1"
 init = "random"
-for seed in range(1, 4):
+for seed in range(1, 2):
+    for id in range(6, 10):
+        for size in [120, 240]:
+            for l1 in [0.5]:
+                l2 = 1 - l1
+                for (k, m) in [(40, 10)]:
+                    for search_method in ["local_search"]:
+                        decompose = f'rolling_horizon_k={k}_m={m}'
+                        instance_name = f'{size}_{id}'
+                        setting = Settings(method=f"{decompose}_{search_method}",  instance=f'{size}_{id}_{factory_name}',
+                                           size=size, simulator=simulator, stop_criterium="Budget", budget=(size/20)*100,
+                                           objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2, k=k, m=m)
+                        setting_list.append(setting)
+
+for seed in range(2, 4):
     for id in range(1, 10):
         for size in [120, 240]:
             for l1 in [0.5]:
