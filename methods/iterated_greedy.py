@@ -27,8 +27,10 @@ def IterativeImprovementInsertion(x, fitness_x, count_eval, f_eval, budget=1000)
     stop_loop = False
     while improve:
         improve = False
-        # FIXME: do this in random order
-        for i in range(0, n-1):
+        indices = [i for i in range(0, n-1)]
+        np.random.shuffle(indices)
+        print(indices)
+        for i in indices:
             item = x[i]
             y = np.delete(x, i)
             best_insert_x = np.insert(y, 0, item)
@@ -54,11 +56,10 @@ def IterativeImprovementInsertion(x, fitness_x, count_eval, f_eval, budget=1000)
             if stop_loop:
                 break
 
-
     return x, fitness_x, count_eval
 
 
-def iterated_greedy(n, f_eval, d=20, seed=1, time_limit=200, output_file="results_random_search.txt", printing=True,
+def iterated_greedy(n, f_eval, d=7, seed=1, time_limit=200, output_file="results_random_search.txt", printing=True,
                      write=True, stop_criterium="Time", budget=400):
     random.seed(seed)
     np.random.seed(seed)
@@ -118,7 +119,8 @@ def iterated_greedy(n, f_eval, d=20, seed=1, time_limit=200, output_file="result
         x_ = copy.copy(x)
 
         # destruction phase
-        to_remove_idx = random.sample(range(0, n), d)
+        to_remove_idx = np.random.choice(range(0, n), d, replace=False)
+        print(f'alternative to remove_idx {to_remove_idx}')
         to_remove_items = x_[to_remove_idx]
         x_ = np.delete(x_, to_remove_idx)
 
