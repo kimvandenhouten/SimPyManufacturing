@@ -1,4 +1,4 @@
-from general import Settings
+from classes.general import Settings
 import pandas as pd
 
 printing = False
@@ -6,19 +6,19 @@ settings_list = []
 results = []
 factory_name = "factory_1"
 for simulator in ["simulator_3"]:
-    for seed in range(1, 2):
-        for size in [20, 40, 60]:
-            for id in range(1, 6):
+    for seed in range(1, 4):
+        for size in [20, 40]:
+            for id in range(1, 10):
                 for l1 in [0.5]:
                     l2 = 1 - l1
-                    for method in ["random_search", "local_search"]:
+                    for method in ["random_search", "local_search", 'iterated_greedy']:
                         for init in ["random"]:
                             setting = Settings(method=method, stop_criterium="Budget", budget=200 * (size / 20),
                                                instance=f'{size}_{id}_{factory_name}', size=size, simulator=simulator,
                                                objective=f'l1={l1}_l2={l2}', init=init, seed=seed, l1=l1, l2=l2)
                             settings_list.append(setting)
 
-                    for method in ["local_search"]:
+                    for method in ["local_search", 'iterated_greedy']:
                         for init in ["sorted"]:
                             setting = Settings(method=method, stop_criterium="Budget",
                                                budget=200 * (size / 20),
@@ -41,7 +41,7 @@ for setting in settings_list:
     print(file_name)
 
     # read in best sequence
-    data = pd.read_csv(f'results/{file_name}.txt')
+    data = pd.read_csv(f'results/results_algorithm/{file_name}.txt')
     data_x = data["Best_sequence"].tolist()[-1]
     data_x = data_x[1:-1].split(", ")
     data_x = [int(i) for i in data_x]
@@ -62,7 +62,7 @@ for setting in settings_list:
     instance = pd.read_pickle(f"factory_data/instances/instance_{setting.instance}.pkl")
     instance.set_sequence(data_x)
     simulator = Simulator(instance, printing=False)
-    makespan, tardiness = simulator.simulate(SIM_TIME=10000000000, RANDOM_SEED=setting.seed, write=False)
+    makespan, lateness = simulator.simulate(SIM_TIME=10000000000, RANDOM_SEED=setting.seed, write=False)
 
     print(f'The best sequence for instance {setting.instance} using {setting.method} has fitness {data_y}')
     results.append({"simulator": setting.simulator,
@@ -72,17 +72,17 @@ for setting in settings_list:
                     "objective": setting.objective,
                     "stop_criterium": setting.stop_criterium,
                     "time": round(runtime),
-                    "budget": total_budget,
+                    "budget": setting.budget,
                     "seed": setting.seed,
                     "sequence": sequence,
                     "makespan": makespan,
-                    "tardiness": tardiness,
-                    "average_tardiness": tardiness/setting.size,
+                    "lateness": lateness,
                     "fitness": data_y,
+                    "costs": setting.l1 * makespan + setting.l2 * lateness,
                     "lambda 1 ": setting.l1,
                     "lambda 2": setting.l2})
 
 results = pd.DataFrame(results)
-results.to_csv("results/short horizon results.csv")
+results.to_csv("summary_tables/short horizon results seed 1-3.csv")
 
 

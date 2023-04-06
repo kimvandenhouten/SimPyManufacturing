@@ -60,7 +60,7 @@ def IterativeImprovementInsertion(x, fitness_x, count_eval, f_eval, budget=1000)
 
 
 def iterated_greedy(n, f_eval, d=7, seed=1, time_limit=200, output_file="results_random_search.txt", printing=True,
-                     write=True, stop_criterium="Time", budget=400):
+                     write=True, stop_criterium="Time", budget=400, init=None):
     random.seed(seed)
     np.random.seed(seed)
     count_eval = 1
@@ -72,7 +72,10 @@ def iterated_greedy(n, f_eval, d=7, seed=1, time_limit=200, output_file="results
     count_evaluations = []
 
     # Start algorithm
-    x = np.random.permutation(np.arange(n))
+    if init is None:
+        x = np.random.permutation(np.arange(n))
+    else:
+        x = copy.copy(init)
     fitness_x = f_eval(x, count_eval)
     count_eval += 1
 
