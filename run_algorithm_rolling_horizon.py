@@ -18,7 +18,7 @@ init = "random"
 for seed in range(1, 4):
     for size in [120, 240]:
         for id in range(1, 10):
-            for l1 in [0.5, 0.9]:
+            for l1 in [0.75]:
                 l2 = 1 - l1
                 for (k, m) in [(40, 10)]:
                     for search_method in ["local_search"]:
@@ -74,7 +74,7 @@ for setting in setting_list:
     results['Sequence'] = [productionplan]
     results['Best_fitness'] = [setting.l1 * makespan + setting.l2 * lateness]
     results['Best_sequence'] = [productionplan]
-    results.to_csv(f'results/{file_name}.txt', header=True, index=False)
+    results.to_csv(f'results/results_algorithm/{file_name}.txt', header=True, index=False)
     data_table.append({"instance": setting.instance,
                        "method": setting.method,
                        "budget": setting.budget,
@@ -87,6 +87,6 @@ for setting in setting_list:
                        "seed": setting.seed,
                        "time": runtime})
     dataframe = pd.DataFrame(data_table)
-    dataframe.to_csv("summary_tables/rolling horizon")
+    dataframe.to_csv("summary_tables/tuning lambda 1")
 
 
