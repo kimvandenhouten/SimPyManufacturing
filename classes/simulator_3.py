@@ -6,12 +6,13 @@ from collections import namedtuple
 
 
 class Simulator:
-    def __init__(self, plan, printing=False):
+    def __init__(self, plan, delay=3, printing=False):
         self.plan = plan
         self.RESOURCE_NAMES = plan.FACTORY.RESOURCE_NAMES
         self.NR_RESOURCES = len(self.RESOURCE_NAMES)
         self.CAPACITY = plan.FACTORY.CAPACITY
         self.RESOURCES = []
+        self.delay_between_products = delay
         self.env = simpy.Environment()
         self.resource_usage = []
         self.printing = printing
@@ -124,7 +125,7 @@ class Simulator:
         for p in self.plan.SEQUENCE:
             self.env.process(self.product(p, priority=priority))
             priority += 1
-            yield self.env.timeout(3)
+            yield self.env.timeout(self.delay_between_products)
 
     def simulate(self, SIM_TIME, RANDOM_SEED, write=False, output_location="Results.csv"):
 
