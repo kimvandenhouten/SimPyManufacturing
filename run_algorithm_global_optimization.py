@@ -15,7 +15,7 @@ if __name__ == '__main__':
     factory_name = "factory_1"
     for simulator in ["simulator_3"]:
         for size in [20, 40]:
-            for seed in [1, 2, 3]:
+            for seed in [4]:
                 budget = (size/20)*200
                 for id in range(1, 10):
                     for l1 in [0.5]:
@@ -28,7 +28,7 @@ if __name__ == '__main__':
                                 settings_list.append(setting)
 
         for size in [20, 120, 240]:
-            for seed in [1, 2, 3]:
+            for seed in [4]:
                 budget = (size/20)*200
                 for id in range(1, 10):
                     for l1 in [0.5]:
@@ -103,7 +103,7 @@ if __name__ == '__main__':
                            "l2": setting.l2,
                            "seed": setting.seed})
         dataframe = pd.DataFrame(data_table)
-        dataframe.to_csv("summary_tables/global search.csv")
+        dataframe.to_csv("results/summary_tables/global search.csv")
 
 
 

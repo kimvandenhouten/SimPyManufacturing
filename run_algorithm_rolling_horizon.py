@@ -15,10 +15,10 @@ data_table = []
 simulator = "simulator_3"
 factory_name = "factory_1"
 init = "random"
-for seed in range(1, 4):
+for seed in range(4, 5):
     for size in [120, 240]:
         for id in range(1, 10):
-            for l1 in [0.75]:
+            for l1 in [0.5]:
                 l2 = 1 - l1
                 for (k, m) in [(40, 10)]:
                     for search_method in ["local_search"]:
@@ -87,6 +87,6 @@ for setting in setting_list:
                        "seed": setting.seed,
                        "time": runtime})
     dataframe = pd.DataFrame(data_table)
-    dataframe.to_csv("summary_tables/tuning lambda 1")
+    dataframe.to_csv("results/summary_tables/rolling horizon")
 
 
