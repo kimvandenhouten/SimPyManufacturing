@@ -8,3 +8,5 @@ To set up the environment, use the command ``pip install -r requirements.txt`` i
 
 
 SimPyManufacturing is documented, see: https://simpymanufacturing-documentation.readthedocs.io/en/latest/usage.html. 
+
+To run a simple example use example.py.
