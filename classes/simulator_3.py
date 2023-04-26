@@ -164,7 +164,7 @@ class Simulator:
 
         if self.printing:
             print(f"The makespan corresponding to this schedule is {makespan}")
-            print(f"The tardiness corresponding to this schedule is {tardiness}")
+            print(f"The lateness corresponding to this schedule is {tardiness}")
         if write:
             self.resource_usage.to_csv(output_location)
 
