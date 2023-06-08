@@ -125,7 +125,7 @@ class Simulator:
         for p in self.plan.SEQUENCE:
             self.env.process(self.product(p, priority=priority))
             priority += 1
-            yield self.env.timeout(0)
+            yield self.env.timeout(3)
 
     def simulate(self, SIM_TIME, RANDOM_SEED, write=False, output_location="Results.csv"):
 
