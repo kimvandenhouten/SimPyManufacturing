@@ -79,12 +79,13 @@ class Simulator:
                                                       ))
 
     def activity_processing(self, i, p, delay, duration, resources_required, resources_names, request_time):
+
         if i > 0:
             yield self.env.timeout(delay)
-            request_time = self.env.now
             yield self.env.all_of(resources_required)
         else:
             yield self.env.timeout(0)
+            print(f'request time {p} {i} is {request_time}')
 
         retrieve_time = self.env.now
 
@@ -124,7 +125,7 @@ class Simulator:
         for p in self.plan.SEQUENCE:
             self.env.process(self.product(p, priority=priority))
             priority += 1
-            yield self.env.timeout(3)
+            yield self.env.timeout(0)
 
     def simulate(self, SIM_TIME, RANDOM_SEED, write=False, output_location="Results.csv"):
 
@@ -169,4 +170,3 @@ class Simulator:
             self.resource_usage.to_csv(output_location)
 
         return makespan, tardiness
-
