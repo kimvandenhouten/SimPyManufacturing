@@ -6,7 +6,7 @@ from collections import namedtuple
 
 
 class Simulator:
-    def __init__(self, plan, delay=3, printing=False):
+    def __init__(self, plan, delay=0, printing=False):
         self.plan = plan
         self.RESOURCE_NAMES = plan.FACTORY.RESOURCE_NAMES
         self.NR_RESOURCES = len(self.RESOURCE_NAMES)
