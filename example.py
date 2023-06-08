@@ -1,15 +1,17 @@
 from classes.classes import Factory
-my_factory = Factory(NAME="MyFactory", RESOURCE_NAMES=["Filter", "Mixer"], CAPACITY=[2, 3])
+my_factory = Factory(NAME="MyFactory", RESOURCE_NAMES=["Filter", "Mixer", "Dryer"], CAPACITY=[1, 1, 1])
 
 from classes.classes import Product
 product = Product(NAME="Enzyme_1", ID=0)
+product = Product(NAME="Enzyme_2", ID=1)
 
 from classes.classes import Activity
 # Make the activites
-activity0 = Activity(ID=0, PROCESSING_TIME=[10, 15], PRODUCT="Enzyme_1",
-                     PRODUCT_ID="0", NEEDS=[1, 0])
+activity0 = Activity(ID=0, PROCESSING_TIME=[4, 4], PRODUCT="Enzyme_1",
+                     PRODUCT_ID="0", NEEDS=[1, 0, 0])
 activity1 = Activity(ID=1, PROCESSING_TIME=[20, 30], PRODUCT="Enzyme_1",
-                     PRODUCT_ID="0", NEEDS=[0, 1])
+                     PRODUCT_ID="0", NEEDS=[0, 1, 0])
+
 # Add the activities to the product
 product.add_activity(activity=activity0)
 product.add_activity(activity=activity1)
