@@ -1,6 +1,7 @@
 from classes.classes import Factory
 from classes.classes import Product
 from classes.classes import Activity
+import pandas as pd
 
 my_factory = Factory(NAME="MyFactory", RESOURCE_NAMES=["Filter", "Mixer", "Dryer"], CAPACITY=[1, 1, 1])
 product = Product(NAME="Enzyme_1", ID=0)
@@ -33,3 +34,28 @@ my_productionplan.set_sequence(sequence=[0, 1])
 from classes.simulator_3 import Simulator
 my_simulator = Simulator(plan=my_productionplan, printing=True)
 my_simulator.simulate(SIM_TIME=1000, RANDOM_SEED=1, write=True, output_location=f"minimal_example.csv")
+print('------------------------------------------------------------ \n END OF SIMULATION PRINTING \n')
+# TODO: automatically check whether constraints are violated
+
+# read input
+print('------------------------------------------------------------ \n CONSTRAINT CHECKING \n')
+gannt = pd.read_csv("minimal_example.csv")
+# iterate over products
+for p in my_productionplan.PRODUCTS:
+    # obtain temporal relations
+    for (i, j) in p.TEMPORAL_RELATIONS:
+        print(f'The difference between the start time of activity {i} and activity {j} '
+              f'from product {p.ID} should be exactly {p.TEMPORAL_RELATIONS[(i, j)]}')
+        start_i = gannt.loc[(gannt['Product'] == p.ID) & (gannt['Activity'] == i)]['Start'].values[0]
+        start_j = gannt.loc[(gannt['Product'] == p.ID) & (gannt['Activity'] == j)]['Start'].values[0]
+
+        print(f'The simulated difference between the start time of activity {i} and activity {j} is {start_j-start_i}')
+        if start_j-start_i == p.TEMPORAL_RELATIONS[(i, j)]:
+            print("CONSTRAINT SATISFIED")
+        else:
+            print("CONSTRAINT VIOLATED")
+# check violations of temporal relations by comparing start times of activities within temporal relations
+# report on violated relations
+
+
+
