@@ -2,10 +2,13 @@ from classes.classes import Factory
 from classes.classes import Product
 from classes.classes import Activity
 import pandas as pd
+import numpy as np
 
-instance_name = "10_1_factory_1"
+size = 10
+id = 1
+instance_name = f"{size}_{id}_factory_1"
 my_productionplan = pd.read_pickle(f"factory_data/instances/instance_{instance_name}.pkl")
-my_productionplan.set_sequence(sequence=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+my_productionplan.set_sequence(sequence=np.arange(size))
 
 from classes.simulator_3 import Simulator
 my_simulator = Simulator(plan=my_productionplan, printing=False)
