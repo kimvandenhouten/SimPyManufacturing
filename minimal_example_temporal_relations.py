@@ -40,20 +40,29 @@ print('------------------------------------------------------------ \n END OF SI
 # read input
 print('------------------------------------------------------------ \n CONSTRAINT CHECKING \n')
 gannt = pd.read_csv("minimal_example.csv")
+
+# initialize number of violations
+number_of_violations = 0
 # iterate over products
-for p in my_productionplan.PRODUCTS:
+for p, product in enumerate(my_productionplan.PRODUCTS):
     # obtain temporal relations
-    for (i, j) in p.TEMPORAL_RELATIONS:
+    for (i, j) in product.TEMPORAL_RELATIONS:
+        print(i, j)
         print(f'The difference between the start time of activity {i} and activity {j} '
-              f'from product {p.ID} should be exactly {p.TEMPORAL_RELATIONS[(i, j)]}')
-        start_i = gannt.loc[(gannt['Product'] == p.ID) & (gannt['Activity'] == i)]['Start'].values[0]
-        start_j = gannt.loc[(gannt['Product'] == p.ID) & (gannt['Activity'] == j)]['Start'].values[0]
+              f'from product {p} should be exactly {product.TEMPORAL_RELATIONS[(i, j)]}')
+        start_i = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == i)]['Start'].values[0]
+        start_j = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == j)]['Start'].values[0]
 
         print(f'The simulated difference between the start time of activity {i} and activity {j} is {start_j-start_i}')
-        if start_j-start_i == p.TEMPORAL_RELATIONS[(i, j)]:
+        if start_j-start_i == product.TEMPORAL_RELATIONS[(i, j)]:
             print("CONSTRAINT SATISFIED")
         else:
             print("CONSTRAINT VIOLATED")
+            number_of_violations += 1
+
+# check violations of temporal relations by comparing start times of activities within temporal relations
+# report on violated relations
+print(f'TOTAL NUMBER OF VIOLATIONS {number_of_violations}')
 # check violations of temporal relations by comparing start times of activities within temporal relations
 # report on violated relations
 

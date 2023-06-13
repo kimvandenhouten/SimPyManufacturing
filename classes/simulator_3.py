@@ -54,7 +54,7 @@ class Simulator:
                                                   resources_required=resources_required[i],
                                                   resources_names=resources_names[i], request_time=request_time ))
 
-        for i in range(1, len(activities)):
+        for i in range(1,  len(activities)):
             activity = activities[i]
             needs = activity.NEEDS
             duration = random.randint(*activity.PROCESSING_TIME)
