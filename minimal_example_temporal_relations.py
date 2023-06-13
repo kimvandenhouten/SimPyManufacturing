@@ -35,7 +35,6 @@ from classes.simulator_3 import Simulator
 my_simulator = Simulator(plan=my_productionplan, printing=True)
 my_simulator.simulate(SIM_TIME=1000, RANDOM_SEED=1, write=True, output_location=f"minimal_example.csv")
 print('------------------------------------------------------------ \n END OF SIMULATION PRINTING \n')
-# TODO: automatically check whether constraints are violated
 
 # read input
 print('------------------------------------------------------------ \n CONSTRAINT CHECKING \n')
