@@ -28,6 +28,8 @@ class Product:
         self.ACTIVITIES.append(activity)
 
     def set_temporal_relations(self, TEMPORAL_RELATIONS):
+        # TODO currently self.PREDECESSORS not in use
+        # TODO currently self.SUCCESSORS not in use
         self.TEMPORAL_RELATIONS = TEMPORAL_RELATIONS
         self.PREDECESSORS = [[] for _ in self.ACTIVITIES]
         self.SUCCESSORS = [[] for _ in self.ACTIVITIES]
@@ -86,4 +88,7 @@ class ProductionPlan:
         df["Product_ID"] = self.PRODUCT_IDS
         df["Deadlines"] = self.DEADLINES
         return df
+
+    def set_earliest_start_times(self, earliest_start):
+        self.earliest_start = earliest_start
 
