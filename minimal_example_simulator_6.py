@@ -13,17 +13,17 @@ from classes.classes import ProductionPlan
 my_factory = Factory(NAME="MyFactory", RESOURCE_NAMES=["Filter", "Mixer", "Dryer"], CAPACITY=[1, 1, 1])
 product = Product(NAME="Enzyme_1", ID=0)
 activity0 = Activity(ID=0, PROCESSING_TIME=[4, 4], PRODUCT="Enzyme_1",
-                     PRODUCT_ID="0", NEEDS="Filter")
+                     PRODUCT_ID="0", NEEDS=[1, 0, 1])
 activity1 = Activity(ID=1, PROCESSING_TIME=[5, 5], PRODUCT="Enzyme_1",
-                     PRODUCT_ID="0", NEEDS="Mixer")
+                     PRODUCT_ID="0", NEEDS=[0, 1, 0])
 product.add_activity(activity=activity0)
 product.add_activity(activity=activity1)
 product.set_temporal_relations(TEMPORAL_RELATIONS={(0, 1): 4})
 my_factory.add_product(product=product)
 activity0 = Activity(ID=0, PROCESSING_TIME=[3, 3], PRODUCT="Enzyme_2",
-                     PRODUCT_ID="1", NEEDS="Filter")
+                     PRODUCT_ID="1", NEEDS=[1, 0, 1])
 activity1 = Activity(ID=1, PROCESSING_TIME=[6, 6], PRODUCT="Enzyme_2",
-                     PRODUCT_ID="1", NEEDS="Dryer")
+                     PRODUCT_ID="1", NEEDS=[0, 1, 1])
 product = Product(NAME="Enzyme_2", ID=1)
 product.add_activity(activity=activity0)
 product.add_activity(activity=activity1)
@@ -40,16 +40,16 @@ my_productionplan.set_sequence(sequence=[0, 1])
 
 # This is the new format for the simulator input
 earliest_start = [{"Product_ID": 0, "Activity_ID": 0, "Earliest_start": 0},
-                  {"Product_ID": 0, "Activity_ID": 1, "Earliest_start": 4},
-                  {"Product_ID": 1, "Activity_ID": 0, "Earliest_start": 0},
-                  {"Product_ID": 1, "Activity_ID": 1, "Earliest_start": 1}]
+                  {"Product_ID": 0, "Activity_ID": 1, "Earliest_start": 10},
+                  {"Product_ID": 1, "Activity_ID": 0, "Earliest_start": 20},
+                  {"Product_ID": 1, "Activity_ID": 1, "Earliest_start": 30}]
 my_productionplan.set_earliest_start_times(earliest_start)
 
 # Import the new simulator
-from classes.simulator_5 import Simulator
+from classes.simulator_6 import Simulator
 my_simulator = Simulator(plan=my_productionplan, printing=True)
-my_simulator.simulate(SIM_TIME=1000, RANDOM_SEED=1, write=True, output_location=f"minimal_example_simulator_5.csv")
-gannt = pd.read_csv(f"minimal_example_simulator_5.csv")
+my_simulator.simulate(SIM_TIME=1000, RANDOM_SEED=1, write=True, output_location=f"minimal_example_simulator_6.csv")
+gannt = pd.read_csv(f"minimal_example_simulator_6.csv")
 
 # initialize number of violations
 constraint_checking = True
