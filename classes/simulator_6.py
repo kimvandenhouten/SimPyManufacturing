@@ -16,6 +16,7 @@ class Simulator:
         self.env = simpy.Environment()
         self.resource_usage = []
         self.printing = printing
+        self.nr_clashes = 0
 
     def activity_processing(self, activity_ID, product_ID, proc_time, needs):
         """
@@ -29,15 +30,18 @@ class Simulator:
         # Trace back the moment in time that the resources are requested
         request_time = self.env.now
 
-        print(f'At time {self.env.now} we have available {self.factory.items}')
+        if self.printing:
+            print(f'At time {self.env.now} we have available {self.factory.items}')
+
         # Check all machines are available
         start_processing = True
         for r, need in enumerate(needs):
             if need > 0:
                 resource_name = self.RESOURCE_NAMES[r]
                 available_machines = [i.resource_group for i in self.factory.items].count(resource_name)
-                print(f'We need {need} {resource_name} for product {product_ID}, activity {activity_ID} and currently '
-                      f'in the factory we have {available_machines} available')
+                if self.printing:
+                    print(f'We need {need} {resource_name} for product {product_ID}, activity {activity_ID} and currently '
+                          f'in the factory we have {available_machines} available')
                 if available_machines < need:
                     start_processing = False
 
@@ -74,30 +78,30 @@ class Simulator:
             for resource in resources:
                 yield self.factory.put(resource)
 
-            print(f'Product {product_ID}, activity {activity_ID} released resources: {needs} at time: {end_time} \n')
+            if self.printing:
+                print(f'Product {product_ID}, activity {activity_ID} released resources: {needs} at time: {end_time} \n')
 
             # Store relevant information
             self.resource_usage.append({"Product": product_ID,
                                         "Activity": activity_ID,
-                                        "Resource": needs,
-                                        "Check_resource_type": resources,
-                                        "Machine_id": resources,
-                                        "Request moment": request_time,
-                                        "Retrieve moment": retrieve_time,
+                                        "Needs": needs,
+                                        "Resources": resources,
+                                        "Request": request_time,
+                                        "Retrieve": retrieve_time,
                                         "Start": start_time,
                                         "Finish": end_time})
 
         # If it is not available then we don't process this activity, so we avoid that there starts a queue in the
         # factory
         else:
-            print(f"Since there are no resources available, ACTIVITY {activity_ID} will not be processed")
+            print(f"Since there are no resources available, PRODUCT {product_ID} ACTIVITY {activity_ID} will not be processed")
+            self.nr_clashes += 1
             self.resource_usage.append({"Product": product_ID,
                                         "Activity": activity_ID,
-                                        "Resource": needs,
-                                        "Check_resource_type": "NOT PROCESSED",
-                                        "Machine_id": "NOT PROCESSED",
-                                        "Request moment": float("inf"),
-                                        "Retrieve moment": float("inf"),
+                                        "Needs": needs,
+                                        "Resources": "NOT PROCESSED",
+                                        "Request": float("inf"),
+                                        "Retrieve": float("inf"),
                                         "Start": float("inf"),
                                         "Finish": float("inf")})
 
@@ -175,7 +179,6 @@ class Simulator:
 
         # Process results
         self.resource_usage = pd.DataFrame(self.resource_usage)
-        print(self.resource_usage)
         makespan = max(self.resource_usage["Finish"])
         lateness = 0
 
