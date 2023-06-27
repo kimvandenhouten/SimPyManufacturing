@@ -57,11 +57,17 @@ class Product:
             self.PREDECESSORS[j].append(i)
             self.SUCCESSORS[i].append(j)
 
+    def _set_temporal_relations(self, temporal_relations):
+        TEMPORAL_RELATIONS = {}
+        for relation in temporal_relations:
+            TEMPORAL_RELATIONS[(relation['SUCCESSOR'], relation['PREDECESSOR'])] = relation['REL']
+        return TEMPORAL_RELATIONS
+
 
 class Factory:
-    def __init__(self, NAME, RESOURCE_NAMES, CAPACITY):
+    def __init__(self, NAME, RESOURCE_NAMES, CAPACITY, PRODUCTS=None):
         self.NAME = NAME
-        self.PRODUCTS = []
+        self.PRODUCTS = PRODUCTS if PRODUCTS else []
         self.RESOURCE_NAMES = RESOURCE_NAMES
         self.CAPACITY = CAPACITY
 
