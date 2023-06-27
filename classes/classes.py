@@ -11,6 +11,26 @@ class Activity:
         self.NEEDS = NEEDS
         self.SEQUENCE_ID = int()
 
+    #TODO: Deepali will implement this function
+    def sample_processing_Time(self, distribution_type="normal"):
+
+        # This function can be used in different modes (for different distributions)
+        if distribution_type == "normal":
+            # Replace with sample step from stochastic distrbiution
+            processing_time = 10
+
+        elif distribution_type == "exponential":
+            # Replace with sample step from stochastic distrbiution
+            processing_time = 10
+
+        elif distribution_type == "poisson":
+            # Replace with sample step from stochastic distrbiution
+            processing_time = 10
+
+        # Distribution parameters should be stored in Activity object
+        # Think of default parameters (mean, std.)
+        return processing_time
+
 
 class Product:
     def __init__(self, ID, NAME):
