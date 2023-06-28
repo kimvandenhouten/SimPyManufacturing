@@ -33,12 +33,12 @@ class Activity:
 
 
 class Product:
-    def __init__(self, ID, NAME):
+    def __init__(self, ID, NAME, ACTIVITIES=None, TEMPORAL_RELATIONS=None):
         self.ID = ID
         self.NAME = NAME
         self.DEADLINE = int()
-        self.ACTIVITIES = []
-        self.TEMPORAL_RELATIONS = {}
+        self._set_activities(ACTIVITIES)
+        self._set_temporal_relations(TEMPORAL_RELATIONS)
 
     def add_activity(self, activity):
         """
@@ -57,17 +57,32 @@ class Product:
             self.PREDECESSORS[j].append(i)
             self.SUCCESSORS[i].append(j)
 
+    def _set_activities(self, activities):
+        activities_obj = []
+        if activities:
+            for activity in activities:
+                if isinstance(activity, dict):
+                    activities_obj.append(Activity(**activity))
+                elif isinstance(activity, Activity):
+                    activities_obj.append(activity)
+                else:
+                    raise TypeError("Invalid type of data provided needed: Activity or dict provided:", type(activity))
+
+        self.ACTIVITIES = activities_obj
+
     def _set_temporal_relations(self, temporal_relations):
+
         TEMPORAL_RELATIONS = {}
-        for relation in temporal_relations:
-            TEMPORAL_RELATIONS[(relation['SUCCESSOR'], relation['PREDECESSOR'])] = relation['REL']
+        if (temporal_relations):
+            for relation in temporal_relations:
+                TEMPORAL_RELATIONS[(relation['SUCCESSOR'], relation['PREDECESSOR'])] = relation['REL']
         return TEMPORAL_RELATIONS
 
 
 class Factory:
     def __init__(self, NAME, RESOURCE_NAMES, CAPACITY, PRODUCTS=None):
         self.NAME = NAME
-        self.PRODUCTS = PRODUCTS if PRODUCTS else []
+        self._set_products(PRODUCTS)
         self.RESOURCE_NAMES = RESOURCE_NAMES
         self.CAPACITY = CAPACITY
 
@@ -77,6 +92,19 @@ class Factory:
         :param product: Class Product
         """
         self.PRODUCTS.append(product)
+
+    def _set_products(self, products):
+        products_obj = []
+        if products:
+            for product in products:
+                if isinstance(product, dict):
+                    products_obj.append(Product(**product))
+                elif isinstance(product, Product):
+                    products_obj.append(product)
+                else:
+                    raise TypeError("Invalid type of data provided needed: Product or dict provided:", type(product))
+
+        self.PRODUCTS = products_obj
 
 
 class ProductionPlan:
