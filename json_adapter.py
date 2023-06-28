@@ -7,10 +7,9 @@ if __name__ == '__main__':
 
     # Initialize factory
     factory_name = "factory_1"
-    src = 'C:/Users/deepa/PycharmProjects/FactorySimulation/'
-    resource_groups = pd.read_csv(src + "factory_data/resource_groups.csv",
+    resource_groups = pd.read_csv("./factory_data/resource_groups.csv",
                                   delimiter=";")
-    recipes = pd.read_csv(src + "factory_data/recipes.csv", delimiter=";")
+    recipes = pd.read_csv("./factory_data/recipes.csv", delimiter=";")
 
     production = {'FACTORIES': []}
     factory = {
@@ -86,7 +85,6 @@ if __name__ == '__main__':
         machines = df_downstream["Machine"].tolist()
         durations = df_downstream["Duration claim"].tolist()
         durations = [round(i) for i in durations]
-        print(durations)
         release_time = df_downstream["Release time"].tolist()
         start_claim = df_downstream["Claim time"].tolist()
 
@@ -100,7 +98,6 @@ if __name__ == '__main__':
             release = release_time[i]
 
             duration = round(release - claim)
-            print(duration)
             temp_rel = claim - start_fermentation
             processing_time = [duration, duration]
             activity = {
@@ -116,10 +113,9 @@ if __name__ == '__main__':
             temporal_relations.append(relation)
             task_id += 1
 
-        print(temporal_relations)
         product['TEMPORAL_RELATIONS'] = temporal_relations
         factory['PRODUCTS'].append(product)
         product_id += 1
     production['FACTORIES'].append(factory)
 
-    json.dump(production, open(src + 'factory_data/data.json', 'w+'))
+    json.dump(production, open('./factory_data/data.json', 'w+'))

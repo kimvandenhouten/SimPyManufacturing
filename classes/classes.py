@@ -80,7 +80,7 @@ class Product:
 
 
 class Factory:
-    def __init__(self, NAME, RESOURCE_NAMES, CAPACITY, PRODUCTS=None):
+    def __init__(self, NAME, RESOURCE_NAMES, CAPACITY,PRODUCTS=None):
         self.NAME = NAME
         self._set_products(PRODUCTS)
         self.RESOURCE_NAMES = RESOURCE_NAMES
