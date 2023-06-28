@@ -15,6 +15,7 @@ class TestFactory(unittest.TestCase):
         self.assertEqual(len(factory.PRODUCTS), 44)
         self.assertEqual(True, isinstance(factory.PRODUCTS[0], Product))
         self.assertEqual(True, isinstance(factory.PRODUCTS[0].ACTIVITIES[0], Activity))
+        self.assertEqual(len(factory.PRODUCTS[0].TEMPORAL_RELATIONS.keys()),13)
         fp.close()
 
 

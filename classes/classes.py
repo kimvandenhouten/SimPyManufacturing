@@ -71,12 +71,11 @@ class Product:
         self.ACTIVITIES = activities_obj
 
     def _set_temporal_relations(self, temporal_relations):
-
         TEMPORAL_RELATIONS = {}
         if (temporal_relations):
             for relation in temporal_relations:
                 TEMPORAL_RELATIONS[(relation['SUCCESSOR'], relation['PREDECESSOR'])] = relation['REL']
-        return TEMPORAL_RELATIONS
+        self.TEMPORAL_RELATIONS = TEMPORAL_RELATIONS
 
 
 class Factory:
