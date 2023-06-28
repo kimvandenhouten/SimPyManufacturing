@@ -1,7 +1,6 @@
-import os
 import unittest
 import json
-import os
+
 
 from classes.classes import Factory, Product, Activity
 
