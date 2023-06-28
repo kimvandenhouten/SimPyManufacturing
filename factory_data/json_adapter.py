@@ -7,9 +7,9 @@ if __name__ == '__main__':
 
     # Initialize factory
     factory_name = "factory_1"
-    resource_groups = pd.read_csv("./factory_data/resource_groups.csv",
+    resource_groups = pd.read_csv("resource_groups.csv",
                                   delimiter=";")
-    recipes = pd.read_csv("./factory_data/recipes.csv", delimiter=";")
+    recipes = pd.read_csv("recipes.csv", delimiter=";")
 
     production = {'FACTORIES': []}
     factory = {
@@ -118,4 +118,4 @@ if __name__ == '__main__':
         product_id += 1
     production['FACTORIES'].append(factory)
 
-    json.dump(production, open('./factory_data/data.json', 'w+'))
+    json.dump(production, open('data.json', 'w+'))
