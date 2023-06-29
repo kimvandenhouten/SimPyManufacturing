@@ -9,13 +9,15 @@ class Operator:
         self.initial_plan = plan
         self.plan = plan
 
-    def process_signals_factory(self):
+    def signal_failed_activity(self, product_ID, activity_ID, current_time):
         """
-        Read current state of factory
+        Process signal about a failed activity
         """
-        # TODO check if there was a clash for an activity
+        # Check if there was a clash for an activity
+        print(f'At time {current_time} the operators receives the signal that product {product_ID} activity {activity_ID} failed')
 
         # TODO remove all other activities from the schedule
+        print(f'Now the operator should remove all future activities for this product from the list')
 
     def send_next_activity(self, current_time):
         """

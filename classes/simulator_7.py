@@ -7,7 +7,7 @@ import numpy as np
 
 
 class Simulator:
-    def __init__(self, plan, printing=False):
+    def __init__(self, plan, operator, printing=False):
         self.plan = plan
         self.resource_names = plan.FACTORY.RESOURCE_NAMES
         self.nr_resources = len(self.resource_names)
@@ -17,6 +17,7 @@ class Simulator:
         self.resource_usage = []
         self.printing = printing
         self.nr_clashes = 0
+        self.operator = operator
 
     def activity_processing(self, activity_ID, product_ID, proc_time, needs):
         """
@@ -94,24 +95,28 @@ class Simulator:
         # If it is not available then we don't process this activity, so we avoid that there starts a queue in the
         # factory
         else:
+
             print(f"Since there are no resources available, PRODUCT {product_ID} ACTIVITY {activity_ID} will not be processed")
+            self.operator.signal_failed_activity(product_ID=product_ID, activity_ID=activity_ID,
+                                                 current_time=self.env.now)
             self.nr_clashes += 1
             self.resource_usage.append({"Product": product_ID,
                                         "Activity": activity_ID,
                                         "Needs": needs,
-                                        "Resources": "NOT PROCESSED",
+                                        "Resources": "NOT PROCESSED DUE TO CLASH",
                                         "Request": float("inf"),
                                         "Retrieve": float("inf"),
                                         "Start": float("inf"),
                                         "Finish": float("inf")})
 
-    def activity_generator(self, operator):
+    def activity_generator(self):
         """Generate activities that arrive at the factory based on earliest start times."""
 
         finish = False
+
         # Ask operator about next activity
         while not finish:
-            delay, activity_ID, product_ID, proc_time, needs, finish = operator.send_next_activity(current_time=self.env.now)
+            delay, activity_ID, product_ID, proc_time, needs, finish = self.operator.send_next_activity(current_time=self.env.now)
 
             # Generator object that does a time-out for a time period equal to delay value
             yield self.env.timeout(delay)
@@ -119,7 +124,7 @@ class Simulator:
             # Now the activity SimPy process can be started
             self.env.process(self.activity_processing(activity_ID, product_ID, proc_time, needs))
 
-    def simulate(self, sim_time, random_seed, operator, write=False, output_location="Results.csv"):
+    def simulate(self, sim_time, random_seed, write=False, output_location="Results.csv"):
         """
         :param SIM_TIME: time allowed for running the discrete-event simulation (int)
         :param RANDOM_SEED: random seed when used in stochastic mode (int)
@@ -153,7 +158,7 @@ class Simulator:
         self.factory.items = items
 
         # Execute the activity_generator
-        self.env.process(self.activity_generator(operator))
+        self.env.process(self.activity_generator())
         self.env.run(until=sim_time)
 
         # Process results

@@ -40,9 +40,9 @@ my_productionplan.set_sequence(sequence=[0, 1])
 
 # This is the new format for the simulator input
 earliest_start = [{"Product_ID": 0, "Activity_ID": 0, "Earliest_start": 0},
-                  {"Product_ID": 0, "Activity_ID": 1, "Earliest_start": 10},
-                  {"Product_ID": 1, "Activity_ID": 0, "Earliest_start": 20},
-                  {"Product_ID": 1, "Activity_ID": 1, "Earliest_start": 30}]
+                  {"Product_ID": 0, "Activity_ID": 1, "Earliest_start": 1},
+                  {"Product_ID": 1, "Activity_ID": 0, "Earliest_start": 2},
+                  {"Product_ID": 1, "Activity_ID": 1, "Earliest_start": 3}]
 my_productionplan.set_earliest_start_times(earliest_start)
 
 # Import the new simulator
@@ -50,10 +50,13 @@ from classes.simulator_7 import Simulator
 from classes.operator import Operator
 operator = Operator(plan=my_productionplan)
 
-my_simulator = Simulator(plan=my_productionplan, printing=False)
+my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=False)
 
-my_simulator.simulate(sim_time=1000, random_seed=1, write=True,
-                      operator=operator, output_location=f"minimal_example_simulator_7.csv")
+makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=1000, random_seed=1, write=True, output_location=f"minimal_example_simulator_7.csv")
+
+print(f'According to the simulation, the makespan is {makespan} and the lateness is {lateness}')
+print(f'The number of unfinished products {nr_unfinished}')
+print(f'The number of clashes (i.e. activities that could not be processed) is {my_simulator.nr_clashes}')
 gannt = pd.read_csv(f"minimal_example_simulator_7.csv")
 
 # initialize number of violations
