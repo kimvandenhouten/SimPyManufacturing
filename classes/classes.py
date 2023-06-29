@@ -1,35 +1,32 @@
 import copy
 import pandas as pd
+import numpy as np
+
+from classes.distributions import Distribution, get_distribution
 
 
 class Activity:
-    def __init__(self, ID, PROCESSING_TIME, PRODUCT, PRODUCT_ID, NEEDS):
+    def __init__(self, ID, PROCESSING_TIME, PRODUCT, PRODUCT_ID, NEEDS, DISTRIBUTION=None):
         self.ID = ID
         self.PRODUCT = PRODUCT
         self.PRODUCT_ID = PRODUCT_ID
         self.PROCESSING_TIME = PROCESSING_TIME
         self.NEEDS = NEEDS
         self.SEQUENCE_ID = int()
+        self._set_distribution(DISTRIBUTION)
 
-    #TODO: Deepali will implement this function
-    def sample_processing_Time(self, distribution_type="normal"):
+    def sample_processing_Time(self):
+        if (self._DISTRIBUTION is None):
+            raise Exception("Distribution for this activity is not set.")
+        return self._DISTRIBUTION.sample()
 
-        # This function can be used in different modes (for different distributions)
-        if distribution_type == "normal":
-            # Replace with sample step from stochastic distrbiution
-            processing_time = 10
-
-        elif distribution_type == "exponential":
-            # Replace with sample step from stochastic distrbiution
-            processing_time = 10
-
-        elif distribution_type == "poisson":
-            # Replace with sample step from stochastic distrbiution
-            processing_time = 10
-
-        # Distribution parameters should be stored in Activity object
-        # Think of default parameters (mean, std.)
-        return processing_time
+    def _set_distribution(self, distribution):
+        if isinstance(distribution, Distribution) or distribution is None:
+            self._DISTRIBUTION = distribution
+        elif isinstance(distribution, dict):
+            self._DISTRIBUTION = get_distribution(distribution["TYPE"], distribution["ARGS"])
+        else:
+            return TypeError("Illegal distribution type: ", type(distribution))
 
 
 class Product:
@@ -79,7 +76,7 @@ class Product:
 
 
 class Factory:
-    def __init__(self, NAME, RESOURCE_NAMES, CAPACITY,PRODUCTS=None):
+    def __init__(self, NAME, RESOURCE_NAMES, CAPACITY, PRODUCTS=None):
         self.NAME = NAME
         self._set_products(PRODUCTS)
         self.RESOURCE_NAMES = RESOURCE_NAMES
@@ -144,4 +141,3 @@ class ProductionPlan:
 
     def set_earliest_start_times(self, earliest_start):
         self.earliest_start = earliest_start
-

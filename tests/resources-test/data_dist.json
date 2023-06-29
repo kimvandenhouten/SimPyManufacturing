@@ -39,6 +39,13 @@
               "ID": 0,
               "PRODUCT": "13133_4",
               "PRODUCT_ID": 0,
+              "DISTRIBUTION": {
+                "TYPE": "NORMAL",
+                "ARGS": {
+                  "MEAN": 5.0,
+                  "VARIANCE": 1
+                }
+              },
               "PROCESSING_TIME": [
                 106,
                 106
@@ -62,6 +69,12 @@
               "ID": 1,
               "PRODUCT": "13133_4",
               "PRODUCT_ID": 0,
+              "DISTRIBUTION": {
+                "TYPE": "EXPONENTIAL",
+                "ARGS": {
+                  "BETA": 3.0
+                }
+              },
               "PROCESSING_TIME": [
                 28,
                 28
@@ -85,6 +98,12 @@
               "ID": 2,
               "PRODUCT": "13133_4",
               "PRODUCT_ID": 0,
+              "DISTRIBUTION": {
+                "TYPE": "POISSON",
+                "ARGS": {
+                  "ALPHA": 3.0
+                }
+              },
               "PROCESSING_TIME": [
                 59,
                 59
