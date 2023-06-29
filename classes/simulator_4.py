@@ -7,13 +7,12 @@ import numpy as np
 
 
 class Simulator:
-    def __init__(self, plan, delay=0, printing=False):
+    def __init__(self, plan, printing=False):
         self.plan = plan
         self.RESOURCE_NAMES = plan.FACTORY.RESOURCE_NAMES
         self.NR_RESOURCES = len(self.RESOURCE_NAMES)
         self.CAPACITY = plan.FACTORY.CAPACITY
         self.RESOURCES = []
-        self.delay_between_products = delay
         self.env = simpy.Environment()
         self.resource_usage = []
         self.printing = printing

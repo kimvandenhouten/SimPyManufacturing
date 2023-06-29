@@ -179,22 +179,31 @@ class Simulator:
 
         # Process results
         self.resource_usage = pd.DataFrame(self.resource_usage)
-        makespan = max(self.resource_usage["Finish"])
+        print(self.resource_usage)
+        finish_times = self.resource_usage["Finish"].tolist()
+        finish_times = [i for i in finish_times if i != float("inf")]
+        makespan = max(finish_times)
         lateness = 0
 
+        nr_unfinished_products = 0
         for p in self.plan.SEQUENCE:
             schedule = self.resource_usage[self.resource_usage["Product"] == p]
             finish = max(schedule["Finish"])
             if self.printing:
-                print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
-            lateness += max(0, finish - self.plan.PRODUCTS[p].DEADLINE)
+                if finish == float("inf"):
+                    print(f'Product {p} did not finish, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
+                    nr_unfinished_products += 1
+                else:
+                    print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
+                    lateness += max(0, finish - self.plan.PRODUCTS[p].DEADLINE)
 
         if self.printing:
             print(f"The makespan corresponding to this schedule is {makespan}")
             print(f"The lateness corresponding to this schedule is {lateness}")
+            print(f"The number of unfinished products is {nr_unfinished_products}")
 
         if write:
             self.resource_usage.to_csv(output_location)
 
-        return makespan, lateness
+        return makespan, lateness, nr_unfinished_products
 

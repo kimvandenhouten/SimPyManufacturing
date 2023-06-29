@@ -40,9 +40,9 @@ my_productionplan.set_sequence(sequence=[0, 1])
 
 # This is the new format for the simulator input
 earliest_start = [{"Product_ID": 0, "Activity_ID": 0, "Earliest_start": 0},
-                  {"Product_ID": 0, "Activity_ID": 1, "Earliest_start": 10},
-                  {"Product_ID": 1, "Activity_ID": 0, "Earliest_start": 20},
-                  {"Product_ID": 1, "Activity_ID": 1, "Earliest_start": 30}]
+                  {"Product_ID": 0, "Activity_ID": 1, "Earliest_start": 1},
+                  {"Product_ID": 1, "Activity_ID": 0, "Earliest_start": 2},
+                  {"Product_ID": 1, "Activity_ID": 1, "Earliest_start": 3}]
 my_productionplan.set_earliest_start_times(earliest_start)
 
 # Import the new simulator
@@ -52,7 +52,7 @@ my_simulator.simulate(SIM_TIME=1000, RANDOM_SEED=1, write=True, output_location=
 gannt = pd.read_csv(f"minimal_example_simulator_6.csv")
 
 # initialize number of violations
-constraint_checking = True
+constraint_checking = False
 if constraint_checking:
     # Afterwards you can check the temporal relations
     print('------------------------------------------------------------ \n CONSTRAINT CHECKING \n')
