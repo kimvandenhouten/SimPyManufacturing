@@ -1,0 +1,5 @@
+,Product,Activity,Needs,Resources,Request,Retrieve,Start,Finish
+0,0,0,"[1, 0, 1]","[Machine(resource_group='Filter', id=0), Machine(resource_group='Dryer', id=0)]",0,0,0,4
+1,0,1,"[0, 1, 0]","[Machine(resource_group='Mixer', id=0)]",10,10,10,15
+2,1,0,"[1, 0, 1]","[Machine(resource_group='Filter', id=0), Machine(resource_group='Dryer', id=0)]",20,20,20,23
+3,1,1,"[0, 1, 1]","[Machine(resource_group='Mixer', id=0), Machine(resource_group='Dryer', id=0)]",30,30,30,36
