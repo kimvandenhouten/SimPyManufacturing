@@ -4,11 +4,13 @@ For running this script set working directory to ~/SimPyManufacturing
 
 import pandas as pd
 import random
-from classes.classes import ProductionPlan
+from classes.classes import ProductionPlan, Factory
 import pickle
+import json
 
-factory_name = "factory_1"
-factory = pd.read_pickle(f"factory_data/{factory_name}.pkl")
+#Load factory from new json file
+fp = open('./factory_data/data.json', 'r')
+factory = Factory(**json.load(fp)["FACTORIES"][0])
 nr_products = len(factory.PRODUCTS)
 rowIDS = range(0, nr_products)
 months = range(1, 13)
@@ -25,7 +27,7 @@ for instance_size in [10, 20, 40, 60, 120, 240]:
             product_list.append(product_type)
 
         deadlines = month_assignment[:instance_size]
-        plan = ProductionPlan(ID=general_id, SIZE=instance_size, NAME=f'{instance_size}_{id}_{factory_name}', PRODUCT_IDS=product_list,
+        plan = ProductionPlan(ID=general_id, SIZE=instance_size, NAME=f'{instance_size}_{id}_{factory.NAME}', PRODUCT_IDS=product_list,
                               DEADLINES=deadline_assignment[:instance_size],
                               FACTORY=factory)
         plan.list_products()
