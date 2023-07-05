@@ -15,7 +15,7 @@ class Operator:
         """
         # Check if there was a clash for an activity
         print(f'At time {current_time} the operators receives the signal that product {product_ID} activity {activity_ID} failed')
-
+        print(self.plan.earliest_start)
         # TODO remove all other activities from the schedule
         print(f'Now the operator should remove all future activities for this product from the list')
 
@@ -44,6 +44,8 @@ class Operator:
 
         # Compute delay
         delay = self.plan.earliest_start[i]["Earliest_start"] - current_time
+
+
 
         # Remove this activity from plan
         del self.plan.earliest_start[0]

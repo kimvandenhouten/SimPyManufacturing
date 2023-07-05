@@ -48,6 +48,7 @@ class Simulator:
 
         # If it is available start the request and processing
         if start_processing:
+            self.signal_to_operator = False
             if self.printing:
                 print(f'\nProduct {product_ID}, activity {activity_ID} requested resources: {needs} at time: {request_time} \n')
 
@@ -95,7 +96,6 @@ class Simulator:
         # If it is not available then we don't process this activity, so we avoid that there starts a queue in the
         # factory
         else:
-
             print(f"Since there are no resources available, PRODUCT {product_ID} ACTIVITY {activity_ID} will not be processed")
             self.operator.signal_failed_activity(product_ID=product_ID, activity_ID=activity_ID,
                                                  current_time=self.env.now)
@@ -118,11 +118,14 @@ class Simulator:
         while not finish:
             delay, activity_ID, product_ID, proc_time, needs, finish = self.operator.send_next_activity(current_time=self.env.now)
 
+            print(f'current time is {self.env.now} and delay is {delay}')
             # Generator object that does a time-out for a time period equal to delay value
             yield self.env.timeout(delay)
 
             # Now the activity SimPy process can be started
             self.env.process(self.activity_processing(activity_ID, product_ID, proc_time, needs))
+
+
 
     def simulate(self, sim_time, random_seed, write=False, output_location="Results.csv"):
         """
@@ -173,13 +176,15 @@ class Simulator:
         for p in self.plan.SEQUENCE:
             schedule = self.resource_usage[self.resource_usage["Product"] == p]
             finish = max(schedule["Finish"])
-            if self.printing:
-                if finish == float("inf"):
+            if finish == float("inf"):
+                nr_unfinished_products += 1
+                if self.printing:
                     print(f'Product {p} did not finish, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
-                    nr_unfinished_products += 1
-                else:
+
+            else:
+                lateness += max(0, finish - self.plan.PRODUCTS[p].DEADLINE)
+                if self.printing:
                     print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
-                    lateness += max(0, finish - self.plan.PRODUCTS[p].DEADLINE)
 
         if self.printing:
             print(f"The makespan corresponding to this schedule is {makespan}")

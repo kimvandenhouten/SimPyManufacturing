@@ -42,7 +42,7 @@ my_productionplan.set_sequence(sequence=[0, 1])
 earliest_start = [{"Product_ID": 0, "Activity_ID": 0, "Earliest_start": 0},
                   {"Product_ID": 0, "Activity_ID": 1, "Earliest_start": 1},
                   {"Product_ID": 1, "Activity_ID": 0, "Earliest_start": 2},
-                  {"Product_ID": 1, "Activity_ID": 1, "Earliest_start": 3}]
+                  {"Product_ID": 1, "Activity_ID": 1, "Earliest_start": 4}]
 my_productionplan.set_earliest_start_times(earliest_start)
 
 # Import the new simulator
