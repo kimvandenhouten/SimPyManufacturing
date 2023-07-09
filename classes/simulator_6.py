@@ -126,7 +126,6 @@ class Simulator:
 
             # Obtain information about resource needs and processing time
             needs = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].NEEDS
-            # TODO: stochastic distribution here. Add version, can choose deterministic
             proc_time = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].PROCESSING_TIME[0]
 
 

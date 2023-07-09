@@ -29,12 +29,6 @@ my_productionplan.set_sequence(sequence=np.arange(size))
 my_productionplan.set_earliest_start_times(earliest_start)
 
 scenario_1 = Scenario(my_productionplan)
-scenario_2 = Scenario(my_productionplan)
-
-json.dumps(jsonpickle.encode(scenario_1, unpicklable=False))
-
-
-
 
 # Load simulator
 from classes.simulator_6 import Simulator
