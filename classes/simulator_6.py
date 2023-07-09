@@ -40,15 +40,17 @@ class Simulator:
                 resource_name = self.RESOURCE_NAMES[r]
                 available_machines = [i.resource_group for i in self.factory.items].count(resource_name)
                 if self.printing:
-                    print(f'We need {need} {resource_name} for product {product_ID}, activity {activity_ID} and currently '
-                          f'in the factory we have {available_machines} available')
+                    print(
+                        f'We need {need} {resource_name} for product {product_ID}, activity {activity_ID} and currently '
+                        f'in the factory we have {available_machines} available')
                 if available_machines < need:
                     start_processing = False
 
         # If it is available start the request and processing
         if start_processing:
             if self.printing:
-                print(f'\nProduct {product_ID}, activity {activity_ID} requested resources: {needs} at time: {request_time} \n')
+                print(
+                    f'\nProduct {product_ID}, activity {activity_ID} requested resources: {needs} at time: {request_time} \n')
 
             # SimPy request
             resources = []
@@ -62,7 +64,8 @@ class Simulator:
             retrieve_time = self.env.now
 
             if self.printing:
-                print(f'Product {product_ID}, activity {activity_ID} retrieved resources: {needs} at time: {retrieve_time} \n')
+                print(
+                    f'Product {product_ID}, activity {activity_ID} retrieved resources: {needs} at time: {retrieve_time} \n')
 
             # Trace back the moment in time that the activity starts processing
             start_time = self.env.now
@@ -79,7 +82,8 @@ class Simulator:
                 yield self.factory.put(resource)
 
             if self.printing:
-                print(f'Product {product_ID}, activity {activity_ID} released resources: {needs} at time: {end_time} \n')
+                print(
+                    f'Product {product_ID}, activity {activity_ID} released resources: {needs} at time: {end_time} \n')
 
             # Store relevant information
             self.resource_usage.append({"Product": product_ID,
@@ -94,7 +98,8 @@ class Simulator:
         # If it is not available then we don't process this activity, so we avoid that there starts a queue in the
         # factory
         else:
-            print(f"Since there are no resources available, PRODUCT {product_ID} ACTIVITY {activity_ID} will not be processed")
+            print(
+                f"Since there are no resources available, PRODUCT {product_ID} ACTIVITY {activity_ID} will not be processed")
             self.nr_clashes += 1
             self.resource_usage.append({"Product": product_ID,
                                         "Activity": activity_ID,
@@ -121,8 +126,9 @@ class Simulator:
 
             # Obtain information about resource needs and processing time
             needs = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].NEEDS
-            proc_time = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].PROCESSING_TIME
-            proc_time = random.randint(*proc_time)
+            # TODO: stochastic distribution here. Add version, can choose deterministic
+            proc_time = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].PROCESSING_TIME[0]
+
 
             # If this is the first activity in the sorted start times list, we have no delay
             if id == 0:
@@ -194,7 +200,8 @@ class Simulator:
                     print(f'Product {p} did not finish, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
                     nr_unfinished_products += 1
                 else:
-                    print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
+                    print(
+                        f'Product {p} finished at time {finish}, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
                     lateness += max(0, finish - self.plan.PRODUCTS[p].DEADLINE)
 
         if self.printing:
@@ -206,4 +213,3 @@ class Simulator:
             self.resource_usage.to_csv(output_location)
 
         return makespan, lateness, nr_unfinished_products
-
