@@ -11,7 +11,7 @@ from classes.classes import ProductionPlan
 import json
 
 # Set up a factory
-fp = open('./data/instance.json', 'r')
+fp = open('simulators/simulator6/data/instance.json', 'r')
 factory = Factory(**json.load(fp)["FACTORIES"][0])
 
 # Set up a production plan for this factory
@@ -32,12 +32,12 @@ my_productionplan.set_earliest_start_times(earliest_start)
 # create scenario and store
 scenario_1 = Scenario(my_productionplan)
 scenario_1_json_str = jsonpickle.encode(scenario_1)
-with open('./data/' + factory.NAME + '_scenario_1.json', 'w+') as f:
+with open('simulators/simulator6/data/' + factory.NAME + '_scenario_1.json', 'w+') as f:
     f.write(scenario_1_json_str)
     f.close()
 
 # re load scenario and use
-with open('./data/' + factory.NAME + '_scenario_1.json', 'r') as f:
+with open('simulators/simulator6/data/' + factory.NAME + '_scenario_1.json', 'r') as f:
     reloaded_str = f.read()
     scenario_1 = jsonpickle.decode(reloaded_str)
 
@@ -46,8 +46,8 @@ from classes.simulator_6 import Simulator
 
 my_simulator = Simulator(plan=scenario_1.PRODUCTION_PLAN, printing=True)
 my_simulator.simulate(SIM_TIME=1000, RANDOM_SEED=1, write=True,
-                      output_location=f"./outputs/minimal_example_simulator_6.csv")
-gannt = pd.read_csv(f"./outputs/minimal_example_simulator_6.csv")
+                      output_location=f"simulators/simulator6/outputs/minimal_example_simulator_6.csv")
+gannt = pd.read_csv(f"simulators/simulator6/outputs/minimal_example_simulator_6.csv")
 
 # ignore from here
 # initialize number of violations
