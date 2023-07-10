@@ -1,6 +1,6 @@
 import unittest
 
-from classes.distributions import NormalDistribution, PoissonDistribution, ExponentialDistribution
+from classes.distributions import NormalDistribution, PoissonDistribution, ExponentialDistribution, Distribution
 
 
 class TestDistribution(unittest.TestCase):
@@ -22,6 +22,14 @@ class TestDistribution(unittest.TestCase):
         exp_distr = ExponentialDistribution(alpha)
         sample = exp_distr.sample()
         self.assertNotEqual(sample, None)  # add assertion here
+
+    def test_default_distribution(self):
+        default_value = 3
+        default_distr = Distribution(default_value)
+        sample = default_distr.sample()
+        self.assertNotEqual(sample, None)  # add assertion here
+        self.assertEqual(sample, default_value)  # add assertion here
+
 
 
 if __name__ == '__main__':

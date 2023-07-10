@@ -1,0 +1,123 @@
+{
+  "FACTORIES": [
+    {
+      "NAME": "MyFactory",
+      "PRODUCTS": [
+        {
+          "ID": 0,
+          "NAME": "Enzyme_1",
+          "DEADLINE": 0,
+          "ACTIVITIES": [
+            {
+              "ID": 0,
+              "PRODUCT": "Enzyme_1",
+              "PRODUCT_ID": "0",
+              "PROCESSING_TIME": 4,
+              "NEEDS": [
+                1,
+                0,
+                1
+              ],
+              "SEQUENCE_ID": 0,
+              "DISTRIBUTION": {
+                "TYPE": "NORMAL",
+                "ARGS": {
+                  "MEAN": 5.0,
+                  "VARIANCE": 2
+                }
+              }
+            },
+            {
+              "ID": 1,
+              "PRODUCT": "Enzyme_1",
+              "PRODUCT_ID": "0",
+              "PROCESSING_TIME": 5,
+              "NEEDS": [
+                0,
+                1,
+                0
+              ],
+              "SEQUENCE_ID": 0,
+              "DISTRIBUTION": {
+                "TYPE": "NORMAL",
+                "ARGS": {
+                  "MEAN": 5.0,
+                  "VARIANCE": 2
+                }
+              }
+            }
+          ],
+          "TEMPORAL_RELATIONS": [
+            {
+              "PREDECESSOR": 0,
+              "SUCCESSOR": 1,
+              "REL": 4
+            }
+          ]
+        },
+        {
+          "ID": 1,
+          "NAME": "Enzyme_2",
+          "DEADLINE": 0,
+          "ACTIVITIES": [
+            {
+              "ID": 0,
+              "PRODUCT": "Enzyme_2",
+              "PRODUCT_ID": "1",
+              "PROCESSING_TIME": 3,
+              "NEEDS": [
+                1,
+                0,
+                1
+              ],
+              "SEQUENCE_ID": 0,
+              "DISTRIBUTION": {
+                "TYPE": "NORMAL",
+                "ARGS": {
+                  "MEAN": 5.0,
+                  "VARIANCE": 2
+                }
+              }
+            },
+            {
+              "ID": 1,
+              "PRODUCT": "Enzyme_2",
+              "PRODUCT_ID": "1",
+              "PROCESSING_TIME": 6,
+              "NEEDS": [
+                0,
+                1,
+                1
+              ],
+              "SEQUENCE_ID": 0,
+              "DISTRIBUTION": {
+                "TYPE": "NORMAL",
+                "ARGS": {
+                  "MEAN": 5.0,
+                  "VARIANCE": 2
+                }
+              }
+            }
+          ],
+          "TEMPORAL_RELATIONS": [
+            {
+              "PREDECESSOR": 0,
+              "SUCCESSOR": 1,
+              "REL": 1
+            }
+          ]
+        }
+      ],
+      "RESOURCE_NAMES": [
+        "Filter",
+        "Mixer",
+        "Dryer"
+      ],
+      "CAPACITY": [
+        1,
+        1,
+        1
+      ]
+    }
+  ]
+}

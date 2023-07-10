@@ -2,11 +2,11 @@ import numpy as np
 
 
 class Distribution:
-    def __init__(self):
-        pass
+    def __init__(self, PROCESSING_TIME):
+        self.DEFAULT = PROCESSING_TIME
 
     def sample(self) -> float:
-        return None
+        return self.DEFAULT
 
 
 class NormalDistribution(Distribution):

@@ -6,23 +6,27 @@ from classes.distributions import Distribution, get_distribution
 
 
 class Activity:
-    def __init__(self, ID, PROCESSING_TIME, PRODUCT, PRODUCT_ID, NEEDS, DISTRIBUTION=None):
+    def __init__(self, ID, PROCESSING_TIME, PRODUCT, PRODUCT_ID, NEEDS, DISTRIBUTION=None, SEQUENCE_ID=int()):
         self.ID = ID
         self.PRODUCT = PRODUCT
         self.PRODUCT_ID = PRODUCT_ID
         self.PROCESSING_TIME = PROCESSING_TIME
         self.NEEDS = NEEDS
-        self.SEQUENCE_ID = int()
+        self.SEQUENCE_ID = SEQUENCE_ID
         self._set_distribution(DISTRIBUTION)
 
-    def sample_processing_Time(self):
-        if (self._DISTRIBUTION is None):
-            raise Exception("Distribution for this activity is not set.")
+    def sample_processing_time(self):
         return self._DISTRIBUTION.sample()
 
+    def sample_and_set_scenario(self):
+        sample = self.sample_processing_time()
+        self.PROCESSING_TIME = [sample,sample]
+
     def _set_distribution(self, distribution):
-        if isinstance(distribution, Distribution) or distribution is None:
+        if isinstance(distribution, Distribution):
             self._DISTRIBUTION = distribution
+        elif distribution is None:
+            self._DISTRIBUTION = Distribution(self.PROCESSING_TIME)
         elif isinstance(distribution, dict):
             self._DISTRIBUTION = get_distribution(distribution["TYPE"], distribution["ARGS"])
         else:
@@ -30,10 +34,10 @@ class Activity:
 
 
 class Product:
-    def __init__(self, ID, NAME, ACTIVITIES=None, TEMPORAL_RELATIONS=None):
+    def __init__(self, ID, NAME, ACTIVITIES=None, TEMPORAL_RELATIONS=None, DEADLINE=int()):
         self.ID = ID
         self.NAME = NAME
-        self.DEADLINE = int()
+        self.DEADLINE = DEADLINE
         self._set_activities(ACTIVITIES)
         self._set_temporal_relations(TEMPORAL_RELATIONS)
 
@@ -72,6 +76,7 @@ class Product:
         if (temporal_relations):
             for relation in temporal_relations:
                 TEMPORAL_RELATIONS[(relation['SUCCESSOR'], relation['PREDECESSOR'])] = relation['REL']
+
         self.TEMPORAL_RELATIONS = TEMPORAL_RELATIONS
 
 
@@ -141,3 +146,15 @@ class ProductionPlan:
 
     def set_earliest_start_times(self, earliest_start):
         self.earliest_start = earliest_start
+
+
+class Scenario:
+    def __init__(self, PRODUCTION_PLAN):
+        self.PRODUCTION_PLAN = copy.deepcopy(PRODUCTION_PLAN)
+        self.create_scenario()
+
+    def create_scenario(self):
+        for product in self.PRODUCTION_PLAN.FACTORY.PRODUCTS:
+            for activity in product.ACTIVITIES:
+                activity.sample_and_set_scenario()
+        return self

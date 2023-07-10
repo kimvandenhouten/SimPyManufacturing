@@ -7,7 +7,7 @@ from classes.distributions import NormalDistribution, ExponentialDistribution, P
 
 class TestFactory(unittest.TestCase):
     def test_object_mapping(self):
-        fp = open('./tests/resources-test/data.json', 'r')
+        fp = open('./resources-test/data.json', 'r')
         factory = Factory(**json.load(fp)["FACTORIES"][0])
         self.assertEqual(factory.NAME, 'factory_1')
         self.assertEqual(len(factory.CAPACITY), 12)
@@ -18,17 +18,17 @@ class TestFactory(unittest.TestCase):
         fp.close()
 
     def test_distribution_mapping(self):
-        fp = open('./tests/resources-test/data_dist.json', 'r')
+        fp = open('./resources-test/data_dist.json', 'r')
         factory = Factory(**json.load(fp)["FACTORIES"][0])
 
-        self.assertNotEqual(factory.PRODUCTS[0].ACTIVITIES[0].DISTRIBUTION.sample(), None)
-        self.assertEqual(isinstance(factory.PRODUCTS[0].ACTIVITIES[0].DISTRIBUTION, NormalDistribution), True)
+        self.assertNotEqual(factory.PRODUCTS[0].ACTIVITIES[0]._DISTRIBUTION.sample(), None)
+        self.assertEqual(isinstance(factory.PRODUCTS[0].ACTIVITIES[0]._DISTRIBUTION, NormalDistribution), True)
 
-        self.assertNotEqual(factory.PRODUCTS[0].ACTIVITIES[1].DISTRIBUTION.sample(), None)
-        self.assertEqual(isinstance(factory.PRODUCTS[0].ACTIVITIES[1].DISTRIBUTION, ExponentialDistribution), True)
+        self.assertNotEqual(factory.PRODUCTS[0].ACTIVITIES[1]._DISTRIBUTION.sample(), None)
+        self.assertEqual(isinstance(factory.PRODUCTS[0].ACTIVITIES[1]._DISTRIBUTION, ExponentialDistribution), True)
 
-        self.assertNotEqual(factory.PRODUCTS[0].ACTIVITIES[2].DISTRIBUTION.sample(), None)
-        self.assertEqual(isinstance(factory.PRODUCTS[0].ACTIVITIES[2].DISTRIBUTION, PoissonDistribution), True)
+        self.assertNotEqual(factory.PRODUCTS[0].ACTIVITIES[2]._DISTRIBUTION.sample(), None)
+        self.assertEqual(isinstance(factory.PRODUCTS[0].ACTIVITIES[2]._DISTRIBUTION, PoissonDistribution), True)
 
 
 if __name__ == '__main__':
