@@ -1,5 +1,11 @@
+import json
+
+import jsonpickle
 import pandas as pd
 import numpy as np
+
+from classes.classes import Scenario
+
 # Set instance name
 size = 10
 id = 1
@@ -22,9 +28,12 @@ my_productionplan = pd.read_pickle(f"factory_data/instances/instance_{instance_n
 my_productionplan.set_sequence(sequence=np.arange(size))
 my_productionplan.set_earliest_start_times(earliest_start)
 
+scenario_1 = Scenario(my_productionplan)
+
 # Load simulator
 from classes.simulator_6 import Simulator
-my_simulator = Simulator(plan=my_productionplan, printing=True)  # Set printing to True if you want to print all events
+
+my_simulator = Simulator(plan=scenario_1.PRODUCTION_PLAN, printing=True)  # Set printing to True if you want to print all events
 
 # Run simulation
 makespan, lateness, nr_unfinished = my_simulator.simulate(SIM_TIME=1000, RANDOM_SEED=1, write=True, output_location=f"example_cp_output_to_simulator.csv")
