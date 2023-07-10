@@ -7,10 +7,10 @@ instance_name = f"{size}_{id}_factory_1"
 
 # Read CP output csv
 # choose this one if you want to see an infeasible example
-file_name = f"{instance_name}"
+#file_name = f"{instance_name}_infeasible"
 
 # choose this one if you want to see a feasible example
-#file_name = f"{instance_name}"
+file_name = f"{instance_name}"
 cp_output = pd.read_csv(f"results/cp_model/{file_name}.csv", delimiter=";")
 
 print(f'Makespan according to CP outout is {max(cp_output["End"].tolist())}')
