@@ -40,6 +40,15 @@ class ExponentialDistribution(Distribution):
         return np.random.exponential(self.BETA, 1)[0]
 
 
+class LogNormalDistribution(Distribution):
+    def __init__(self, MEAN, VARIANCE):
+        self.MEAN = MEAN
+        self.VARIANCE = VARIANCE
+
+    def sample(self):
+        return np.random.lognormal(self.MEAN, self.VARIANCE, 1000)[0]
+
+
 def get_distribution(dist_type, arg_dict):
     if dist_type == "NORMAL":
         return NormalDistribution(**arg_dict)
