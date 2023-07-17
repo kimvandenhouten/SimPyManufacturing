@@ -1,6 +1,7 @@
 import unittest
 
-from classes.distributions import NormalDistribution, PoissonDistribution, ExponentialDistribution, Distribution
+from classes.distributions import NormalDistribution, PoissonDistribution, ExponentialDistribution, Distribution, \
+    LogNormalDistribution
 
 
 class TestDistribution(unittest.TestCase):
@@ -28,7 +29,18 @@ class TestDistribution(unittest.TestCase):
         default_distr = Distribution(default_value)
         sample = default_distr.sample()
         self.assertNotEqual(sample, None)  # add assertion here
-        self.assertEqual(sample, default_value)  # add assertion here
+        self.assertEqual(sample, default_value)
+
+
+    def test_lognormal_distribution(self):
+        mean = 5
+        var = 2
+        lognorm_distr = LogNormalDistribution(mean, var)
+        sample = lognorm_distr.sample()
+        self.assertNotEqual(sample, None)
+
+
+# add assertion here
 
 
 
