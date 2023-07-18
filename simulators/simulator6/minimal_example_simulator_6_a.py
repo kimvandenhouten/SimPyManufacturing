@@ -11,7 +11,7 @@ from classes.classes import ProductionPlan
 import json
 
 # Set up a factory
-fp = open('simulators/simulator6/data/instance.json', 'r')
+fp = open('factory_data/stochastic/data_stochastic.json', 'r')
 factory = Factory(**json.load(fp)["FACTORIES"][0])
 
 # Set up a production plan for this factory
