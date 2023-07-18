@@ -16,7 +16,7 @@ class Activity:
         self._set_distribution(DISTRIBUTION)
 
     def sample_processing_time(self):
-        return self._DISTRIBUTION.sample()
+        return self.DISTRIBUTION.sample()
 
     def sample_and_set_scenario(self):
         sample = self.sample_processing_time()
@@ -24,11 +24,11 @@ class Activity:
 
     def _set_distribution(self, distribution):
         if isinstance(distribution, Distribution):
-            self._DISTRIBUTION = distribution
+            self.DISTRIBUTION = distribution
         elif distribution is None:
-            self._DISTRIBUTION = Distribution(self.PROCESSING_TIME)
+            self.DISTRIBUTION = Distribution(self.PROCESSING_TIME)
         elif isinstance(distribution, dict):
-            self._DISTRIBUTION = get_distribution(distribution["TYPE"], distribution["ARGS"])
+            self.DISTRIBUTION = get_distribution(distribution["TYPE"], distribution["ARGS"])
         else:
             return TypeError("Illegal distribution type: ", type(distribution))
 
@@ -150,11 +150,12 @@ class ProductionPlan:
 
 class Scenario:
     def __init__(self, PRODUCTION_PLAN):
-        self.PRODUCTION_PLAN = copy.deepcopy(PRODUCTION_PLAN)
+        self.PRODUCTION_PLAN = PRODUCTION_PLAN
         self.create_scenario()
 
     def create_scenario(self):
         for product in self.PRODUCTION_PLAN.FACTORY.PRODUCTS:
             for activity in product.ACTIVITIES:
                 activity.sample_and_set_scenario()
+        self.PRODUCTION_PLAN.list_products()
         return self
