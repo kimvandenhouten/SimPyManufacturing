@@ -14,10 +14,13 @@ class Operator:
         Process signal about a failed activity
         """
         # Check if there was a clash for an activity
+        print(f'\n')
         print(f'At time {current_time} the operators receives the signal that product {product_ID} activity {activity_ID} failed')
-        print(self.plan.earliest_start)
         # TODO remove all other activities from the schedule
-        print(f'Now the operator should remove all future activities for this product from the list')
+        print(f'Now we should remove all remaining activities from product {product_ID} from the plan')
+        print(f'STEP 1: Print the current plan {self.plan.earliest_start}')
+        print(f'STEP 2: Now the operator should remove all future activities for this product from the list')
+        print(f'\n')
 
     def send_next_activity(self, current_time):
         """
