@@ -59,32 +59,6 @@ print(f'The number of unfinished products {nr_unfinished}')
 print(f'The number of clashes (i.e. activities that could not be processed) is {my_simulator.nr_clashes}')
 gannt = pd.read_csv(f"minimal_example_simulator_7.csv")
 
-# initialize number of violations
-constraint_checking = False
-if constraint_checking:
-    # Afterwards you can check the temporal relations
-    print('------------------------------------------------------------ \n CONSTRAINT CHECKING \n')
-    number_of_violations = 0
-    # iterate over products
-    for p, product in enumerate(my_productionplan.PRODUCTS):
-        # obtain temporal relations
-        for (i, j) in product.TEMPORAL_RELATIONS:
-            print(i, j)
-            print(f'The difference between the start time of activity {i} and activity {j} '
-                  f'from product {p} should be exactly {product.TEMPORAL_RELATIONS[(i, j)]}')
-            start_i = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == i)]['Start'].values[0]
-            start_j = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == j)]['Start'].values[0]
-
-            print(f'The simulated difference between the start time of activity {i} and activity {j} is {start_j-start_i}')
-            if start_j-start_i == product.TEMPORAL_RELATIONS[(i, j)]:
-                print("CONSTRAINT SATISFIED")
-            else:
-                print("CONSTRAINT VIOLATED")
-                number_of_violations += 1
-
-    # check violations of temporal relations by comparing start times of activities within temporal relations
-    # report on violated relations
-    print(f'TOTAL NUMBER OF VIOLATIONS {number_of_violations}')
 
 
 
