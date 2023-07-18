@@ -118,7 +118,9 @@ class Simulator:
         while not finish:
             delay, activity_ID, product_ID, proc_time, needs, finish = self.operator.send_next_activity(current_time=self.env.now)
 
-            print(f'current time is {self.env.now} and delay is {delay}')
+            # delay refers to the different between the current time and the time that the next activity should start
+            print(f'current time is {self.env.now} and from now to the next activity event is {delay}')
+
             # Generator object that does a time-out for a time period equal to delay value
             yield self.env.timeout(delay)
 

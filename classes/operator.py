@@ -45,8 +45,6 @@ class Operator:
         # Compute delay
         delay = self.plan.earliest_start[i]["Earliest_start"] - current_time
 
-
-
         # Remove this activity from plan
         del self.plan.earliest_start[0]
 
