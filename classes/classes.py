@@ -13,7 +13,7 @@ class Activity:
         self.PROCESSING_TIME = PROCESSING_TIME
         self.NEEDS = NEEDS
         self.SEQUENCE_ID = SEQUENCE_ID
-        self._set_distribution(DISTRIBUTION)
+        self.set_distribution(DISTRIBUTION)
 
     def sample_processing_time(self):
         return self.DISTRIBUTION.sample()
@@ -22,11 +22,11 @@ class Activity:
         sample = self.sample_processing_time()
         self.PROCESSING_TIME = [sample, sample]
 
-    def _set_distribution(self, distribution):
+    def set_distribution(self, distribution):
         if isinstance(distribution, Distribution):
             self.DISTRIBUTION = distribution
         elif distribution is None:
-            self.DISTRIBUTION = Distribution(self.PROCESSING_TIME)
+            self.DISTRIBUTION = Distribution(self.PROCESSING_TIME[0])
         elif isinstance(distribution, dict):
             self.DISTRIBUTION = get_distribution(distribution["TYPE"], distribution["ARGS"])
         else:
@@ -161,5 +161,6 @@ class Scenario:
         for product in self.PRODUCTION_PLAN.FACTORY.PRODUCTS:
             for activity in product.ACTIVITIES:
                 activity.sample_and_set_scenario()
+                activity.set_distribution(None)
         self.PRODUCTION_PLAN.list_products()
         return self
