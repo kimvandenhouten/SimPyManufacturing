@@ -20,7 +20,7 @@ class Activity:
 
     def sample_and_set_scenario(self):
         sample = self.sample_processing_time()
-        self.PROCESSING_TIME = [sample,sample]
+        self.PROCESSING_TIME = [sample, sample]
 
     def _set_distribution(self, distribution):
         if isinstance(distribution, Distribution):
@@ -149,11 +149,15 @@ class ProductionPlan:
 
 
 class Scenario:
-    def __init__(self, PRODUCTION_PLAN):
-        self.PRODUCTION_PLAN = PRODUCTION_PLAN
+    def __init__(self, PRODUCTION_PLAN, SEED=None):
+        self.PRODUCTION_PLAN = copy.deepcopy(PRODUCTION_PLAN)
+        self.SEED = SEED
         self.create_scenario()
 
     def create_scenario(self):
+        if (self.SEED!=None):
+            np.random.seed(self.SEED)
+
         for product in self.PRODUCTION_PLAN.FACTORY.PRODUCTS:
             for activity in product.ACTIVITIES:
                 activity.sample_and_set_scenario()
