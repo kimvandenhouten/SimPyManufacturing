@@ -50,7 +50,7 @@ from classes.simulator_7 import Simulator
 from classes.operator import Operator
 operator = Operator(plan=my_productionplan)
 
-my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=False)
+my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=True)
 
 makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=1000, random_seed=1, write=True, output_location=f"minimal_example_simulator_7.csv")
 

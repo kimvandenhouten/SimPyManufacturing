@@ -1,5 +1,4 @@
 ,Product,Activity,Needs,Resources,Request,Retrieve,Start,Finish
 0,1,0,"[1, 0, 1]",NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-1,1,1,"[0, 1, 1]",NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-2,0,0,"[1, 0, 1]","[Machine(resource_group='Filter', id=0), Machine(resource_group='Dryer', id=0)]",0.0,0.0,0.0,4.0
-3,0,1,"[0, 1, 0]","[Machine(resource_group='Mixer', id=0)]",1.0,1.0,1.0,6.0
+1,0,0,"[1, 0, 1]","[Machine(resource_group='Filter', id=0), Machine(resource_group='Dryer', id=0)]",0.0,0.0,0.0,4.0
+2,0,1,"[0, 1, 0]","[Machine(resource_group='Mixer', id=0)]",1.0,1.0,1.0,6.0
