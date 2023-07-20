@@ -24,7 +24,7 @@ print(f'Makespan according to CP outout is {max(cp_output["End"].tolist())}')
 earliest_start = cp_output.to_dict('records')
 
 # Read input instance
-my_productionplan = pd.read_pickle(f"factory_data/instances/instance_{instance_name}.pkl")
+my_productionplan = pd.read_pickle(f"factory_data/stochastic/instances/instance_{instance_name}.pkl")
 my_productionplan.set_sequence(sequence=np.arange(size))
 my_productionplan.set_earliest_start_times(earliest_start)
 

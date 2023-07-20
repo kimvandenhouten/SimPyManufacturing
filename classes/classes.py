@@ -13,22 +13,22 @@ class Activity:
         self.PROCESSING_TIME = PROCESSING_TIME
         self.NEEDS = NEEDS
         self.SEQUENCE_ID = SEQUENCE_ID
-        self._set_distribution(DISTRIBUTION)
+        self.set_distribution(DISTRIBUTION)
 
     def sample_processing_time(self):
-        return self._DISTRIBUTION.sample()
+        return self.DISTRIBUTION.sample()
 
     def sample_and_set_scenario(self):
         sample = self.sample_processing_time()
-        self.PROCESSING_TIME = [sample,sample]
+        self.PROCESSING_TIME = [sample, sample]
 
-    def _set_distribution(self, distribution):
+    def set_distribution(self, distribution):
         if isinstance(distribution, Distribution):
-            self._DISTRIBUTION = distribution
+            self.DISTRIBUTION = distribution
         elif distribution is None:
-            self._DISTRIBUTION = Distribution(self.PROCESSING_TIME)
+            self.DISTRIBUTION = Distribution(self.PROCESSING_TIME[0])
         elif isinstance(distribution, dict):
-            self._DISTRIBUTION = get_distribution(distribution["TYPE"], distribution["ARGS"])
+            self.DISTRIBUTION = get_distribution(distribution["TYPE"], distribution["ARGS"])
         else:
             return TypeError("Illegal distribution type: ", type(distribution))
 
@@ -149,12 +149,18 @@ class ProductionPlan:
 
 
 class Scenario:
-    def __init__(self, PRODUCTION_PLAN):
+    def __init__(self, PRODUCTION_PLAN, SEED=None):
         self.PRODUCTION_PLAN = copy.deepcopy(PRODUCTION_PLAN)
+        self.SEED = SEED
         self.create_scenario()
 
     def create_scenario(self):
+        if (self.SEED!=None):
+            np.random.seed(self.SEED)
+
         for product in self.PRODUCTION_PLAN.FACTORY.PRODUCTS:
             for activity in product.ACTIVITIES:
                 activity.sample_and_set_scenario()
+                activity.set_distribution(None)
+        self.PRODUCTION_PLAN.list_products()
         return self
