@@ -118,6 +118,7 @@ class ProductionPlan:
         self.DEADLINES = DEADLINES
         self.SEQUENCE = []
         self.PRODUCTS = []
+        self.earliest_start = []
 
     def list_products(self):
         """

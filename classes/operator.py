@@ -1,14 +1,15 @@
 import random
 import numpy as np
-
+import copy
 
 class Operator:
-    def __init__(self, plan, name="simple_operator"):
+    def __init__(self, plan, name="simple_operator", policy_type=1, printing=True):
         self.current_time = 0
         self.name = name
         self.initial_plan = plan
-        self.plan = plan
-        self.printing = True
+        self.plan = copy.deepcopy(plan)
+        self.printing = printing
+        self.policy_type = policy_type
 
     def signal_failed_activity(self, product_ID, activity_ID, current_time):
         """
@@ -16,16 +17,20 @@ class Operator:
         """
         if self.printing:
             print(f'At time {current_time}: the operator receives the signal that PRODUCT {product_ID} ACTIVITY '
-                  f'{activity_ID} got cancelled')
+                  f'{activity_ID} got cancelled, so we apply policy {self.policy_type}')
+            print(f'At time {current_time}: the current plan is {self.plan.earliest_start}')
 
-        # Remove activities from plan that are from the same product_ID as the cancelled activity
-        for i, act in enumerate(self.plan.earliest_start):
+        if self.policy_type == 1:
+            # Remove activities from plan that are from the same product_ID as the cancelled activity
             if self.printing:
-                print(f'At time {current_time}: the current plan is {self.plan.earliest_start}')
                 print(f'At time {current_time}: the repair policy removes all activities from product {product_ID} '
                       f'from the plan')
-            if act['Product_ID'] == product_ID:
-                del self.plan.earliest_start[i]
+            for i, act in enumerate(self.plan.earliest_start):
+                if act['Product_ID'] == product_ID:
+                    del self.plan.earliest_start[i]
+
+        elif self.policy_type == 2:
+            self.plan.earliest_start.append({'Product_ID': product_ID, "Activity_ID": activity_ID, "Earliest_start": current_time + 1})
 
         if self.printing:
             print(f'At time {current_time}: the updated plan is {self.plan.earliest_start}')
@@ -71,14 +76,11 @@ class Operator:
                           f' and should start now')
 
                 # Remove this activity from plan
-                del self.plan.earliest_start[0]
+                del self.plan.earliest_start[i]
 
-                # Check if there are still activities that needs to be done
                 if len(self.plan.earliest_start) == 0:
-                    finish = True
                     delay = 0
                 else:
-                    finish = False
                     if earliest_start_times[1] == current_time:
                         delay = 0
                     else:
