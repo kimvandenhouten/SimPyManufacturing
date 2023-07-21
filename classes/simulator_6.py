@@ -128,7 +128,6 @@ class Simulator:
             needs = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].NEEDS
             proc_time = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].PROCESSING_TIME[0]
 
-
             # If this is the first activity in the sorted start times list, we have no delay
             if id == 0:
                 delay = self.plan.earliest_start[i]["Earliest_start"]
@@ -194,14 +193,14 @@ class Simulator:
         for p in self.plan.SEQUENCE:
             schedule = self.resource_usage[self.resource_usage["Product"] == p]
             finish = max(schedule["Finish"])
-            if self.printing:
-                if finish == float("inf"):
+            if finish == float("inf"):
+                if self.printing:
                     print(f'Product {p} did not finish, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
-                    nr_unfinished_products += 1
-                else:
-                    print(
-                        f'Product {p} finished at time {finish}, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
-                    lateness += max(0, finish - self.plan.PRODUCTS[p].DEADLINE)
+                nr_unfinished_products += 1
+            else:
+                if self.printing:
+                    print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
+                lateness += max(0, finish - self.plan.PRODUCTS[p].DEADLINE)
 
         if self.printing:
             print(f"The makespan corresponding to this schedule is {makespan}")
