@@ -44,7 +44,8 @@ my_productionplan.set_earliest_start_times(earliest_start)
 # Here you can choose policy 1 or policy 2
 operator = Operator(plan=my_productionplan, policy_type=1, printing=True)
 my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=False)
-makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=1000, random_seed=1, write=True, output_location=f"minimal_example_simulator_7.csv")
+makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=1000, random_seed=1, write=True, output_location=
+f"simulators/simulator7/outputs/minimal_example_simulator_7.csv")
 print(f'According to the simulation, the makespan is {makespan} and the lateness is {lateness}')
 print(f'The number of unfinished products {nr_unfinished}')
 print(f'The number of clashes (returned activities) is {my_simulator.nr_clashes}')
