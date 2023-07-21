@@ -1,10 +1,9 @@
 import json
-
-
+import jsonpickle
 import pandas as pd
 import numpy as np
-
-from classes.classes import Scenario, ProductionPlan
+from classes.classes import Scenario
+from classes.operator import Operator
 
 # Set instance name
 size = 10
@@ -13,7 +12,7 @@ instance_name = f"{size}_{id}_factory_1"
 
 # Read CP output csv
 # choose this one if you want to see an infeasible example
-# file_name = f"{instance_name}_infeasible"
+#file_name = f"{instance_name}_infeasible"
 
 # choose this one if you want to see a feasible example
 file_name = f"{instance_name}"
@@ -24,25 +23,18 @@ print(f'Makespan according to CP outout is {max(cp_output["End"].tolist())}')
 earliest_start = cp_output.to_dict('records')
 
 # Read input instance
-my_productionplan = ProductionPlan(
-    **json.load(open('factory_data/stochastic/json_instances/instance_' + instance_name + '.json')))
-my_productionplan.set_sequence(sequence=np.arange(size))
+my_productionplan = pd.read_pickle(f"factory_data/instances/instance_{instance_name}.pkl")
 my_productionplan.set_earliest_start_times(earliest_start)
 
-scenario_1 = my_productionplan.create_scenario(300)
-
 # Load simulator
-from classes.simulator_6 import Simulator
-
-my_simulator = Simulator(plan=scenario_1.PRODUCTION_PLAN,
-                         printing=False)  # Set printing to True if you want to print all events
+from classes.simulator_7 import Simulator
+# Set printing to True if you want to print all events
+operator = Operator(plan=my_productionplan, policy_type=1, printing=False)
+my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=False)
 
 # Run simulation
-makespan, lateness, nr_unfinished = my_simulator.simulate(SIM_TIME=1000, RANDOM_SEED=300, write=True,
-                                                          output_location=f"simulators/simulator6/data/example_cp_output_to_simulator.csv")
+makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=1000, random_seed=3, write=True, output_location=f""
+f"simulators/simulator7/outputs/example_cp_output_to_simulator.csv")
 print(f'According to the simulation, the makespan is {makespan} and the lateness is {lateness}')
 print(f'The number of unfinished products {nr_unfinished}')
 print(f'The number of clashes (i.e. activities that could not be processed) is {my_simulator.nr_clashes}')
-
-# Todo: build in some kind of check
-# gannt = pd.read_csv(f"example_cp_output_to_simulator_6.csv"")

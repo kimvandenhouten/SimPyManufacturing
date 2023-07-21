@@ -81,7 +81,8 @@ class Operator:
                 if len(self.plan.earliest_start) == 0:
                     delay = 0
                 else:
-                    if earliest_start_times[1] == current_time:
+                    j = earliest_start_times_argsort[1]
+                    if earliest_start_times[j] == current_time:
                         delay = 0
                     else:
                         delay = 1
