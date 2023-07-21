@@ -1,105 +1,105 @@
 ,Product,Activity,Needs,Resources,Request,Retrieve,Start,Finish
-0,0,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=10)]",832,832,832,929
-1,0,10,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",821,821,821,840
-2,0,11,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",813,813,813,840
-3,0,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",812,812,812,835
-4,0,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",804,804,804,832
-5,0,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",805,805,805,832
-6,0,3,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",804,804,804,823
-7,0,4,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",812,812,812,823
-8,0,5,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=2)]",781,781,781,823
-9,0,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=1)]",706,706,706,823
-10,0,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",622,622,622,809
-11,0,2,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=1)]",706,706,706,791
-12,6,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=9)]",645,645,645,742
-13,0,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=2)]",706,706,706,721
-14,6,10,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",634,634,634,653
-15,6,11,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",626,626,626,653
-16,6,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",625,625,625,648
-17,6,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",617,617,617,645
-18,6,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",618,618,618,645
-19,6,3,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",617,617,617,636
-20,6,4,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",625,625,625,636
-21,6,5,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=3)]",594,594,594,636
-22,6,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=5)]",519,519,519,636
-23,6,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",435,435,435,622
-24,6,2,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=0)]",519,519,519,604
-25,4,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=8)]",478,478,478,574
-26,6,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=3)]",519,519,519,534
-27,9,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=7)]",415,415,415,508
-28,9,11,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=6)]",363,363,363,499
-29,4,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",466,466,466,485
-30,4,6,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",466,466,466,485
-31,4,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",456,456,456,478
-32,4,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",458,458,458,478
-33,4,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",456,456,456,473
-34,4,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=4)]",422,422,422,473
-35,8,13,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=5)]",316,316,316,441
-36,4,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",374,374,374,435
-37,9,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",353,353,353,415
-38,9,10,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",353,353,353,415
-39,9,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",344,344,344,406
-40,9,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",344,344,344,406
-41,9,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]","[Machine(resource_group='Filters B', id=0)]",344,344,344,396
-42,9,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=0)]",290,290,290,396
-43,9,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",363,363,363,390
-44,9,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",362,362,362,390
-45,1,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=4)]",296,296,296,385
-46,7,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=3)]",278,278,278,382
-47,9,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",249,249,249,374
-48,9,2,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",362,362,362,363
-49,8,11,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",316,316,316,352
-50,8,12,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",316,316,316,352
-51,8,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",316,316,316,350
-52,8,10,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",316,316,316,350
-53,9,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=2)]",290,290,290,344
-54,8,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",304,304,304,341
-55,8,4,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",304,304,304,341
-56,8,5,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",304,304,304,341
-57,8,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=2)]",273,273,273,341
-58,8,7,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",305,305,305,341
-59,8,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",305,305,305,341
-60,8,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",304,304,304,332
-61,8,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=1)]",273,273,273,332
-62,2,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=2)]",226,226,226,322
-63,1,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",172,172,172,296
-64,1,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",172,172,172,296
-65,8,0,"[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_3', id=0)]",187,187,187,293
-66,7,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",258,258,258,289
-67,7,6,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",258,258,258,289
-68,7,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",247,247,247,278
-69,7,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",247,247,247,278
-70,3,14,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=1)]",172,172,172,277
-71,1,1,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]","[Machine(resource_group='Filters B', id=0)]",172,172,172,270
-72,1,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=3)]",157,157,157,270
-73,7,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",247,247,247,268
-74,7,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=5)]",237,237,237,268
-75,7,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",183,183,183,249
-76,2,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",214,214,214,233
-77,2,6,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",214,214,214,233
-78,2,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",204,204,204,226
-79,2,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",206,206,206,226
-80,2,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",204,204,204,221
-81,2,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=4)]",170,170,170,221
-82,5,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=0)]",119,119,119,208
-83,3,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",148,148,148,188
-84,3,13,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",143,143,143,188
-85,1,0,"[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_3', id=0)]",22,22,22,187
-86,2,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",122,122,122,183
-87,3,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",129,129,129,177
-88,3,10,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",143,143,143,177
-89,3,11,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",131,131,131,177
-90,3,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",124,124,124,172
-91,3,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",126,126,126,172
-92,3,5,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",124,124,124,158
-93,3,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=0)]",30,30,30,158
-94,3,3,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",129,129,129,152
-95,3,4,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=2)]",96,96,96,152
-96,3,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",0,0,0,122
-97,5,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",90,90,90,119
-98,5,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",90,90,90,119
-99,3,2,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=1)]",30,30,30,102
-100,5,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",90,90,90,102
-101,5,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=1)]",81,81,81,102
-102,5,0,"[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_5', id=0)]",0,0,0,96
-103,3,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=0)]",30,30,30,58
+0,0,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=10)]",832,832,832,927.9015823431095
+1,0,10,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",821,821,821,839.9659474164358
+2,0,11,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",813,813,813,839.9452978150746
+3,0,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",812,812,812,835.39766947424
+4,0,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",804,804,804,831.0343049976478
+5,0,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",805,805,805,833.2871794721533
+6,0,3,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",804,804,804,822.5866276856578
+7,0,4,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",812,812,812,822.2217446634949
+8,0,5,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=2)]",781,781,781,821.4984905684387
+9,0,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=1)]",706,706,706,823.8412395172537
+10,0,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",622,622,622,807.088557381653
+11,0,2,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=1)]",706,706,706,791.565415779427
+12,6,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=9)]",645,645,645,740.9015823431095
+13,0,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=2)]",706,706,706,721.7308083197534
+14,6,10,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",634,634,634,652.9659474164358
+15,6,11,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",626,626,626,652.9452978150746
+16,6,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",625,625,625,648.39766947424
+17,6,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",617,617,617,644.0343049976478
+18,6,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",618,618,618,646.2871794721533
+19,6,3,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",617,617,617,635.5866276856578
+20,6,4,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",625,625,625,635.2217446634949
+21,6,5,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=5)]",594,594,594,634.4984905684387
+22,6,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=3)]",519,519,519,636.8412395172537
+23,6,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",435,435,435,620.088557381653
+24,6,2,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=0)]",519,519,519,604.565415779427
+25,4,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=8)]",478,478,478,575.0588061971002
+26,6,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=3)]",519,519,519,534.7308083197534
+27,9,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=7)]",415,415,415,505.01734052257314
+28,9,11,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=6)]",363,363,363,498.2812244515711
+29,4,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",466,466,466,480.46327279934343
+30,4,6,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",466,466,466,485.0926017612731
+31,4,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",456,456,456,478.61562708074194
+32,4,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",458,458,458,477.981000605923
+33,4,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",456,456,456,472.6989446597555
+34,4,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=4)]",422,422,422,470.42460994819766
+35,8,13,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=5)]",316,316,316,440.7928286150734
+36,4,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",375,375,375,432.54040689157847
+37,9,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",353,353,353,416.8564056336019
+38,9,10,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",353,353,353,415.77301155879724
+39,9,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",344,344,344,402.43899396700203
+40,9,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",344,344,344,407.31292334507066
+41,9,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]","[Machine(resource_group='Filters B', id=0)]",344,344,344,400.83647039046167
+42,9,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=0)]",290,290,290,392.9823219611412
+43,9,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",363,363,363,388.11683442637025
+44,9,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",362,362,362,388.82705214213587
+45,1,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=4)]",296,296,296,379.8339172638204
+46,7,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=3)]",278,278,278,383.0304882475968
+47,9,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",250,250,250,374.93919938490325
+48,9,2,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",362,362,362,364.11473371234496
+49,8,11,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",316,316,316,347.00930427083057
+50,8,12,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",316,316,316,350.6437691994721
+51,8,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",316,316,316,346.70020405105754
+52,8,10,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",316,316,316,354.7620336197052
+53,9,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=2)]",290,290,290,344.93792717789506
+54,8,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",304,304,304,340.73243804971696
+55,8,4,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",304,304,304,341.0268139375348
+56,8,5,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",304,304,304,342.3394441966918
+57,8,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=2)]",273,273,273,343.964406645763
+58,8,7,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",305,305,305,339.6963556921379
+59,8,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",305,305,305,340.52068128097113
+60,8,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",304,304,304,330.7462546352977
+61,8,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=1)]",273,273,273,329.1234058064829
+62,2,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=2)]",226,226,226,323.05880619710024
+63,1,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",172,172,172,292.80901399442405
+64,1,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",172,172,172,294.98214154695813
+65,8,0,"[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_3', id=0)]",190,190,190,296.8604484663257
+66,7,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",258,258,258,288.5660204608328
+67,7,6,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",258,258,258,290.15329127945904
+68,7,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",247,247,247,274.70512613733115
+69,7,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",247,247,247,273.8342286440848
+70,3,14,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=1)]",172,172,172,277.06890876955276
+71,1,1,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]","[Machine(resource_group='Filters B', id=0)]",172,172,172,266.24430266131344
+72,1,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=3)]",157,157,157,265.22062953591023
+73,7,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",247,247,247,267.6246334515059
+74,7,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=5)]",237,237,237,267.28599991290196
+75,7,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",183,183,183,249.36285913651938
+76,2,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",214,214,214,228.46327279934343
+77,2,6,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",214,214,214,233.0926017612731
+78,2,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",204,204,204,226.61562708074194
+79,2,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",206,206,206,225.981000605923
+80,2,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",204,204,204,220.6989446597555
+81,2,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=4)]",170,170,170,218.42460994819768
+82,5,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=0)]",119,119,119,207.39334353845553
+83,3,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",148,148,148,187.19727932878774
+84,3,13,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",143,143,143,186.94787518365658
+85,1,0,"[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_3', id=0)]",22,22,22,189.8016750757304
+86,2,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",122,122,122,179.54040689157847
+87,3,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",129,129,129,179.75124551140544
+88,3,10,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",143,143,143,171.7786168341033
+89,3,11,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",131,131,131,174.35351690058036
+90,3,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",124,124,124,167.38634726311471
+91,3,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",126,126,126,176.39940890051687
+92,3,5,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",124,124,124,158.8565829438831
+93,3,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=0)]",30,30,30,159.350945175678
+94,3,3,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",129,129,129,152.04546250914305
+95,3,4,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=2)]",96,96,96,151.67002346000442
+96,3,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",0,0,0,121.27587611491938
+97,5,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",90,90,90,115.57165702443038
+98,5,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",90,90,90,122.43806602682818
+99,3,2,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=1)]",30,30,30,104.57115504885667
+100,5,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",90,90,90,104.92883015768139
+101,5,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=1)]",81,81,81,105.38398341078408
+102,5,0,"[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_5', id=0)]",0,0,0,91.94403683760436
+103,3,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=0)]",30,30,30,58.79685420630562

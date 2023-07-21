@@ -118,7 +118,7 @@ class Simulator:
             # Generator object that does a time-out for a time period equal to delay value
             yield self.env.timeout(delay)
 
-    def simulate(self, sim_time, random_seed, write=False, output_location="Results.csv"):
+    def simulate(self, sim_time=1000, random_seed=1, write=False, output_location="Results.csv"):
         """
         :param SIM_TIME: time allowed for running the discrete-event simulation (int)
         :param RANDOM_SEED: random seed when used in stochastic mode (int)

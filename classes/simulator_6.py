@@ -46,6 +46,9 @@ class Simulator:
                 if available_machines < need:
                     start_processing = False
 
+        # TODO: check if there is a compatibility check
+        # If there is a clash, set start_processing to False
+
         # If it is available start the request and processing
         if start_processing:
             if self.printing:

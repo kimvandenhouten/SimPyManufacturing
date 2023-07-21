@@ -26,9 +26,7 @@ earliest_start = cp_output.to_dict('records')
 # Read input instance
 my_productionplan = ProductionPlan(
     **json.load(open('factory_data/stochastic/json_instances/instance_' + instance_name + '.json')))
-my_productionplan.set_sequence(sequence=np.arange(size))
 my_productionplan.set_earliest_start_times(earliest_start)
-
 scenario_1 = my_productionplan.create_scenario(300)
 
 # Load simulator

@@ -13,7 +13,7 @@ from classes.distributions import NormalDistribution
 
 instance_name = 'instance_10_1_factory_1.pkl'
 production_plan = pd.read_pickle('factory_data/instances/' + instance_name)
-default_variance = 2
+default_variance = 10
 for i in range(len(production_plan.FACTORY.PRODUCTS)):
     activities = []
     for activity in production_plan.FACTORY.PRODUCTS[i].ACTIVITIES:

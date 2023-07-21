@@ -68,8 +68,7 @@ class Operator:
 
                 # Obtain information about resource needs and processing time
                 needs = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].NEEDS
-                proc_time = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].PROCESSING_TIME
-                proc_time = random.randint(*proc_time)
+                proc_time = max(self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].PROCESSING_TIME[0], 1)
 
                 if self.printing:
                     print(f'At time {current_time}: the next event is PRODUCT {product_ID} ACTIVITY {activity_ID}'
