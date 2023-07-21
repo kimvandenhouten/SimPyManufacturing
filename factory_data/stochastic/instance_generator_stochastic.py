@@ -23,10 +23,9 @@ for i in range(len(production_plan.FACTORY.PRODUCTS)):
                                   activity.NEEDS, distribution, activity.SEQUENCE_ID)
         activities.append(activity_stoch)
     production_plan.FACTORY.PRODUCTS[i].ACTIVITIES = activities
-
-scenario = Scenario(production_plan)
+    production_plan.list_products()
 
 file_name = f'factory_data/stochastic/instances/' + instance_name
 with open(file_name, 'wb') as file:
-    pickle.dump(scenario.PRODUCTION_PLAN, file)
+    pickle.dump(production_plan, file)
     print(f'Object successfully saved to "{file_name}"')

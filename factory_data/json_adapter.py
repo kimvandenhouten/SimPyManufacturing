@@ -11,7 +11,6 @@ if __name__ == '__main__':
                                   delimiter=";")
     recipes = pd.read_csv("recipes.csv", delimiter=";")
 
-    production = {'FACTORIES': []}
     factory = {
                 'NAME': factory_name,
                 'RESOURCE_NAMES': list(resource_groups.to_dict()['Resource_group'].values()),
@@ -116,6 +115,5 @@ if __name__ == '__main__':
         product['TEMPORAL_RELATIONS'] = temporal_relations
         factory['PRODUCTS'].append(product)
         product_id += 1
-    production['FACTORIES'].append(factory)
 
-    json.dump(production, open('data.json', 'w+'))
+    json.dump(factory, open('data.json', 'w+'))

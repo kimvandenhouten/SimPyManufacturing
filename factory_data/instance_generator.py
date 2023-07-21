@@ -10,7 +10,7 @@ import json
 
 #Load factory from new json file
 fp = open('./factory_data/data.json', 'r')
-factory = Factory(**json.load(fp)["FACTORIES"][0])
+factory = Factory(**json.load(fp))
 nr_products = len(factory.PRODUCTS)
 rowIDS = range(0, nr_products)
 months = range(1, 13)

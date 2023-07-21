@@ -1,4 +1,5 @@
 import copy
+import json
 import pandas as pd
 import numpy as np
 
@@ -28,16 +29,24 @@ class Activity:
         elif distribution is None:
             self.DISTRIBUTION = Distribution(self.PROCESSING_TIME[0])
         elif isinstance(distribution, dict):
-            self.DISTRIBUTION = get_distribution(distribution["TYPE"], distribution["ARGS"])
+            try:
+                args = copy.copy(distribution)
+                del args['TYPE']
+                self.DISTRIBUTION = get_distribution(distribution["TYPE"], args)
+            except:
+                self.DISTRIBUTION = get_distribution(distribution["TYPE"], distribution["ARGS"])
         else:
             return TypeError("Illegal distribution type: ", type(distribution))
 
 
 class Product:
-    def __init__(self, ID, NAME, ACTIVITIES=None, TEMPORAL_RELATIONS=None, DEADLINE=int()):
+    def __init__(self, ID, NAME, ACTIVITIES=None, TEMPORAL_RELATIONS=None, DEADLINE=int(), PREDECESSORS=None,
+                 SUCCESSORS=None):
         self.ID = ID
         self.NAME = NAME
         self.DEADLINE = DEADLINE
+        self.SUCCESSORS = SUCCESSORS
+        self.PREDECESSORS = PREDECESSORS
         self._set_activities(ACTIVITIES)
         self._set_temporal_relations(TEMPORAL_RELATIONS)
 
@@ -109,16 +118,15 @@ class Factory:
 
 
 class ProductionPlan:
-    def __init__(self, ID, SIZE, NAME, FACTORY, PRODUCT_IDS, DEADLINES):
+    def __init__(self, ID, SIZE, NAME, FACTORY, PRODUCT_IDS, DEADLINES, PRODUCTS=[], SEQUENCE=[], earliest_start=None):
         self.ID = ID
         self.SIZE = SIZE
         self.NAME = NAME
-        self.FACTORY = FACTORY
         self.PRODUCT_IDS = PRODUCT_IDS
         self.DEADLINES = DEADLINES
-        self.SEQUENCE = []
-        self.PRODUCTS = []
-        self.earliest_start = []
+        self.SEQUENCE = SEQUENCE
+        self.earliest_start = earliest_start
+        self._set_factory(FACTORY, PRODUCTS)
 
     def list_products(self):
         """
@@ -148,20 +156,68 @@ class ProductionPlan:
     def set_earliest_start_times(self, earliest_start):
         self.earliest_start = earliest_start
 
+    def _set_factory(self, FACTORY, PRODUCTS):
+        if isinstance(FACTORY, dict):
+            self.FACTORY = Factory(**FACTORY)
+        elif isinstance(FACTORY, Factory):
+            self.FACTORY = FACTORY
+        else:
+            raise TypeError("Invalid type of data provided needed: Product or dict provided:",
+                            type(FACTORY))
+
+        products = []
+        for product in PRODUCTS:
+            if isinstance(product, dict):
+                products.append(Product(**product))
+            elif isinstance(products, product):
+                products.append(product)
+            else:
+                raise TypeError("Invalid type of data provided needed: Product or dict provided:",
+                                type(product))
+
+        self.PRODUCTS = products
+
+    def to_json(self):
+        plan = copy.deepcopy(self)
+        temporal_relations = []
+
+        for i in range(len(plan.FACTORY.PRODUCTS)):
+            temporal_relations = list(map(lambda rel: {
+                "PREDECESSOR": rel[1],
+                "SUCCESSOR": rel[0],
+                "REL": plan.FACTORY.PRODUCTS[i].TEMPORAL_RELATIONS[rel]
+            }, plan.FACTORY.PRODUCTS[i].TEMPORAL_RELATIONS.keys()))
+            plan.FACTORY.PRODUCTS[i].TEMPORAL_RELATIONS = temporal_relations
+        plan.list_products()
+        return json.dumps(plan, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
+
+    def create_scenario(self, SEED=None):
+        plan = copy.deepcopy(self)
+        if (SEED != None):
+            np.random.seed(SEED)
+        for product in plan.FACTORY.PRODUCTS:
+            for activity in product.ACTIVITIES:
+                activity.sample_and_set_scenario()
+        plan.list_products()
+        return Scenario(plan, SEED)
+
 
 class Scenario:
     def __init__(self, PRODUCTION_PLAN, SEED=None):
-        self.PRODUCTION_PLAN = copy.deepcopy(PRODUCTION_PLAN)
+        self._set_production_plan(PRODUCTION_PLAN)
         self.SEED = SEED
-        self.create_scenario()
 
-    def create_scenario(self):
-        if (self.SEED!=None):
-            np.random.seed(self.SEED)
+    def to_json(self):
+        scenario = {'SEED': self.SEED, 'PRODUCTION_PLAN': json.loads(self.PRODUCTION_PLAN.to_json())}
+        return json.dumps(scenario, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
 
-        for product in self.PRODUCTION_PLAN.FACTORY.PRODUCTS:
-            for activity in product.ACTIVITIES:
-                activity.sample_and_set_scenario()
-                activity.set_distribution(None)
-        self.PRODUCTION_PLAN.list_products()
-        return self
+    def _set_production_plan(self, PRODUCTION_PLAN):
+        if isinstance(PRODUCTION_PLAN, dict):
+            self.PRODUCTION_PLAN = ProductionPlan(**PRODUCTION_PLAN)
+        elif isinstance(PRODUCTION_PLAN, ProductionPlan):
+            self.PRODUCTION_PLAN = PRODUCTION_PLAN
+        else:
+            raise TypeError("Invalid type of data provided needed: Product or dict provided:",
+                            type(PRODUCTION_PLAN))
