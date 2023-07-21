@@ -14,7 +14,7 @@ class Simulator:
         self.capacity = plan.FACTORY.CAPACITY
         self.resources = []
         self.env = simpy.Environment()
-        self.resource_usage = []
+        self.resource_usage = {}
         self.printing = printing
         self.nr_clashes = 0
         self.operator = operator
@@ -32,7 +32,7 @@ class Simulator:
         request_time = self.env.now
 
         if self.printing:
-            print(f'At time {self.env.now} we have available {self.factory.items}')
+            print(f'At time {self.env.now}: the available resources are {self.factory.items}')
 
         # Check all machines are available
         start_processing = True
@@ -41,16 +41,16 @@ class Simulator:
                 resource_name = self.resource_names[r]
                 available_machines = [i.resource_group for i in self.factory.items].count(resource_name)
                 if self.printing:
-                    print(f'We need {need} {resource_name} for product {product_ID}, activity {activity_ID} and currently '
+                    print(f'At time {self.env.now}: we need {need} {resource_name} for product {product_ID}, activity {activity_ID} and currently '
                           f'in the factory we have {available_machines} available')
                 if available_machines < need:
                     start_processing = False
 
-        # If it is available start the request and processing
+        # If it is avaiglable start the request and processing
         if start_processing:
             self.signal_to_operator = False
             if self.printing:
-                print(f'\nProduct {product_ID}, activity {activity_ID} requested resources: {needs} at time: {request_time} \n')
+                print(f'At time {self.env.now}: PRODUCT {product_ID} ACTIVITY {activity_ID} requested resources: {needs}')
 
             # SimPy request
             resources = []
@@ -64,7 +64,7 @@ class Simulator:
             retrieve_time = self.env.now
 
             if self.printing:
-                print(f'Product {product_ID}, activity {activity_ID} retrieved resources: {needs} at time: {retrieve_time} \n')
+                print(f'At time {self.env.now}: PRODUCT {product_ID} ACTIVITY {activity_ID} retrieved resources: {needs}')
 
             # Trace back the moment in time that the activity starts processing
             start_time = self.env.now
@@ -81,33 +81,26 @@ class Simulator:
                 yield self.factory.put(resource)
 
             if self.printing:
-                print(f'Product {product_ID}, activity {activity_ID} released resources: {needs} at time: {end_time} \n')
+                print(f'At time {self.env.now}: PRODUCT {product_ID} ACTIVITY {activity_ID} released resources: {needs}')
 
-            # Store relevant information
-            self.resource_usage.append({"Product": product_ID,
+            self.resource_usage[(product_ID, activity_ID)] = \
+                                        {"Product": product_ID,
                                         "Activity": activity_ID,
                                         "Needs": needs,
                                         "Resources": resources,
                                         "Request": request_time,
                                         "Retrieve": retrieve_time,
                                         "Start": start_time,
-                                        "Finish": end_time})
+                                        "Finish": end_time}
 
         # If it is not available then we don't process this activity, so we avoid that there starts a queue in the
         # factory
         else:
-            print(f"Since there are no resources available, PRODUCT {product_ID} ACTIVITY {activity_ID} will not be processed")
+            if self.printing:
+                print(f"At time {self.env.now}: there are no resources available for PRODUCT {product_ID} ACTIVITY {activity_ID}, so it cannot start")
             self.operator.signal_failed_activity(product_ID=product_ID, activity_ID=activity_ID,
                                                  current_time=self.env.now)
             self.nr_clashes += 1
-            self.resource_usage.append({"Product": product_ID,
-                                        "Activity": activity_ID,
-                                        "Needs": needs,
-                                        "Resources": "NOT PROCESSED DUE TO CLASH",
-                                        "Request": float("inf"),
-                                        "Retrieve": float("inf"),
-                                        "Start": float("inf"),
-                                        "Finish": float("inf")})
 
     def activity_generator(self):
         """Generate activities that arrive at the factory based on earliest start times."""
@@ -116,18 +109,14 @@ class Simulator:
 
         # Ask operator about next activity
         while not finish:
-            delay, activity_ID, product_ID, proc_time, needs, finish = self.operator.send_next_activity(current_time=self.env.now)
+            send_activity, delay, activity_ID, product_ID, proc_time, needs, finish = \
+                self.operator.send_next_activity(current_time=self.env.now)
 
-            # delay refers to the different between the current time and the time that the next activity should start
-            print(f'current time is {self.env.now} and from now to the next activity event is {delay}')
+            if send_activity:
+                self.env.process(self.activity_processing(activity_ID, product_ID, proc_time, needs))
 
             # Generator object that does a time-out for a time period equal to delay value
             yield self.env.timeout(delay)
-
-            # Now the activity SimPy process can be started
-            self.env.process(self.activity_processing(activity_ID, product_ID, proc_time, needs))
-
-
 
     def simulate(self, sim_time, random_seed, write=False, output_location="Results.csv"):
         """
@@ -137,7 +126,6 @@ class Simulator:
         :param output_location: give location for output file (str)
         :return:
         """
-
         if self.printing:
             print(f'START FACTORY SIMULATION FOR SEED {random_seed}\n')
 
@@ -147,8 +135,15 @@ class Simulator:
         # Reset environment
         self.env = simpy.Environment()
 
-        # Create a list to store information about resource usage (gannt information)
-        self.resource_usage = []
+        for act in self.plan.earliest_start:
+            self.resource_usage[(act["Product_ID"], act["Activity_ID"])] = {"Product": act["Product_ID"],
+                                        "Activity": act["Activity_ID"],
+                                        "Needs": float("inf"),
+                                        "Resources": "NOT PROCESSED DUE TO CLASH",
+                                        "Request": float("inf"),
+                                        "Retrieve": float("inf"),
+                                        "Start": float("inf"),
+                                        "Finish": float("inf")}
 
         # Create the factory that is a SimPy FilterStore object
         self.factory = simpy.FilterStore(self.env, capacity=sum(self.capacity))
@@ -167,8 +162,15 @@ class Simulator:
         self.env.run(until=sim_time)
 
         # Process results
-        self.resource_usage = pd.DataFrame(self.resource_usage)
+        resource_usage_df = []
+        for i in self.resource_usage:
+            resource_usage_df.append(self.resource_usage[i])
+
+        self.resource_usage = pd.DataFrame(resource_usage_df)
         print(self.resource_usage)
+
+        if self.printing:
+            print(f' \nSIMULATION OUTPUT\n {self.resource_usage}')
         finish_times = self.resource_usage["Finish"].tolist()
         finish_times = [i for i in finish_times if i != float("inf")]
         makespan = max(finish_times)

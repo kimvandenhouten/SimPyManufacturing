@@ -35,7 +35,7 @@ scenario_1 = my_productionplan.create_scenario()
 from classes.simulator_6 import Simulator
 
 my_simulator = Simulator(plan=scenario_1.PRODUCTION_PLAN,
-                         printing=True)  # Set printing to True if you want to print all events
+                         printing=False)  # Set printing to True if you want to print all events
 
 # Run simulation
 makespan, lateness, nr_unfinished = my_simulator.simulate(SIM_TIME=1000, RANDOM_SEED=1, write=True,
