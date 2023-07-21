@@ -2,8 +2,9 @@ import numpy as np
 
 
 class Distribution:
-    def __init__(self, PROCESSING_TIME):
-        self.DEFAULT = PROCESSING_TIME
+    def __init__(self, DEFAULT):
+        self.TYPE = "DEFAULT"
+        self.DEFAULT = DEFAULT
 
     def sample(self) -> float:
         return self.DEFAULT
@@ -11,6 +12,7 @@ class Distribution:
 
 class NormalDistribution(Distribution):
     def __init__(self, MEAN, VARIANCE):
+        self.TYPE = "NORMAL"
         self.MEAN = MEAN
         self.VARIANCE = VARIANCE
 
@@ -23,6 +25,7 @@ class PoissonDistribution(Distribution):
         '''
         ALPHA: Expected number of events occurring in a fixed-time interval, must be >= 0.
         '''
+        self.TYPE = "POISSON"
         self.ALPHA = ALPHA
 
     def sample(self):
@@ -34,6 +37,7 @@ class ExponentialDistribution(Distribution):
         '''
         BETA: SCALE parameter which is the inverse of the rate parameter (lambda)
         '''
+        self.TYPE = "EXPONENTIAL"
         self.BETA = BETA
 
     def sample(self):
@@ -42,6 +46,7 @@ class ExponentialDistribution(Distribution):
 
 class LogNormalDistribution(Distribution):
     def __init__(self, MEAN, VARIANCE):
+        self.TYPE = "LOGNORMAL"
         self.MEAN = MEAN
         self.VARIANCE = VARIANCE
 
@@ -56,4 +61,6 @@ def get_distribution(dist_type, arg_dict):
         return ExponentialDistribution(**arg_dict)
     elif dist_type == "POISSON":
         return PoissonDistribution(**arg_dict)
+    elif dist_type == "LOGNORMAL":
+        return LogNormalDistribution(**arg_dict)
     raise TypeError("Illegal type for distribution: ", type)

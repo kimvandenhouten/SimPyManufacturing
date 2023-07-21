@@ -12,7 +12,7 @@ import json
 
 # Set up a factory
 fp = open('factory_data/stochastic/data_stochastic.json', 'r')
-factory = Factory(**json.load(fp)["FACTORIES"][0])
+factory = Factory(**json.load(fp))
 
 # Set up a production plan for this factory
 my_productionplan = ProductionPlan(ID=0, SIZE=2, NAME="ProductionPlanJanuary", FACTORY=factory,
@@ -30,16 +30,15 @@ earliest_start = [{"Product_ID": 0, "Activity_ID": 0, "Earliest_start": 0},
 my_productionplan.set_earliest_start_times(earliest_start)
 
 # create scenario and store
-scenario_1 = Scenario(my_productionplan)
-scenario_1_json_str = jsonpickle.encode(scenario_1)
+scenario_1 = my_productionplan.create_scenario(0)
+
 with open('simulators/simulator6/data/' + factory.NAME + '_scenario_1.json', 'w+') as f:
-    f.write(scenario_1_json_str)
+    f.write(scenario_1.to_json())
     f.close()
 
 # re load scenario and use
 with open('simulators/simulator6/data/' + factory.NAME + '_scenario_1.json', 'r') as f:
-    reloaded_str = f.read()
-    scenario_1 = jsonpickle.decode(reloaded_str)
+    scenario_1 = Scenario(**json.load(f))
 
 # Import the new simulator
 from classes.simulator_6 import Simulator
