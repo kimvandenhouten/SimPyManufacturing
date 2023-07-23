@@ -9,9 +9,9 @@ import numpy as np
 class Simulator:
     def __init__(self, plan, operator, printing=False):
         self.plan = plan
-        self.resource_names = plan.FACTORY.RESOURCE_NAMES
-        self.nr_resources = len(self.resource_names)
-        self.capacity = plan.FACTORY.CAPACITY
+        self.resource_name = plan.factory.resource_name
+        self.nr_resources = len(self.resource_name)
+        self.capacity = plan.factory.capacity
         self.resources = []
         self.env = simpy.Environment()
         self.resource_usage = {}
@@ -19,10 +19,10 @@ class Simulator:
         self.nr_clashes = 0
         self.operator = operator
 
-    def activity_processing(self, activity_ID, product_ID, proc_time, needs):
+    def activity_processing(self, activity_id, product_id, proc_time, needs):
         """
-        :param activity_ID: ID of the activity (int)
-        :param product_ID: ID of the product (int)
+        :param activity_id: id of the activity (int)
+        :param product_id: id of the product (int)
         :param proc_time: processing time of this activity (int)
         :param resources_required: list with SimPy processes for resource requests (list)
         :param resources_names: list with the corresponding resource names (list)
@@ -38,10 +38,10 @@ class Simulator:
         start_processing = True
         for r, need in enumerate(needs):
             if need > 0:
-                resource_name = self.resource_names[r]
+                resource_name = self.resource_name[r]
                 available_machines = [i.resource_group for i in self.factory.items].count(resource_name)
                 if self.printing:
-                    print(f'At time {self.env.now}: we need {need} {resource_name} for product {product_ID}, activity {activity_ID} and currently '
+                    print(f'At time {self.env.now}: we need {need} {resource_name} for product {product_id}, activity {activity_id} and currently '
                           f'in the factory we have {available_machines} available')
                 if available_machines < need:
                     start_processing = False
@@ -50,13 +50,13 @@ class Simulator:
         if start_processing:
             self.signal_to_operator = False
             if self.printing:
-                print(f'At time {self.env.now}: PRODUCT {product_ID} ACTIVITY {activity_ID} requested resources: {needs}')
+                print(f'At time {self.env.now}: product {product_id} ACTIVITY {activity_id} requested resources: {needs}')
 
             # SimPy request
             resources = []
             for r, need in enumerate(needs):
                 if need > 0:
-                    resource_name = self.resource_names[r]
+                    resource_name = self.resource_name[r]
                     for _ in range(0, need):
                         resource = yield self.factory.get(lambda resource: resource.resource_group == resource_name)
                         resources.append(resource)
@@ -64,7 +64,7 @@ class Simulator:
             retrieve_time = self.env.now
 
             if self.printing:
-                print(f'At time {self.env.now}: PRODUCT {product_ID} ACTIVITY {activity_ID} retrieved resources: {needs}')
+                print(f'At time {self.env.now}: product {product_id} ACTIVITY {activity_id} retrieved resources: {needs}')
 
             # Trace back the moment in time that the activity starts processing
             start_time = self.env.now
@@ -81,13 +81,13 @@ class Simulator:
                 yield self.factory.put(resource)
 
             if self.printing:
-                print(f'At time {self.env.now}: PRODUCT {product_ID} ACTIVITY {activity_ID} released resources: {needs}')
+                print(f'At time {self.env.now}: product {product_id} ACTIVITY {activity_id} released resources: {needs}')
 
-            self.resource_usage[(product_ID, activity_ID)] = \
-                                        {"Product": product_ID,
-                                        "Activity": activity_ID,
+            self.resource_usage[(product_id, activity_id)] = \
+                                        {"Product": product_id,
+                                        "Activity": activity_id,
                                         "Needs": needs,
-                                        "Resources": resources,
+                                        "resources": resources,
                                         "Request": request_time,
                                         "Retrieve": retrieve_time,
                                         "Start": start_time,
@@ -97,8 +97,8 @@ class Simulator:
         # factory
         else:
             if self.printing:
-                print(f"At time {self.env.now}: there are no resources available for PRODUCT {product_ID} ACTIVITY {activity_ID}, so it cannot start")
-            self.operator.signal_failed_activity(product_ID=product_ID, activity_ID=activity_ID,
+                print(f"At time {self.env.now}: there are no resources available for product {product_id} ACTIVITY {activity_id}, so it cannot start")
+            self.operator.signal_failed_activity(product_id=product_id, activity_id=activity_id,
                                                  current_time=self.env.now)
             self.nr_clashes += 1
 
@@ -109,11 +109,11 @@ class Simulator:
 
         # Ask operator about next activity
         while not finish:
-            send_activity, delay, activity_ID, product_ID, proc_time, needs, finish = \
+            send_activity, delay, activity_id, product_id, proc_time, needs, finish = \
                 self.operator.send_next_activity(current_time=self.env.now)
 
             if send_activity:
-                self.env.process(self.activity_processing(activity_ID, product_ID, proc_time, needs))
+                self.env.process(self.activity_processing(activity_id, product_id, proc_time, needs))
 
             # Generator object that does a time-out for a time period equal to delay value
             yield self.env.timeout(delay)
@@ -121,13 +121,13 @@ class Simulator:
     def simulate(self, sim_time, random_seed, write=False, output_location="Results.csv"):
         """
         :param SIM_TIME: time allowed for running the discrete-event simulation (int)
-        :param RANDOM_SEED: random seed when used in stochastic mode (int)
+        :param random_seed: random seed when used in stochastic mode (int)
         :param write: set to true if you want to write output to a csv file (boolean)
         :param output_location: give location for output file (str)
         :return:
         """
         if self.printing:
-            print(f'START FACTORY SIMULATION FOR SEED {random_seed}\n')
+            print(f'START factory SIMULATION FOR seed {random_seed}\n')
 
         # Set random seed
         random.seed(random_seed)
@@ -136,10 +136,10 @@ class Simulator:
         self.env = simpy.Environment()
 
         for act in self.plan.earliest_start:
-            self.resource_usage[(act["Product_ID"], act["Activity_ID"])] = {"Product": act["Product_ID"],
-                                        "Activity": act["Activity_ID"],
+            self.resource_usage[(act["product_id"], act["activity_id"])] = {"Product": act["product_id"],
+                                        "Activity": act["activity_id"],
                                         "Needs": float("inf"),
-                                        "Resources": "NOT PROCESSED DUE TO CLASH",
+                                        "resources": "NOT PROCESSED DUE TO CLASH",
                                         "Request": float("inf"),
                                         "Retrieve": float("inf"),
                                         "Start": float("inf"),
@@ -153,7 +153,7 @@ class Simulator:
         items = []
         for r in range(0, self.nr_resources):
             for j in range(0, self.capacity[r]):
-                resource = Resource(self.resource_names[r], j)
+                resource = Resource(self.resource_name[r], j)
                 items.append(copy.copy(resource))
         self.factory.items = items
 
@@ -177,18 +177,18 @@ class Simulator:
         lateness = 0
 
         nr_unfinished_products = 0
-        for p in self.plan.SEQUENCE:
+        for p in self.plan.sequence:
             schedule = self.resource_usage[self.resource_usage["Product"] == p]
             finish = max(schedule["Finish"])
             if finish == float("inf"):
                 nr_unfinished_products += 1
                 if self.printing:
-                    print(f'Product {p} did not finish, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
+                    print(f'Product {p} did not finish, while the dealine was {self.plan.products[p].dealine}.')
 
             else:
-                lateness += max(0, finish - self.plan.PRODUCTS[p].DEADLINE)
+                lateness += max(0, finish - self.plan.products[p].dealine)
                 if self.printing:
-                    print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
+                    print(f'Product {p} finished at time {finish}, while the dealine was {self.plan.products[p].dealine}.')
 
         if self.printing:
             print(f"The makespan corresponding to this schedule is {makespan}")

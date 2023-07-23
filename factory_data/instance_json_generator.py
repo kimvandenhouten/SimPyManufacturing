@@ -23,7 +23,7 @@ def produce_json_data(source_path, output_path):
 
 
 if __name__ == '__main__':
-    base_path = 'factory_data/instances/'
+    base_path = 'factory_data/instances_new/'
     output_path = f'factory_data/json_instances/'
 
     source_instances = os.listdir(base_path)

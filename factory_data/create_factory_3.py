@@ -5,8 +5,8 @@ import pickle
 # Initialize factory
 factory_name = "factory_3"
 resource_groups = pd.read_csv("factory_data/resource_groups_factory_3.csv", delimiter=";")
-factory = Factory(NAME=factory_name, RESOURCE_NAMES=resource_groups["Resource_group"].tolist(),
-                  CAPACITY=resource_groups["Capacity"].tolist())
+factory = Factory(name=factory_name, resource_name=resource_groups["Resource_group"].tolist(),
+                  capacity=resource_groups["capacity"].tolist())
 
 
 # TO DO: add a product to the factory, using the recipes table
@@ -21,7 +21,7 @@ for index, row in unique_products.iterrows():
     # Select recipe for this product
     recipe = recipes[recipes["Enzyme name"] == enzyme_name]
     recipe = recipe[recipe["Fermenter"] == fermenter]
-    product = Product(ID=product_id, NAME=f'{enzyme_name}_{fermenter}')
+    product = Product(id=product_id, name=f'{enzyme_name}_{fermenter}')
 
     recipe["Claim time"] = round(recipe["Claim time"]/2)
     recipe["Release time"] = round(recipe["Release time"]/2)
@@ -45,7 +45,7 @@ for index, row in unique_products.iterrows():
     start_fermentation = start_claim[0]
     task_dur_ferm = int(durations[0])
     task_id_ferm = task_id
-    activity = Activity(ID=task_id, PRODUCT=f'{enzyme_name}_{fermenter}', PRODUCT_ID="0", PROCESSING_TIME=[task_dur_ferm, task_dur_ferm], NEEDS=resource_use)
+    activity = Activity(id=task_id, product=f'{enzyme_name}_{fermenter}', product_id="0", processing_time=[task_dur_ferm, task_dur_ferm], needs=resource_use)
     product.add_activity(activity)
     task_id += 1
 
@@ -75,14 +75,14 @@ for index, row in unique_products.iterrows():
         duration = round(release - claim)
         print(duration)
         temp_rel = claim - start_fermentation
-        activity = Activity(ID=task_id, PRODUCT=f'{enzyme_name}_{fermenter}', PRODUCT_ID="0",
-                            PROCESSING_TIME=[duration, duration], NEEDS=resource_use)
+        activity = Activity(id=task_id, product=f'{enzyme_name}_{fermenter}', product_id="0",
+                            processing_time=[duration, duration], needs=resource_use)
         product.add_activity(activity)
         temporal_relations[(task_id_ferm, task_id)] = round(temp_rel)
         task_id += 1
 
     print(temporal_relations)
-    product.set_temporal_relations(TEMPORAL_RELATIONS=temporal_relations)
+    product.set_temporal_relations(temporal_relations=temporal_relations)
     factory.add_product(product)
     product_id += 1
 

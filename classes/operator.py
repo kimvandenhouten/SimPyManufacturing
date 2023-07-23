@@ -11,26 +11,26 @@ class Operator:
         self.printing = printing
         self.policy_type = policy_type
 
-    def signal_failed_activity(self, product_ID, activity_ID, current_time):
+    def signal_failed_activity(self, product_id, activity_id, current_time):
         """
         Process signal about a failed activity
         """
         if self.printing:
-            print(f'At time {current_time}: the operator receives the signal that PRODUCT {product_ID} ACTIVITY '
-                  f'{activity_ID} got cancelled, so we apply policy {self.policy_type}')
+            print(f'At time {current_time}: the operator receives the signal that product {product_id} ACTIVITY '
+                  f'{activity_id} got cancelled, so we apply policy {self.policy_type}')
             print(f'At time {current_time}: the current plan is {self.plan.earliest_start}')
 
         if self.policy_type == 1:
-            # Remove activities from plan that are from the same product_ID as the cancelled activity
+            # Remove activities from plan that are from the same product_id as the cancelled activity
             if self.printing:
-                print(f'At time {current_time}: the repair policy removes all activities from product {product_ID} '
+                print(f'At time {current_time}: the repair policy removes all activities from product {product_id} '
                       f'from the plan')
             for i, act in enumerate(self.plan.earliest_start):
-                if act['Product_ID'] == product_ID:
+                if act['product_id'] == product_id:
                     del self.plan.earliest_start[i]
 
         elif self.policy_type == 2:
-            self.plan.earliest_start.append({'Product_ID': product_ID, "Activity_ID": activity_ID, "Earliest_start": current_time + 1})
+            self.plan.earliest_start.append({'product_id': product_id, "activity_id": activity_id, "earliest_start": current_time + 1})
 
         if self.printing:
             print(f'At time {current_time}: the updated plan is {self.plan.earliest_start}')
@@ -47,32 +47,32 @@ class Operator:
         if len(self.plan.earliest_start) == 0:
             finish, send_activity = True, False
             delay = 0
-            activity_ID, product_ID, proc_time, needs = None, None, None, None
+            activity_id, product_id, proc_time, needs = None, None, None, None
 
         else:
             # Obtain the start time of the next activity according to the plan
             earliest_start_times = []
             for i, dict in enumerate(self.plan.earliest_start):
-                earliest_start_times.append(dict["Earliest_start"])
+                earliest_start_times.append(dict["earliest_start"])
             earliest_start_times_argsort = np.argsort(earliest_start_times)
 
             # Compute the start time of the next activity
             i = earliest_start_times_argsort[0]
-            earliest_start = self.plan.earliest_start[i]["Earliest_start"]
+            earliest_start = self.plan.earliest_start[i]["earliest_start"]
 
             # Check if this activity can start now
             if earliest_start == current_time:
                 send_activity = True
-                product_ID = self.plan.earliest_start[i]["Product_ID"]
-                activity_ID = self.plan.earliest_start[i]["Activity_ID"]
+                product_id = self.plan.earliest_start[i]["product_id"]
+                activity_id = self.plan.earliest_start[i]["activity_id"]
 
                 # Obtain information about resource needs and processing time
-                needs = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].NEEDS
-                proc_time = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].PROCESSING_TIME
+                needs = self.plan.products[product_id].activities[activity_id].needs
+                proc_time = self.plan.products[product_id].activities[activity_id].processing_time
                 proc_time = random.randint(*proc_time)
 
                 if self.printing:
-                    print(f'At time {current_time}: the next event is PRODUCT {product_ID} ACTIVITY {activity_ID}'
+                    print(f'At time {current_time}: the next event is product {product_id} ACTIVITY {activity_id}'
                           f' and should start now')
 
                 # Remove this activity from plan
@@ -89,6 +89,6 @@ class Operator:
             else:
                 send_activity = False
                 delay = 1
-                activity_ID, product_ID, proc_time, needs = None, None, None, None
+                activity_id, product_id, proc_time, needs = None, None, None, None
 
-        return send_activity, delay, activity_ID, product_ID, proc_time, needs, finish
+        return send_activity, delay, activity_id, product_id, proc_time, needs, finish

@@ -2,7 +2,7 @@
 # the start times for all activities. Each start time corresponds to the time in the
 # system that this activity requests the needed resources.
 
-from classes.classes import Factory
+from classes.classes import factory
 from classes.classes import Product
 from classes.classes import Activity
 import pandas as pd
@@ -10,35 +10,35 @@ from classes.classes import ProductionPlan
 from classes.simulator_7 import Simulator
 from classes.operator import Operator
 # Set up a factory
-my_factory = Factory(NAME="MyFactory", RESOURCE_NAMES=["Filter", "Mixer", "Dryer"], CAPACITY=[1, 1, 1])
-product = Product(NAME="Enzyme_1", ID=0)
-activity0 = Activity(ID=0, PROCESSING_TIME=[4, 4], PRODUCT="Enzyme_1",
-                     PRODUCT_ID="0", NEEDS=[1, 0, 1])
-activity1 = Activity(ID=1, PROCESSING_TIME=[5, 5], PRODUCT="Enzyme_1",
-                     PRODUCT_ID="0", NEEDS=[0, 1, 0])
+my_factory = Factory(name="Myfactory", resource_name=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
+product = Product(name="Enzyme_1", id=0)
+activity0 = Activity(id=0, processing_time=[4, 4], product="Enzyme_1",
+                     product_id="0", needs=[1, 0, 1])
+activity1 = Activity(id=1, processing_time=[5, 5], product="Enzyme_1",
+                     product_id="0", needs=[0, 1, 0])
 product.add_activity(activity=activity0)
 product.add_activity(activity=activity1)
-product.set_temporal_relations(TEMPORAL_RELATIONS={(0, 1): 4})
+product.set_temporal_relations(temporal_relations={(0, 1): 4})
 my_factory.add_product(product=product)
-activity0 = Activity(ID=0, PROCESSING_TIME=[3, 3], PRODUCT="Enzyme_2",
-                     PRODUCT_ID="1", NEEDS=[1, 0, 1])
-activity1 = Activity(ID=1, PROCESSING_TIME=[6, 6], PRODUCT="Enzyme_2",
-                     PRODUCT_ID="1", NEEDS=[0, 1, 1])
-product = Product(NAME="Enzyme_2", ID=1)
+activity0 = Activity(id=0, processing_time=[3, 3], product="Enzyme_2",
+                     product_id="1", needs=[1, 0, 1])
+activity1 = Activity(id=1, processing_time=[6, 6], product="Enzyme_2",
+                     product_id="1", needs=[0, 1, 1])
+product = Product(name="Enzyme_2", id=1)
 product.add_activity(activity=activity0)
 product.add_activity(activity=activity1)
-product.set_temporal_relations(TEMPORAL_RELATIONS={(0, 1): 1})
+product.set_temporal_relations(temporal_relations={(0, 1): 1})
 my_factory.add_product(product=product)
 # Set up a production plan for this factory
-my_productionplan = ProductionPlan(ID=0, SIZE=2, NAME="ProductionPlanJanuary", FACTORY=my_factory,
-                                PRODUCT_IDS=[0, 1], DEADLINES=[8, 20])
+my_productionplan = ProductionPlan(id=0, size=2, name="ProductionPlanJanuary", factory=my_factory,
+                                product_ids=[0, 1], dealines=[8, 20])
 my_productionplan.list_products()
 
 # Define partial schedule that includes earliest start times
-earliest_start = [{"Product_ID": 0, "Activity_ID": 0, "Earliest_start": 0},
-                  {"Product_ID": 0, "Activity_ID": 1, "Earliest_start": 1},
-                  {"Product_ID": 1, "Activity_ID": 0, "Earliest_start": 2},
-                  {"Product_ID": 1, "Activity_ID": 1, "Earliest_start": 4}]
+earliest_start = [{"product_id": 0, "activity_id": 0, "earliest_start": 0},
+                  {"product_id": 0, "activity_id": 1, "earliest_start": 1},
+                  {"product_id": 1, "activity_id": 0, "earliest_start": 2},
+                  {"product_id": 1, "activity_id": 1, "earliest_start": 4}]
 my_productionplan.set_earliest_start_times(earliest_start)
 
 # Here you can choose policy 1 or policy 2

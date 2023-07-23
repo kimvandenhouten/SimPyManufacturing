@@ -32,10 +32,10 @@ for setting in settings_list:
     data_x = data_x[1:-1].split(", ")
     data_x = [int(i) for i in data_x]
 
-    plan = pd.read_pickle(f"factory_data/instances/instance_{setting.instance}.pkl")
+    plan = pd.read_pickle(f"factory_data/instances_new/instance_{setting.instance}.pkl")
     sequence = data_x
-    for SEED in range(1, 2):
+    for seed in range(1, 2):
         plan.set_sequence(sequence)
         simulator = Simulator(plan, printing=True)
-        makespan, tardiness = simulator.simulate(SIM_TIME=300000, RANDOM_SEED=SEED, write=True,
+        makespan, tardiness = simulator.simulate(SIM_TIME=300000, random_seed=seed, write=True,
                                                  output_location=f"results/resource_usage/{file_name}.csv")

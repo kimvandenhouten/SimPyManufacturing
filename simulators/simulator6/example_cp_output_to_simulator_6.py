@@ -34,11 +34,11 @@ scenario_1 = my_productionplan.create_scenario(300)
 # Load simulator
 from classes.simulator_6 import Simulator
 
-my_simulator = Simulator(plan=scenario_1.PRODUCTION_PLAN,
+my_simulator = Simulator(plan=scenario_1.production_plan,
                          printing=False)  # Set printing to True if you want to print all events
 
 # Run simulation
-makespan, lateness, nr_unfinished = my_simulator.simulate(SIM_TIME=1000, RANDOM_SEED=300, write=True,
+makespan, lateness, nr_unfinished = my_simulator.simulate(SIM_TIME=1000, random_seed=300, write=True,
                                                           output_location=f"simulators/simulator6/data/example_cp_output_to_simulator.csv")
 print(f'According to the simulation, the makespan is {makespan} and the lateness is {lateness}')
 print(f'The number of unfinished products {nr_unfinished}')

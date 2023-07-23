@@ -178,7 +178,7 @@ def iterated_greedy(n, f_eval, d=7, seed=1, time_limit=200, output_file="results
         results = pd.DataFrame()
         results['Time'] = runtime
         results['Fitness'] = fitnesses
-        results['Sequence'] = sequences
+        results['sequence'] = sequences
         results['Best_sequence'] = best_sequences
         results['Best_fitness'] = best_fitnesses
         results["Number of evaluations"] = count_evaluations
