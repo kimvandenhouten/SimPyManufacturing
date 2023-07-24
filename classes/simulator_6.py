@@ -73,11 +73,17 @@ class Simulator:
             # Trace back the moment in time that the activity starts processing
             start_time = self.env.now
 
+            # TODO:
+            # activity.start = start_time
+
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
 
             # Trace back the moment in time that the activity ends processing
             end_time = self.env.now
+
+            # TODO:
+            # activity.end = end_time
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object

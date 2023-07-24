@@ -135,7 +135,7 @@ class ProductionPlan:
         """
         self.PRODUCTS = []
         for i in range(0, len(self.PRODUCT_IDS)):
-            product = copy.copy(self.FACTORY.PRODUCTS[self.PRODUCT_IDS[i]])
+            product = copy.deepcopy(self.FACTORY.PRODUCTS[self.PRODUCT_IDS[i]])
             product.DEADLINE = self.DEADLINES[i]
             self.PRODUCTS.append(product)
         self.SIZE = len(self.PRODUCT_IDS)
@@ -196,10 +196,9 @@ class ProductionPlan:
         plan = copy.deepcopy(self)
         if (SEED != None):
             np.random.seed(SEED)
-        for product in plan.FACTORY.PRODUCTS:
+        for product in plan.PRODUCTS:
             for activity in product.ACTIVITIES:
                 activity.sample_and_set_scenario()
-        plan.list_products()
         return Scenario(plan, SEED)
 
 
