@@ -2,6 +2,7 @@ import random
 import numpy as np
 import copy
 
+
 class Operator:
     def __init__(self, plan, name="simple_operator", policy_type=1, printing=True):
         self.current_time = 0
@@ -69,6 +70,7 @@ class Operator:
                 # Obtain information about resource needs and processing time
                 needs = self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].NEEDS
                 proc_time = max(self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].PROCESSING_TIME[0], 1)
+                proc_time = np.ceil(proc_time)
 
                 if self.printing:
                     print(f'At time {current_time}: the next event is PRODUCT {product_ID} ACTIVITY {activity_ID}'

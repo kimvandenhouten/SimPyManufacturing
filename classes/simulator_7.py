@@ -167,7 +167,6 @@ class Simulator:
             resource_usage_df.append(self.resource_usage[i])
 
         self.resource_usage = pd.DataFrame(resource_usage_df)
-        print(self.resource_usage)
 
         if self.printing:
             print(f' \nSIMULATION OUTPUT\n {self.resource_usage}')

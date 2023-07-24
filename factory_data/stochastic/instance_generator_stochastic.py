@@ -4,20 +4,22 @@ For running this script set working directory to ~/SimPyManufacturing
 import os
 
 import pandas as pd
-import random
+import numpy as np
 from classes.classes import ProductionPlan, Factory, Scenario, Activity
 import pickle
 import json
 
-from classes.distributions import NormalDistribution
+from classes.distributions import NormalDistribution, ExponentialDistribution
 
 instance_name = 'instance_10_1_factory_1.pkl'
 production_plan = pd.read_pickle('factory_data/instances/' + instance_name)
-default_variance = 10
+
 for i in range(len(production_plan.FACTORY.PRODUCTS)):
     activities = []
     for activity in production_plan.FACTORY.PRODUCTS[i].ACTIVITIES:
         processing_time = activity.PROCESSING_TIME[0]
+        default_variance = np.sqrt(processing_time)
+        print(default_variance)
         distribution = NormalDistribution(processing_time, default_variance)
         activity_stoch = Activity(activity.ID, activity.PROCESSING_TIME, activity.PRODUCT, activity.PRODUCT_ID,
                                   activity.NEEDS, distribution, activity.SEQUENCE_ID)
