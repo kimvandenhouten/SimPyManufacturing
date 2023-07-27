@@ -95,7 +95,7 @@ class RCPSP:
     def solve(self, time_limit=None):
         print("Makes solver")
         solver = 'gurobi'
-        opt = Solverfactory(solver)
+        opt = SolverFactory(solver)
         if time_limit is not None:
             opt.options['Time_limit'] = time_limit
         print("Start solving")
