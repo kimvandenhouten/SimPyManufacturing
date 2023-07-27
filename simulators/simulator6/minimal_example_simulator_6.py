@@ -3,7 +3,7 @@
 # system that this activity requests the needed resources.
 
 import numpy as np
-from classes.classes import Factory, Constraint
+from classes.classes import Factory, CompatibilityConstraint
 from classes.classes import Product
 from classes.classes import Activity
 import pandas as pd
@@ -26,7 +26,7 @@ activity1 = Activity(id=1, processing_time=[6, 6], product="Enzyme_2",
                      product_id="1", needs=[0, 1, 1])
 product = Product(name="Enzyme_2", id=1)
 product.add_activity(activity=activity0)
-activity1.constraints = [Constraint(0, 0)]
+activity1.constraints = [CompatibilityConstraint(0, 0)]
 product.add_activity(activity=activity1)
 product.set_temporal_relations(temporal_relations={(0, 1): 1})
 my_factory.add_product(product=product)

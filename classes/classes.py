@@ -9,7 +9,7 @@ from classes.distributions import get_distribution, Distribution
 from enum import Enum
 
 
-class Constraint:
+class CompatibilityConstraint:
     def __init__(self, product_id=None, activity_id=None):
         self.activity_id = activity_id
         self.product_id = product_id
@@ -53,10 +53,10 @@ class Activity:
     def _set_constraints(self, constraints):
         constraints_obj = []
         for constr in constraints:
-            if isinstance(constr, Constraint):
+            if isinstance(constr, CompatibilityConstraint):
                 constraints_obj.append(constr)
             elif isinstance(constr, dict):
-                constraints_obj.append(Constraint(**constr))
+                constraints_obj.append(CompatibilityConstraint(**constr))
             else:
                 return TypeError("Illegal distribution type: ", type(constr))
         self.constraints = constraints_obj
