@@ -12,5 +12,5 @@ plt.savefig(f"simulators/simulator7/outputs/makespan_histogram_{instance_name}.p
 average_makespan = evaluation["makespan"].mean()
 std_makespan = evaluation["makespan"].std()
 
-print(f"Based on {evaluation.shape} scenarios, the average makespan is {average_makespan}")
-print(f"Based on {evaluation.shape}  scenarios, the std makespan is {std_makespan}")
+print(f"Based on {evaluation.shape[0]} scenarios, the average makespan is {average_makespan}")
+print(f"Based on {evaluation.shape[0]}  scenarios, the std makespan is {std_makespan}")

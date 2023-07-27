@@ -11,7 +11,6 @@ from matplotlib import pyplot as plt
 instance_size = 10
 instance_id = 1
 cp_output = 'feasible'
-nr_scenarios = 1000
 scenario_seeds = random.randint(100000, size=1)
 policy_type = 2
 printing = False
@@ -44,7 +43,6 @@ if printing:
     print(f'The number of clashes (i.e. activities that could not be processed) is {my_simulator.nr_clashes}')
 
 gannt = my_simulator.resource_usage
-
 
 # Afterwards you can check the temporal relations
 print('------------------------------------------------------------ \n CONSTRAINT CHECKING \n')
