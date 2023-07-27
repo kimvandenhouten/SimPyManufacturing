@@ -24,7 +24,7 @@ my_factory.add_product(product=product)
 
 from classes.classes import ProductionPlan
 my_productionplan = ProductionPlan(id=0, size=10, name="ProductionPlanJanuary", factory=my_factory,
-                                product_ids=[0, 0, 0], dealines=[70, 100, 120])
+                                   product_ids=[0, 0, 0], deadlines=[70, 100, 120])
 my_productionplan.list_products()
 my_productionplan.set_sequence(sequence=[2, 0, 1])
 

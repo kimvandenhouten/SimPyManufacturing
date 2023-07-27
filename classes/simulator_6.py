@@ -204,12 +204,12 @@ class Simulator:
             finish = max(schedule["Finish"])
             if finish == float("inf"):
                 if self.printing:
-                    print(f'Product {p} did not finish, while the dealine was {self.plan.products[p].dealine}.')
+                    print(f'Product {p} did not finish, while the deadline was {self.plan.products[p].deadline}.')
                 nr_unfinished_products += 1
             else:
                 if self.printing:
-                    print(f'Product {p} finished at time {finish}, while the dealine was {self.plan.products[p].dealine}.')
-                lateness += max(0, finish - self.plan.products[p].dealine)
+                    print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.products[p].deadline}.')
+                lateness += max(0, finish - self.plan.products[p].deadline)
 
         if self.printing:
             print(f"The makespan corresponding to this schedule is {makespan}")

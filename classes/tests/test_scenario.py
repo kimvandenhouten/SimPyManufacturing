@@ -13,7 +13,7 @@ class TestScenarioCreation(unittest.TestCase):
         fp = open('./resources-test/data_stochastic.json', 'r')
         factory = Factory(**json.load(fp))
         my_productionplan = ProductionPlan(id=0, size=2, name="ProductionPlanJanuary", factory=factory,
-                                           product_ids=[0, 1], dealines=[8, 20])
+                                           product_ids=[0, 1], deadlines=[8, 20])
         my_productionplan.list_products()
 
         # This is the old format for the simulator input

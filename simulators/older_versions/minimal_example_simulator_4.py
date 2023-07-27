@@ -32,7 +32,7 @@ my_factory.add_product(product=product)
 
 # Set up a production plan for this factory
 my_productionplan = ProductionPlan(id=0, size=2, name="ProductionPlanJanuary", factory=my_factory,
-                                product_ids=[0, 1], dealines=[8, 20])
+                                   product_ids=[0, 1], deadlines=[8, 20])
 my_productionplan.list_products()
 
 # This is the old format for the simulator input

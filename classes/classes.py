@@ -41,11 +41,11 @@ class Activity:
 
 
 class Product:
-    def __init__(self, id, name, activities=None, temporal_relations=None, dealine=int(), predecessors=None,
+    def __init__(self, id, name, activities=None, temporal_relations=None, deadline=int(), predecessors=None,
                  successors=None):
         self.id = id
         self.name = name
-        self.dealine = dealine
+        self.deadline = deadline
         self.successors = successors
         self.predecessors = predecessors
         self._set_activities(activities)
@@ -124,12 +124,12 @@ class Factory:
 
 
 class ProductionPlan:
-    def __init__(self, id, size, name, factory, product_ids, dealines, products=[], sequence=[], earliest_start=None):
+    def __init__(self, id, size, name, factory, product_ids, deadlines, products=[], sequence=[], earliest_start=None):
         self.id = id
         self.size = size
         self.name = name
         self.product_ids = product_ids
-        self.dealines = dealines
+        self.deadlines = deadlines
         self.sequence = sequence
         self.earliest_start = earliest_start
         self._set_factory(factory, products)
@@ -142,7 +142,7 @@ class ProductionPlan:
         self.products = []
         for i in range(0, len(self.product_ids)):
             product = copy.deepcopy(self.factory.products[self.product_ids[i]])
-            product.dealine = self.dealines[i]
+            product.deadline = self.deadlines[i]
             self.products.append(product)
         self.size = len(self.product_ids)
 
@@ -156,7 +156,7 @@ class ProductionPlan:
     def convert_to_dataframe(self):
         df = pd.DataFrame()
         df["product_id"] = self.product_ids
-        df["dealines"] = self.dealines
+        df["deadlines"] = self.deadlines
         return df
 
     def set_earliest_start_times(self, earliest_start):

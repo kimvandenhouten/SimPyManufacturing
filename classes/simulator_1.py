@@ -136,8 +136,8 @@ class Simulator:
             schedule = self.resource_usage[self.resource_usage["Product"] == p]
             finish = max(schedule["Finish"])
             if self.printing:
-                print(f'Product {p} finished at time {finish}, while the dealine was {self.plan.products[p].dealine}.')
-            tardiness += max(0, finish - self.plan.products[p].dealine)
+                print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.products[p].deadline}.')
+            tardiness += max(0, finish - self.plan.products[p].deadline)
 
         if self.printing:
             print(f"The makespan corresponding to this schedule is {makespan}")

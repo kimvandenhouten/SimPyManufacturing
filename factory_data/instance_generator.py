@@ -14,8 +14,8 @@ factory = Factory(**json.load(fp))
 nr_products = len(factory.products)
 rowids = range(0, nr_products)
 months = range(1, 13)
-month_dealines = [744, 1416, 2160, 2880, 3624, 4344, 5088, 5832, 6552, 7296, 8016, 8760]
-dealine_assignment = [dealine for dealine in month_dealines for _ in range(0, 20)]
+month_deadlines = [744, 1416, 2160, 2880, 3624, 4344, 5088, 5832, 6552, 7296, 8016, 8760]
+deadline_assignment = [deadline for deadline in month_deadlines for _ in range(0, 20)]
 month_assignment = [month for month in months for _ in range(0, 20)]
 
 general_id = 0
@@ -26,13 +26,13 @@ for instance_size in [10, 20, 40, 60, 120, 240]:
             product_type = random.choice(rowids)
             product_list.append(product_type)
 
-        dealines = month_assignment[:instance_size]
+        deadlines = month_assignment[:instance_size]
         plan = ProductionPlan(id=general_id, size=instance_size, name=f'{instance_size}_{id}_{factory.name}', product_ids=product_list,
-                              dealines=dealine_assignment[:instance_size],
+                              deadlines=deadline_assignment[:instance_size],
                               factory=factory)
         plan.list_products()
         file_name = f'factory_data/instances_new/instance_{plan.name}.pkl'
-        with open(file_name, 'wb') as file:
+        with open(file_name, 'wb+') as file:
             pickle.dump(plan, file)
             print(f'Object successfully saved to "{file_name}"')
         general_id += 1

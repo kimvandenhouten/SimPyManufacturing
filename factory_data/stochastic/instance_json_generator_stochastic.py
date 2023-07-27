@@ -43,6 +43,7 @@ if __name__ == '__main__':
     for instance in source_instances:
         try:
             produce_json_data(base_path + instance, output_path)
+            print(instance)
         except Exception as error:
             print("Could not convert instance:" + instance, error)
             error_count += 1
