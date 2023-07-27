@@ -9,8 +9,8 @@ import numpy as np
 class Simulator:
     def __init__(self, plan, printing=False):
         self.plan = plan
-        self.resource_name = plan.factory.resource_name
-        self.nr_resources = len(self.resource_name)
+        self.resource_names = plan.factory.resource_names
+        self.nr_resources = len(self.resource_names)
         self.capacity = plan.factory.capacity
         self.resources = []
         self.env = simpy.Environment()
@@ -153,7 +153,7 @@ class Simulator:
         items = []
         for r in range(0, self.nr_resources):
             for j in range(0, self.capacity[r]):
-                resource = Resource(self.resource_name[r], j)
+                resource = Resource(self.resource_names[r], j)
                 items.append(copy.copy(resource))
         self.factory.items = items
 

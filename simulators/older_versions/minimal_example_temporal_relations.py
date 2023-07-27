@@ -3,7 +3,7 @@ from classes.classes import Product
 from classes.classes import Activity
 import pandas as pd
 
-my_factory = Factory(name="Myfactory", resource_name=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
+my_factory = Factory(name="Myfactory", resource_names=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
 product = Product(name="Enzyme_1", id=0)
 activity0 = Activity(id=0, processing_time=[4, 4], product="Enzyme_1",
                      product_id="0", needs=[1, 0, 0])

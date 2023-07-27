@@ -1,6 +1,6 @@
 {
   "name": "factory_1",
-  "resource_name": [
+  "resource_names": [
     "Fermenter_1",
     "Fermenter_2",
     "Fermenter_3",
@@ -54,6 +54,12 @@
             0,
             0,
             0
+          ],
+          "constraints": [
+            {
+              "product_id": 0,
+              "activity_id": 2
+            }
           ]
         },
         {

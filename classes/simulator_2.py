@@ -8,8 +8,8 @@ from collections import namedtuple
 class Simulator:
     def __init__(self, plan, printing=False):
         self.plan = plan
-        self.resource_name = plan.factory.resource_name
-        self.nr_resources = len(self.resource_name)
+        self.resource_names = plan.factory.resource_names
+        self.nr_resources = len(self.resource_names)
         self.capacity = plan.factory.capacity
         self.resources = []
         self.env = simpy.Environment()
@@ -42,9 +42,9 @@ class Simulator:
                 need = needs[r]
                 if need > 0:
                     for _ in range(0, need):
-                        resource_name = self.resource_name[r]
-                        resources_required_act.append(self.env.process(self.resource_request(product=p, resource_group=resource_name)))
-                        resources_names_act.append(resource_name)
+                        resource_names = self.resource_names[r]
+                        resources_required_act.append(self.env.process(self.resource_request(product=p, resource_group=resource_names)))
+                        resources_names_act.append(resource_names)
             resources_required[i] = resources_required_act
             resources_names[i] = resources_names_act
 
@@ -85,13 +85,13 @@ class Simulator:
         for j in range(0, len(resources_required)):
             r = resources_required[j].value
             yield self.factory.put(r)
-            resource_name = resources_names[j]
+            resource_names = resources_names[j]
             if self.printing:
-                print(f'Product {p} released resources: {resource_name} at time: {end_time}')
+                print(f'Product {p} released resources: {resource_names} at time: {end_time}')
 
             self.resource_usage.append({"Activity": i,
                                         "Product": p,
-                                        "Resource": resource_name,
+                                        "Resource": resource_names,
                                         "Check_resource_type": r.resource_group,
                                         "Machine_id": r.id,
                                         "Request moment": request_time,
@@ -125,7 +125,7 @@ class Simulator:
         items = []
         for r in range(0, self.nr_resources):
             for j in range(0, self.capacity[r]):
-                resource = Resource(self.resource_name[r], j)
+                resource = Resource(self.resource_names[r], j)
                 items.append(copy.copy(resource))
         self.factory.items = items
         self.env.process(self.product_generator())

@@ -5,18 +5,21 @@ import pandas as pd
 from collections import namedtuple
 import numpy as np
 
+from classes.classes import SimulatorLogger, Action
+
 
 class Simulator:
     def __init__(self, plan, printing=False):
         self.plan = plan
-        self.resource_name = plan.factory.resource_name
-        self.nr_resources = len(self.resource_name)
+        self.resource_names = plan.factory.resource_names
+        self.nr_resources = len(self.resource_names)
         self.capacity = plan.factory.capacity
         self.resources = []
         self.env = simpy.Environment()
         self.resource_usage = []
         self.printing = printing
         self.nr_clashes = 0
+        self.logger = SimulatorLogger(self.__class__.__name__)
 
     def activity_processing(self, activity_id, product_id, proc_time, needs):
         """
@@ -37,17 +40,22 @@ class Simulator:
         start_processing = True
         for r, need in enumerate(needs):
             if need > 0:
-                resource_name = self.resource_name[r]
-                available_machines = [i.resource_group for i in self.factory.items].count(resource_name)
+                resource_names = self.resource_names[r]
+                available_machines = [i.resource_group for i in self.factory.items].count(resource_names)
                 if self.printing:
                     print(
-                        f'We need {need} {resource_name} for product {product_id}, activity {activity_id} and currently '
+                        f'We need {need} {resource_names} for product {product_id}, activity {activity_id} and currently '
                         f'in the factory we have {available_machines} available')
                 if available_machines < need:
                     start_processing = False
 
         # TODO: check if there is a compatibility check
         # If there is a clash, set start_processing to False
+        for constraint in self.plan.products[product_id].activities[activity_id].constraints:
+            if (constraint.product_id, constraint.activity_id) in self.logger.active_processes:
+                start_processing = False
+                print(f'Activity {activity_id} of product {product_id} has incompatibility with activity {constraint.activity_id} of product {constraint.product_id} which is currently active')
+                break
 
         # If it is available start the request and processing
         if start_processing:
@@ -59,9 +67,9 @@ class Simulator:
             resources = []
             for r, need in enumerate(needs):
                 if need > 0:
-                    resource_name = self.resource_name[r]
+                    resource_names = self.resource_names[r]
                     for _ in range(0, need):
-                        resource = yield self.factory.get(lambda resource: resource.resource_group == resource_name)
+                        resource = yield self.factory.get(lambda resource: resource.resource_group == resource_names)
                         resources.append(resource)
             # Trace back the moment in time that the resources are retrieved
             retrieve_time = self.env.now
@@ -74,7 +82,7 @@ class Simulator:
             start_time = self.env.now
 
             # TODO:
-            # activity.start = start_time
+            self.logger.log_activity(product_id, activity_id, Action.START)
 
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
@@ -83,7 +91,7 @@ class Simulator:
             end_time = self.env.now
 
             # TODO:
-            # activity.end = end_time
+            self.logger.log_activity(product_id, activity_id, Action.END)
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object
@@ -182,7 +190,7 @@ class Simulator:
         items = []
         for r in range(0, self.nr_resources):
             for j in range(0, self.capacity[r]):
-                resource = Resource(self.resource_name[r], j)
+                resource = Resource(self.resource_names[r], j)
                 items.append(copy.copy(resource))
         self.factory.items = items
 
@@ -208,7 +216,8 @@ class Simulator:
                 nr_unfinished_products += 1
             else:
                 if self.printing:
-                    print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.products[p].deadline}.')
+                    print(
+                        f'Product {p} finished at time {finish}, while the deadline was {self.plan.products[p].deadline}.')
                 lateness += max(0, finish - self.plan.products[p].deadline)
 
         if self.printing:

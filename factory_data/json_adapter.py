@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     factory = {
                 'name': factory_name,
-                'resource_name': list(resource_groups.to_dict()['Resource_group'].values()),
+                'resource_names': list(resource_groups.to_dict()['Resource_group'].values()),
                 'capacity': list(resource_groups.to_dict()['Capacity'].values())
 
                 }

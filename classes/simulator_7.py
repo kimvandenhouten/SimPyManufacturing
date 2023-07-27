@@ -9,8 +9,8 @@ import numpy as np
 class Simulator:
     def __init__(self, plan, operator, printing=False):
         self.plan = plan
-        self.resource_name = plan.factory.resource_name
-        self.nr_resources = len(self.resource_name)
+        self.resource_names = plan.factory.resource_names
+        self.nr_resources = len(self.resource_names)
         self.capacity = plan.factory.capacity
         self.resources = []
         self.env = simpy.Environment()
@@ -36,33 +36,34 @@ class Simulator:
         if self.printing:
             print(f'At time {self.env.now}: the available resources are {self.factory.items}')
 
-        # Check if all machines are available
         start_processing = True
+
+        # Check if all resources are available
         for r, need in enumerate(needs):
             if need > 0:
-                resource_name = self.resource_name[r]
-                available_machines = [i.resource_group for i in self.factory.items].count(resource_name)
+                resource_names = self.resource_names[r]
+                available_machines = [i.resource_group for i in self.factory.items].count(resource_names)
                 if self.printing:
-                    print(f'At time {self.env.now}: we need {need} {resource_name} for product {product_id}, activity {activity_id} and currently '
+                    print(f'At time {self.env.now}: we need {need} {resource_names} for product {product_id}, activity {activity_id} and currently '
                           f'in the factory we have {available_machines} available')
                 if available_machines < need:
                     start_processing = False
 
         # Check precedence relations (check if minimal difference between start time with predecessors is satisfied)
-        predecessors = self.plan.PRODUCTS[product_ID].PREDECESSORS[activity_ID]
-        for pred_activity_ID in predecessors:
-            temp_rel = self.plan.PRODUCTS[product_ID].TEMPORAL_RELATIONS[(pred_activity_ID, activity_ID)]
-            start_pred = self.log_start_times[(product_ID, pred_activity_ID)]
+        predecessors = self.plan.products[product_id].predecessors[activity_id]
+        for pred_activity_id in predecessors:
+            temp_rel = self.plan.products[product_id].temporal_relations[(pred_activity_id, activity_id)]
+            start_pred = self.log_start_times[(product_id, pred_activity_id)]
             if start_pred is None:
                 if self.printing:
-                    print(f'At time {self.env.now}: product {product_ID}, activity {activity_ID} cannot start because '
-                          f' predecessors {product_ID}, {pred_activity_ID} did not start yet')
+                    print(f'At time {self.env.now}: product {product_id}, activity {activity_id} cannot start because '
+                          f' predecessors {product_id}, {pred_activity_id} did not start yet')
                 start_processing = False
             else:
                 if self.env.now - start_pred < temp_rel:
                     if self.printing:
-                        print(f'At time {self.env.now}: product {product_ID}, activity {activity_ID} cannot start because '
-                              f' minimal time lag with {product_ID}, {pred_activity_ID} is not satisfied')
+                        print(f'At time {self.env.now}: product {product_id}, activity {activity_id} cannot start because '
+                              f' minimal time lag with {product_id}, {pred_activity_id} is not satisfied')
                     start_processing = False
 
         # If it is available start the request and processing
@@ -75,9 +76,9 @@ class Simulator:
             resources = []
             for r, need in enumerate(needs):
                 if need > 0:
-                    resource_name = self.resource_name[r]
+                    resource_names = self.resource_names[r]
                     for _ in range(0, need):
-                        resource = yield self.factory.get(lambda resource: resource.resource_group == resource_name)
+                        resource = yield self.factory.get(lambda resource: resource.resource_group == resource_names)
                         resources.append(resource)
             # Trace back the moment in time that the resources are retrieved
             retrieve_time = self.env.now
@@ -87,14 +88,14 @@ class Simulator:
 
             # Trace back the moment in time that the activity starts processing
             start_time = self.env.now
-            self.log_start_times[(product_ID, activity_ID)] = start_time
+            self.log_start_times[(product_id, activity_id)] = start_time
 
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
 
             # Trace back the moment in time that the activity ends processing
             end_time = self.env.now
-            self.log_end_times[(product_ID, activity_ID)] = end_time
+            self.log_end_times[(product_id, activity_id)] = end_time
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object
@@ -168,8 +169,8 @@ class Simulator:
                                         "Start": float("inf"),
                                         "Finish": float("inf")}
 
-            self.log_start_times[(act["Product_ID"], act["Activity_ID"])] = None
-            self.log_end_times[(act["Product_ID"], act["Activity_ID"])] = None
+            self.log_start_times[(act["product_id"], act["activity_id"])] = None
+            self.log_end_times[(act["product_id"], act["activity_id"])] = None
 
         # Create the factory that is a SimPy FilterStore object
         self.factory = simpy.FilterStore(self.env, capacity=sum(self.capacity))
@@ -179,7 +180,7 @@ class Simulator:
         items = []
         for r in range(0, self.nr_resources):
             for j in range(0, self.capacity[r]):
-                resource = Resource(self.resource_name[r], j)
+                resource = Resource(self.resource_names[r], j)
                 items.append(copy.copy(resource))
         self.factory.items = items
 

@@ -13,7 +13,7 @@ for instance_name in ["5_1_factory_1", "5_2_factory_1", "5_3_factory_1", "5_4_fa
     successors = []
     temporal_relations = {}
 
-    resource_translation = instance.factory.resource_name
+    resource_translation = instance.factory.resource_names
     task_translation = []
 
     activity_counter = 0

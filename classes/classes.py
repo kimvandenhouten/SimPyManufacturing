@@ -1,13 +1,23 @@
 import copy
 import json
+import time
+
 import pandas as pd
 import numpy as np
 
 from classes.distributions import get_distribution, Distribution
+from enum import Enum
+
+
+class Constraint:
+    def __init__(self, product_id=None, activity_id=None):
+        self.activity_id = activity_id
+        self.product_id = product_id
 
 
 class Activity:
-    def __init__(self, id, processing_time, product, product_id, needs, distribution=None, sequence_id=int()):
+    def __init__(self, id, processing_time, product, product_id, needs, distribution=None, sequence_id=int(),
+                 constraints=[]):
         self.distribution = None
         self.id = id
         self.product = product
@@ -15,6 +25,7 @@ class Activity:
         self.processing_time = processing_time
         self.needs = needs
         self.sequence_id = sequence_id
+        self._set_constraints(constraints)
         self.set_distribution(distribution)
 
     def sample_processing_time(self):
@@ -38,6 +49,17 @@ class Activity:
                 self.distribution = get_distribution(distribution["type"], distribution["args"])
         else:
             return TypeError("Illegal distribution type: ", type(distribution))
+
+    def _set_constraints(self, constraints):
+        constraints_obj = []
+        for constr in constraints:
+            if isinstance(constr, Constraint):
+                constraints_obj.append(constr)
+            elif isinstance(constr, dict):
+                constraints_obj.append(Constraint(**constr))
+            else:
+                return TypeError("Illegal distribution type: ", type(constr))
+        self.constraints = constraints_obj
 
 
 class Product:
@@ -96,10 +118,10 @@ class Product:
 
 
 class Factory:
-    def __init__(self, name, resource_name, capacity, products=None):
+    def __init__(self, name, resource_names, capacity, products=None):
         self.name = name
         self._set_products(products)
-        self.resource_name = resource_name
+        self.resource_names = resource_names
         self.capacity = capacity
 
     def add_product(self, product):
@@ -226,3 +248,32 @@ class Scenario:
         else:
             raise TypeError("Invalid type of data provided needed: product or dict provided:",
                             type(production_plan))
+
+
+class Action(Enum):
+    START = "Start"
+    END = "End"
+
+
+class LogEntry:
+
+    def __init__(self, product_id, activity_id, action, timestamp):
+        self.product_id = product_id
+        self.activity_id = activity_id
+        self.action = action
+        self.timestamp = timestamp
+
+
+class SimulatorLogger:
+
+    def __init__(self, class_name):
+        self.active_processes = []
+        self.class_name = class_name
+        self.log = []
+
+    def log_activity(self, product_id, activity_id, action):
+        self.log.append(LogEntry(activity_id, product_id, action, time.time()))
+        if action == Action.START and (product_id, activity_id) not in self.active_processes:
+            self.active_processes.append((product_id, activity_id))
+        elif action == Action.END and (product_id, activity_id) in self.active_processes:
+            self.active_processes.remove((product_id, activity_id))

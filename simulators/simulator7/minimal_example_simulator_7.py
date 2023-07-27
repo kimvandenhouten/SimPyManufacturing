@@ -10,7 +10,7 @@ from classes.classes import ProductionPlan
 from classes.simulator_7 import Simulator
 from classes.operator import Operator
 # Set up a factory
-my_factory = Factory(name="Myfactory", resource_name=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
+my_factory = Factory(name="Myfactory", resource_names=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
 product = Product(name="Enzyme_1", id=0)
 activity0 = Activity(id=0, processing_time=[4, 4], product="Enzyme_1",
                      product_id="0", needs=[1, 0, 1])
