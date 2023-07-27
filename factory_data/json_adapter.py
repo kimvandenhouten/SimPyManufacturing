@@ -12,27 +12,27 @@ if __name__ == '__main__':
     recipes = pd.read_csv("recipes.csv", delimiter=";")
 
     factory = {
-                'NAME': factory_name,
-                'RESOURCE_NAMES': list(resource_groups.to_dict()['Resource_group'].values()),
-                'CAPACITY': list(resource_groups.to_dict()['Capacity'].values())
+                'name': factory_name,
+                'resource_name': list(resource_groups.to_dict()['Resource_group'].values()),
+                'capacity': list(resource_groups.to_dict()['Capacity'].values())
 
                 }
 
     unique_products = recipes.drop_duplicates(subset=["Enzyme name", "Fermenter"])
 
-    factory['PRODUCTS'] = []
+    factory['products'] = []
     product_id = 0
     for index, row in unique_products.iterrows():
-        product = {'ID': product_id}
+        product = {'id': product_id}
         enzyme_name = row["Enzyme name"]
         fermenter = row["Fermenter"]
 
         # Select recipe for this product
         recipe = recipes[recipes["Enzyme name"] == enzyme_name]
         recipe = recipe[recipe["Fermenter"] == fermenter]
-        product['NAME'] = f'{enzyme_name}_{fermenter}'
+        product['name'] = f'{enzyme_name}_{fermenter}'
 
-        product['ACTIVITIES'] = []
+        product['activities'] = []
 
         # Select recipe for this product
         recipe = recipes[recipes["Enzyme name"] == enzyme_name]
@@ -62,14 +62,14 @@ if __name__ == '__main__':
         task_id_ferm = task_id
         processing_time = [task_dur_ferm, task_dur_ferm]
         activity = {
-            "ID": task_id,
-            "PRODUCT": product['NAME'],
-            "PRODUCT_ID": product_id,
-            "PROCESSING_TIME": processing_time,
-            "NEEDS": resource_use
+            "id": task_id,
+            "product": product['name'],
+            "product_id": product_id,
+            "processing_time": processing_time,
+            "needs": resource_use
 
         }
-        product['ACTIVITIES'].append(activity)
+        product['activities'].append(activity)
 
         task_id += 1
 
@@ -100,20 +100,20 @@ if __name__ == '__main__':
             temp_rel = claim - start_fermentation
             processing_time = [duration, duration]
             activity = {
-                "ID": task_id,
-                "PRODUCT": product['NAME'],
-                "PRODUCT_ID": product_id,
-                "PROCESSING_TIME": processing_time,
-                "NEEDS": resource_use
+                "id": task_id,
+                "product": product['name'],
+                "product_id": product_id,
+                "processing_time": processing_time,
+                "needs": resource_use
 
             }
-            product['ACTIVITIES'].append(activity)
-            relation = {"PREDECESSOR": task_id_ferm, "SUCCESSOR": task_id, "REL": round(temp_rel)}
+            product['activities'].append(activity)
+            relation = {"predecessor": task_id_ferm, "successor": task_id, "rel": round(temp_rel)}
             temporal_relations.append(relation)
             task_id += 1
 
-        product['TEMPORAL_RELATIONS'] = temporal_relations
-        factory['PRODUCTS'].append(product)
+        product['temporal_relations'] = temporal_relations
+        factory['products'].append(product)
         product_id += 1
 
     json.dump(factory, open('data.json', 'w+'))

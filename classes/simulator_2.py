@@ -8,10 +8,10 @@ from collections import namedtuple
 class Simulator:
     def __init__(self, plan, printing=False):
         self.plan = plan
-        self.RESOURCE_NAMES = plan.FACTORY.RESOURCE_NAMES
-        self.NR_RESOURCES = len(self.RESOURCE_NAMES)
-        self.CAPACITY = plan.FACTORY.CAPACITY
-        self.RESOURCES = []
+        self.resource_name = plan.factory.resource_name
+        self.nr_resources = len(self.resource_name)
+        self.capacity = plan.factory.capacity
+        self.resources = []
         self.env = simpy.Environment()
         self.resource_usage = []
         self.printing = printing
@@ -27,22 +27,22 @@ class Simulator:
         #TODO: adjust such that machines in the store are requested instead of resources
 
         # FIRST DO THE REQUESTING
-        activities = self.plan.PRODUCTS[p].ACTIVITIES
+        activities = self.plan.products[p].activities
         durations = []
         resources_required = {}
         resources_names = {}
         for i in range(0, len(activities)):
             activity = activities[i]
-            needs = activity.NEEDS
-            duration = random.randint(*activity.PROCESSING_TIME)
+            needs = activity.needs
+            duration = random.randint(*activity.processing_time)
             durations.append(duration)
             resources_required_act = []
             resources_names_act = []
-            for r in range(0, self.NR_RESOURCES):
+            for r in range(0, self.nr_resources):
                 need = needs[r]
                 if need > 0:
                     for _ in range(0, need):
-                        resource_name = self.RESOURCE_NAMES[r]
+                        resource_name = self.resource_name[r]
                         resources_required_act.append(self.env.process(self.resource_request(product=p, resource_group=resource_name)))
                         resources_names_act.append(resource_name)
             resources_required[i] = resources_required_act
@@ -53,7 +53,7 @@ class Simulator:
                 delay_factor = 0
                 start_fermentation = self.env.now
             else:
-                delay_factor = self.plan.PRODUCTS[p].TEMPORAL_RELATIONS[(0, i)]
+                delay_factor = self.plan.products[p].temporal_relations[(0, i)]
             yield self.env.timeout(0)
 
             self.env.process(self.activity_processing(i=i, p=p, delay=delay_factor, start_fermentation=start_fermentation, duration=durations[i], resources_required=resources_required[i],
@@ -81,7 +81,7 @@ class Simulator:
         yield self.env.timeout(duration)
         end_time = self.env.now
 
-        # NOW RELEASE ALL RESOURCES THAT WERE NEEDED
+        # NOW RELEASE ALL resources THAT WERE NEEDED
         for j in range(0, len(resources_required)):
             r = resources_required[j].value
             yield self.factory.put(r)
@@ -103,29 +103,29 @@ class Simulator:
         """Generate activities that arrive at the factory. For certain activities there are temporal relations,
         this means that there are fixed time intervals between the request times for the two activities."""
         if self.printing:
-            print(f"The products are processed according to the production sequence {self.plan.SEQUENCE}.")
+            print(f"The products are processed according to the production sequence {self.plan.sequence}.")
         # Schedule activities with priority ordering
         priority = 0
-        for p in self.plan.SEQUENCE:
+        for p in self.plan.sequence:
             self.env.process(self.product(p, priority=priority))
             priority += 1
             yield self.env.timeout(3)
 
-    def simulate(self, SIM_TIME, RANDOM_SEED, write=False, output_location="Results.csv"):
+    def simulate(self, SIM_TIME, random_seed, write=False, output_location="Results.csv"):
         if self.printing:
-            print(f'START Factory simulation for seed {RANDOM_SEED}')
-        random.seed(RANDOM_SEED)
+            print(f'START factory simulation for seed {random_seed}')
+        random.seed(random_seed)
         # Reset environment
         self.env = simpy.Environment()
         self.resource_usage = []
 
-        # TO DO: REPLACE WITH FACTORY STORE TYPE
-        self.factory = simpy.FilterStore(self.env, capacity=sum(self.CAPACITY))
+        # TO DO: REPLACE WITH factory STORE TYPE
+        self.factory = simpy.FilterStore(self.env, capacity=sum(self.capacity))
         Resource = namedtuple('Machine', 'resource_group, id')
         items = []
-        for r in range(0, self.NR_RESOURCES):
-            for j in range(0, self.CAPACITY[r]):
-                resource = Resource(self.RESOURCE_NAMES[r], j)
+        for r in range(0, self.nr_resources):
+            for j in range(0, self.capacity[r]):
+                resource = Resource(self.resource_name[r], j)
                 items.append(copy.copy(resource))
         self.factory.items = items
         self.env.process(self.product_generator())
@@ -138,12 +138,12 @@ class Simulator:
         makespan = max(self.resource_usage["Finish"])
         tardiness = 0
 
-        for p in self.plan.SEQUENCE:
+        for p in self.plan.sequence:
             schedule = self.resource_usage[self.resource_usage["Product"] == p]
             finish = max(schedule["Finish"])
             if self.printing:
-                print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.PRODUCTS[p].DEADLINE}.')
-            tardiness += max(0, finish - self.plan.PRODUCTS[p].DEADLINE)
+                print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.products[p].deadline}.')
+            tardiness += max(0, finish - self.plan.products[p].deadline)
 
         if self.printing:
             print(f"The makespan corresponding to this schedule is {makespan}")

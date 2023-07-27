@@ -2,56 +2,56 @@ import numpy as np
 
 
 class Distribution:
-    def __init__(self, DEFAULT):
-        self.TYPE = "DEFAULT"
-        self.DEFAULT = DEFAULT
+    def __init__(self, default):
+        self.type = "DEFAULT"
+        self.default = default
 
     def sample(self) -> float:
-        return self.DEFAULT
+        return self.default
 
 
 class NormalDistribution(Distribution):
-    def __init__(self, MEAN, VARIANCE):
-        self.TYPE = "NORMAL"
-        self.MEAN = MEAN
-        self.VARIANCE = VARIANCE
+    def __init__(self, mean, variance):
+        self.type = "NORMAL"
+        self.mean = mean
+        self.variance = variance
 
     def sample(self):
-        return np.random.normal(self.MEAN, self.VARIANCE, 1)[0]
+        return np.random.normal(self.mean, self.variance, 1)[0]
 
 
 class PoissonDistribution(Distribution):
-    def __init__(self, ALPHA):
+    def __init__(self, alpha):
         '''
-        ALPHA: Expected number of events occurring in a fixed-time interval, must be >= 0.
+        alpha: Expected number of events occurring in a fixed-time interval, must be >= 0.
         '''
-        self.TYPE = "POISSON"
-        self.ALPHA = ALPHA
+        self.type = "POISSON"
+        self.alpha = alpha
 
     def sample(self):
-        return np.random.poisson(self.ALPHA, 1)[0]
+        return np.random.poisson(self.alpha, 1)[0]
 
 
 class ExponentialDistribution(Distribution):
-    def __init__(self, BETA):
+    def __init__(self, beta):
         '''
-        BETA: SCALE parameter which is the inverse of the rate parameter (lambda)
+        beta: SCALE parameter which is the inverse of the rate parameter (lambda)
         '''
-        self.TYPE = "EXPONENTIAL"
-        self.BETA = BETA
+        self.type = "EXPONENTIAL"
+        self.beta = beta
 
     def sample(self):
-        return np.random.exponential(self.BETA, 1)[0]
+        return np.random.exponential(self.beta, 1)[0]
 
 
 class LogNormalDistribution(Distribution):
-    def __init__(self, MEAN, VARIANCE):
-        self.TYPE = "LOGNORMAL"
-        self.MEAN = MEAN
-        self.VARIANCE = VARIANCE
+    def __init__(self, mean, variance):
+        self.type = "LOGNORMAL"
+        self.mean = mean
+        self.variance = variance
 
     def sample(self):
-        return np.random.lognormal(self.MEAN, self.VARIANCE, 1000)[0]
+        return np.random.lognormal(self.mean, self.variance, 1000)[0]
 
 
 def get_distribution(dist_type, arg_dict):

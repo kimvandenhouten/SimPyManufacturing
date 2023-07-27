@@ -14,16 +14,16 @@ from classes.distributions import NormalDistribution
 
 def produce_json_data(source_path, output_path):
     production_plan = pd.read_pickle(source_path)
-    for i in range(len(production_plan.FACTORY.PRODUCTS)):
+    for i in range(len(production_plan.factory.products)):
         activities = []
-        for activity in production_plan.FACTORY.PRODUCTS[i].ACTIVITIES:
-            processing_time = activity.PROCESSING_TIME[0]
+        for activity in production_plan.factory.products[i].activities:
+            processing_time = activity.processing_time[0]
             default_variance = np.sqrt(processing_time)
             distribution = NormalDistribution(processing_time, default_variance)
-            activity_stoch = Activity(activity.ID, activity.PROCESSING_TIME, activity.PRODUCT, activity.PRODUCT_ID,
-                                      activity.NEEDS, distribution, activity.SEQUENCE_ID)
+            activity_stoch = Activity(activity.id, activity.processing_time, activity.product, activity.product_id,
+                                      activity.needs, distribution, activity.sequence_id)
             activities.append(activity_stoch)
-        production_plan.FACTORY.PRODUCTS[i].ACTIVITIES = activities
+        production_plan.factory.products[i].activities = activities
         production_plan.list_products()
 
     json_str = production_plan.to_json()
@@ -35,7 +35,7 @@ def produce_json_data(source_path, output_path):
 
 
 if __name__ == '__main__':
-    base_path = 'factory_data/instances/'
+    base_path = 'factory_data/instances_new/'
     output_path = f'factory_data/stochastic/json_instances/'
 
     source_instances = os.listdir(base_path)
@@ -43,6 +43,7 @@ if __name__ == '__main__':
     for instance in source_instances:
         try:
             produce_json_data(base_path + instance, output_path)
+            print(instance)
         except Exception as error:
             print("Could not convert instance:" + instance, error)
             error_count += 1

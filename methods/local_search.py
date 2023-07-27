@@ -89,7 +89,7 @@ def local_search(n, f_eval, time_limit=200, stop_criterium="Time", budget=400,
             stop = True
 
     results = pd.DataFrame()
-    results['Sequence'] = sequences
+    results['sequence'] = sequences
     results['Fitness'] = fitnesses
     results['Best_sequence'] = best_sequences
     results['Best_fitness'] = best_fitnesses

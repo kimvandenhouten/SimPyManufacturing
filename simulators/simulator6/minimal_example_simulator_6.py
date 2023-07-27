@@ -10,46 +10,47 @@ import pandas as pd
 from classes.classes import ProductionPlan
 
 # Set up a factory
-my_factory = Factory(NAME="MyFactory", RESOURCE_NAMES=["Filter", "Mixer", "Dryer"], CAPACITY=[1, 1, 1])
-product = Product(NAME="Enzyme_1", ID=0)
-activity0 = Activity(ID=0, PROCESSING_TIME=[4, 4], PRODUCT="Enzyme_1",
-                     PRODUCT_ID="0", NEEDS=[1, 0, 1])
-activity1 = Activity(ID=1, PROCESSING_TIME=[5, 5], PRODUCT="Enzyme_1",
-                     PRODUCT_ID="0", NEEDS=[0, 1, 0])
+my_factory = Factory(name="Myfactory", resource_name=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
+product = Product(name="Enzyme_1", id=0)
+activity0 = Activity(id=0, processing_time=[4, 4], product="Enzyme_1",
+                     product_id="0", needs=[1, 0, 1])
+activity1 = Activity(id=1, processing_time=[5, 5], product="Enzyme_1",
+                     product_id="0", needs=[0, 1, 0])
 product.add_activity(activity=activity0)
 product.add_activity(activity=activity1)
-product.set_temporal_relations(TEMPORAL_RELATIONS={(0, 1): 4})
+product.set_temporal_relations(temporal_relations={(0, 1): 4})
 my_factory.add_product(product=product)
-activity0 = Activity(ID=0, PROCESSING_TIME=[3, 3], PRODUCT="Enzyme_2",
-                     PRODUCT_ID="1", NEEDS=[1, 0, 1])
-activity1 = Activity(ID=1, PROCESSING_TIME=[6, 6], PRODUCT="Enzyme_2",
-                     PRODUCT_ID="1", NEEDS=[0, 1, 1])
-product = Product(NAME="Enzyme_2", ID=1)
+activity0 = Activity(id=0, processing_time=[3, 3], product="Enzyme_2",
+                     product_id="1", needs=[1, 0, 1])
+activity1 = Activity(id=1, processing_time=[6, 6], product="Enzyme_2",
+                     product_id="1", needs=[0, 1, 1])
+product = Product(name="Enzyme_2", id=1)
 product.add_activity(activity=activity0)
 product.add_activity(activity=activity1)
-product.set_temporal_relations(TEMPORAL_RELATIONS={(0, 1): 1})
+product.set_temporal_relations(temporal_relations={(0, 1): 1})
 my_factory.add_product(product=product)
 
 # Set up a production plan for this factory
-my_productionplan = ProductionPlan(ID=0, SIZE=2, NAME="ProductionPlanJanuary", FACTORY=my_factory,
-                                PRODUCT_IDS=[0, 1], DEADLINES=[8, 20])
+my_productionplan = ProductionPlan(id=0, size=2, name="ProductionPlanJanuary", factory=my_factory,
+                                   product_ids=[0, 1], deadlines=[8, 20])
 my_productionplan.list_products()
 
 # This is the old format for the simulator input
 my_productionplan.set_sequence(sequence=[0, 1])
 
 # This is the new format for the simulator input
-earliest_start = [{"Product_ID": 0, "Activity_ID": 0, "Earliest_start": 0},
-                  {"Product_ID": 0, "Activity_ID": 1, "Earliest_start": 4},
-                  {"Product_ID": 1, "Activity_ID": 0, "Earliest_start": 2},
-                  {"Product_ID": 1, "Activity_ID": 1, "Earliest_start": 3}]
+earliest_start = [{"product_id": 0, "activity_id": 0, "earliest_start": 0},
+                  {"product_id": 0, "activity_id": 1, "earliest_start": 4},
+                  {"product_id": 1, "activity_id": 0, "earliest_start": 2},
+                  {"product_id": 1, "activity_id": 1, "earliest_start": 3}]
 my_productionplan.set_earliest_start_times(earliest_start)
 
 # Import the new simulator
 from classes.simulator_6 import Simulator
+
 my_simulator = Simulator(plan=my_productionplan, printing=True)
-my_simulator.simulate(SIM_TIME=1000, RANDOM_SEED=1, write=True, output_location=f"minimal_example_simulator_6.csv")
-gannt = pd.read_csv(f"../../minimal_example_simulator_6.csv")
+my_simulator.simulate(SIM_TIME=1000, random_seed=1, write=True, output_location=f"simulators/simulator6/outputs/minimal_example_simulator_6.csv")
+gannt = pd.read_csv(f"simulators/simulator6/outputs/minimal_example_simulator_6.csv")
 
 # initialize number of violations
 constraint_checking = False
@@ -58,17 +59,18 @@ if constraint_checking:
     print('------------------------------------------------------------ \n CONSTRAINT CHECKING \n')
     number_of_violations = 0
     # iterate over products
-    for p, product in enumerate(my_productionplan.PRODUCTS):
+    for p, product in enumerate(my_productionplan.products):
         # obtain temporal relations
-        for (i, j) in product.TEMPORAL_RELATIONS:
+        for (i, j) in product.temporal_relations:
             print(i, j)
             print(f'The difference between the start time of activity {i} and activity {j} '
-                  f'from product {p} should be exactly {product.TEMPORAL_RELATIONS[(i, j)]}')
+                  f'from product {p} should be exactly {product.temporal_relations[(i, j)]}')
             start_i = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == i)]['Start'].values[0]
             start_j = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == j)]['Start'].values[0]
 
-            print(f'The simulated difference between the start time of activity {i} and activity {j} is {start_j-start_i}')
-            if start_j-start_i == product.TEMPORAL_RELATIONS[(i, j)]:
+            print(
+                f'The simulated difference between the start time of activity {i} and activity {j} is {start_j - start_i}')
+            if start_j - start_i == product.temporal_relations[(i, j)]:
                 print("CONSTRAINT SATISFIED")
             else:
                 print("CONSTRAINT VIOLATED")

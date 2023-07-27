@@ -32,7 +32,7 @@ for seed in range(4, 5):
 for setting in setting_list:
     start = time.time()
     file_name = setting.make_file_name()
-    instance = pd.read_pickle(f"factory_data/instances/instance_{setting.instance}.pkl")
+    instance = pd.read_pickle(f"factory_data/instances_new/instance_{setting.instance}.pkl")
 
     fixed = []
     # Important, the f_eval considers the previously solved subinstances
@@ -63,7 +63,7 @@ for setting in setting_list:
     if setting.simulator == "simulator_3":
         from classes.simulator_3 import Simulator
     simulator = Simulator(instance, printing=False)
-    makespan, lateness = simulator.simulate(SIM_TIME=setting.size*300000, RANDOM_SEED=setting.seed, write=True,
+    makespan, lateness = simulator.simulate(SIM_TIME=setting.size*300000, random_seed=setting.seed, write=True,
                                              output_location=f"results/resource_usage/{file_name}.csv")
     runtime = time.time() - start
     results = pd.DataFrame()
@@ -71,7 +71,7 @@ for setting in setting_list:
     results['Lateness'] = [lateness]
     results['Time'] = [runtime]
     results['Fitness'] = [setting.l1 * makespan + setting.l2 * lateness]
-    results['Sequence'] = [productionplan]
+    results['sequence'] = [productionplan]
     results['Best_fitness'] = [setting.l1 * makespan + setting.l2 * lateness]
     results['Best_sequence'] = [productionplan]
     results.to_csv(f'results/results_algorithm/{file_name}.txt', header=True, index=False)

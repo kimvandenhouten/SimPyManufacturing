@@ -12,19 +12,18 @@ import json
 from classes.distributions import NormalDistribution, ExponentialDistribution
 
 instance_name = 'instance_10_1_factory_1.pkl'
-production_plan = pd.read_pickle('factory_data/instances/' + instance_name)
-
-for i in range(len(production_plan.FACTORY.PRODUCTS)):
+production_plan = pd.read_pickle('factory_data/instances_new/' + instance_name)
+for i in range(len(production_plan.factory.products)):
     activities = []
-    for activity in production_plan.FACTORY.PRODUCTS[i].ACTIVITIES:
-        processing_time = activity.PROCESSING_TIME[0]
+    for activity in production_plan.factory.products[i].activities:
+        processing_time = activity.processing_time[0]
         default_variance = np.sqrt(processing_time)
         print(default_variance)
         distribution = NormalDistribution(processing_time, default_variance)
-        activity_stoch = Activity(activity.ID, activity.PROCESSING_TIME, activity.PRODUCT, activity.PRODUCT_ID,
-                                  activity.NEEDS, distribution, activity.SEQUENCE_ID)
+        activity_stoch = Activity(activity.id, activity.processing_time, activity.product, activity.product_id,
+                                  activity.needs, distribution, activity.sequence_id)
         activities.append(activity_stoch)
-    production_plan.FACTORY.PRODUCTS[i].ACTIVITIES = activities
+    production_plan.factory.products[i].activities = activities
     production_plan.list_products()
 
 file_name = f'factory_data/stochastic/instances/' + instance_name
