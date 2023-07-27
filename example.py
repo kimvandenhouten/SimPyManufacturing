@@ -1,4 +1,4 @@
-from classes.classes import factory
+from classes.classes import Factory
 my_factory = Factory(name="Myfactory", resource_name=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
 
 from classes.classes import Product

@@ -2,7 +2,7 @@
 # the start times for all activities. Each start time corresponds to the time in the
 # system that this activity requests the needed resources.
 
-from classes.classes import factory
+from classes.classes import Factory
 from classes.classes import Product
 from classes.classes import Activity
 import pandas as pd
@@ -49,7 +49,7 @@ f"simulators/simulator7/outputs/minimal_example_simulator_7.csv")
 print(f'According to the simulation, the makespan is {makespan} and the lateness is {lateness}')
 print(f'The number of unfinished products {nr_unfinished}')
 print(f'The number of clashes (returned activities) is {my_simulator.nr_clashes}')
-gannt = pd.read_csv(f"minimal_example_simulator_7.csv")
+gannt = pd.read_csv(f"simulators/simulator7/outputs/minimal_example_simulator_7.csv")
 
 
 

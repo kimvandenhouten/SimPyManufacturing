@@ -3,7 +3,7 @@
 # system that this activity requests the needed resources.
 
 import numpy as np
-from classes.classes import factory
+from classes.classes import Factory
 from classes.classes import Product
 from classes.classes import Activity
 import pandas as pd
@@ -32,7 +32,7 @@ my_factory.add_product(product=product)
 
 # Set up a production plan for this factory
 my_productionplan = ProductionPlan(id=0, size=2, name="ProductionPlanJanuary", factory=my_factory,
-                                product_ids=[0, 1], dealines=[8, 20])
+                                   product_ids=[0, 1], dealines=[8, 20])
 my_productionplan.list_products()
 
 # This is the old format for the simulator input
@@ -47,9 +47,10 @@ my_productionplan.set_earliest_start_times(earliest_start)
 
 # Import the new simulator
 from classes.simulator_6 import Simulator
+
 my_simulator = Simulator(plan=my_productionplan, printing=True)
 my_simulator.simulate(SIM_TIME=1000, random_seed=1, write=True, output_location=f"minimal_example_simulator_6.csv")
-gannt = pd.read_csv(f"../../minimal_example_simulator_6.csv")
+gannt = pd.read_csv(f"simulators/simulator6/outputs/minimal_example_simulator_6.csv")
 
 # initialize number of violations
 constraint_checking = False
@@ -67,8 +68,9 @@ if constraint_checking:
             start_i = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == i)]['Start'].values[0]
             start_j = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == j)]['Start'].values[0]
 
-            print(f'The simulated difference between the start time of activity {i} and activity {j} is {start_j-start_i}')
-            if start_j-start_i == product.temporal_relations[(i, j)]:
+            print(
+                f'The simulated difference between the start time of activity {i} and activity {j} is {start_j - start_i}')
+            if start_j - start_i == product.temporal_relations[(i, j)]:
                 print("CONSTRAINT SATISFIED")
             else:
                 print("CONSTRAINT VIOLATED")

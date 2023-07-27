@@ -141,7 +141,7 @@ class ProductionPlan:
         """
         self.products = []
         for i in range(0, len(self.product_ids)):
-            product = copy.copy(self.factory.products[self.product_ids[i]])
+            product = copy.deepcopy(self.factory.products[self.product_ids[i]])
             product.dealine = self.dealines[i]
             self.products.append(product)
         self.size = len(self.product_ids)

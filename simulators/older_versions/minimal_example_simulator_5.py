@@ -3,7 +3,7 @@
 # system that this activity requests the needed resources.
 
 import numpy as np
-from classes.classes import factory
+from classes.classes import Factory
 from classes.classes import Product
 from classes.classes import Activity
 import pandas as pd
