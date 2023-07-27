@@ -18,6 +18,8 @@ class Simulator:
         self.printing = printing
         self.nr_clashes = 0
         self.operator = operator
+        self.log_start_times = {}
+        self.log_end_times = {}
 
     def activity_processing(self, activity_id, product_id, proc_time, needs):
         """
@@ -34,7 +36,7 @@ class Simulator:
         if self.printing:
             print(f'At time {self.env.now}: the available resources are {self.factory.items}')
 
-        # Check all machines are available
+        # Check if all machines are available
         start_processing = True
         for r, need in enumerate(needs):
             if need > 0:
@@ -46,7 +48,24 @@ class Simulator:
                 if available_machines < need:
                     start_processing = False
 
-        # If it is avaiglable start the request and processing
+        # Check precedence relations (check if minimal difference between start time with predecessors is satisfied)
+        predecessors = self.plan.PRODUCTS[product_ID].PREDECESSORS[activity_ID]
+        for pred_activity_ID in predecessors:
+            temp_rel = self.plan.PRODUCTS[product_ID].TEMPORAL_RELATIONS[(pred_activity_ID, activity_ID)]
+            start_pred = self.log_start_times[(product_ID, pred_activity_ID)]
+            if start_pred is None:
+                if self.printing:
+                    print(f'At time {self.env.now}: product {product_ID}, activity {activity_ID} cannot start because '
+                          f' predecessors {product_ID}, {pred_activity_ID} did not start yet')
+                start_processing = False
+            else:
+                if self.env.now - start_pred < temp_rel:
+                    if self.printing:
+                        print(f'At time {self.env.now}: product {product_ID}, activity {activity_ID} cannot start because '
+                              f' minimal time lag with {product_ID}, {pred_activity_ID} is not satisfied')
+                    start_processing = False
+
+        # If it is available start the request and processing
         if start_processing:
             self.signal_to_operator = False
             if self.printing:
@@ -68,12 +87,14 @@ class Simulator:
 
             # Trace back the moment in time that the activity starts processing
             start_time = self.env.now
+            self.log_start_times[(product_ID, activity_ID)] = start_time
 
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
 
             # Trace back the moment in time that the activity ends processing
             end_time = self.env.now
+            self.log_end_times[(product_ID, activity_ID)] = end_time
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object
@@ -92,6 +113,8 @@ class Simulator:
                                         "Retrieve": retrieve_time,
                                         "Start": start_time,
                                         "Finish": end_time}
+            #print(self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].start_time)
+            #print(self.resource_usage[(product_ID, activity_ID)])
 
         # If it is not available then we don't process this activity, so we avoid that there starts a queue in the
         # factory
@@ -118,7 +141,7 @@ class Simulator:
             # Generator object that does a time-out for a time period equal to delay value
             yield self.env.timeout(delay)
 
-    def simulate(self, sim_time, random_seed, write=False, output_location="Results.csv"):
+    def simulate(self, sim_time=1000, random_seed=1, write=False, output_location="Results.csv"):
         """
         :param SIM_TIME: time allowed for running the discrete-event simulation (int)
         :param random_seed: random seed when used in stochastic mode (int)
@@ -145,6 +168,9 @@ class Simulator:
                                         "Start": float("inf"),
                                         "Finish": float("inf")}
 
+            self.log_start_times[(act["Product_ID"], act["Activity_ID"])] = None
+            self.log_end_times[(act["Product_ID"], act["Activity_ID"])] = None
+
         # Create the factory that is a SimPy FilterStore object
         self.factory = simpy.FilterStore(self.env, capacity=sum(self.capacity))
 
@@ -167,7 +193,6 @@ class Simulator:
             resource_usage_df.append(self.resource_usage[i])
 
         self.resource_usage = pd.DataFrame(resource_usage_df)
-        print(self.resource_usage)
 
         if self.printing:
             print(f' \nSIMULATION OUTPUT\n {self.resource_usage}')

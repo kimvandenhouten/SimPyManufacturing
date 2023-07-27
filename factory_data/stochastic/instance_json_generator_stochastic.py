@@ -8,17 +8,17 @@ import random
 from classes.classes import ProductionPlan, Factory, Scenario, Activity
 import pickle
 import json
-
+import numpy as np
 from classes.distributions import NormalDistribution
 
 
 def produce_json_data(source_path, output_path):
     production_plan = pd.read_pickle(source_path)
-    default_variance = 2
     for i in range(len(production_plan.factory.products)):
         activities = []
         for activity in production_plan.factory.products[i].activities:
             processing_time = activity.processing_time[0]
+            default_variance = np.sqrt(processing_time)
             distribution = NormalDistribution(processing_time, default_variance)
             activity_stoch = Activity(activity.id, activity.processing_time, activity.product, activity.product_id,
                                       activity.needs, distribution, activity.sequence_id)

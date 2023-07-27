@@ -205,7 +205,6 @@ class ProductionPlan:
         for product in plan.factory.products:
             for activity in product.activities:
                 activity.sample_and_set_scenario()
-        plan.list_products()
         return Scenario(plan, seed)
 
 

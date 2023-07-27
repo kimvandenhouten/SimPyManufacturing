@@ -49,8 +49,6 @@ f"simulators/simulator7/outputs/minimal_example_simulator_7.csv")
 print(f'According to the simulation, the makespan is {makespan} and the lateness is {lateness}')
 print(f'The number of unfinished products {nr_unfinished}')
 print(f'The number of clashes (returned activities) is {my_simulator.nr_clashes}')
-gannt = pd.read_csv(f"simulators/simulator7/outputs/minimal_example_simulator_7.csv")
-
 
 
 
