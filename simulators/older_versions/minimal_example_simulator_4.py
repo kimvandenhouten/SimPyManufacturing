@@ -48,7 +48,7 @@ my_productionplan.set_earliest_start_times(earliest_start)
 # Import the new simulator
 from classes.simulator_4 import Simulator
 my_simulator = Simulator(plan=my_productionplan, printing=True)
-my_simulator.simulate(SIM_TIME=1000, random_seed=1, write=True, output_location=f"minimal_example_simulator_4.csv")
+my_simulator.simulate(sim_time=1000, random_seed=1, write=True, output_location=f"minimal_example_simulator_4.csv")
 
 
 # Afterwards you can check the temporal relations

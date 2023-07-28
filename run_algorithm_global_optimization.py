@@ -89,7 +89,7 @@ if __name__ == '__main__':
         sequence = best_sequence
         plan.set_sequence(sequence)
         simulator = Simulator(plan, printing=False)
-        makespan, lateness = simulator.simulate(SIM_TIME=size*1000000, random_seed=setting.seed, write=True,
+        makespan, lateness = simulator.simulate(sim_time=size*1000000, random_seed=setting.seed, write=True,
                                                          output_location=f"results/resource_usage/{file_name}.csv")
 
         data_table.append({"instance": setting.instance,

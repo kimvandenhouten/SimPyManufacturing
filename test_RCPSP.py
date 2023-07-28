@@ -54,6 +54,6 @@ for instance_name in ["5_1_factory_1", "5_2_factory_1", "5_3_factory_1", "5_4_fa
     plan = pd.read_pickle(f"factory_data/instances_new/instance_{instance_name}.pkl")
     plan.set_sequence([0])
     simulator = Simulator(plan, delay=0, printing=False)
-    makespan, lateness = simulator.simulate(SIM_TIME=1000, random_seed=1, write=True,
+    makespan, lateness = simulator.simulate(sim_time=1000, random_seed=1, write=True,
                                             output_location=f"results/milp_output/simulator_check_instance_{instance_name}.csv")
     print(f'Makespan obtained with simulator is {makespan}')

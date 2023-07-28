@@ -63,7 +63,7 @@ for setting in setting_list:
     if setting.simulator == "simulator_3":
         from classes.simulator_3 import Simulator
     simulator = Simulator(instance, printing=False)
-    makespan, lateness = simulator.simulate(SIM_TIME=setting.size*300000, random_seed=setting.seed, write=True,
+    makespan, lateness = simulator.simulate(sim_time=setting.size*300000, random_seed=setting.seed, write=True,
                                              output_location=f"results/resource_usage/{file_name}.csv")
     runtime = time.time() - start
     results = pd.DataFrame()

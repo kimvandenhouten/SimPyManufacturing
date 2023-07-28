@@ -124,9 +124,9 @@ class Simulator:
             # Now the activity SimPy process can be started
             self.env.process(self.activity_processing(activity_id, product_id, proc_time, needs))
 
-    def simulate(self, SIM_TIME, random_seed, write=False, output_location="Results.csv"):
+    def simulate(self, sim_time, random_seed, write=False, output_location="Results.csv"):
         """
-        :param SIM_TIME: time allowed for running the discrete-event simulation (int)
+        :param sim_time: time allowed for running the discrete-event simulation (int)
         :param random_seed: random seed when used in stochastic mode (int)
         :param write: set to true if you want to write output to a csv file (boolean)
         :param output_location: give location for output file (str)
@@ -159,7 +159,7 @@ class Simulator:
 
         # Execute the activity_generator
         self.env.process(self.activity_generator())
-        self.env.run(until=SIM_TIME)
+        self.env.run(until=sim_time)
 
         # Process results
         self.resource_usage = pd.DataFrame(self.resource_usage)

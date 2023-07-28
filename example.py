@@ -30,4 +30,4 @@ my_productionplan.set_sequence(sequence=[2, 0, 1])
 
 from classes.simulator_3 import Simulator
 my_simulator = Simulator(plan=my_productionplan, printing=True)
-my_simulator.simulate(SIM_TIME=1000, random_seed=1)
+my_simulator.simulate(sim_time=1000, random_seed=1)

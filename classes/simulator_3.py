@@ -127,7 +127,7 @@ class Simulator:
             priority += 1
             yield self.env.timeout(self.delay_between_products)
 
-    def simulate(self, SIM_TIME, random_seed, write=False, output_location="Results.csv"):
+    def simulate(self, sim_time, random_seed, write=False, output_location="Results.csv"):
 
         self.plan.sequence = [int(i) for i in self.plan.sequence]
         if self.printing:
@@ -149,7 +149,7 @@ class Simulator:
         self.env.process(self.product_generator())
 
         # Execute!
-        self.env.run(until=SIM_TIME)
+        self.env.run(until=sim_time)
 
         # Process results
         self.resource_usage = pd.DataFrame(self.resource_usage)

@@ -105,7 +105,7 @@ class Simulator:
             priority += 1
             yield self.env.timeout(3)
 
-    def simulate(self, SIM_TIME, random_seed, write=False, output_location="Results.csv"):
+    def simulate(self, sim_time, random_seed, write=False, output_location="Results.csv"):
         if self.printing:
             print(f'START factory simulation for seed {random_seed}')
         random.seed(random_seed)
@@ -125,7 +125,7 @@ class Simulator:
         self.env.process(self.product_generator())
 
         # Execute!
-        self.env.run(until=SIM_TIME)
+        self.env.run(until=sim_time)
 
         # Process results
         self.resource_usage = pd.DataFrame(self.resource_usage)

@@ -48,7 +48,7 @@ my_productionplan.set_earliest_start_times(earliest_start)
 # Import the new simulator
 from classes.simulator_5 import Simulator
 my_simulator = Simulator(plan=my_productionplan, printing=True)
-my_simulator.simulate(SIM_TIME=1000, random_seed=1, write=True, output_location=f"minimal_example_simulator_5.csv")
+my_simulator.simulate(sim_time=1000, random_seed=1, write=True, output_location=f"minimal_example_simulator_5.csv")
 gannt = pd.read_csv(f"minimal_example_simulator_5.csv")
 
 # initialize number of violations
