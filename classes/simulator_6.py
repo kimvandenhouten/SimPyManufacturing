@@ -1,4 +1,6 @@
 import copy
+
+
 import simpy
 import random
 import pandas as pd
@@ -82,7 +84,7 @@ class Simulator:
             start_time = self.env.now
 
             # TODO:
-            self.logger.log_activity(product_id, activity_id, Action.START)
+            self.logger.log_activity(product_id, activity_id, Action.START,start_time)
 
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
@@ -91,7 +93,7 @@ class Simulator:
             end_time = self.env.now
 
             # TODO:
-            self.logger.log_activity(product_id, activity_id, Action.END)
+            self.logger.log_activity(product_id, activity_id, Action.END,end_time)
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object

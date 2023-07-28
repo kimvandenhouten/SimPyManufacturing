@@ -68,8 +68,8 @@ class Operator:
                 activity_id = self.plan.earliest_start[i]["activity_id"]
 
                 # Obtain information about resource needs and processing time
-                needs = self.plan.products[product_ID].activities[activity_ID].NEEDS
-                proc_time = max(self.plan.products[product_ID].activities[activity_ID].processing_time[0], 1)
+                needs = self.plan.products[product_id].activities[activity_id].needs
+                proc_time = max(self.plan.products[product_id].activities[activity_id].processing_time[0], 1)
                 #proc_time = np.ceil(proc_time)
 
                 if self.printing:

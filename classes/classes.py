@@ -5,8 +5,10 @@ import time
 import pandas as pd
 import numpy as np
 
-from classes.distributions import get_distribution, Distribution
+
 from enum import Enum
+
+from classes.distributions import Distribution, get_distribution
 
 
 class CompatibilityConstraint:
@@ -271,8 +273,8 @@ class SimulatorLogger:
         self.class_name = class_name
         self.log = []
 
-    def log_activity(self, product_id, activity_id, action):
-        self.log.append(LogEntry(activity_id, product_id, action, time.time()))
+    def log_activity(self, product_id, activity_id, action,timestamp=time.time()):
+        self.log.append(LogEntry(activity_id, product_id, action, timestamp))
         if action == Action.START and (product_id, activity_id) not in self.active_processes:
             self.active_processes.append((product_id, activity_id))
         elif action == Action.END and (product_id, activity_id) in self.active_processes:
