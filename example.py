@@ -1,5 +1,5 @@
 from classes.classes import Factory
-my_factory = Factory(name="Myfactory", resource_name=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
+my_factory = Factory(name="Myfactory", resource_names=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
 
 from classes.classes import Product
 product = Product(name="Enzyme_1", id=0)
@@ -30,4 +30,4 @@ my_productionplan.set_sequence(sequence=[2, 0, 1])
 
 from classes.simulator_3 import Simulator
 my_simulator = Simulator(plan=my_productionplan, printing=True)
-my_simulator.simulate(SIM_TIME=1000, random_seed=1)
+my_simulator.simulate(sim_time=1000, random_seed=1)

@@ -9,8 +9,8 @@ import numpy as np
 class Simulator:
     def __init__(self, plan, printing=False):
         self.plan = plan
-        self.resource_name = plan.factory.resource_name
-        self.nr_resources = len(self.resource_name)
+        self.resource_names = plan.factory.resource_names
+        self.nr_resources = len(self.resource_names)
         self.capacity = plan.factory.capacity
         self.resources = []
         self.env = simpy.Environment()
@@ -66,14 +66,14 @@ class Simulator:
 
             # For releasing use the SimPy put function from the FilterStore object
             yield self.factory.put(r_process)
-            resource_name = resources_names[j]
+            resource_names = resources_names[j]
             if self.printing:
-                print(f'Product {product_id}, activity {activity_id} released resources: {resource_name} at time: {end_time}')
+                print(f'Product {product_id}, activity {activity_id} released resources: {resource_names} at time: {end_time}')
 
             # Store relevant information
             self.resource_usage.append({"Product": product_id,
                                         "Activity": activity_id,
-                                        "Resource": resource_name,
+                                        "Resource": resource_names,
                                         "Check_resource_type": r_process.resource_group,
                                         "Machine_id": r_process.id,
                                         "Request moment": request_time,
@@ -101,15 +101,15 @@ class Simulator:
             proc_time = random.randint(*proc_time)
 
             # Combine the different resources needed for this activity in resources_required
-            # and resource_name to store the requests processes for SimPy FilterStore objects
+            # and resource_names to store the requests processes for SimPy FilterStore objects
             resources_required, resources_names = [], []
             for r, need in enumerate(needs):
                 if need > 0:
                     for _ in range(0, need):
-                        resource_name = self.resource_name[r]
+                        resource_names = self.resource_names[r]
                         resources_required.append(
-                            self.env.process(self.resource_request(resource_group=resource_name)))
-                        resources_names.append(resource_name)
+                            self.env.process(self.resource_request(resource_group=resource_names)))
+                        resources_names.append(resource_names)
             # If this is the first activity in the sorted start times list, we have no delay
             if id == 0:
                 delay = self.plan.earliest_start[i]["earliest_start"]
@@ -127,9 +127,9 @@ class Simulator:
             self.env.process(self.activity_processing(activity_id, product_id, proc_time, resources_required,
                                                       resources_names))
 
-    def simulate(self, SIM_TIME, random_seed, write=False, output_location="Results.csv"):
+    def simulate(self, sim_time, random_seed, write=False, output_location="Results.csv"):
         """
-        :param SIM_TIME: time allowed for running the discrete-event simulation (int)
+        :param sim_time: time allowed for running the discrete-event simulation (int)
         :param random_seed: random seed when used in stochastic mode (int)
         :param write: set to true if you want to write output to a csv file (boolean)
         :param output_location: give location for output file (str)
@@ -156,13 +156,13 @@ class Simulator:
         items = []
         for r in range(0, self.nr_resources):
             for j in range(0, self.capacity[r]):
-                resource = Resource(self.resource_name[r], j)
+                resource = Resource(self.resource_names[r], j)
                 items.append(copy.copy(resource))
         self.factory.items = items
 
         # Execute the activity_generator
         self.env.process(self.activity_generator())
-        self.env.run(until=SIM_TIME)
+        self.env.run(until=sim_time)
 
         # Process results
         self.resource_usage = pd.DataFrame(self.resource_usage)

@@ -6,7 +6,7 @@ from classes.classes import Factory, Product, Activity
 
 # Initialize factory
 resource_groups = pd.read_csv("factory_data/resource_groups.csv", delimiter=";")
-factory = Factory(name="Representativefactory3", resource_name=resource_groups["Resource_group"].tolist(),
+factory = Factory(name="Representativefactory3", resource_names=resource_groups["Resource_group"].tolist(),
                   capacity=resource_groups["Capacity"].tolist())
 
 

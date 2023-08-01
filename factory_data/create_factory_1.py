@@ -5,7 +5,7 @@ import pickle
 # Initialize factory
 factory_name = "factory_1"
 resource_groups = pd.read_csv("factory_data/resource_groups.csv", delimiter=";")
-factory = Factory(name=factory_name, resource_name=resource_groups["Resource_group"].tolist(),
+factory = Factory(name=factory_name, resource_names=resource_groups["Resource_group"].tolist(),
                   capacity=resource_groups["capacity"].tolist())
 
 

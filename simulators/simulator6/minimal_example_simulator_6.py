@@ -3,14 +3,14 @@
 # system that this activity requests the needed resources.
 
 import numpy as np
-from classes.classes import Factory
+from classes.classes import Factory, CompatibilityConstraint
 from classes.classes import Product
 from classes.classes import Activity
 import pandas as pd
 from classes.classes import ProductionPlan
 
 # Set up a factory
-my_factory = Factory(name="Myfactory", resource_name=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
+my_factory = Factory(name="Myfactory", resource_names=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
 product = Product(name="Enzyme_1", id=0)
 activity0 = Activity(id=0, processing_time=[4, 4], product="Enzyme_1",
                      product_id="0", needs=[1, 0, 1])
@@ -26,6 +26,7 @@ activity1 = Activity(id=1, processing_time=[6, 6], product="Enzyme_2",
                      product_id="1", needs=[0, 1, 1])
 product = Product(name="Enzyme_2", id=1)
 product.add_activity(activity=activity0)
+activity1.constraints = [CompatibilityConstraint(0, 0)]
 product.add_activity(activity=activity1)
 product.set_temporal_relations(temporal_relations={(0, 1): 1})
 my_factory.add_product(product=product)
@@ -49,7 +50,8 @@ my_productionplan.set_earliest_start_times(earliest_start)
 from classes.simulator_6 import Simulator
 
 my_simulator = Simulator(plan=my_productionplan, printing=True)
-my_simulator.simulate(SIM_TIME=1000, random_seed=1, write=True, output_location=f"simulators/simulator6/outputs/minimal_example_simulator_6.csv")
+my_simulator.simulate(sim_time=1000, random_seed=1, write=True,
+                      output_location=f"simulators/simulator6/outputs/minimal_example_simulator_6.csv")
 gannt = pd.read_csv(f"simulators/simulator6/outputs/minimal_example_simulator_6.csv")
 
 # initialize number of violations
@@ -79,6 +81,3 @@ if constraint_checking:
     # check violations of temporal relations by comparing start times of activities within temporal relations
     # report on violated relations
     print(f'TOTAL NUMBER OF VIOLATIONS {number_of_violations}')
-
-
-

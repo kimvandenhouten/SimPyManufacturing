@@ -9,8 +9,8 @@ import numpy as np
 class Simulator:
     def __init__(self, plan, printing=False):
         self.plan = plan
-        self.resource_name = plan.factory.resource_name
-        self.nr_resources = len(self.resource_name)
+        self.resource_names = plan.factory.resource_names
+        self.nr_resources = len(self.resource_names)
         self.capacity = plan.factory.capacity
         self.resources = []
         self.env = simpy.Environment()
@@ -124,9 +124,9 @@ class Simulator:
             # Now the activity SimPy process can be started
             self.env.process(self.activity_processing(activity_id, product_id, proc_time, needs))
 
-    def simulate(self, SIM_TIME, random_seed, write=False, output_location="Results.csv"):
+    def simulate(self, sim_time, random_seed, write=False, output_location="Results.csv"):
         """
-        :param SIM_TIME: time allowed for running the discrete-event simulation (int)
+        :param sim_time: time allowed for running the discrete-event simulation (int)
         :param random_seed: random seed when used in stochastic mode (int)
         :param write: set to true if you want to write output to a csv file (boolean)
         :param output_location: give location for output file (str)
@@ -153,13 +153,13 @@ class Simulator:
         items = []
         for r in range(0, self.nr_resources):
             for j in range(0, self.capacity[r]):
-                resource = Resource(self.resource_name[r], j)
+                resource = Resource(self.resource_names[r], j)
                 items.append(copy.copy(resource))
         self.factory.items = items
 
         # Execute the activity_generator
         self.env.process(self.activity_generator())
-        self.env.run(until=SIM_TIME)
+        self.env.run(until=sim_time)
 
         # Process results
         self.resource_usage = pd.DataFrame(self.resource_usage)

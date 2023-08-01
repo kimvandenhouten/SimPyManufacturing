@@ -10,7 +10,7 @@ import pandas as pd
 from classes.classes import ProductionPlan
 
 # Set up a factory
-my_factory = Factory(name="Myfactory", resource_name=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
+my_factory = Factory(name="Myfactory", resource_names=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
 product = Product(name="Enzyme_1", id=0)
 activity0 = Activity(id=0, processing_time=[4, 4], product="Enzyme_1",
                      product_id="0", needs=[1, 0, 0])
@@ -48,7 +48,7 @@ my_productionplan.set_earliest_start_times(earliest_start)
 # Import the new simulator
 from classes.simulator_4 import Simulator
 my_simulator = Simulator(plan=my_productionplan, printing=True)
-my_simulator.simulate(SIM_TIME=1000, random_seed=1, write=True, output_location=f"minimal_example_simulator_4.csv")
+my_simulator.simulate(sim_time=1000, random_seed=1, write=True, output_location=f"minimal_example_simulator_4.csv")
 
 
 # Afterwards you can check the temporal relations

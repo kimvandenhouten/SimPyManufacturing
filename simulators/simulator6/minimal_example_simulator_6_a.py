@@ -44,7 +44,7 @@ with open('simulators/simulator6/data/' + factory.name + '_scenario_1.json', 'r'
 from classes.simulator_6 import Simulator
 
 my_simulator = Simulator(plan=scenario_1.production_plan, printing=True)
-my_simulator.simulate(SIM_TIME=1000, random_seed=1, write=True,
+my_simulator.simulate(sim_time=1000, random_seed=1, write=True,
                       output_location=f"simulators/simulator6/outputs/minimal_example_simulator_6.csv")
 gannt = pd.read_csv(f"simulators/simulator6/outputs/minimal_example_simulator_6.csv")
 

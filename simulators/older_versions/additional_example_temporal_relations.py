@@ -12,7 +12,7 @@ my_productionplan.set_sequence(sequence=np.arange(size))
 
 from classes.simulator_3 import Simulator
 my_simulator = Simulator(plan=my_productionplan, printing=False)
-my_simulator.simulate(SIM_TIME=100000, random_seed=1, write=True, output_location=f"additional_example.csv")
+my_simulator.simulate(sim_time=100000, random_seed=1, write=True, output_location=f"additional_example.csv")
 print('------------------------------------------------------------ \n END OF SIMULATION PRINTING \n')
 
 # read input

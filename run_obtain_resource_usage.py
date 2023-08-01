@@ -37,5 +37,5 @@ for setting in settings_list:
     for seed in range(1, 2):
         plan.set_sequence(sequence)
         simulator = Simulator(plan, printing=True)
-        makespan, tardiness = simulator.simulate(SIM_TIME=300000, random_seed=seed, write=True,
+        makespan, tardiness = simulator.simulate(sim_time=300000, random_seed=seed, write=True,
                                                  output_location=f"results/resource_usage/{file_name}.csv")
