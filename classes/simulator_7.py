@@ -56,13 +56,9 @@ class Simulator:
         for pred_activity_id in predecessors:
             temp_rel = self.plan.products[product_id].temporal_relations[(pred_activity_id, activity_id)]
             # start_pred = self.log_start_times[(product_id, pred_activity_id)]
-            start_pred_log = list(filter(lambda
-                                             entry: entry.product_id == product_id and entry.activity_id == pred_activity_id and entry.action == Action.START,
-                                         self.logger.log))
-            if len(start_pred_log) < 1:
-                raise Exception(
-                    f'activity log does not have a record for product id {product_id} and activity id {pred_activity_id}')
-            start_pred = start_pred_log[-1].timestamp
+            start_pred_log = self.logger.fetch_latest_entry(self.plan.products[product_id].id,
+                                                            pred_activity_id, Action.START)
+            start_pred = start_pred_log.timestamp
             if start_pred is None:
                 if self.printing:
                     print(f'At time {self.env.now}: product {product_id}, activity {activity_id} cannot start because '
@@ -75,6 +71,13 @@ class Simulator:
                             f'At time {self.env.now}: product {product_id}, activity {activity_id} cannot start because '
                             f' minimal time lag with {product_id}, {pred_activity_id} is not satisfied')
                     start_processing = False
+
+        for constraint in self.plan.products[product_id].activities[activity_id].constraints:
+            if (constraint.product_id, constraint.activity_id) in self.logger.active_processes:
+                start_processing = False
+                print(
+                    f'Activity {activity_id} of product {self.plan.products[product_id]} has incompatibility with activity {constraint.activity_id} of product {constraint.product_id} which is currently active')
+                break
 
         # If it is available start the request and processing
         if start_processing:
@@ -100,7 +103,8 @@ class Simulator:
 
             # Trace back the moment in time that the activity starts processing
             start_time = self.env.now
-            self.logger.log_activity(product_id, activity_id, Action.START, start_time)
+            self.logger.log_activity(self.plan.products[product_id].id,
+                                     activity_id, Action.START, start_time)
             # self.log_start_times[(product_id, activity_id)] = start_time
 
             # Generator for processing the activity
@@ -108,7 +112,8 @@ class Simulator:
 
             # Trace back the moment in time that the activity ends processing
             end_time = self.env.now
-            self.logger.log_activity(product_id, activity_id, Action.END, end_time)
+            self.logger.log_activity(self.plan.products[product_id].id,
+                                     activity_id, Action.END, end_time)
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object

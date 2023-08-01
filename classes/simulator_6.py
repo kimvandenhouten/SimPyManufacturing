@@ -56,7 +56,8 @@ class Simulator:
         for constraint in self.plan.products[product_id].activities[activity_id].constraints:
             if (constraint.product_id, constraint.activity_id) in self.logger.active_processes:
                 start_processing = False
-                print(f'Activity {activity_id} of product {product_id} has incompatibility with activity {constraint.activity_id} of product {constraint.product_id} which is currently active')
+                print(
+                    f'Activity {activity_id} of product {self.plan.products[product_id]} has incompatibility with activity {constraint.activity_id} of product {constraint.product_id} which is currently active')
                 break
 
         # If it is available start the request and processing
@@ -84,7 +85,7 @@ class Simulator:
             start_time = self.env.now
 
             # TODO:
-            self.logger.log_activity(product_id, activity_id, Action.START,start_time)
+            self.logger.log_activity(self.plan.products[product_id], activity_id, Action.START, start_time)
 
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
@@ -93,7 +94,7 @@ class Simulator:
             end_time = self.env.now
 
             # TODO:
-            self.logger.log_activity(product_id, activity_id, Action.END,end_time)
+            self.logger.log_activity(self.plan.products[product_id], activity_id, Action.END, end_time)
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object
