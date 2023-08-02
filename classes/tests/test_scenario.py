@@ -40,24 +40,28 @@ class TestScenarioCreation(unittest.TestCase):
     def test_scenario_load(self):
         with open('./resources-test/factory_1_scenario_1.json', 'r') as f:
             scenario_1 = Scenario(**json.load(f))
-            self.assertNotEqual(scenario_1.production_plan.factory.products[0].activities[0].processing_time[0], None)
+            self.assertNotEqual(scenario_1.production_plan.products[0].activities[0].processing_time[0], None)
 
     def test_random_seeding(self):
         my_productionplan = self.init_production_plan()
         scenario_1 = my_productionplan.create_scenario(0)
         scenario_2 = my_productionplan.create_scenario(scenario_1.seed)
-        self.assertEqual(scenario_1.production_plan.factory.products[0].activities[0].processing_time[0],
-                         scenario_2.production_plan.factory.products[0].activities[0].processing_time[0])
-        self.assertEqual(scenario_1.production_plan.factory.products[5].activities[1].processing_time[0],
-                         scenario_2.production_plan.factory.products[5].activities[1].processing_time[0])
+        self.assertEqual(scenario_1.production_plan.products[0].activities[0].processing_time[0],
+                         scenario_2.production_plan.products[0].activities[0].processing_time[0])
+        self.assertEqual(scenario_1.production_plan.products[1].activities[1].processing_time[0],
+                         scenario_2.production_plan.products[1].activities[1].processing_time[0])
 
         scenario_3 = my_productionplan.create_scenario(2)
-        self.assertNotEqual(scenario_1.production_plan.factory.products[0].activities[0].processing_time[0],
-                            scenario_3.production_plan.factory.products[0].activities[0].processing_time[0])
+        self.assertNotEqual(scenario_1.production_plan.products[0].activities[0].processing_time[0],
+                            scenario_3.production_plan.products[0].activities[0].processing_time[0])
 
         scenario_4 = my_productionplan.create_scenario()
-        self.assertNotEqual(scenario_3.production_plan.factory.products[0].activities[0].processing_time[0],
-                            scenario_4.production_plan.factory.products[0].activities[0].processing_time[0])
+        self.assertNotEqual(scenario_3.production_plan.products[0].activities[0].processing_time[0],
+                            scenario_4.production_plan.products[0].activities[0].processing_time[0])
+
+        #Ensure no sampling on factory product level
+        self.assertEqual(scenario_1.production_plan.factory.products[0].activities[0].processing_time[0],
+                         scenario_2.production_plan.factory.products[0].activities[0].processing_time[0])
 
 
 if __name__ == '__main__':

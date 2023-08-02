@@ -226,7 +226,9 @@ class ProductionPlan:
         plan = copy.deepcopy(self)
         if seed is not None:
             np.random.seed(seed)
-        for product in plan.factory.products:
+
+        # sample only plan products
+        for product in plan.products:
             for activity in product.activities:
                 activity.sample_and_set_scenario()
         return Scenario(plan, seed)
@@ -273,9 +275,18 @@ class SimulatorLogger:
         self.class_name = class_name
         self.log = []
 
-    def log_activity(self, product_id, activity_id, action,timestamp=time.time()):
-        self.log.append(LogEntry(activity_id, product_id, action, timestamp))
+    def log_activity(self, product_id, activity_id, action, timestamp=time.time()):
+        self.log.append(LogEntry(product_id, activity_id, action, timestamp))
         if action == Action.START and (product_id, activity_id) not in self.active_processes:
             self.active_processes.append((product_id, activity_id))
         elif action == Action.END and (product_id, activity_id) in self.active_processes:
             self.active_processes.remove((product_id, activity_id))
+
+    def fetch_latest_entry(self, product_id, activity_id, action):
+        entries = list(filter(lambda
+                                  entry: entry.product_id == product_id and entry.activity_id ==
+                                         activity_id and entry.action == action,
+                              self.log))
+        if len(entries) < 1:
+            raise Exception(f'No entry present for product {product_id} and activity {activity_id} for action {action}')
+        return entries[-1]
