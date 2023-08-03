@@ -39,7 +39,7 @@ def random_search(n, f_eval, time_limit=200, stop_criterium="Time", budget=400,
     while stop == False:
         it += 1
 
-        # random new sequence
+        # Random new sequence
         sequence = np.random.permutation(np.arange(n))
 
         # write new sequence to output file
@@ -72,7 +72,7 @@ def random_search(n, f_eval, time_limit=200, stop_criterium="Time", budget=400,
             stop = True
 
     results = pd.DataFrame()
-    results['sequence'] = sequences
+    results['Sequence'] = sequences
     results['Fitness'] = fitnesses
     results['Best_sequence'] = best_sequences
     results['Best_fitness'] = best_fitnesses
