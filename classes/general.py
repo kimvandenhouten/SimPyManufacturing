@@ -41,7 +41,7 @@ def evaluator_simpy(plan, setting, sequence, sim_time=10000000, printing=False):
 
     plan.set_sequence(sequence)
     simulator = Simulator(plan, printing=printing)
-    makespan, lateness = simulator.simulate(sim_time=sim_time, random_seed=setting.seed, write=False)
+    makespan, lateness = simulator.simulate(SIM_TIME=sim_time, RANDOM_SEED=setting.seed, write=False)
     fitness = setting.l1 * makespan + setting.l2 * lateness
 
     if printing:
