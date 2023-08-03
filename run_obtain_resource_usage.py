@@ -32,7 +32,7 @@ for setting in settings_list:
     data_x = data_x[1:-1].split(", ")
     data_x = [int(i) for i in data_x]
 
-    plan = pd.read_pickle(f"factory_data/instances_new/instance_{setting.instance}.pkl")
+    plan = pd.read_pickle(f"factory_data/instances_legacy/instances_new/instance_{setting.instance}.pkl")
     sequence = data_x
     for seed in range(1, 2):
         plan.set_sequence(sequence)

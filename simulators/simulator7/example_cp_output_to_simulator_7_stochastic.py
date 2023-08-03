@@ -28,14 +28,14 @@ evaluation = []
 for seed in scenario_seeds:
     # Read input instance
     my_productionplan = ProductionPlan(
-        **json.load(open('factory_data/stochastic/json_instances/instance_' + instance_name + '.json')))
+        **json.load(open('factory_data/instances_legacy/stochastic/json_instances/instance_' + instance_name + '.json')))
     my_productionplan.set_earliest_start_times(earliest_start)
     my_productionplan.set_sequence(sequence=np.arange(instance_size))
     scenario_1 = my_productionplan.create_scenario(seed)
 
     # Set printing to True if you want to print all events
-    operator = Operator(plan=scenario_1.PRODUCTION_PLAN, policy_type=policy_type, printing=False)
-    my_simulator = Simulator(plan=scenario_1.PRODUCTION_PLAN, operator=operator, printing=False)
+    operator = Operator(plan=scenario_1.production_plan, policy_type=policy_type, printing=False)
+    my_simulator = Simulator(plan=scenario_1.production_plan, operator=operator, printing=False)
 
     # Run simulation
     makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False, output_location=f""

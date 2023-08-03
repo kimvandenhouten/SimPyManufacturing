@@ -2,7 +2,7 @@ import pandas as pd
 
 # read instance
 for instance_name in ["5_1_factory_1", "5_2_factory_1", "5_3_factory_1", "5_4_factory_1", "5_5_factory_1"]:
-    instance = pd.read_pickle(f"factory_data/instances_new/instance_{instance_name}.pkl")
+    instance = pd.read_pickle(f"factory_data/instances_legacy/instances_new/instance_{instance_name}.pkl")
 
     # convert to RCPSP instance
     capacity = instance.factory.capacity
@@ -51,7 +51,7 @@ for instance_name in ["5_1_factory_1", "5_2_factory_1", "5_3_factory_1", "5_4_fa
 
     # Compare with simulator
     from classes.simulator_3 import Simulator
-    plan = pd.read_pickle(f"factory_data/instances_new/instance_{instance_name}.pkl")
+    plan = pd.read_pickle(f"factory_data/instances_legacy/instances_new/instance_{instance_name}.pkl")
     plan.set_sequence([0])
     simulator = Simulator(plan, delay=0, printing=False)
     makespan, lateness = simulator.simulate(sim_time=1000, random_seed=1, write=True,

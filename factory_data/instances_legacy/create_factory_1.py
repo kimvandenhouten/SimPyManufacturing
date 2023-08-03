@@ -4,13 +4,13 @@ import pickle
 
 # Initialize factory
 factory_name = "factory_1"
-resource_groups = pd.read_csv("factory_data/resource_groups.csv", delimiter=";")
+resource_groups = pd.read_csv("factory_data/instances_legacy/resource_groups.csv", delimiter=";")
 factory = Factory(name=factory_name, resource_names=resource_groups["Resource_group"].tolist(),
                   capacity=resource_groups["capacity"].tolist())
 
 
 # TO DO: add a product to the factory, using the recipes table
-recipes = pd.read_csv("factory_data/recipes.csv", delimiter=";")
+recipes = pd.read_csv("factory_data/instances_legacy/recipes.csv", delimiter=";")
 unique_products = recipes.drop_duplicates(subset=["Enzyme name", "Fermenter"])
 
 for index, row in unique_products.iterrows():
@@ -86,7 +86,7 @@ for index, row in unique_products.iterrows():
     factory.add_product(product)
     product_id += 1
 
-file_name = f'factory_data/{factory_name}.pkl'
+file_name = f'factory_data/instances_legacy/{factory_name}.pkl'
 with open(file_name, 'wb') as file:
     pickle.dump(factory, file)
     print(f'Object successfully saved to "{file_name}"')

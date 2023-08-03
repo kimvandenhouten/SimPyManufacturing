@@ -32,7 +32,7 @@ for seed in range(4, 5):
 for setting in setting_list:
     start = time.time()
     file_name = setting.make_file_name()
-    instance = pd.read_pickle(f"factory_data/instances_new/instance_{setting.instance}.pkl")
+    instance = pd.read_pickle(f"factory_data/instances_legacy/instances_new/instance_{setting.instance}.pkl")
 
     fixed = []
     # Important, the f_eval considers the previously solved subinstances

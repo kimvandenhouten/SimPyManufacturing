@@ -23,8 +23,8 @@ def convert_to_new_production_plan(data):
 
 
 if __name__ == '__main__':
-    base_path = 'factory_data/instances/'
-    target_path = 'factory_data/instances_new/'
+    base_path = 'factory_data/instances_legacy/instances/'
+    target_path = 'factory_data/instances_legacy/instances_new/'
     files = os.listdir(base_path)
 
     for file in files:

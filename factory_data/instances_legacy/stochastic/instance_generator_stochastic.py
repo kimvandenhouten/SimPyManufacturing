@@ -12,7 +12,7 @@ import json
 from classes.distributions import NormalDistribution, ExponentialDistribution
 
 instance_name = 'instance_10_1_factory_1.pkl'
-production_plan = pd.read_pickle('factory_data/instances_new/' + instance_name)
+production_plan = pd.read_pickle('factory_data/instances_legacy/instances_new/' + instance_name)
 for i in range(len(production_plan.factory.products)):
     activities = []
     for activity in production_plan.factory.products[i].activities:
@@ -26,7 +26,7 @@ for i in range(len(production_plan.factory.products)):
     production_plan.factory.products[i].activities = activities
     production_plan.list_products()
 
-file_name = f'factory_data/stochastic/instances/' + instance_name
+file_name = f'factory_data/instances_legacy/stochastic/instances/' + instance_name
 with open(file_name, 'wb') as file:
     pickle.dump(production_plan, file)
     print(f'Object successfully saved to "{file_name}"')
