@@ -1,105 +1,105 @@
 ,Product,Activity,Needs,resources,Request,Retrieve,Start,Finish
-0,0,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=1)]",832.0,832.0,832.0,929.0
-1,0,10,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",821.0,821.0,821.0,840.0
-2,0,11,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",813.0,813.0,813.0,840.0
-3,0,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",812.0,812.0,812.0,835.0
-4,0,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",804.0,804.0,804.0,832.0
-5,0,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",805.0,805.0,805.0,832.0
-6,0,3,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",804.0,804.0,804.0,823.0
-7,0,4,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",812.0,812.0,812.0,823.0
-8,0,5,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=0)]",781.0,781.0,781.0,823.0
-9,0,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=5)]",706.0,706.0,706.0,823.0
-10,0,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",622.0,622.0,622.0,809.0
-11,0,2,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=3)]",706.0,706.0,706.0,791.0
-12,6,12,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-13,0,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=0)]",706.0,706.0,706.0,721.0
-14,6,10,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-15,6,11,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-16,6,9,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-17,6,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",617.0,617.0,617.0,645.0
-18,6,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",618.0,618.0,618.0,645.0
-19,6,3,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",617.0,617.0,617.0,636.0
-20,6,4,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-21,6,5,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=4)]",594.0,594.0,594.0,636.0
-22,6,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=3)]",519.0,519.0,519.0,636.0
-23,6,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",435.0,435.0,435.0,622.0
-24,6,2,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=2)]",519.0,519.0,519.0,604.0
-25,4,7,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-26,6,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=1)]",519.0,519.0,519.0,534.0
-27,9,12,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-28,9,11,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=0)]",363.0,363.0,363.0,499.0
-29,4,5,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-30,4,6,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-31,4,3,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-32,4,4,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-33,4,1,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-34,4,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=2)]",422.0,422.0,422.0,473.0
-35,8,13,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-36,4,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",374.0,374.0,374.0,435.0
-37,9,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",353.0,353.0,353.0,415.0
-38,9,10,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",353.0,353.0,353.0,415.0
-39,9,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",344.0,344.0,344.0,406.0
-40,9,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",344.0,344.0,344.0,406.0
-41,9,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]","[Machine(resource_group='Filters B', id=0)]",344.0,344.0,344.0,396.0
-42,9,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=1)]",290.0,290.0,290.0,396.0
-43,9,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",363.0,363.0,363.0,390.0
-44,9,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",362.0,362.0,362.0,390.0
-45,1,5,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-46,7,7,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-47,9,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",249.0,249.0,249.0,374.0
-48,9,2,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",362.0,362.0,362.0,363.0
-49,8,11,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-50,8,12,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-51,8,9,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-52,8,10,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-53,9,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=0)]",290.0,290.0,290.0,344.0
-54,8,3,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-55,8,4,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-56,8,5,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-57,8,6,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-58,8,7,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-59,8,8,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-60,8,1,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-61,8,2,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-62,2,7,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-63,1,3,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-64,1,4,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-65,8,0,"[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_3', id=0)]",187.0,187.0,187.0,293.0
-66,7,5,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-67,7,6,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-68,7,3,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-69,7,4,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-70,3,14,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-71,1,1,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-72,1,2,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-73,7,1,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-74,7,2,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-75,7,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",183.0,183.0,183.0,249.0
-76,2,5,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-77,2,6,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-78,2,3,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-79,2,4,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-80,2,1,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-81,2,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=0)]",170.0,170.0,170.0,221.0
-82,5,5,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-83,3,12,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-84,3,13,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-85,1,0,"[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_3', id=0)]",22.0,22.0,22.0,187.0
-86,2,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",122.0,122.0,122.0,183.0
-87,3,9,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-88,3,10,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-89,3,11,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-90,3,7,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-91,3,8,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-92,3,5,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-93,3,6,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-94,3,3,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-95,3,4,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-96,3,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",0.0,0.0,0.0,122.0
-97,5,3,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-98,5,4,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-99,3,2,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-100,5,1,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-101,5,2,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
-102,5,0,"[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_5', id=0)]",0.0,0.0,0.0,96.0
-103,3,1,inf,NOT PROCESSED DUE TO CLASH,inf,inf,inf,inf
+0,0,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=10)]",832,832,832,929
+1,0,10,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",821,821,821,840
+2,0,11,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",813,813,813,840
+3,0,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",812,812,812,835
+4,0,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",804,804,804,832
+5,0,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",805,805,805,832
+6,0,3,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",804,804,804,823
+7,0,4,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",812,812,812,823
+8,0,5,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=2)]",781,781,781,823
+9,0,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=1)]",706,706,706,823
+10,0,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",622,622,622,809
+11,0,2,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=1)]",706,706,706,791
+12,6,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=9)]",645,645,645,742
+13,0,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=2)]",706,706,706,721
+14,6,10,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",634,634,634,653
+15,6,11,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",626,626,626,653
+16,6,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",625,625,625,648
+17,6,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",617,617,617,645
+18,6,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",618,618,618,645
+19,6,3,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",617,617,617,636
+20,6,4,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",625,625,625,636
+21,6,5,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=3)]",594,594,594,636
+22,6,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=5)]",519,519,519,636
+23,6,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",435,435,435,622
+24,6,2,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=0)]",519,519,519,604
+25,4,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=8)]",478,478,478,574
+26,6,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=3)]",519,519,519,534
+27,9,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=7)]",415,415,415,508
+28,9,11,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=6)]",363,363,363,499
+29,4,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",466,466,466,485
+30,4,6,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",466,466,466,485
+31,4,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",456,456,456,478
+32,4,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",458,458,458,478
+33,4,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",456,456,456,473
+34,4,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=4)]",422,422,422,473
+35,8,13,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=5)]",316,316,316,441
+36,4,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",374,374,374,435
+37,9,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",353,353,353,415
+38,9,10,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",353,353,353,415
+39,9,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",344,344,344,406
+40,9,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",344,344,344,406
+41,9,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]","[Machine(resource_group='Filters B', id=0)]",344,344,344,396
+42,9,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=0)]",290,290,290,396
+43,9,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",363,363,363,390
+44,9,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",362,362,362,390
+45,1,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=4)]",296,296,296,385
+46,7,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=3)]",278,278,278,382
+47,9,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",249,249,249,374
+48,9,2,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",362,362,362,363
+49,8,11,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",316,316,316,352
+50,8,12,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",316,316,316,352
+51,8,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",316,316,316,350
+52,8,10,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",316,316,316,350
+53,9,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=2)]",290,290,290,344
+54,8,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",304,304,304,341
+55,8,4,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",304,304,304,341
+56,8,5,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",304,304,304,341
+57,8,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=2)]",273,273,273,341
+58,8,7,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",305,305,305,341
+59,8,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",305,305,305,341
+60,8,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",304,304,304,332
+61,8,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=1)]",273,273,273,332
+62,2,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=2)]",226,226,226,322
+63,1,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",172,172,172,296
+64,1,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",172,172,172,296
+65,8,0,"[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_3', id=0)]",187,187,187,293
+66,7,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",258,258,258,289
+67,7,6,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",258,258,258,289
+68,7,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",247,247,247,278
+69,7,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",247,247,247,278
+70,3,14,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=1)]",172,172,172,277
+71,1,1,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]","[Machine(resource_group='Filters B', id=0)]",172,172,172,270
+72,1,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=3)]",157,157,157,270
+73,7,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",247,247,247,268
+74,7,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=5)]",237,237,237,268
+75,7,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",183,183,183,249
+76,2,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",214,214,214,233
+77,2,6,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",214,214,214,233
+78,2,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",204,204,204,226
+79,2,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",206,206,206,226
+80,2,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",204,204,204,221
+81,2,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=4)]",170,170,170,221
+82,5,5,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]","[Machine(resource_group='Stabilization tanks', id=0)]",119,119,119,208
+83,3,12,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",148,148,148,188
+84,3,13,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=3)]",143,143,143,188
+85,1,0,"[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_3', id=0)]",22,22,22,187
+86,2,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",122,122,122,183
+87,3,9,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=2)]",129,129,129,177
+88,3,10,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=3)]",143,143,143,177
+89,3,11,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=2)]",131,131,131,177
+90,3,7,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=1)]",124,124,124,172
+91,3,8,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=1)]",126,126,126,172
+92,3,5,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=1)]",124,124,124,158
+93,3,6,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=0)]",30,30,30,158
+94,3,3,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=2)]",129,129,129,152
+95,3,4,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=2)]",96,96,96,152
+96,3,0,"[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_2', id=0)]",0,0,0,122
+97,5,3,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]","[Machine(resource_group='Buffer tanks', id=0)]",90,90,90,119
+98,5,4,"[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]","[Machine(resource_group='Microfilter', id=0)]",90,90,90,119
+99,3,2,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=1)]",30,30,30,102
+100,5,1,"[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]","[Machine(resource_group='Filters A', id=0)]",90,90,90,102
+101,5,2,"[0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks B', id=1)]",81,81,81,102
+102,5,0,"[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]","[Machine(resource_group='Fermenter_5', id=0)]",0,0,0,96
+103,3,1,"[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]","[Machine(resource_group='Harvesting tanks A', id=0)]",30,30,30,58
