@@ -1,89 +1,292 @@
 import copy
+import json
+import time
+
 import pandas as pd
+import numpy as np
+
+
+from enum import Enum
+
+from classes.distributions import Distribution, get_distribution
+
+
+class CompatibilityConstraint:
+    def __init__(self, product_id=None, activity_id=None):
+        self.activity_id = activity_id
+        self.product_id = product_id
 
 
 class Activity:
-    def __init__(self, ID, PROCESSING_TIME, PRODUCT, PRODUCT_ID, NEEDS):
-        self.ID = ID
-        self.PRODUCT = PRODUCT
-        self.PRODUCT_ID = PRODUCT_ID
-        self.PROCESSING_TIME = PROCESSING_TIME
-        self.NEEDS = NEEDS
-        self.SEQUENCE_ID = int()
+    def __init__(self, id, processing_time, product, product_id, needs, distribution=None, sequence_id=int(),
+                 constraints=[]):
+        self.distribution = None
+        self.id = id
+        self.product = product
+        self.product_id = product_id
+        self.processing_time = processing_time
+        self.needs = needs
+        self.sequence_id = sequence_id
+        self._set_constraints(constraints)
+        self.set_distribution(distribution)
+
+    def sample_processing_time(self):
+        return self.distribution.sample()
+
+    def sample_and_set_scenario(self):
+        sample = self.sample_processing_time()
+        self.processing_time = [sample, sample]
+
+    def set_distribution(self, distribution):
+        if isinstance(distribution, Distribution):
+            self.distribution = distribution
+        elif distribution is None:
+            self.distribution = Distribution(self.processing_time[0])
+        elif isinstance(distribution, dict):
+            try:
+                args = copy.copy(distribution)
+                del args['type']
+                self.distribution = get_distribution(distribution["type"], args)
+            except:
+                self.distribution = get_distribution(distribution["type"], distribution["args"])
+        else:
+            return TypeError("Illegal distribution type: ", type(distribution))
+
+    def _set_constraints(self, constraints):
+        constraints_obj = []
+        for constr in constraints:
+            if isinstance(constr, CompatibilityConstraint):
+                constraints_obj.append(constr)
+            elif isinstance(constr, dict):
+                constraints_obj.append(CompatibilityConstraint(**constr))
+            else:
+                return TypeError("Illegal distribution type: ", type(constr))
+        self.constraints = constraints_obj
 
 
 class Product:
-    def __init__(self, ID, NAME):
-        self.ID = ID
-        self.NAME = NAME
-        self.DEADLINE = int()
-        self.ACTIVITIES = []
-        self.TEMPORAL_RELATIONS = {}
+    def __init__(self, id, name, activities=None, temporal_relations=None, deadline=int(), predecessors=None,
+                 successors=None):
+        self.id = id
+        self.name = name
+        self.deadline = deadline
+        self.successors = successors
+        self.predecessors = predecessors
+        self._set_activities(activities)
+        self._set_temporal_relations(temporal_relations)
 
     def add_activity(self, activity):
         """
         Add a product to the product
-        :param product: Class Product
+        :param product: Class product
         """
-        self.ACTIVITIES.append(activity)
+        self.activities.append(activity)
 
-    def set_temporal_relations(self, TEMPORAL_RELATIONS):
-        self.TEMPORAL_RELATIONS = TEMPORAL_RELATIONS
-        self.PREDECESSORS = [[] for _ in self.ACTIVITIES]
-        self.SUCCESSORS = [[] for _ in self.ACTIVITIES]
-        for (i, j) in self.TEMPORAL_RELATIONS.keys():
-            self.PREDECESSORS[j].append(i)
-            self.SUCCESSORS[i].append(j)
+    def set_temporal_relations(self, temporal_relations):
+        # TODO currently self.predecessors not in use
+        # TODO currently self.successors not in use
+        self.temporal_relations = temporal_relations
+        self.predecessors = [[] for _ in self.activities]
+        self.successors = [[] for _ in self.activities]
+        for (i, j) in self.temporal_relations.keys():
+            self.predecessors[j].append(i)
+            self.successors[i].append(j)
+
+    def _set_activities(self, activities):
+        activities_obj = []
+        if activities:
+            for activity in activities:
+                if isinstance(activity, dict):
+                    activities_obj.append(Activity(**activity))
+                elif isinstance(activity, Activity):
+                    activities_obj.append(activity)
+                else:
+                    raise TypeError("Invalid type of data provided needed: Activity or dict provided:", type(activity))
+
+        self.activities = activities_obj
+
+    def _set_temporal_relations(self, relations):
+        temporal_relations = {}
+        if relations:
+            for relation in relations:
+                if (isinstance(relation, dict)):
+                    temporal_relations[(relation['successor'], relation['predecessor'])] = relation['rel']
+                elif (isinstance(relation, tuple)):
+                    temporal_relations[relation] = relations[relation]
+                else:
+                    raise TypeError("Unknown temporal relation type:", type(relations))
+
+        self.temporal_relations = temporal_relations
 
 
 class Factory:
-    def __init__(self, NAME, RESOURCE_NAMES, CAPACITY):
-        self.NAME = NAME
-        self.PRODUCTS = []
-        self.RESOURCE_NAMES = RESOURCE_NAMES
-        self.CAPACITY = CAPACITY
+    def __init__(self, name, resource_names, capacity, products=None):
+        self.name = name
+        self._set_products(products)
+        self.resource_names = resource_names
+        self.capacity = capacity
 
     def add_product(self, product):
         """
         Add a product to the production plan
-        :param product: Class Product
+        :param product: Class product
         """
-        self.PRODUCTS.append(product)
+        self.products.append(product)
+
+    def _set_products(self, products):
+        products_obj = []
+        if products:
+            for product in products:
+                if isinstance(product, dict):
+                    products_obj.append(Product(**product))
+                elif isinstance(product, Product):
+                    products_obj.append(product)
+                else:
+                    raise TypeError("Invalid type of data provided needed: product or dict provided:", type(product))
+
+        self.products = products_obj
 
 
 class ProductionPlan:
-    def __init__(self, ID, SIZE, NAME, FACTORY, PRODUCT_IDS, DEADLINES):
-        self.ID = ID
-        self.SIZE = SIZE
-        self.NAME = NAME
-        self.FACTORY = FACTORY
-        self.PRODUCT_IDS = PRODUCT_IDS
-        self.DEADLINES = DEADLINES
-        self.SEQUENCE = []
-        self.PRODUCTS = []
+    def __init__(self, id, size, name, factory, product_ids, deadlines, products=[], sequence=[], earliest_start=None):
+        self.id = id
+        self.size = size
+        self.name = name
+        self.product_ids = product_ids
+        self.deadlines = deadlines
+        self.sequence = sequence
+        self.earliest_start = earliest_start
+        self._set_factory(factory, products)
 
     def list_products(self):
         """
         Add a product to the production plan
-        :param product: Class Product
+        :param product: Class product
         """
-        self.PRODUCTS = []
-        for i in range(0, len(self.PRODUCT_IDS)):
-            product = copy.copy(self.FACTORY.PRODUCTS[self.PRODUCT_IDS[i]])
-            product.DEADLINE = self.DEADLINES[i]
-            self.PRODUCTS.append(product)
-        self.SIZE = len(self.PRODUCT_IDS)
+        self.products = []
+        for i in range(0, len(self.product_ids)):
+            product = copy.deepcopy(self.factory.products[self.product_ids[i]])
+            product.deadline = self.deadlines[i]
+            self.products.append(product)
+        self.size = len(self.product_ids)
 
     def set_sequence(self, sequence):
         """
         Give the sequence in which the products will be processed
         :param sequence: list of integers
         """
-        self.SEQUENCE = sequence
+        self.sequence = sequence
 
     def convert_to_dataframe(self):
         df = pd.DataFrame()
-        df["Product_ID"] = self.PRODUCT_IDS
-        df["Deadlines"] = self.DEADLINES
+        df["product_id"] = self.product_ids
+        df["deadlines"] = self.deadlines
         return df
 
+    def set_earliest_start_times(self, earliest_start):
+        self.earliest_start = earliest_start
+
+    def _set_factory(self, factory, products):
+        if isinstance(factory, dict):
+            self.factory = Factory(**factory)
+        elif isinstance(factory, Factory):
+            self.factory = factory
+        else:
+            raise TypeError("Invalid type of data provided needed: product or dict provided:",
+                            type(factory))
+
+        products_obj = []
+        for product in products:
+            if isinstance(product, dict):
+                products_obj.append(Product(**product))
+            elif isinstance(products, Product):
+                products_obj.append(product)
+            else:
+                raise TypeError("Invalid type of data provided needed: product or dict provided:",
+                                type(product))
+
+        self.products = products_obj
+
+        x = 1
+
+    def to_json(self):
+        plan = copy.deepcopy(self)
+        for i in range(len(plan.factory.products)):
+            temporal_relations = list(map(lambda rel: {
+                "predecessor": rel[1],
+                "successor": rel[0],
+                "rel": plan.factory.products[i].temporal_relations[rel]
+            }, plan.factory.products[i].temporal_relations.keys()))
+            plan.factory.products[i].temporal_relations = temporal_relations
+        plan.list_products()
+        return json.dumps(plan, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
+
+    def create_scenario(self, seed=None):
+        plan = copy.deepcopy(self)
+        if seed is not None:
+            np.random.seed(seed)
+
+        # sample only plan products
+        for product in plan.products:
+            for activity in product.activities:
+                activity.sample_and_set_scenario()
+        return Scenario(plan, seed)
+
+
+class Scenario:
+    def __init__(self, production_plan, seed=None):
+        self._set_production_plan(production_plan)
+        self.seed = seed
+
+    def to_json(self):
+        scenario = {'seed': self.seed, 'production_plan': json.loads(self.production_plan.to_json())}
+        return json.dumps(scenario, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
+
+    def _set_production_plan(self, production_plan):
+        if isinstance(production_plan, dict):
+            self.production_plan = ProductionPlan(**production_plan)
+        elif isinstance(production_plan, ProductionPlan):
+            self.production_plan = production_plan
+        else:
+            raise TypeError("Invalid type of data provided needed: product or dict provided:",
+                            type(production_plan))
+
+
+class Action(Enum):
+    START = "Start"
+    END = "End"
+
+
+class LogEntry:
+
+    def __init__(self, product_id, activity_id, action, timestamp):
+        self.product_id = product_id
+        self.activity_id = activity_id
+        self.action = action
+        self.timestamp = timestamp
+
+
+class SimulatorLogger:
+
+    def __init__(self, class_name):
+        self.active_processes = []
+        self.class_name = class_name
+        self.log = []
+
+    def log_activity(self, product_id, activity_id, action, timestamp=time.time()):
+        self.log.append(LogEntry(product_id, activity_id, action, timestamp))
+        if action == Action.START and (product_id, activity_id) not in self.active_processes:
+            self.active_processes.append((product_id, activity_id))
+        elif action == Action.END and (product_id, activity_id) in self.active_processes:
+            self.active_processes.remove((product_id, activity_id))
+
+    def fetch_latest_entry(self, product_id, activity_id, action):
+        entries = list(filter(lambda
+                                  entry: entry.product_id == product_id and entry.activity_id ==
+                                         activity_id and entry.action == action,
+                              self.log))
+        if len(entries) < 1:
+            raise Exception(f'No entry present for product {product_id} and activity {activity_id} for action {action}')
+        return entries[-1]

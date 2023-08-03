@@ -51,7 +51,7 @@ if __name__ == '__main__':
         # Set seed
         random.seed(setting.seed)
         np.random.seed(setting.seed)
-        instance = pd.read_pickle(f"factory_data/instances/instance_{setting.instance}.pkl")
+        instance = pd.read_pickle(f"factory_data/instances_new/instance_{setting.instance}.pkl")
         file_name = setting.make_file_name()
 
         f_eval = lambda x, i: evaluator_simpy(plan=instance, sequence=x, setting=setting, sim_time=size*1000000,
@@ -85,11 +85,11 @@ if __name__ == '__main__':
         else:
             print('WARNING: simulator not defined')
 
-        plan = pd.read_pickle(f"factory_data/instances/instance_{setting.instance}.pkl")
+        plan = pd.read_pickle(f"factory_data/instances_new/instance_{setting.instance}.pkl")
         sequence = best_sequence
         plan.set_sequence(sequence)
         simulator = Simulator(plan, printing=False)
-        makespan, lateness = simulator.simulate(SIM_TIME=size*1000000, RANDOM_SEED=setting.seed, write=True,
+        makespan, lateness = simulator.simulate(sim_time=size*1000000, random_seed=setting.seed, write=True,
                                                          output_location=f"results/resource_usage/{file_name}.csv")
 
         data_table.append({"instance": setting.instance,
