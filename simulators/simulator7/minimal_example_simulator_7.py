@@ -39,10 +39,10 @@ my_productionplan = ProductionPlan(id=0, size=2, name="ProductionPlanJanuary", f
 my_productionplan.list_products()
 
 # Define partial schedule that includes earliest start times
-earliest_start = [{"product_id": 0, "activity_id": 0, "earliest_start": 0},
-                  {"product_id": 0, "activity_id": 1, "earliest_start": 1},
-                  {"product_id": 1, "activity_id": 0, "earliest_start": 2},
-                  {"product_id": 1, "activity_id": 1, "earliest_start": 4}]
+earliest_start = [{"product_index": 0, "activity_id": 0, "earliest_start": 0},
+                  {"product_index": 0, "activity_id": 1, "earliest_start": 1},
+                  {"product_index": 1, "activity_id": 0, "earliest_start": 2},
+                  {"product_index": 1, "activity_id": 1, "earliest_start": 4}]
 my_productionplan.set_earliest_start_times(earliest_start)
 
 # Here you can choose policy 1 or policy 2

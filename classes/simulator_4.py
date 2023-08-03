@@ -71,7 +71,7 @@ class Simulator:
                 print(f'Product {product_id}, activity {activity_id} released resources: {resource_names} at time: {end_time}')
 
             # Store relevant information
-            self.resource_usage.append({"Product": product_id,
+            self.resource_usage.append({"ProductIndex": product_id,
                                         "Activity": activity_id,
                                         "Resource": resource_names,
                                         "Check_resource_type": r_process.resource_group,
@@ -92,7 +92,7 @@ class Simulator:
 
         # Iterate through the different activities
         for id, i in enumerate(earliest_start_times_argsort):
-            product_id = self.plan.earliest_start[i]["product_id"]
+            product_id = self.plan.earliest_start[i]["product_index"]
             activity_id = self.plan.earliest_start[i]["activity_id"]
 
             # Obtain information about resource needs and processing time
@@ -170,7 +170,7 @@ class Simulator:
         lateness = 0
 
         for p in self.plan.sequence:
-            schedule = self.resource_usage[self.resource_usage["Product"] == p]
+            schedule = self.resource_usage[self.resource_usage["ProductIndex"] == p]
             finish = max(schedule["Finish"])
             if self.printing:
                 print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.products[p].deadline}.')

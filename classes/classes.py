@@ -5,7 +5,6 @@ import time
 import pandas as pd
 import numpy as np
 
-
 from enum import Enum
 
 from classes.distributions import Distribution, get_distribution
@@ -66,7 +65,7 @@ class Activity:
 
 class Product:
     def __init__(self, id, name, activities=None, temporal_relations=None, deadline=int(), predecessors=None,
-                 successors=None):
+                 successors=None, product_index=None):
         self.id = id
         self.name = name
         self.deadline = deadline
@@ -74,6 +73,7 @@ class Product:
         self.predecessors = predecessors
         self._set_activities(activities)
         self._set_temporal_relations(temporal_relations)
+        self.product_index = product_index
 
     def add_activity(self, activity):
         """
@@ -167,6 +167,7 @@ class ProductionPlan:
         for i in range(0, len(self.product_ids)):
             product = copy.deepcopy(self.factory.products[self.product_ids[i]])
             product.deadline = self.deadlines[i]
+            product.product_index = i
             self.products.append(product)
         self.size = len(self.product_ids)
 

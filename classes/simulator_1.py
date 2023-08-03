@@ -84,7 +84,7 @@ class Simulator:
                 print(f'Product {p} released resources: {resource_names} at time: {end_time}')
 
             self.resource_usage.append({"Activity": i,
-                                        "Product": p,
+                                        "ProductIndex": p,
                                         "Resource": resource_names,
                                         "Check_resource_type": r.resource_group,
                                         "Machine_id": r.id,
@@ -133,7 +133,7 @@ class Simulator:
         tardiness = 0
 
         for p in self.plan.sequence:
-            schedule = self.resource_usage[self.resource_usage["Product"] == p]
+            schedule = self.resource_usage[self.resource_usage["ProductIndex"] == p]
             finish = max(schedule["Finish"])
             if self.printing:
                 print(f'Product {p} finished at time {finish}, while the deadline was {self.plan.products[p].deadline}.')
