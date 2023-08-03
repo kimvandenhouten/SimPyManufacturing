@@ -1,6 +1,6 @@
 import json
 
-json_stochastic = json.load(open('factory_data/data.json', 'r'))
+json_stochastic = json.load(open('factory_data/instances_legacy/data.json', 'r'))
 
 for i in range(len(json_stochastic['products'])):
     for j in range(len(json_stochastic['products'][i]['activities'])):
@@ -13,4 +13,4 @@ for i in range(len(json_stochastic['products'])):
             }
         }
 
-json.dump(json_stochastic, open('factory_data/stochastic/data_stochastic.json', 'w'))
+json.dump(json_stochastic, open('factory_data/instances_legacy/stochastic/data_stochastic.json', 'w'))

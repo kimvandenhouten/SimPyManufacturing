@@ -7,7 +7,7 @@ import numpy as np
 size = 10
 id = 1
 instance_name = f"{size}_{id}_factory_1"
-my_productionplan = pd.read_pickle(f"factory_data/instances_new/instance_{instance_name}.pkl")
+my_productionplan = pd.read_pickle(f"factory_data/instances_legacy/instances_new/instance_{instance_name}.pkl")
 my_productionplan.set_sequence(sequence=np.arange(size))
 
 from classes.simulator_3 import Simulator

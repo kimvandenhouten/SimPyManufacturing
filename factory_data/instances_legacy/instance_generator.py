@@ -9,7 +9,7 @@ import pickle
 import json
 
 #Load factory from new json file
-fp = open('./factory_data/data.json', 'r')
+fp = open('./factory_data/instances_legacy/data.json', 'r')
 factory = Factory(**json.load(fp))
 nr_products = len(factory.products)
 rowids = range(0, nr_products)
@@ -31,7 +31,7 @@ for instance_size in [10, 20, 40, 60, 120, 240]:
                               deadlines=deadline_assignment[:instance_size],
                               factory=factory)
         plan.list_products()
-        file_name = f'factory_data/instances_new/instance_{plan.name}.pkl'
+        file_name = f'factory_data/instances_legacy/instances_new/instance_{plan.name}.pkl'
         with open(file_name, 'wb+') as file:
             pickle.dump(plan, file)
             print(f'Object successfully saved to "{file_name}"')
