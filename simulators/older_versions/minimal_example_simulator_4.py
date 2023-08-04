@@ -39,10 +39,10 @@ my_productionplan.list_products()
 my_productionplan.set_sequence(sequence=[0, 1])
 
 # This is the new format for the simulator input
-earliest_start = [{"product_id": 0, "activity_id": 0, "earliest_start": 0},
-                  {"product_id": 0, "activity_id": 1, "earliest_start": 4},
-                  {"product_id": 1, "activity_id": 0, "earliest_start": 8},
-                  {"product_id": 1, "activity_id": 1, "earliest_start": 9}]
+earliest_start = [{"product_index": 0, "activity_id": 0, "earliest_start": 0},
+                  {"product_index": 0, "activity_id": 1, "earliest_start": 4},
+                  {"product_index": 1, "activity_id": 0, "earliest_start": 8},
+                  {"product_index": 1, "activity_id": 1, "earliest_start": 9}]
 my_productionplan.set_earliest_start_times(earliest_start)
 
 # Import the new simulator

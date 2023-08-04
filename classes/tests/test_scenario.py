@@ -20,10 +20,10 @@ class TestScenarioCreation(unittest.TestCase):
         my_productionplan.set_sequence(sequence=[0, 1])
 
         # This is the new format for the simulator input
-        earliest_start = [{"product_id": 0, "activity_id": 0, "earliest_start": 0},
-                          {"product_id": 0, "activity_id": 1, "earliest_start": 1},
-                          {"product_id": 1, "activity_id": 0, "earliest_start": 2},
-                          {"product_id": 1, "activity_id": 1, "earliest_start": 3}]
+        earliest_start = [{"product_index": 0, "activity_id": 0, "earliest_start": 0},
+                          {"product_index": 0, "activity_id": 1, "earliest_start": 1},
+                          {"product_index": 1, "activity_id": 0, "earliest_start": 2},
+                          {"product_index": 1, "activity_id": 1, "earliest_start": 3}]
         my_productionplan.set_earliest_start_times(earliest_start)
 
         return my_productionplan

@@ -22,10 +22,10 @@ class Simulator:
         self.operator = operator
         self.logger = SimulatorLogger(self.__class__.__name__)
 
-    def activity_processing(self, activity_id, product_id, proc_time, needs):
+    def activity_processing(self, activity_id, product_index, proc_time, needs):
         """
         :param activity_id: id of the activity (int)
-        :param product_id: id of the product (int)
+        :param product_index: id of the product (int)
         :param proc_time: processing time of this activity (int)
         :param resources_required: list with SimPy processes for resource requests (list)
         :param resources_names: list with the corresponding resource names (list)
@@ -46,37 +46,37 @@ class Simulator:
                 available_machines = [i.resource_group for i in self.factory.items].count(resource_names)
                 if self.printing:
                     print(
-                        f'At time {self.env.now}: we need {need} {resource_names} for product {product_id}, activity {activity_id} and currently '
+                        f'At time {self.env.now}: we need {need} {resource_names} for product index {product_index} with product id {self.plan.products[product_index].id}, activity {activity_id} and currently '
                         f'in the factory we have {available_machines} available')
                 if available_machines < need:
                     start_processing = False
 
         # Check precedence relations (check if minimal difference between start time with predecessors is satisfied)
-        predecessors = self.plan.products[product_id].predecessors[activity_id]
+        predecessors = self.plan.products[product_index].predecessors[activity_id]
         for pred_activity_id in predecessors:
-            temp_rel = self.plan.products[product_id].temporal_relations[(pred_activity_id, activity_id)]
+            temp_rel = self.plan.products[product_index].temporal_relations[(pred_activity_id, activity_id)]
             # start_pred = self.log_start_times[(product_id, pred_activity_id)]
-            start_pred_log = self.logger.fetch_latest_entry(self.plan.products[product_id].id,
+            start_pred_log = self.logger.fetch_latest_entry(self.plan.products[product_index].id,
                                                             pred_activity_id, Action.START)
             start_pred = start_pred_log.timestamp
             if start_pred is None:
                 if self.printing:
-                    print(f'At time {self.env.now}: product {product_id}, activity {activity_id} cannot start because '
-                          f' predecessors {product_id}, {pred_activity_id} did not start yet')
+                    print(f'At time {self.env.now}: product {product_index}, activity {activity_id} cannot start because '
+                          f' predecessors {product_index}, {pred_activity_id} did not start yet')
                 start_processing = False
             else:
                 if self.env.now - start_pred < temp_rel:
                     if self.printing:
                         print(
-                            f'At time {self.env.now}: product {product_id}, activity {activity_id} cannot start because '
-                            f' minimal time lag with {product_id}, {pred_activity_id} is not satisfied')
+                            f'At time {self.env.now}: product {product_index}, activity {activity_id} cannot start because '
+                            f' minimal time lag with {product_index}, {pred_activity_id} is not satisfied')
                     start_processing = False
 
-        for constraint in self.plan.products[product_id].activities[activity_id].constraints:
+        for constraint in self.plan.products[product_index].activities[activity_id].constraints:
             if (constraint.product_id, constraint.activity_id) in self.logger.active_processes:
                 start_processing = False
                 print(
-                    f'Activity {activity_id} of product {self.plan.products[product_id]} has incompatibility with activity {constraint.activity_id} of product {constraint.product_id} which is currently active')
+                    f'Activity {activity_id} of product {self.plan.products[product_index].id} has incompatibility with activity {constraint.activity_id} of product {constraint.product_id} which is currently active')
                 break
 
         # If it is available start the request and processing
@@ -84,7 +84,7 @@ class Simulator:
             self.signal_to_operator = False
             if self.printing:
                 print(
-                    f'At time {self.env.now}: product {product_id} ACTIVITY {activity_id} requested resources: {needs}')
+                    f'At time {self.env.now}: product {product_index} ACTIVITY {activity_id} requested resources: {needs}')
 
             # SimPy request
             resources = []
@@ -99,11 +99,11 @@ class Simulator:
 
             if self.printing:
                 print(
-                    f'At time {self.env.now}: product {product_id} ACTIVITY {activity_id} retrieved resources: {needs}')
+                    f'At time {self.env.now}: product {product_index} ACTIVITY {activity_id} retrieved resources: {needs}')
 
             # Trace back the moment in time that the activity starts processing
             start_time = self.env.now
-            self.logger.log_activity(self.plan.products[product_id].id,
+            self.logger.log_activity(self.plan.products[product_index].id,
                                      activity_id, Action.START, start_time)
             # self.log_start_times[(product_id, activity_id)] = start_time
 
@@ -112,7 +112,7 @@ class Simulator:
 
             # Trace back the moment in time that the activity ends processing
             end_time = self.env.now
-            self.logger.log_activity(self.plan.products[product_id].id,
+            self.logger.log_activity(self.plan.products[product_index].id,
                                      activity_id, Action.END, end_time)
 
             # Release the resources that were used during processing the activity
@@ -122,10 +122,10 @@ class Simulator:
 
             if self.printing:
                 print(
-                    f'At time {self.env.now}: product {product_id} ACTIVITY {activity_id} released resources: {needs}')
+                    f'At time {self.env.now}: product index {product_index} with id {self.plan.products[product_index].id} ACTIVITY {activity_id} released resources: {needs}')
 
-            self.resource_usage[(product_id, activity_id)] = \
-                {"Product": product_id,
+            self.resource_usage[(product_index, activity_id)] = \
+                {"ProductIndex": product_index,
                  "Activity": activity_id,
                  "Needs": needs,
                  "resources": resources,
@@ -141,8 +141,8 @@ class Simulator:
         else:
             if self.printing:
                 print(
-                    f"At time {self.env.now}: there are no resources available for product {product_id} ACTIVITY {activity_id}, so it cannot start")
-            self.operator.signal_failed_activity(product_id=product_id, activity_id=activity_id,
+                    f"At time {self.env.now}: there are no resources available for product {product_index} ACTIVITY {activity_id}, so it cannot start")
+            self.operator.signal_failed_activity(product_index=product_index, activity_id=activity_id,
                                                  current_time=self.env.now)
             self.nr_clashes += 1
 
@@ -153,11 +153,11 @@ class Simulator:
 
         # Ask operator about next activity
         while not finish:
-            send_activity, delay, activity_id, product_id, proc_time, needs, finish = \
+            send_activity, delay, activity_id, product_index, proc_time, needs, finish = \
                 self.operator.send_next_activity(current_time=self.env.now)
 
             if send_activity:
-                self.env.process(self.activity_processing(activity_id, product_id, proc_time, needs))
+                self.env.process(self.activity_processing(activity_id, product_index, proc_time, needs))
 
             # Generator object that does a time-out for a time period equal to delay value
             yield self.env.timeout(delay)
@@ -180,7 +180,7 @@ class Simulator:
         self.env = simpy.Environment()
 
         for act in self.plan.earliest_start:
-            self.resource_usage[(act["product_id"], act["activity_id"])] = {"Product": act["product_id"],
+            self.resource_usage[(act["product_index"], act["activity_id"])] = {"ProductIndex": act["product_index"],
                                                                             "Activity": act["activity_id"],
                                                                             "Needs": float("inf"),
                                                                             "resources": "NOT PROCESSED DUE TO CLASH",
@@ -221,7 +221,7 @@ class Simulator:
 
         nr_unfinished_products = 0
         for p in self.plan.sequence:
-            schedule = self.resource_usage[self.resource_usage["Product"] == p]
+            schedule = self.resource_usage[self.resource_usage["ProductIndex"] == p]
             finish = max(schedule["Finish"])
             if finish == float("inf"):
                 nr_unfinished_products += 1

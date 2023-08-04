@@ -1,6 +1,5 @@
 import copy
 
-
 import simpy
 import random
 import pandas as pd
@@ -23,10 +22,10 @@ class Simulator:
         self.nr_clashes = 0
         self.logger = SimulatorLogger(self.__class__.__name__)
 
-    def activity_processing(self, activity_id, product_id, proc_time, needs):
+    def activity_processing(self, activity_id, product_index, proc_time, needs):
         """
         :param activity_id: id of the activity (int)
-        :param product_id: id of the product (int)
+        :param product_index: index of the product in the plan (int)
         :param proc_time: processing time of this activity (int)
         :param resources_required: list with SimPy processes for resource requests (list)
         :param resources_names: list with the corresponding resource names (list)
@@ -46,25 +45,25 @@ class Simulator:
                 available_machines = [i.resource_group for i in self.factory.items].count(resource_names)
                 if self.printing:
                     print(
-                        f'We need {need} {resource_names} for product {product_id}, activity {activity_id} and currently '
+                        f'We need {need} {resource_names} for product index {product_index} of product id {self.plan.products[product_index].id}, activity {activity_id} and currently '
                         f'in the factory we have {available_machines} available')
                 if available_machines < need:
                     start_processing = False
 
         # TODO: check if there is a compatibility check
         # If there is a clash, set start_processing to False
-        for constraint in self.plan.products[product_id].activities[activity_id].constraints:
+        for constraint in self.plan.products[product_index].activities[activity_id].constraints:
             if (constraint.product_id, constraint.activity_id) in self.logger.active_processes:
                 start_processing = False
                 print(
-                    f'Activity {activity_id} of product {self.plan.products[product_id]} has incompatibility with activity {constraint.activity_id} of product {constraint.product_id} which is currently active')
+                    f'Activity {activity_id} of product {self.plan.products[product_index].id} has incompatibility with activity {constraint.activity_id} of product {constraint.product_id} which is currently active')
                 break
 
         # If it is available start the request and processing
         if start_processing:
             if self.printing:
                 print(
-                    f'\nProduct {product_id}, activity {activity_id} requested resources: {needs} at time: {request_time} \n')
+                    f'\nProduct {product_index}, activity {activity_id} requested resources: {needs} at time: {request_time} \n')
 
             # SimPy request
             resources = []
@@ -79,13 +78,13 @@ class Simulator:
 
             if self.printing:
                 print(
-                    f'Product {product_id}, activity {activity_id} retrieved resources: {needs} at time: {retrieve_time} \n')
+                    f'Product {product_index}, activity {activity_id} retrieved resources: {needs} at time: {retrieve_time} \n')
 
             # Trace back the moment in time that the activity starts processing
             start_time = self.env.now
 
             # TODO:
-            self.logger.log_activity(self.plan.products[product_id], activity_id, Action.START, start_time)
+            self.logger.log_activity(self.plan.products[product_index].id, activity_id, Action.START, start_time)
 
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
@@ -94,7 +93,7 @@ class Simulator:
             end_time = self.env.now
 
             # TODO:
-            self.logger.log_activity(self.plan.products[product_id], activity_id, Action.END, end_time)
+            self.logger.log_activity(self.plan.products[product_index].id, activity_id, Action.END, end_time)
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object
@@ -103,10 +102,10 @@ class Simulator:
 
             if self.printing:
                 print(
-                    f'Product {product_id}, activity {activity_id} released resources: {needs} at time: {end_time} \n')
+                    f'Product {product_index}, activity {activity_id} released resources: {needs} at time: {end_time} \n')
 
             # Store relevant information
-            self.resource_usage.append({"Product": product_id,
+            self.resource_usage.append({"ProductIndex": product_index,
                                         "Activity": activity_id,
                                         "Needs": needs,
                                         "resources": resources,
@@ -119,9 +118,9 @@ class Simulator:
         # factory
         else:
             print(
-                f"Since there are no resources available, product {product_id} ACTIVITY {activity_id} will not be processed")
+                f"Since there are no resources available, product {product_index} ACTIVITY {activity_id} will not be processed")
             self.nr_clashes += 1
-            self.resource_usage.append({"Product": product_id,
+            self.resource_usage.append({"ProductIndex": product_index,
                                         "Activity": activity_id,
                                         "Needs": needs,
                                         "resources": "NOT PROCESSED",
@@ -141,7 +140,7 @@ class Simulator:
 
         # Iterate through the different activities
         for id, i in enumerate(earliest_start_times_argsort):
-            product_id = self.plan.earliest_start[i]["product_id"]
+            product_id = self.plan.earliest_start[i]["product_index"]
             activity_id = self.plan.earliest_start[i]["activity_id"]
 
             # Obtain information about resource needs and processing time
@@ -211,7 +210,7 @@ class Simulator:
 
         nr_unfinished_products = 0
         for p in self.plan.sequence:
-            schedule = self.resource_usage[self.resource_usage["Product"] == p]
+            schedule = self.resource_usage[self.resource_usage["ProductIndex"] == p]
             finish = max(schedule["Finish"])
             if finish == float("inf"):
                 if self.printing:
