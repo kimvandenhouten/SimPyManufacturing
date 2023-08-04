@@ -53,7 +53,7 @@ class Simulator:
                 delay_factor = 0
                 start_fermentation = self.env.now
             else:
-                delay_factor = self.plan.products[p].temporal_relations[(0, i)]
+                delay_factor = self.plan.products[p].temporal_relations[(0, i)].min_lag
             yield self.env.timeout(0)
 
             self.env.process(self.activity_processing(i=i, p=p, delay=delay_factor, start_fermentation=start_fermentation, duration=durations[i], resources_required=resources_required[i],

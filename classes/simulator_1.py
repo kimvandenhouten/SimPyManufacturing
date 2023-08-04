@@ -61,7 +61,7 @@ class Simulator:
             if i == 0:
                 delay_factor = 0
             else:
-                delay_factor = self.plan.products[p].temporal_relations[(0, i)]
+                delay_factor = self.plan.products[p].temporal_relations[(0, i)].min_lag
             self.env.process(self.activity_processing(i=i, p=p, delay=delay_factor, duration=durations[i], resources_required=resources_required[i],
                                                       resources_names=resources_names[i], request_time=request_time,
                                                       retrieve_time=retrieve_time))

@@ -22,7 +22,7 @@ for instance_name in ["5_1_factory_1", "5_2_factory_1", "5_3_factory_1", "5_4_fa
     # loop over all products
     for p in instance.products:
         for (i, j) in p.temporal_relations:
-            temporal_relations[(i+activity_counter, j+activity_counter)] = p.temporal_relations[(i, j)]
+            temporal_relations[(i+activity_counter, j+activity_counter)] = p.temporal_relations[(i, j)].min_lag
             successors.append((i+activity_counter, j+activity_counter))
 
         nr_activities = len(p.activities)

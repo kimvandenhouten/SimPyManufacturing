@@ -27,12 +27,12 @@ for p, product in enumerate(my_productionplan.products):
     for (i, j) in product.temporal_relations:
         print(i, j)
         print(f'The difference between the start time of activity {i} and activity {j} '
-              f'from product {p} should be exactly {product.temporal_relations[(i, j)]}')
+              f'from product {p} should be exactly {product.temporal_relations[(i, j)].min_lag}')
         start_i = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == i)]['Start'].values[0]
         start_j = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == j)]['Start'].values[0]
 
         print(f'The simulated difference between the start time of activity {i} and activity {j} is {start_j-start_i}')
-        if start_j-start_i == product.temporal_relations[(i, j)]:
+        if start_j-start_i == product.temporal_relations[(i, j)].min_lag:
             print("CONSTRAINT SATISFIED")
         else:
             print("CONSTRAINT VIOLATED")

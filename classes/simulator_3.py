@@ -72,7 +72,7 @@ class Simulator:
             resources_names[i] = resources_names_act
 
         for i in range(1, len(activities)):
-            delay_factor = self.plan.products[p].temporal_relations[(0, i)]
+            delay_factor = self.plan.products[p].temporal_relations[(0, i)].min_lag
             yield self.env.timeout(0)
 
             self.env.process(self.activity_processing(i=i, p=p, delay=delay_factor, duration=durations[i],

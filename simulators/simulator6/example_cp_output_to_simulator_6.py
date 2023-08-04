@@ -21,7 +21,7 @@ cp_output = pd.read_csv(f"results/cp_model/{file_name}.csv", delimiter=";")
 
 print(f'Makespan according to CP outout is {max(cp_output["End"].tolist())}')
 # Convert to earlies starttimes dict
-earliest_start = cp_output.to_dict('records') #TODO: check with Kim on this
+earliest_start = cp_output.to_dict('records')
 
 # Read input instance
 my_productionplan = ProductionPlan(
