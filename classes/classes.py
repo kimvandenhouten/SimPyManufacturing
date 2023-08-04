@@ -116,7 +116,7 @@ class Product:
         if relations:
             for relation in relations:
                 if (isinstance(relation, dict)):
-                    temporal_relations[(relation['successor'], relation['predecessor'])] = TemporalRelation(
+                    temporal_relations[(relation['predecessor'], relation['successor'])] = TemporalRelation(
                         relation['min_lag'], relation['max_lag'] if 'max_lag' in relation.keys() else None)
                 elif (isinstance(relation, tuple)):
                     temporal_relations[relation] = relations[relation]

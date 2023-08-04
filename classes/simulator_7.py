@@ -72,10 +72,11 @@ class Simulator:
     def _compatibility_constraint_check(self, product_index, activity_id):
         for constraint in self.plan.products[product_index].activities[activity_id].constraints:
             if (constraint.product_id, constraint.activity_id) in self.logger.active_processes:
+                if self.printing:
+                    print(
+                        f'Activity {activity_id} of product {self.plan.products[product_index].id} has incompatibility with activity {constraint.activity_id} of product {constraint.product_id} which is currently active')
                 return FailureCode.COMPATIBILITY
-                print(
-                    f'Activity {activity_id} of product {self.plan.products[product_index].id} has incompatibility with activity {constraint.activity_id} of product {constraint.product_id} which is currently active')
-                break
+
         return None
 
     def activity_processing(self, activity_id, product_index, proc_time, needs):
