@@ -16,8 +16,8 @@ class TestFactory(unittest.TestCase):
         self.assertEqual(True, isinstance(factory.products[0], Product))
         self.assertEqual(True, isinstance(factory.products[0].activities[0], Activity))
         self.assertEqual(len(factory.products[0].temporal_relations.keys()), 13)
-        self.assertEqual(factory.products[0].activities[0].constraints[0].activity_id, 2)
-        self.assertEqual(factory.products[0].activities[0].constraints[0].product_id, 0)
+        self.assertEqual(factory.products[0].activities[1].constraints[0].activity_id, 1)
+        self.assertEqual(factory.products[1].activities[1].constraints[0].product_id, 0)
         fp.close()
 
     def test_distribution_mapping(self):

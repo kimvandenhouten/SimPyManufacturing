@@ -32,6 +32,7 @@ class Activity:
         self.processing_time = processing_time
         self.needs = needs
         self.sequence_id = sequence_id
+        self.constraints = []
         self._set_constraints(constraints)
         self.set_distribution(distribution)
 
@@ -58,15 +59,16 @@ class Activity:
             return TypeError("Illegal distribution type: ", type(distribution))
 
     def _set_constraints(self, constraints):
-        constraints_obj = []
         for constr in constraints:
-            if isinstance(constr, CompatibilityConstraint):
-                constraints_obj.append(constr)
-            elif isinstance(constr, dict):
-                constraints_obj.append(CompatibilityConstraint(**constr))
-            else:
-                return TypeError("Illegal distribution type: ", type(constr))
-        self.constraints = constraints_obj
+            self._set_constraint(constr)
+
+    def _set_constraint(self, constraint):
+        if isinstance(constraint, CompatibilityConstraint):
+            self.constraints.append(constraint)
+        elif isinstance(constraint, dict):
+            self.constraints.append(CompatibilityConstraint(**constraint))
+        else:
+            return TypeError("Illegal distribution type: ", type(constraint))
 
 
 class Product:
@@ -127,11 +129,12 @@ class Product:
 
 
 class Factory:
-    def __init__(self, name, resource_names, capacity, products=None):
+    def __init__(self, name, resource_names, capacity, compatibility_constraints=[], products=None):
         self.name = name
         self._set_products(products)
         self.resource_names = resource_names
         self.capacity = capacity
+        self._set_compatibility_constraints(compatibility_constraints)
 
     def add_product(self, product):
         """
@@ -139,6 +142,14 @@ class Factory:
         :param product: Class product
         """
         self.products.append(product)
+
+    def _set_compatibility_constraints(self, compatibility_constraints):
+        for constraint in compatibility_constraints:
+            self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]]._set_constraint(
+                CompatibilityConstraint(**constraint[1]))
+
+            self.products[constraint[1]["product_id"]].activities[constraint[0]["activity_id"]]._set_constraint(
+                CompatibilityConstraint(**constraint[0]))
 
     def _set_products(self, products):
         products_obj = []

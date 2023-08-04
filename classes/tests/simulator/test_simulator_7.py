@@ -24,7 +24,7 @@ class MyTestCase(unittest.TestCase):
                              product_id="0", needs=[0, 1, 0], distribution=NormalDistribution(0, 2))
         product.add_activity(activity=activity0)
         product.add_activity(activity=activity1)
-        product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1,2)})
+        product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1, 2)})
         my_factory.add_product(product=product)
         activity0 = Activity(id=0, processing_time=[3, 3], product="Enzyme_2",
                              product_id="7", needs=[1, 0, 1])
