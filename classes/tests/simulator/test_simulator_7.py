@@ -13,11 +13,12 @@ from classes.operator import Operator
 
 
 class MyTestCase(unittest.TestCase):
-    def test_something(self):
+    def test_simulator(self):
+        compatibility_constraints = [[{"product_id": 0, "activity_id": 0}, {"product_id": 1, "activity_id": 0}]]
         my_factory = Factory(name="Myfactory", resource_names=["Filter", "Mixer", "Dryer"], capacity=[2, 2, 2])
         # set id which is not index for testing
 
-        product = Product(name="Enzyme_1", id=7)
+        product = Product(name="Enzyme_1", id=0)
         activity0 = Activity(id=0, processing_time=[100, 100], product="Enzyme_1",
                              product_id="0", needs=[1, 0, 1], distribution=NormalDistribution(4, 2))
         activity1 = Activity(id=1, processing_time=[5, 5], product="Enzyme_1",
@@ -27,16 +28,17 @@ class MyTestCase(unittest.TestCase):
         product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1, 2)})
         my_factory.add_product(product=product)
         activity0 = Activity(id=0, processing_time=[3, 3], product="Enzyme_2",
-                             product_id="7", needs=[1, 0, 1])
+                             product_id="1", needs=[1, 0, 1])
         activity1 = Activity(id=1, processing_time=[6, 6], product="Enzyme_2",
-                             product_id="7", needs=[0, 1, 1])
+                             product_id="1", needs=[0, 1, 1])
 
-        activity0.constraints = [CompatibilityConstraint(7, 0)]
         product = Product(name="Enzyme_2", id=1)
         product.add_activity(activity=activity0)
         product.add_activity(activity=activity1)
         product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1)})
         my_factory.add_product(product=product)
+
+        my_factory.set_compatibility_constraints(compatibility_constraints)
         # Set up a production plan for this factory
         my_productionplan = ProductionPlan(id=0, size=2, name="ProductionPlanJanuary", factory=my_factory,
                                            product_ids=[0, 1], deadlines=[8, 20])
@@ -44,7 +46,7 @@ class MyTestCase(unittest.TestCase):
 
         # Define partial schedule that includes earliest start times
         earliest_start = [{"product_index": 0, "activity_id": 0, "earliest_start": 0},
-                          {"product_index": 0, "activity_id": 1, "earliest_start": 5},
+                          {"product_index": 0, "activity_id": 1, "earliest_start": 2},
                           {"product_index": 1, "activity_id": 0, "earliest_start": 6},
                           {"product_index": 1, "activity_id": 1, "earliest_start": 7}]
         my_productionplan.set_earliest_start_times(earliest_start)
@@ -59,7 +61,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(int(makespan), 7)
         self.assertEqual(lateness, 0)
         self.assertEqual(nr_unfinished, 0)
-        self.assertEqual(my_simulator.nr_clashes, 2)
+        self.assertEqual(my_simulator.nr_clashes, 1)
 
 
 if __name__ == '__main__':

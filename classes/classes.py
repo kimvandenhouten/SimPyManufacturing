@@ -134,7 +134,7 @@ class Factory:
         self._set_products(products)
         self.resource_names = resource_names
         self.capacity = capacity
-        self._set_compatibility_constraints(compatibility_constraints)
+        self.set_compatibility_constraints(compatibility_constraints)
 
     def add_product(self, product):
         """
@@ -143,13 +143,16 @@ class Factory:
         """
         self.products.append(product)
 
-    def _set_compatibility_constraints(self, compatibility_constraints):
+    def set_compatibility_constraints(self, compatibility_constraints):
         for constraint in compatibility_constraints:
-            self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]]._set_constraint(
-                CompatibilityConstraint(**constraint[1]))
+            if isinstance(constraint[0],CompatibilityConstraint) and isinstance(constraint[1],CompatibilityConstraint):
+                self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]].constraints.append(constraint)
+            elif  isinstance(constraint[0],dict) and isinstance(constraint[1],dict):
+                self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]]._set_constraint(
+                    CompatibilityConstraint(**constraint[1]))
 
-            self.products[constraint[1]["product_id"]].activities[constraint[0]["activity_id"]]._set_constraint(
-                CompatibilityConstraint(**constraint[0]))
+                self.products[constraint[1]["product_id"]].activities[constraint[0]["activity_id"]]._set_constraint(
+                    CompatibilityConstraint(**constraint[0]))
 
     def _set_products(self, products):
         products_obj = []

@@ -1,4 +1,16 @@
 {
+    "compatibility_constraints": [
+    [
+      {
+        "product_id": 0,
+        "activity_id": 1
+      },
+      {
+        "product_id": 1,
+        "activity_id": 1
+      }
+    ]
+  ],
   "name": "factory_1",
   "resource_names": [
     "Fermenter_1",
