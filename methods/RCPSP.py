@@ -32,7 +32,7 @@ class RCPSP:
             self.S[j].add(i)
 
         if temp_relation == "temporal" or temp_relation == "time_lag":
-            self.d = {(i, j): self.temporal_relations[(i, j)] for (i, j) in self.successors}
+            self.d = {(i, j): self.temporal_relations[(i, j)].min_lag for (i, j) in self.successors}
 
         self.T = np.array(range(0, sum(self.durations)))
 

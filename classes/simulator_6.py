@@ -50,7 +50,7 @@ class Simulator:
                 if available_machines < need:
                     start_processing = False
 
-        # TODO: check if there is a compatibility check
+
         # If there is a clash, set start_processing to False
         for constraint in self.plan.products[product_index].activities[activity_id].constraints:
             if (constraint.product_id, constraint.activity_id) in self.logger.active_processes:
@@ -83,7 +83,6 @@ class Simulator:
             # Trace back the moment in time that the activity starts processing
             start_time = self.env.now
 
-            # TODO:
             self.logger.log_activity(self.plan.products[product_index].id, activity_id, Action.START, start_time)
 
             # Generator for processing the activity
@@ -92,7 +91,7 @@ class Simulator:
             # Trace back the moment in time that the activity ends processing
             end_time = self.env.now
 
-            # TODO:
+
             self.logger.log_activity(self.plan.products[product_index].id, activity_id, Action.END, end_time)
 
             # Release the resources that were used during processing the activity

@@ -1,4 +1,5 @@
-from classes.classes import Factory
+from classes.classes import Factory, TemporalRelation
+
 my_factory = Factory(name="Myfactory", resource_names=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
 
 from classes.classes import Product
@@ -17,7 +18,7 @@ product.add_activity(activity=activity0)
 product.add_activity(activity=activity1)
 # Set temporal relations, in this case meaning that activity 1 requests
 # resources 10 minutes after start of activity 0.
-product.set_temporal_relations(temporal_relations={(0, 1): 10})
+product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(10)})
 
 # Add product to factory
 my_factory.add_product(product=product)

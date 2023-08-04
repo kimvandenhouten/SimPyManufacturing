@@ -2,6 +2,8 @@ import random
 import numpy as np
 import copy
 
+from classes.classes import FailureCode
+
 
 class Operator:
     def __init__(self, plan, name="simple_operator", policy_type=1, printing=True):
@@ -12,10 +14,14 @@ class Operator:
         self.printing = printing
         self.policy_type = policy_type
 
-    def signal_failed_activity(self, product_index, activity_id, current_time):
+    def signal_failed_activity(self, product_index, activity_id, current_time, failure_code):
         """
         Process signal about a failed activity
         """
+
+        print(f'Failure code received: {failure_code}')
+        # TODO: (Deepali) use above to use policy 1 for MAX_LAG
+
         if self.printing:
             print(
                 f'At time {current_time}: the operator receives the signal that product index {product_index} with id {self.plan.products[product_index].id} ACTIVITY '
@@ -31,7 +37,7 @@ class Operator:
                 if act['product_index'] == product_index:
                     del self.plan.earliest_start[i]
 
-        elif self.policy_type == 2:
+        elif self.policy_type == 2:  # Postpone for all except for max time,
             self.plan.earliest_start.append(
                 {'product_index': product_index, "activity_id": activity_id, "earliest_start": current_time + 1})
 

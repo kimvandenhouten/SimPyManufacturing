@@ -2,7 +2,7 @@
 # the start times for all activities. Each start time corresponds to the time in the
 # system that this activity requests the needed resources.
 
-from classes.classes import Factory, CompatibilityConstraint
+from classes.classes import Factory, CompatibilityConstraint, TemporalRelation
 from classes.classes import Product
 from classes.classes import Activity
 import pandas as pd
@@ -20,18 +20,18 @@ activity1 = Activity(id=1, processing_time=[5, 5], product="Enzyme_1",
                      product_id="0", needs=[0, 1, 0])
 product.add_activity(activity=activity0)
 product.add_activity(activity=activity1)
-product.set_temporal_relations(temporal_relations={(0, 1): 4})
+product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1)})
 my_factory.add_product(product=product)
 activity0 = Activity(id=0, processing_time=[3, 3], product="Enzyme_2",
                      product_id="7", needs=[1, 0, 1])
 activity1 = Activity(id=1, processing_time=[6, 6], product="Enzyme_2",
                      product_id="7", needs=[0, 1, 1])
 
-activity0.constraints = [CompatibilityConstraint(7, 0)]
+#activity0.constraints = [CompatibilityConstraint(7, 0)]
 product = Product(name="Enzyme_2", id=1)
 product.add_activity(activity=activity0)
 product.add_activity(activity=activity1)
-product.set_temporal_relations(temporal_relations={(0, 1): 1})
+product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1)})
 my_factory.add_product(product=product)
 # Set up a production plan for this factory
 my_productionplan = ProductionPlan(id=0, size=2, name="ProductionPlanJanuary", factory=my_factory,

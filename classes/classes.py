@@ -16,6 +16,12 @@ class CompatibilityConstraint:
         self.product_id = product_id
 
 
+class TemporalRelation:
+    def __init__(self, min_lag=None, max_lag=None):
+        self.min_lag = min_lag
+        self.max_lag = max_lag
+
+
 class Activity:
     def __init__(self, id, processing_time, product, product_id, needs, distribution=None, sequence_id=int(),
                  constraints=[]):
@@ -110,7 +116,8 @@ class Product:
         if relations:
             for relation in relations:
                 if (isinstance(relation, dict)):
-                    temporal_relations[(relation['successor'], relation['predecessor'])] = relation['rel']
+                    temporal_relations[(relation['successor'], relation['predecessor'])] = TemporalRelation(
+                        relation['min_lag'], relation['max_lag'] if 'max_lag' in relation.keys() else None)
                 elif (isinstance(relation, tuple)):
                     temporal_relations[relation] = relations[relation]
                 else:
@@ -216,7 +223,8 @@ class ProductionPlan:
             temporal_relations = list(map(lambda rel: {
                 "predecessor": rel[1],
                 "successor": rel[0],
-                "rel": plan.factory.products[i].temporal_relations[rel]
+                "min_lag": plan.factory.products[i].temporal_relations[rel].min_lag,
+                "max_lag": plan.factory.products[i].temporal_relations[rel].max_lag
             }, plan.factory.products[i].temporal_relations.keys()))
             plan.factory.products[i].temporal_relations = temporal_relations
         plan.list_products()
@@ -260,6 +268,14 @@ class Action(Enum):
     END = "End"
 
 
+class FailureCode(Enum):
+    MIN_LAG = "Min_Lag"
+    MAX_LAG = "Max_Lag"
+    COMPATIBILITY = "Compatibility"
+    PRECEDENCE = "Precedence"
+    AVAILABILITY = "Availability"
+
+
 class LogEntry:
 
     def __init__(self, product_id, activity_id, action, timestamp):
@@ -275,6 +291,7 @@ class SimulatorLogger:
         self.active_processes = []
         self.class_name = class_name
         self.log = []
+        self.failure_code = None
 
     def log_activity(self, product_id, activity_id, action, timestamp=time.time()):
         self.log.append(LogEntry(product_id, activity_id, action, timestamp))

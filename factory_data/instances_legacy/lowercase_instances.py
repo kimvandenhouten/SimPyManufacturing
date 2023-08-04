@@ -1,7 +1,15 @@
 import os
 import pickle
 
-from classes.classes import Activity, Product, Factory, ProductionPlan
+from classes.classes import Activity, Product, Factory, ProductionPlan, TemporalRelation
+
+
+def convert_temporal_relations(relations):
+    temp_relations_obj = {}
+    for key in relations.keys():
+        temp_relations_obj[key] = TemporalRelation(relations[key])
+    return temp_relations_obj
+
 
 
 def convert_to_new_production_plan(data):
@@ -13,7 +21,7 @@ def convert_to_new_production_plan(data):
                                     activity.NEEDS, None, activity.SEQUENCE_ID)
             activities_new.append(activity_new)
         products_new.append(
-            Product(product.ID, product.NAME, activities_new, product.TEMPORAL_RELATIONS, product.DEADLINE,
+            Product(product.ID, product.NAME, activities_new, convert_temporal_relations(product.TEMPORAL_RELATIONS), product.DEADLINE,
                     product.PREDECESSORS, product.SUCCESSORS))
     factory_new = Factory(data.FACTORY.NAME, data.FACTORY.RESOURCE_NAMES, data.FACTORY.CAPACITY, products_new)
     production_plan = ProductionPlan(data.ID, data.SIZE, data.NAME, factory_new, data.PRODUCT_IDS, data.DEADLINES, [],

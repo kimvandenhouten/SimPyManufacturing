@@ -1,5 +1,5 @@
 import unittest
-from classes.classes import Factory, CompatibilityConstraint
+from classes.classes import Factory, CompatibilityConstraint, TemporalRelation
 from classes.classes import Product
 from classes.classes import Activity
 import pandas as pd
@@ -18,13 +18,13 @@ class MyTestCase(unittest.TestCase):
         # set id which is not index for testing
 
         product = Product(name="Enzyme_1", id=7)
-        activity0 = Activity(id=0, processing_time=[4, 4], product="Enzyme_1",
+        activity0 = Activity(id=0, processing_time=[100, 100], product="Enzyme_1",
                              product_id="0", needs=[1, 0, 1], distribution=NormalDistribution(4, 2))
         activity1 = Activity(id=1, processing_time=[5, 5], product="Enzyme_1",
-                             product_id="0", needs=[0, 1, 0], distribution=NormalDistribution(5, 2))
+                             product_id="0", needs=[0, 1, 0], distribution=NormalDistribution(0, 2))
         product.add_activity(activity=activity0)
         product.add_activity(activity=activity1)
-        product.set_temporal_relations(temporal_relations={(0, 1): 4})
+        product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1,2)})
         my_factory.add_product(product=product)
         activity0 = Activity(id=0, processing_time=[3, 3], product="Enzyme_2",
                              product_id="7", needs=[1, 0, 1])
@@ -35,7 +35,7 @@ class MyTestCase(unittest.TestCase):
         product = Product(name="Enzyme_2", id=1)
         product.add_activity(activity=activity0)
         product.add_activity(activity=activity1)
-        product.set_temporal_relations(temporal_relations={(0, 1): 1})
+        product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1)})
         my_factory.add_product(product=product)
         # Set up a production plan for this factory
         my_productionplan = ProductionPlan(id=0, size=2, name="ProductionPlanJanuary", factory=my_factory,
@@ -44,9 +44,9 @@ class MyTestCase(unittest.TestCase):
 
         # Define partial schedule that includes earliest start times
         earliest_start = [{"product_index": 0, "activity_id": 0, "earliest_start": 0},
-                          {"product_index": 0, "activity_id": 1, "earliest_start": 1},
-                          {"product_index": 1, "activity_id": 0, "earliest_start": 2},
-                          {"product_index": 1, "activity_id": 1, "earliest_start": 4}]
+                          {"product_index": 0, "activity_id": 1, "earliest_start": 4},
+                          {"product_index": 1, "activity_id": 0, "earliest_start": 6},
+                          {"product_index": 1, "activity_id": 1, "earliest_start": 7}]
         my_productionplan.set_earliest_start_times(earliest_start)
 
         scenario = my_productionplan.create_scenario(0)

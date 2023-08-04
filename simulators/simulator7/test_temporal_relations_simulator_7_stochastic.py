@@ -31,8 +31,8 @@ my_productionplan.set_sequence(sequence=np.arange(instance_size))
 scenario_1 = my_productionplan.create_scenario(seed)
 
 # Set printing to True if you want to print all events
-operator = Operator(plan=scenario_1.PRODUCTION_PLAN, policy_type=policy_type, printing=False)
-my_simulator = Simulator(plan=scenario_1.PRODUCTION_PLAN, operator=operator, printing=False)
+operator = Operator(plan=scenario_1.production_plan, policy_type=policy_type, printing=False)
+my_simulator = Simulator(plan=scenario_1.production_plan, operator=operator, printing=False)
 
 # Run simulation
 makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False, output_location=f""
@@ -48,17 +48,17 @@ gannt = my_simulator.resource_usage
 print('------------------------------------------------------------ \n CONSTRAINT CHECKING \n')
 number_of_violations = 0
 # iterate over products
-for p, product in enumerate(my_productionplan.PRODUCTS):
+for p, product in enumerate(my_productionplan.products):
     # obtain temporal relations
-    for (i, j) in product.TEMPORAL_RELATIONS:
+    for (i, j) in product.temporal_relations:
         print(i, j)
         print(f'The difference between the start time of activity {i} and activity {j} '
-              f'from product {p} should be at least {product.TEMPORAL_RELATIONS[(i, j)]}')
-        start_i = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == i)]['Start'].values[0]
-        start_j = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == j)]['Start'].values[0]
+              f'from product {p} should be at least {product.temporal_relations[(i, j)].min_lag}')
+        start_i = gannt.loc[(gannt['ProductIndex'] == p) & (gannt['Activity'] == i)]['Start'].values[0]
+        start_j = gannt.loc[(gannt['ProductIndex'] == p) & (gannt['Activity'] == j)]['Start'].values[0]
 
         print(f'The simulated difference between the start time of activity {i} and activity {j} is {start_j-start_i}')
-        if start_j-start_i >= product.TEMPORAL_RELATIONS[(i, j)]:
+        if start_j-start_i >= product.temporal_relations[(i, j)].min_lag:
             print("CONSTRAINT SATISFIED")
         else:
             print("CONSTRAINT VIOLATED")
