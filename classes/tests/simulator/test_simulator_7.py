@@ -14,7 +14,7 @@ from classes.operator import Operator
 
 class MyTestCase(unittest.TestCase):
     def test_something(self):
-        my_factory = Factory(name="Myfactory", resource_names=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
+        my_factory = Factory(name="Myfactory", resource_names=["Filter", "Mixer", "Dryer"], capacity=[2, 2, 2])
         # set id which is not index for testing
 
         product = Product(name="Enzyme_1", id=7)
@@ -44,7 +44,7 @@ class MyTestCase(unittest.TestCase):
 
         # Define partial schedule that includes earliest start times
         earliest_start = [{"product_index": 0, "activity_id": 0, "earliest_start": 0},
-                          {"product_index": 0, "activity_id": 1, "earliest_start": 4},
+                          {"product_index": 0, "activity_id": 1, "earliest_start": 5},
                           {"product_index": 1, "activity_id": 0, "earliest_start": 6},
                           {"product_index": 1, "activity_id": 1, "earliest_start": 7}]
         my_productionplan.set_earliest_start_times(earliest_start)
@@ -53,7 +53,7 @@ class MyTestCase(unittest.TestCase):
 
         # Here you can choose policy 1 or policy 2
         operator = Operator(plan=scenario.production_plan, policy_type=1, printing=True)
-        my_simulator = Simulator(plan=scenario.production_plan, operator=operator, printing=False)
+        my_simulator = Simulator(plan=scenario.production_plan, operator=operator, printing=True)
         makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=1000, random_seed=1, write=False, )
 
         self.assertEqual(int(makespan), 7)
