@@ -221,8 +221,8 @@ class ProductionPlan:
         plan = copy.deepcopy(self)
         for i in range(len(plan.factory.products)):
             temporal_relations = list(map(lambda rel: {
-                "predecessor": rel[1],
-                "successor": rel[0],
+                "predecessor": rel[0],
+                "successor": rel[1],
                 "min_lag": plan.factory.products[i].temporal_relations[rel].min_lag,
                 "max_lag": plan.factory.products[i].temporal_relations[rel].max_lag
             }, plan.factory.products[i].temporal_relations.keys()))
