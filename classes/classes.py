@@ -328,6 +328,5 @@ class SimulatorLogger:
         if len(entries) > 0:
             return entries[-1]
         else:
-            print(f'No entry present for product index {product_index} and activity {activity_id} for action {action}')
             return None
 
