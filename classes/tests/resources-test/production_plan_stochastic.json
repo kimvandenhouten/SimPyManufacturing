@@ -75,7 +75,12 @@
                         "sequence_id": 0
                     },
                     {
-                        "constraints": [],
+                        "constraints": [
+                            {
+                                "activity_id": 1,
+                                "product_id": 1
+                            }
+                        ],
                         "distribution": {
                             "mean": 28.0,
                             "type": "NORMAL",
@@ -473,68 +478,81 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 86,
                         "predecessor": 0,
-                        "rel": 86,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 86,
                         "predecessor": 0,
-                        "rel": 86,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 118,
                         "predecessor": 0,
-                        "rel": 118,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 118,
                         "predecessor": 0,
-                        "rel": 118,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 13
                     }
                 ]
@@ -572,7 +590,12 @@
                         "sequence_id": 0
                     },
                     {
-                        "constraints": [],
+                        "constraints": [
+                            {
+                                "activity_id": 1,
+                                "product_id": 0
+                            }
+                        ],
                         "distribution": {
                             "mean": 56.0,
                             "type": "NORMAL",
@@ -940,63 +963,75 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 45,
                         "predecessor": 0,
-                        "rel": 45,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 45,
                         "predecessor": 0,
-                        "rel": 45,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 81,
                         "predecessor": 0,
-                        "rel": 81,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 45,
                         "predecessor": 0,
-                        "rel": 45,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 81,
                         "predecessor": 0,
-                        "rel": 81,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 116,
                         "predecessor": 0,
-                        "rel": 116,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 99,
                         "predecessor": 0,
-                        "rel": 99,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 113,
                         "predecessor": 0,
-                        "rel": 113,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 82,
                         "predecessor": 0,
-                        "rel": 82,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 114,
                         "predecessor": 0,
-                        "rel": 114,
                         "successor": 12
                     }
                 ]
@@ -1312,48 +1347,57 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 119,
                         "predecessor": 0,
-                        "rel": 119,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 71,
                         "predecessor": 0,
-                        "rel": 71,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 132,
                         "predecessor": 0,
-                        "rel": 132,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 132,
                         "predecessor": 0,
-                        "rel": 132,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 145,
                         "predecessor": 0,
-                        "rel": 145,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 145,
                         "predecessor": 0,
-                        "rel": 145,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 148,
                         "predecessor": 0,
-                        "rel": 148,
                         "successor": 9
                     }
                 ]
@@ -1849,78 +1893,93 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 72,
                         "predecessor": 0,
-                        "rel": 72,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 72,
                         "predecessor": 0,
-                        "rel": 72,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 148,
                         "predecessor": 0,
-                        "rel": 148,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 72,
                         "predecessor": 0,
-                        "rel": 72,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 148,
                         "predecessor": 0,
-                        "rel": 148,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 149,
                         "predecessor": 0,
-                        "rel": 149,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 158,
                         "predecessor": 0,
-                        "rel": 158,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 159,
                         "predecessor": 0,
-                        "rel": 159,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 174,
                         "predecessor": 0,
-                        "rel": 174,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 164,
                         "predecessor": 0,
-                        "rel": 164,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 158,
                         "predecessor": 0,
-                        "rel": 158,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 137,
                         "predecessor": 0,
-                        "rel": 137,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 164,
                         "predecessor": 0,
-                        "rel": 164,
                         "successor": 13
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 209,
                         "predecessor": 0,
-                        "rel": 209,
                         "successor": 14
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 201,
                         "predecessor": 0,
-                        "rel": 201,
                         "successor": 15
                     }
                 ]
@@ -2176,38 +2235,45 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 147,
                         "predecessor": 0,
-                        "rel": 147,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 116,
                         "predecessor": 0,
-                        "rel": 116,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 147,
                         "predecessor": 0,
-                        "rel": 147,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 149,
                         "predecessor": 0,
-                        "rel": 149,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 163,
                         "predecessor": 0,
-                        "rel": 163,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 163,
                         "predecessor": 0,
-                        "rel": 163,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 192,
                         "predecessor": 0,
-                        "rel": 192,
                         "successor": 7
                     }
                 ]
@@ -2703,78 +2769,93 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 41,
                         "predecessor": 0,
-                        "rel": 41,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 41,
                         "predecessor": 0,
-                        "rel": 41,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 111,
                         "predecessor": 0,
-                        "rel": 111,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 103,
                         "predecessor": 0,
-                        "rel": 103,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 111,
                         "predecessor": 0,
-                        "rel": 111,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 41,
                         "predecessor": 0,
-                        "rel": 41,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 119,
                         "predecessor": 0,
-                        "rel": 119,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 119,
                         "predecessor": 0,
-                        "rel": 119,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 103,
                         "predecessor": 0,
-                        "rel": 103,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 119,
                         "predecessor": 0,
-                        "rel": 119,
                         "successor": 13
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 154,
                         "predecessor": 0,
-                        "rel": 154,
                         "successor": 14
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 190,
                         "predecessor": 0,
-                        "rel": 190,
                         "successor": 15
                     }
                 ]
@@ -3030,38 +3111,45 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 113,
                         "predecessor": 0,
-                        "rel": 113,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 94,
                         "predecessor": 0,
-                        "rel": 94,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 113,
                         "predecessor": 0,
-                        "rel": 113,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 114,
                         "predecessor": 0,
-                        "rel": 114,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 125,
                         "predecessor": 0,
-                        "rel": 125,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 125,
                         "predecessor": 0,
-                        "rel": 125,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 139,
                         "predecessor": 0,
-                        "rel": 139,
                         "successor": 7
                     }
                 ]
@@ -3437,58 +3525,69 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 58,
                         "predecessor": 0,
-                        "rel": 58,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 58,
                         "predecessor": 0,
-                        "rel": 58,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 176,
                         "predecessor": 0,
-                        "rel": 176,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 58,
                         "predecessor": 0,
-                        "rel": 58,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 180,
                         "predecessor": 0,
-                        "rel": 180,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 157,
                         "predecessor": 0,
-                        "rel": 157,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 176,
                         "predecessor": 0,
-                        "rel": 176,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 177,
                         "predecessor": 0,
-                        "rel": 177,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 180,
                         "predecessor": 0,
-                        "rel": 180,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 181,
                         "predecessor": 0,
-                        "rel": 181,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 210,
                         "predecessor": 0,
-                        "rel": 210,
                         "successor": 11
                     }
                 ]
@@ -3744,38 +3843,45 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 64,
                         "predecessor": 0,
-                        "rel": 64,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 54,
                         "predecessor": 0,
-                        "rel": 54,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 64,
                         "predecessor": 0,
-                        "rel": 64,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 64,
                         "predecessor": 0,
-                        "rel": 64,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 75,
                         "predecessor": 0,
-                        "rel": 75,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 75,
                         "predecessor": 0,
-                        "rel": 75,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 7
                     }
                 ]
@@ -4091,48 +4197,57 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 100,
                         "predecessor": 0,
-                        "rel": 100,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 100,
                         "predecessor": 0,
-                        "rel": 100,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 188,
                         "predecessor": 0,
-                        "rel": 188,
                         "successor": 9
                     }
                 ]
@@ -4628,78 +4743,93 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 54,
                         "predecessor": 0,
-                        "rel": 54,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 54,
                         "predecessor": 0,
-                        "rel": 54,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 128,
                         "predecessor": 0,
-                        "rel": 128,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 107,
                         "predecessor": 0,
-                        "rel": 107,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 92,
                         "predecessor": 0,
-                        "rel": 92,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 93,
                         "predecessor": 0,
-                        "rel": 93,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 128,
                         "predecessor": 0,
-                        "rel": 128,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 128,
                         "predecessor": 0,
-                        "rel": 128,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 107,
                         "predecessor": 0,
-                        "rel": 107,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 128,
                         "predecessor": 0,
-                        "rel": 128,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 92,
                         "predecessor": 0,
-                        "rel": 92,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 54,
                         "predecessor": 0,
-                        "rel": 54,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 138,
                         "predecessor": 0,
-                        "rel": 138,
                         "successor": 13
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 14
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 123,
                         "predecessor": 0,
-                        "rel": 123,
                         "successor": 15
                     }
                 ]
@@ -5045,53 +5175,63 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 100,
                         "predecessor": 0,
-                        "rel": 100,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 100,
                         "predecessor": 0,
-                        "rel": 100,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 188,
                         "predecessor": 0,
-                        "rel": 188,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 188,
                         "predecessor": 0,
-                        "rel": 188,
                         "successor": 10
                     }
                 ]
@@ -5287,28 +5427,33 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 154,
                         "predecessor": 0,
-                        "rel": 154,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 139,
                         "predecessor": 0,
-                        "rel": 139,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 154,
                         "predecessor": 0,
-                        "rel": 154,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 154,
                         "predecessor": 0,
-                        "rel": 154,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 207,
                         "predecessor": 0,
-                        "rel": 207,
                         "successor": 5
                     }
                 ]
@@ -5774,73 +5919,87 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 27,
                         "predecessor": 0,
-                        "rel": 27,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 27,
                         "predecessor": 0,
-                        "rel": 27,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 27,
                         "predecessor": 0,
-                        "rel": 27,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 130,
                         "predecessor": 0,
-                        "rel": 130,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 108,
                         "predecessor": 0,
-                        "rel": 108,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 119,
                         "predecessor": 0,
-                        "rel": 119,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 145,
                         "predecessor": 0,
-                        "rel": 145,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 130,
                         "predecessor": 0,
-                        "rel": 130,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 132,
                         "predecessor": 0,
-                        "rel": 132,
                         "successor": 13
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 153,
                         "predecessor": 0,
-                        "rel": 153,
                         "successor": 14
                     }
                 ]
@@ -6306,73 +6465,87 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 42,
                         "predecessor": 0,
-                        "rel": 42,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 42,
                         "predecessor": 0,
-                        "rel": 42,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 121,
                         "predecessor": 0,
-                        "rel": 121,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 121,
                         "predecessor": 0,
-                        "rel": 121,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 100,
                         "predecessor": 0,
-                        "rel": 100,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 42,
                         "predecessor": 0,
-                        "rel": 42,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 100,
                         "predecessor": 0,
-                        "rel": 100,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 100,
                         "predecessor": 0,
-                        "rel": 100,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 110,
                         "predecessor": 0,
-                        "rel": 110,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 110,
                         "predecessor": 0,
-                        "rel": 110,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 13
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 192,
                         "predecessor": 0,
-                        "rel": 192,
                         "successor": 14
                     }
                 ]
@@ -6778,63 +6951,75 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 45,
                         "predecessor": 0,
-                        "rel": 45,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 45,
                         "predecessor": 0,
-                        "rel": 45,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 81,
                         "predecessor": 0,
-                        "rel": 81,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 45,
                         "predecessor": 0,
-                        "rel": 45,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 81,
                         "predecessor": 0,
-                        "rel": 81,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 116,
                         "predecessor": 0,
-                        "rel": 116,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 99,
                         "predecessor": 0,
-                        "rel": 99,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 113,
                         "predecessor": 0,
-                        "rel": 113,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 82,
                         "predecessor": 0,
-                        "rel": 82,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 114,
                         "predecessor": 0,
-                        "rel": 114,
                         "successor": 12
                     }
                 ]
@@ -7030,28 +7215,33 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 147,
                         "predecessor": 0,
-                        "rel": 147,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 132,
                         "predecessor": 0,
-                        "rel": 132,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 147,
                         "predecessor": 0,
-                        "rel": 147,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 147,
                         "predecessor": 0,
-                        "rel": 147,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 189,
                         "predecessor": 0,
-                        "rel": 189,
                         "successor": 5
                     }
                 ]
@@ -7247,28 +7437,33 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 90,
                         "predecessor": 0,
-                        "rel": 90,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 81,
                         "predecessor": 0,
-                        "rel": 81,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 90,
                         "predecessor": 0,
-                        "rel": 90,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 90,
                         "predecessor": 0,
-                        "rel": 90,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 119,
                         "predecessor": 0,
-                        "rel": 119,
                         "successor": 5
                     }
                 ]
@@ -7584,48 +7779,57 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 97,
                         "predecessor": 0,
-                        "rel": 97,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 87,
                         "predecessor": 0,
-                        "rel": 87,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 97,
                         "predecessor": 0,
-                        "rel": 97,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 97,
                         "predecessor": 0,
-                        "rel": 97,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 102,
                         "predecessor": 0,
-                        "rel": 102,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 102,
                         "predecessor": 0,
-                        "rel": 102,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 107,
                         "predecessor": 0,
-                        "rel": 107,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 107,
                         "predecessor": 0,
-                        "rel": 107,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 116,
                         "predecessor": 0,
-                        "rel": 116,
                         "successor": 9
                     }
                 ]
@@ -7821,28 +8025,33 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 94,
                         "predecessor": 0,
-                        "rel": 94,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 85,
                         "predecessor": 0,
-                        "rel": 85,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 94,
                         "predecessor": 0,
-                        "rel": 94,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 94,
                         "predecessor": 0,
-                        "rel": 94,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 159,
                         "predecessor": 0,
-                        "rel": 159,
                         "successor": 5
                     }
                 ]
@@ -8098,38 +8307,45 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 82,
                         "predecessor": 0,
-                        "rel": 82,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 48,
                         "predecessor": 0,
-                        "rel": 48,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 82,
                         "predecessor": 0,
-                        "rel": 82,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 84,
                         "predecessor": 0,
-                        "rel": 84,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 92,
                         "predecessor": 0,
-                        "rel": 92,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 92,
                         "predecessor": 0,
-                        "rel": 92,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 104,
                         "predecessor": 0,
-                        "rel": 104,
                         "successor": 7
                     }
                 ]
@@ -8595,73 +8811,87 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 30,
                         "predecessor": 0,
-                        "rel": 30,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 30,
                         "predecessor": 0,
-                        "rel": 30,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 96,
                         "predecessor": 0,
-                        "rel": 96,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 124,
                         "predecessor": 0,
-                        "rel": 124,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 30,
                         "predecessor": 0,
-                        "rel": 30,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 124,
                         "predecessor": 0,
-                        "rel": 124,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 126,
                         "predecessor": 0,
-                        "rel": 126,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 143,
                         "predecessor": 0,
-                        "rel": 143,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 148,
                         "predecessor": 0,
-                        "rel": 148,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 143,
                         "predecessor": 0,
-                        "rel": 143,
                         "successor": 13
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 172,
                         "predecessor": 0,
-                        "rel": 172,
                         "successor": 14
                     }
                 ]
@@ -9097,68 +9327,81 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 156,
                         "predecessor": 0,
-                        "rel": 156,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 192,
                         "predecessor": 0,
-                        "rel": 192,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 204,
                         "predecessor": 0,
-                        "rel": 204,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 156,
                         "predecessor": 0,
-                        "rel": 156,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 202,
                         "predecessor": 0,
-                        "rel": 202,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 189,
                         "predecessor": 0,
-                        "rel": 189,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 158,
                         "predecessor": 0,
-                        "rel": 158,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 202,
                         "predecessor": 0,
-                        "rel": 202,
                         "successor": 13
                     }
                 ]
@@ -9564,63 +9807,75 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 84,
                         "predecessor": 0,
-                        "rel": 84,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 84,
                         "predecessor": 0,
-                        "rel": 84,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 182,
                         "predecessor": 0,
-                        "rel": 182,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 190,
                         "predecessor": 0,
-                        "rel": 190,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 159,
                         "predecessor": 0,
-                        "rel": 159,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 84,
                         "predecessor": 0,
-                        "rel": 84,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 182,
                         "predecessor": 0,
-                        "rel": 182,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 183,
                         "predecessor": 0,
-                        "rel": 183,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 190,
                         "predecessor": 0,
-                        "rel": 190,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 199,
                         "predecessor": 0,
-                        "rel": 199,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 191,
                         "predecessor": 0,
-                        "rel": 191,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 210,
                         "predecessor": 0,
-                        "rel": 210,
                         "successor": 12
                     }
                 ]
@@ -9816,28 +10071,33 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 75,
                         "predecessor": 0,
-                        "rel": 75,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 59,
                         "predecessor": 0,
-                        "rel": 59,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 75,
                         "predecessor": 0,
-                        "rel": 75,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 75,
                         "predecessor": 0,
-                        "rel": 75,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 5
                     }
                 ]
@@ -10123,43 +10383,51 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 90,
                         "predecessor": 0,
-                        "rel": 90,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 114,
                         "predecessor": 0,
-                        "rel": 114,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 114,
                         "predecessor": 0,
-                        "rel": 114,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 114,
                         "predecessor": 0,
-                        "rel": 114,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 90,
                         "predecessor": 0,
-                        "rel": 90,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 144,
                         "predecessor": 0,
-                        "rel": 144,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 144,
                         "predecessor": 0,
-                        "rel": 144,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 135,
                         "predecessor": 0,
-                        "rel": 135,
                         "successor": 8
                     }
                 ]
@@ -10535,58 +10803,69 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 0,
                         "predecessor": 0,
-                        "rel": 0,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 90,
                         "predecessor": 0,
-                        "rel": 90,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 81,
                         "predecessor": 0,
-                        "rel": 81,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 90,
                         "predecessor": 0,
-                        "rel": 90,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 81,
                         "predecessor": 0,
-                        "rel": 81,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 90,
                         "predecessor": 0,
-                        "rel": 90,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 90,
                         "predecessor": 0,
-                        "rel": 90,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 124,
                         "predecessor": 0,
-                        "rel": 124,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 90,
                         "predecessor": 0,
-                        "rel": 90,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 90,
                         "predecessor": 0,
-                        "rel": 90,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 138,
                         "predecessor": 0,
-                        "rel": 138,
                         "successor": 11
                     }
                 ]
@@ -10872,43 +11151,51 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 139,
                         "predecessor": 0,
-                        "rel": 139,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 154,
                         "predecessor": 0,
-                        "rel": 154,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 154,
                         "predecessor": 0,
-                        "rel": 154,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 154,
                         "predecessor": 0,
-                        "rel": 154,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 139,
                         "predecessor": 0,
-                        "rel": 139,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 189,
                         "predecessor": 0,
-                        "rel": 189,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 189,
                         "predecessor": 0,
-                        "rel": 189,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 212,
                         "predecessor": 0,
-                        "rel": 212,
                         "successor": 8
                     }
                 ]
@@ -11284,58 +11571,69 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 72,
                         "predecessor": 0,
-                        "rel": 72,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 150,
                         "predecessor": 0,
-                        "rel": 150,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 72,
                         "predecessor": 0,
-                        "rel": 72,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 150,
                         "predecessor": 0,
-                        "rel": 150,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 168,
                         "predecessor": 0,
-                        "rel": 168,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 152,
                         "predecessor": 0,
-                        "rel": 152,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 168,
                         "predecessor": 0,
-                        "rel": 168,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 135,
                         "predecessor": 0,
-                        "rel": 135,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 176,
                         "predecessor": 0,
-                        "rel": 176,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 182,
                         "predecessor": 0,
-                        "rel": 182,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 182,
                         "predecessor": 0,
-                        "rel": 182,
                         "successor": 11
                     }
                 ]
@@ -11591,38 +11889,45 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 151,
                         "predecessor": 0,
-                        "rel": 151,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 151,
                         "predecessor": 0,
-                        "rel": 151,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 151,
                         "predecessor": 0,
-                        "rel": 151,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 136,
                         "predecessor": 0,
-                        "rel": 136,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 166,
                         "predecessor": 0,
-                        "rel": 166,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 166,
                         "predecessor": 0,
-                        "rel": 166,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 179,
                         "predecessor": 0,
-                        "rel": 179,
                         "successor": 7
                     }
                 ]
@@ -12118,78 +12423,93 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 75,
                         "predecessor": 0,
-                        "rel": 75,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 75,
                         "predecessor": 0,
-                        "rel": 75,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 169,
                         "predecessor": 0,
-                        "rel": 169,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 75,
                         "predecessor": 0,
-                        "rel": 75,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 169,
                         "predecessor": 0,
-                        "rel": 169,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 185,
                         "predecessor": 0,
-                        "rel": 185,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 170,
                         "predecessor": 0,
-                        "rel": 170,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 185,
                         "predecessor": 0,
-                        "rel": 185,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 155,
                         "predecessor": 0,
-                        "rel": 155,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 185,
                         "predecessor": 0,
-                        "rel": 185,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 185,
                         "predecessor": 0,
-                        "rel": 185,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 155,
                         "predecessor": 0,
-                        "rel": 155,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 194,
                         "predecessor": 0,
-                        "rel": 194,
                         "successor": 13
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 205,
                         "predecessor": 0,
-                        "rel": 205,
                         "successor": 14
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 205,
                         "predecessor": 0,
-                        "rel": 205,
                         "successor": 15
                     }
                 ]
@@ -12385,28 +12705,33 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 92,
                         "predecessor": 0,
-                        "rel": 92,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 52,
                         "predecessor": 0,
-                        "rel": 52,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 92,
                         "predecessor": 0,
-                        "rel": 92,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 145,
                         "predecessor": 0,
-                        "rel": 145,
                         "successor": 5
                     }
                 ]
@@ -12812,63 +13137,75 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 62,
                         "predecessor": 0,
-                        "rel": 62,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 62,
                         "predecessor": 0,
-                        "rel": 62,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 157,
                         "predecessor": 0,
-                        "rel": 157,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 62,
                         "predecessor": 0,
-                        "rel": 62,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 163,
                         "predecessor": 0,
-                        "rel": 163,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 147,
                         "predecessor": 0,
-                        "rel": 147,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 157,
                         "predecessor": 0,
-                        "rel": 157,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 157,
                         "predecessor": 0,
-                        "rel": 157,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 163,
                         "predecessor": 0,
-                        "rel": 163,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 170,
                         "predecessor": 0,
-                        "rel": 170,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 163,
                         "predecessor": 0,
-                        "rel": 163,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 182,
                         "predecessor": 0,
-                        "rel": 182,
                         "successor": 12
                     }
                 ]
@@ -13064,28 +13401,33 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 114,
                         "predecessor": 0,
-                        "rel": 114,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 68,
                         "predecessor": 0,
-                        "rel": 68,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 114,
                         "predecessor": 0,
-                        "rel": 114,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 116,
                         "predecessor": 0,
-                        "rel": 116,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 185,
                         "predecessor": 0,
-                        "rel": 185,
                         "successor": 5
                     }
                 ]
@@ -13551,73 +13893,87 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 32,
                         "predecessor": 0,
-                        "rel": 32,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 32,
                         "predecessor": 0,
-                        "rel": 32,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 32,
                         "predecessor": 0,
-                        "rel": 32,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 132,
                         "predecessor": 0,
-                        "rel": 132,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 108,
                         "predecessor": 0,
-                        "rel": 108,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 119,
                         "predecessor": 0,
-                        "rel": 119,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 133,
                         "predecessor": 0,
-                        "rel": 133,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 148,
                         "predecessor": 0,
-                        "rel": 148,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 133,
                         "predecessor": 0,
-                        "rel": 133,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 132,
                         "predecessor": 0,
-                        "rel": 132,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 134,
                         "predecessor": 0,
-                        "rel": 134,
                         "successor": 13
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 155,
                         "predecessor": 0,
-                        "rel": 155,
                         "successor": 14
                     }
                 ]
@@ -13843,33 +14199,39 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 0,
                         "predecessor": 0,
-                        "rel": 0,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 66,
                         "predecessor": 0,
-                        "rel": 66,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 97,
                         "predecessor": 0,
-                        "rel": 97,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 150,
                         "predecessor": 0,
-                        "rel": 150,
                         "successor": 6
                     }
                 ]
@@ -14125,38 +14487,45 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 128,
                         "predecessor": 0,
-                        "rel": 128,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 128,
                         "predecessor": 0,
-                        "rel": 128,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 71,
                         "predecessor": 0,
-                        "rel": 71,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 161,
                         "predecessor": 0,
-                        "rel": 161,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 161,
                         "predecessor": 0,
-                        "rel": 161,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 186,
                         "predecessor": 0,
-                        "rel": 186,
                         "successor": 7
                     }
                 ]
@@ -14622,73 +14991,87 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 27,
                         "predecessor": 0,
-                        "rel": 27,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 27,
                         "predecessor": 0,
-                        "rel": 27,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 27,
                         "predecessor": 0,
-                        "rel": 27,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 96,
                         "predecessor": 0,
-                        "rel": 96,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 119,
                         "predecessor": 0,
-                        "rel": 119,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 143,
                         "predecessor": 0,
-                        "rel": 143,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 13
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 153,
                         "predecessor": 0,
-                        "rel": 153,
                         "successor": 14
                     }
                 ]
@@ -15094,63 +15477,75 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 41,
                         "predecessor": 0,
-                        "rel": 41,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 113,
                         "predecessor": 0,
-                        "rel": 113,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 114,
                         "predecessor": 0,
-                        "rel": 114,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 113,
                         "predecessor": 0,
-                        "rel": 113,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 41,
                         "predecessor": 0,
-                        "rel": 41,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 95,
                         "predecessor": 0,
-                        "rel": 95,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 104,
                         "predecessor": 0,
-                        "rel": 104,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 104,
                         "predecessor": 0,
-                        "rel": 104,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 114,
                         "predecessor": 0,
-                        "rel": 114,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 166,
                         "predecessor": 0,
-                        "rel": 166,
                         "successor": 12
                     }
                 ]
@@ -15406,38 +15801,45 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 172,
                         "predecessor": 0,
-                        "rel": 172,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 147,
                         "predecessor": 0,
-                        "rel": 147,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 172,
                         "predecessor": 0,
-                        "rel": 172,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 172,
                         "predecessor": 0,
-                        "rel": 172,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 190,
                         "predecessor": 0,
-                        "rel": 190,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 190,
                         "predecessor": 0,
-                        "rel": 190,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 216,
                         "predecessor": 0,
-                        "rel": 216,
                         "successor": 7
                     }
                 ]
@@ -15633,28 +16035,33 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 150,
                         "predecessor": 0,
-                        "rel": 150,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 135,
                         "predecessor": 0,
-                        "rel": 135,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 150,
                         "predecessor": 0,
-                        "rel": 150,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 150,
                         "predecessor": 0,
-                        "rel": 150,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 274,
                         "predecessor": 0,
-                        "rel": 274,
                         "successor": 5
                     }
                 ]
@@ -16090,68 +16497,81 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 119,
                         "predecessor": 0,
-                        "rel": 119,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 71,
                         "predecessor": 0,
-                        "rel": 71,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 71,
                         "predecessor": 0,
-                        "rel": 71,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 119,
                         "predecessor": 0,
-                        "rel": 119,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 131,
                         "predecessor": 0,
-                        "rel": 131,
                         "successor": 13
                     }
                 ]
@@ -16587,68 +17007,81 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 86,
                         "predecessor": 0,
-                        "rel": 86,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 117,
                         "predecessor": 0,
-                        "rel": 117,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 86,
                         "predecessor": 0,
-                        "rel": 86,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 118,
                         "predecessor": 0,
-                        "rel": 118,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 118,
                         "predecessor": 0,
-                        "rel": 118,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 129,
                         "predecessor": 0,
-                        "rel": 129,
                         "successor": 13
                     }
                 ]
@@ -17084,68 +17517,81 @@
                 "successors": null,
                 "temporal_relations": [
                     {
+                        "max_lag": null,
+                        "min_lag": 52,
                         "predecessor": 0,
-                        "rel": 52,
                         "successor": 1
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 52,
                         "predecessor": 0,
-                        "rel": 52,
                         "successor": 2
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 86,
                         "predecessor": 0,
-                        "rel": 86,
                         "successor": 3
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 52,
                         "predecessor": 0,
-                        "rel": 52,
                         "successor": 4
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 123,
                         "predecessor": 0,
-                        "rel": 123,
                         "successor": 5
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 99,
                         "predecessor": 0,
-                        "rel": 99,
                         "successor": 6
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 121,
                         "predecessor": 0,
-                        "rel": 121,
                         "successor": 7
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 52,
                         "predecessor": 0,
-                        "rel": 52,
                         "successor": 8
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 99,
                         "predecessor": 0,
-                        "rel": 99,
                         "successor": 9
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 86,
                         "predecessor": 0,
-                        "rel": 86,
                         "successor": 10
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 86,
                         "predecessor": 0,
-                        "rel": 86,
                         "successor": 11
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 123,
                         "predecessor": 0,
-                        "rel": 123,
                         "successor": 12
                     },
                     {
+                        "max_lag": null,
+                        "min_lag": 107,
                         "predecessor": 0,
-                        "rel": 107,
                         "successor": 13
                     }
                 ]
@@ -17206,7 +17652,12 @@
                     "sequence_id": 0
                 },
                 {
-                    "constraints": [],
+                    "constraints": [
+                        {
+                            "activity_id": 1,
+                            "product_id": 1
+                        }
+                    ],
                     "distribution": {
                         "mean": 28.0,
                         "type": "NORMAL",
@@ -17604,68 +18055,81 @@
             "successors": null,
             "temporal_relations": [
                 {
+                    "max_lag": null,
+                    "min_lag": 117,
                     "predecessor": 0,
-                    "rel": 117,
                     "successor": 1
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 86,
                     "predecessor": 0,
-                    "rel": 86,
                     "successor": 2
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 117,
                     "predecessor": 0,
-                    "rel": 117,
                     "successor": 3
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 117,
                     "predecessor": 0,
-                    "rel": 117,
                     "successor": 4
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 117,
                     "predecessor": 0,
-                    "rel": 117,
                     "successor": 5
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 86,
                     "predecessor": 0,
-                    "rel": 86,
                     "successor": 6
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 118,
                     "predecessor": 0,
-                    "rel": 118,
                     "successor": 7
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 118,
                     "predecessor": 0,
-                    "rel": 118,
                     "successor": 8
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 129,
                     "predecessor": 0,
-                    "rel": 129,
                     "successor": 9
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 129,
                     "predecessor": 0,
-                    "rel": 129,
                     "successor": 10
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 129,
                     "predecessor": 0,
-                    "rel": 129,
                     "successor": 11
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 129,
                     "predecessor": 0,
-                    "rel": 129,
                     "successor": 12
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 129,
                     "predecessor": 0,
-                    "rel": 129,
                     "successor": 13
                 }
             ]
@@ -17703,7 +18167,12 @@
                     "sequence_id": 0
                 },
                 {
-                    "constraints": [],
+                    "constraints": [
+                        {
+                            "activity_id": 1,
+                            "product_id": 0
+                        }
+                    ],
                     "distribution": {
                         "mean": 56.0,
                         "type": "NORMAL",
@@ -18071,63 +18540,75 @@
             "successors": null,
             "temporal_relations": [
                 {
+                    "max_lag": null,
+                    "min_lag": 45,
                     "predecessor": 0,
-                    "rel": 45,
                     "successor": 1
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 45,
                     "predecessor": 0,
-                    "rel": 45,
                     "successor": 2
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 81,
                     "predecessor": 0,
-                    "rel": 81,
                     "successor": 3
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 45,
                     "predecessor": 0,
-                    "rel": 45,
                     "successor": 4
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 81,
                     "predecessor": 0,
-                    "rel": 81,
                     "successor": 5
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 117,
                     "predecessor": 0,
-                    "rel": 117,
                     "successor": 6
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 116,
                     "predecessor": 0,
-                    "rel": 116,
                     "successor": 7
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 117,
                     "predecessor": 0,
-                    "rel": 117,
                     "successor": 8
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 99,
                     "predecessor": 0,
-                    "rel": 99,
                     "successor": 9
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 113,
                     "predecessor": 0,
-                    "rel": 113,
                     "successor": 10
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 82,
                     "predecessor": 0,
-                    "rel": 82,
                     "successor": 11
                 },
                 {
+                    "max_lag": null,
+                    "min_lag": 114,
                     "predecessor": 0,
-                    "rel": 114,
                     "successor": 12
                 }
             ]
