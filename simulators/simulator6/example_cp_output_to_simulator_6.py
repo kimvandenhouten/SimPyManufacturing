@@ -38,6 +38,7 @@ my_simulator = Simulator(plan=scenario_1.production_plan,
 # Run simulation
 makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=1000, random_seed=300, write=True,
                                                           output_location=f"simulators/simulator6/data/example_cp_output_to_simulator.csv")
+
 print(f'According to the simulation, the makespan is {makespan} and the lateness is {lateness}')
 print(f'The number of unfinished products {nr_unfinished}')
 print(f'The number of clashes (i.e. activities that could not be processed) is {my_simulator.nr_clashes}')

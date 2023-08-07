@@ -18,13 +18,14 @@ class Operator:
         """
         Process signal about a failed activity
         """
-
-        print(f'Failure code received: {failure_code}')
+        if self.printing:
+            print(f'Failure code received: {failure_code}')
         # TODO: (Deepali) use above to use policy 1 for MAX_LAG
 
         if self.printing:
             print(
-                f'At time {current_time}: the operator receives the signal that product index {product_index} with id {self.plan.products[product_index].id} ACTIVITY '
+                f'At time {current_time}: the operator receives the signal that product index {product_index} with id '
+                f'{self.plan.products[product_index].id} ACTIVITY '
                 f'{activity_id} got cancelled, so we apply policy {self.policy_type}')
             print(f'At time {current_time}: the current plan is {self.plan.earliest_start}')
 

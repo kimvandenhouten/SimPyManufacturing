@@ -91,8 +91,6 @@ class Product:
         self.activities.append(activity)
 
     def set_temporal_relations(self, temporal_relations):
-        # TODO currently self.predecessors not in use
-        # TODO currently self.successors not in use
         self.temporal_relations = temporal_relations
         self.predecessors = [[] for _ in self.activities]
         self.successors = [[] for _ in self.activities]
@@ -139,7 +137,8 @@ class Factory:
         self._set_products(products)
         self.resource_names = resource_names
         self.capacity = capacity
-        self.set_compatibility_constraints(compatibility_constraints)
+        self.compatibility_constraints = compatibility_constraints
+        self.set_compatibility_constraints()
 
     def add_product(self, product):
         """
@@ -148,8 +147,8 @@ class Factory:
         """
         self.products.append(product)
 
-    def set_compatibility_constraints(self, compatibility_constraints):
-        for constraint in compatibility_constraints:
+    def set_compatibility_constraints(self):
+        for constraint in self.compatibility_constraints:
             if isinstance(constraint[0],CompatibilityConstraint) and isinstance(constraint[1],CompatibilityConstraint):
                 self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]].constraints.append(constraint[1])
                 self.products[constraint[1]["product_id"]].activities[constraint[1]["activity_id"]]._set_constraint(
@@ -298,9 +297,10 @@ class FailureCode(Enum):
 
 class LogEntry:
 
-    def __init__(self, product_id, activity_id, action, timestamp):
+    def __init__(self, product_id, activity_id, product_idx, action, timestamp):
         self.product_id = product_id
         self.activity_id = activity_id
+        self.product_index = product_idx
         self.action = action
         self.timestamp = timestamp
 
@@ -313,18 +313,21 @@ class SimulatorLogger:
         self.log = []
         self.failure_code = None
 
-    def log_activity(self, product_id, activity_id, action, timestamp=time.time()):
-        self.log.append(LogEntry(product_id, activity_id, action, timestamp))
+    def log_activity(self, product_id, activity_id, product_index, action, timestamp=time.time()):
+        self.log.append(LogEntry(product_id, activity_id, product_index, action, timestamp))
         if action == Action.START and (product_id, activity_id) not in self.active_processes:
             self.active_processes.append((product_id, activity_id))
         elif action == Action.END and (product_id, activity_id) in self.active_processes:
             self.active_processes.remove((product_id, activity_id))
 
-    def fetch_latest_entry(self, product_id, activity_id, action):
+    def fetch_latest_entry(self, product_index, activity_id, action):
         entries = list(filter(lambda
-                                  entry: entry.product_id == product_id and entry.activity_id ==
+                                  entry: entry.product_index == product_index and entry.activity_id ==
                                          activity_id and entry.action == action,
                               self.log))
-        if len(entries) < 1:
-            raise Exception(f'No entry present for product {product_id} and activity {activity_id} for action {action}')
-        return entries[-1]
+        if len(entries) > 0:
+            return entries[-1]
+        else:
+            print(f'No entry present for product index {product_index} and activity {activity_id} for action {action}')
+            return None
+

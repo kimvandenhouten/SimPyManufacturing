@@ -6,6 +6,7 @@ import numpy as np
 from classes.classes import Factory, Activity, ProductionPlan
 from classes.distributions import NormalDistribution
 
+random.seed(1)
 
 def create_stochastic_plan(production_plan):
     for i in range(len(production_plan.factory.products)):

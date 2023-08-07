@@ -9,7 +9,7 @@ from classes.classes import ProductionPlan, Factory, Scenario, Activity
 import pickle
 import json
 import numpy as np
-from classes.distributions import NormalDistribution
+from classes.distributions import NormalDistribution, PoissonDistribution
 
 
 def produce_json_data(source_path, output_path):
@@ -19,7 +19,8 @@ def produce_json_data(source_path, output_path):
         for activity in production_plan.factory.products[i].activities:
             processing_time = activity.processing_time[0]
             default_variance = np.sqrt(processing_time)
-            distribution = NormalDistribution(processing_time, default_variance)
+            #distribution = NormalDistribution(processing_time, default_variance)
+            distribution = PoissonDistribution(processing_time)
             activity_stoch = Activity(activity.id, activity.processing_time, activity.product, activity.product_id,
                                       activity.needs, distribution, activity.sequence_id)
             activities.append(activity_stoch)

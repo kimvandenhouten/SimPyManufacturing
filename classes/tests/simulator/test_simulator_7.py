@@ -10,8 +10,6 @@ from classes.operator import Operator
 
 
 # Set up a factory
-
-
 class MyTestCase(unittest.TestCase):
     def test_simulator(self):
         compatibility_constraints = [[{"product_id": 0, "activity_id": 0}, {"product_id": 1, "activity_id": 0}]]
@@ -19,7 +17,7 @@ class MyTestCase(unittest.TestCase):
         # set id which is not index for testing
 
         product = Product(name="Enzyme_1", id=0)
-        activity0 = Activity(id=0, processing_time=[100, 100], product="Enzyme_1",
+        activity0 = Activity(id=0, processing_time=[10, 10], product="Enzyme_1",
                              product_id="0", needs=[1, 0, 1], distribution=NormalDistribution(4, 2))
         activity1 = Activity(id=1, processing_time=[5, 5], product="Enzyme_1",
                              product_id="0", needs=[0, 1, 0], distribution=NormalDistribution(0, 2))
@@ -54,13 +52,14 @@ class MyTestCase(unittest.TestCase):
         scenario = my_productionplan.create_scenario(0)
 
         # Here you can choose policy 1 or policy 2
-        operator = Operator(plan=scenario.production_plan, policy_type=1, printing=True)
+        #operator = Operator(plan=scenario.production_plan, policy_type=1, printing=True)
+        operator = Operator(plan=my_productionplan, policy_type=1, printing=True)
         my_simulator = Simulator(plan=scenario.production_plan, operator=operator, printing=True)
         makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=1000, random_seed=1, write=False, )
 
         self.assertEqual(int(makespan), 7)
         self.assertEqual(lateness, 0)
-        self.assertEqual(nr_unfinished, 0)
+        self.assertEqual(nr_unfinished, 1)
         self.assertEqual(my_simulator.nr_clashes, 1)
 
 
