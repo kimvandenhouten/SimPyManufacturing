@@ -126,6 +126,11 @@ class Product:
                     raise TypeError("Unknown temporal relation type:", type(relations))
 
         self.temporal_relations = temporal_relations
+        self.predecessors = [[] for _ in self.activities]
+        self.successors = [[] for _ in self.activities]
+        for (i, j) in self.temporal_relations.keys():
+            self.predecessors[j].append(i)
+            self.successors[i].append(j)
 
 
 class Factory:
@@ -146,12 +151,13 @@ class Factory:
     def set_compatibility_constraints(self, compatibility_constraints):
         for constraint in compatibility_constraints:
             if isinstance(constraint[0],CompatibilityConstraint) and isinstance(constraint[1],CompatibilityConstraint):
-                self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]].constraints.append(constraint)
-            elif  isinstance(constraint[0],dict) and isinstance(constraint[1],dict):
+                self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]].constraints.append(constraint[1])
+                self.products[constraint[1]["product_id"]].activities[constraint[1]["activity_id"]]._set_constraint(
+                    CompatibilityConstraint(constraint[0]))
+            elif isinstance(constraint[0],dict) and isinstance(constraint[1],dict):
                 self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]]._set_constraint(
                     CompatibilityConstraint(**constraint[1]))
-
-                self.products[constraint[1]["product_id"]].activities[constraint[0]["activity_id"]]._set_constraint(
+                self.products[constraint[1]["product_id"]].activities[constraint[1]["activity_id"]]._set_constraint(
                     CompatibilityConstraint(**constraint[0]))
 
     def _set_products(self, products):
