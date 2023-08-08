@@ -6,7 +6,10 @@ import numpy as np
 from classes.classes import Factory, Activity, ProductionPlan
 from classes.distributions import NormalDistribution
 
+# We set the seed fixed such that we can regenerate the instances more easily
+# These instances won't have a max time lag constraint.
 random.seed(1)
+
 
 def create_stochastic_plan(production_plan):
     for i in range(len(production_plan.factory.products)):
@@ -48,7 +51,7 @@ for instance_size in [10, 20, 40, 60, 120, 240]:
         plan = create_stochastic_plan(plan)
         json_str = plan.to_json()
 
-        file_name = f'factory_data/development/instances/instance_{plan.name}.json'
+        file_name = f'factory_data/development/instances_type_1/instance_{plan.name}.json'
         print(file_name, ' created')
 
         with open(file_name, 'w+') as file:

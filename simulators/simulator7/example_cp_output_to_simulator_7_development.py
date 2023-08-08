@@ -7,6 +7,8 @@ import numpy as np
 from numpy import random
 from matplotlib import pyplot as plt
 
+# In this script we test the instances type 1 that do not have a max time lag
+
 # Settings
 nr_scenarios = 1000
 scenario_seeds = random.randint(100000, size=nr_scenarios)
@@ -18,7 +20,7 @@ for instance_size in [40]:
         # Read CP output and convert
         instance_name = f"{instance_size}_{instance_id}_factory_1"
         file_name = instance_name
-        cp_output = pd.read_csv(f"results/instances_development/start times {file_name}.csv")
+        cp_output = pd.read_csv(f"results/cp_model/development/instances_type_1/start times {file_name}.csv")
         makespan_cp_output = max(cp_output["end"].tolist())
         print(f'Makespan according to CP outout is {makespan_cp_output}')
         earliest_start = cp_output.to_dict('records')
@@ -27,7 +29,7 @@ for instance_size in [40]:
         # deterministic check:
         # Read input instance
         my_productionplan = ProductionPlan(
-            **json.load(open('factory_data/development/instances/instance_' + instance_name + '.json')))
+            **json.load(open('factory_data/development/instances_type_1/instance_' + instance_name + '.json')))
         my_productionplan.set_earliest_start_times(earliest_start)
         my_productionplan.set_sequence(sequence=np.arange(instance_size))
 
@@ -45,10 +47,6 @@ for instance_size in [40]:
 
         for seed in scenario_seeds:
             # Read input instance
-            my_productionplan = ProductionPlan(
-                **json.load(open('factory_data/development/instances/instance_' + instance_name + '.json')))
-            my_productionplan.set_earliest_start_times(earliest_start)
-            my_productionplan.set_sequence(sequence=np.arange(instance_size))
             scenario_1 = my_productionplan.create_scenario(seed)
 
             # Set printing to True if you want to print all events
@@ -70,4 +68,4 @@ for instance_size in [40]:
                                "nr_unfinished_products": nr_unfinished})
 
         evaluation = pd.DataFrame(evaluation)
-        evaluation.to_csv(f"simulators/simulator7/outputs/evaluation_table_{instance_name}_policy={policy_type}.csv")
+        evaluation.to_csv(f"simulators/simulator7/outputs/instances_type_1/evaluation_table_{instance_name}_policy={policy_type}.csv")

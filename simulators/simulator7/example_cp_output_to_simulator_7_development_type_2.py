@@ -7,18 +7,21 @@ import numpy as np
 from numpy import random
 from matplotlib import pyplot as plt
 
-# Settings
-nr_scenarios = 10
-scenario_seeds = random.randint(100000, size=nr_scenarios)
-policy_type = 1
-printing = True
+# In this script we test the instances type 2 that do have a max time lag
 
-for instance_size in [10]:
-    for instance_id in range(1, 2):
+
+# Settings
+nr_scenarios = 1000
+scenario_seeds = random.randint(100000, size=nr_scenarios)
+policy_type = 2
+printing = False
+
+for instance_size in [10, 20]:
+    for instance_id in range(1, 10):
         # Read CP output and convert
         instance_name = f"{instance_size}_{instance_id}_factory_1"
         file_name = instance_name
-        cp_output = pd.read_csv(f"results/instances_development/start times {file_name}.csv")
+        cp_output = pd.read_csv(f"results/cp_model/development/instances_type_2/start times {file_name}.csv")
         makespan_cp_output = max(cp_output["end"].tolist())
         print(f'Makespan according to CP outout is {makespan_cp_output}')
         earliest_start = cp_output.to_dict('records')
@@ -36,19 +39,14 @@ for instance_size in [10]:
         my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=False)
 
         # Run simulation
-        makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False, output_location=f""
-        f"simulators/simulator7/outputs/example_cp_output_to_simulator.csv")
+        makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False)
 
         print(f'According to the deterministic simulation, the makespan is {makespan}')
         print(f'The number of unfinished products {nr_unfinished}')
         print(f'The number of clashes (i.e. activities that could not be processed) is {my_simulator.nr_clashes}')
 
         for seed in scenario_seeds:
-            # Read input instance
-            my_productionplan = ProductionPlan(
-                **json.load(open('factory_data/development/instances/instance_' + instance_name + '.json')))
-            my_productionplan.set_earliest_start_times(earliest_start)
-            my_productionplan.set_sequence(sequence=np.arange(instance_size))
+            # Generate scenario
             scenario_1 = my_productionplan.create_scenario(seed)
 
             # Set printing to True if you want to print all events
@@ -56,8 +54,7 @@ for instance_size in [10]:
             my_simulator = Simulator(plan=scenario_1.production_plan, operator=operator, printing=False)
 
             # Run simulation
-            makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False, output_location=f""
-            f"simulators/simulator7/outputs/example_cp_output_to_simulator.csv")
+            makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False)
 
             if printing:
                 print(f'According to the simulation, the makespan is {makespan} and the lateness is {lateness}')
@@ -70,4 +67,4 @@ for instance_size in [10]:
                                "nr_unfinished_products": nr_unfinished})
 
         evaluation = pd.DataFrame(evaluation)
-        evaluation.to_csv(f"simulators/simulator7/outputs/evaluation_table_type_2_{instance_name}_policy={policy_type}.csv")
+        evaluation.to_csv(f"simulators/simulator7/outputs/instances_type_2/evaluation_table_{instance_name}_policy={policy_type}.csv")

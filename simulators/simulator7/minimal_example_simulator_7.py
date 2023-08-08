@@ -2,7 +2,7 @@
 # the start times for all activities. Each start time corresponds to the time in the
 # system that this activity requests the needed resources.
 
-from classes.classes import Factory, CompatibilityConstraint, TemporalRelation
+Ifrom classes.classes import Factory, CompatibilityConstraint, TemporalRelation
 from classes.classes import Product
 from classes.classes import Activity
 import pandas as pd

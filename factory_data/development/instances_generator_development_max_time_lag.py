@@ -6,7 +6,11 @@ import numpy as np
 from classes.classes import Factory, Activity, ProductionPlan
 from classes.distributions import NormalDistribution
 
+# We set the seed fixed such that we can regenerate the instances more easily
+# This script will be used to make almost similar instances as type 1, except
+# For the fact that here we will set a max time lag as well.
 random.seed(1)
+
 
 def create_stochastic_plan(production_plan):
     for i in range(len(production_plan.factory.products)):
