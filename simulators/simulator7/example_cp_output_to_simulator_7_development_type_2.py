@@ -8,13 +8,13 @@ from numpy import random
 from matplotlib import pyplot as plt
 
 # Settings
-nr_scenarios = 1000
+nr_scenarios = 10
 scenario_seeds = random.randint(100000, size=nr_scenarios)
-policy_type = 2
-printing = False
+policy_type = 1
+printing = True
 
-for instance_size in [40]:
-    for instance_id in range(6, 10):
+for instance_size in [10]:
+    for instance_id in range(1, 2):
         # Read CP output and convert
         instance_name = f"{instance_size}_{instance_id}_factory_1"
         file_name = instance_name
@@ -27,7 +27,7 @@ for instance_size in [40]:
         # deterministic check:
         # Read input instance
         my_productionplan = ProductionPlan(
-            **json.load(open('factory_data/development/instances/instance_' + instance_name + '.json')))
+            **json.load(open('factory_data/development/instances_type_2/instance_' + instance_name + '.json')))
         my_productionplan.set_earliest_start_times(earliest_start)
         my_productionplan.set_sequence(sequence=np.arange(instance_size))
 
@@ -70,4 +70,4 @@ for instance_size in [40]:
                                "nr_unfinished_products": nr_unfinished})
 
         evaluation = pd.DataFrame(evaluation)
-        evaluation.to_csv(f"simulators/simulator7/outputs/evaluation_table_{instance_name}_policy={policy_type}.csv")
+        evaluation.to_csv(f"simulators/simulator7/outputs/evaluation_table_type_2_{instance_name}_policy={policy_type}.csv")
