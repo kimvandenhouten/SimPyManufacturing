@@ -20,7 +20,7 @@ for instance_size in [40]:
         # Read CP output and convert
         instance_name = f"{instance_size}_{instance_id}_factory_1"
         file_name = instance_name
-        cp_output = pd.read_csv(f"results/cp_model/development/instances_type_1/start times {file_name}.csv")
+        cp_output = pd.read_csv(f"results/cp_model/development/instance_type_1/start times {file_name}.csv")
         makespan_cp_output = max(cp_output["end"].tolist())
         print(f'Makespan according to CP outout is {makespan_cp_output}')
         earliest_start = cp_output.to_dict('records')
