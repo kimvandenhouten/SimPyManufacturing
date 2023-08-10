@@ -16,7 +16,6 @@ class Simulator:
         self.capacity = plan.factory.capacity
         self.resources = []
         self.env = simpy.Environment()
-        self.resource_usage = {}
         self.printing = printing
         self.nr_clashes = 0
         self.operator = operator
@@ -54,7 +53,7 @@ class Simulator:
                 return FailureCode.PRECEDENCE
             else:
                 start_pred = start_pred_log.timestamp
-                if self.env.now - start_pred < min_lag:
+                if temp_rel.min_lag and self.env.now - start_pred < min_lag:
                     if self.printing:
                         print(
                             f'At time {self.env.now}: product {product_index} with id {self.plan.products[product_index].id}, activity {activity_id} cannot start because '
@@ -132,7 +131,7 @@ class Simulator:
             # Trace back the moment in time that the activity ends processing
             end_time = self.env.now
             self.logger.log_activity(self.plan.products[product_index].id,
-                                     activity_id,  product_index, Action.END, end_time)
+                                     activity_id, product_index, Action.END, end_time)
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object
@@ -143,16 +142,8 @@ class Simulator:
                 print(
                     f'At time {self.env.now}: product index {product_index} with id {self.plan.products[product_index].id} ACTIVITY {activity_id} released resources: {needs}')
 
-            # TODO: (Deepali) merge into logger
-            self.resource_usage[(product_index, activity_id)] = \
-                {"ProductIndex": product_index,
-                 "Activity": activity_id,
-                 "Needs": needs,
-                 "resources": resources,
-                 "Request": request_time,
-                 "Retrieve": retrieve_time,
-                 "Start": start_time,
-                 "Finish": end_time}
+            self.logger.info.log(self.plan.products[product_index].id, activity_id, product_index, needs, resources,
+                                 request_time, retrieve_time, start_time, end_time)
             # print(self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].start_time)
             # print(self.resource_usage[(product_ID, activity_ID)])
         # If it is not available then we don't process this activity, so we avoid that there starts a queue in the
@@ -199,14 +190,9 @@ class Simulator:
         self.env = simpy.Environment()
 
         for act in self.plan.earliest_start:
-            self.resource_usage[(act["product_index"], act["activity_id"])] = {"ProductIndex": act["product_index"],
-                                                                               "Activity": act["activity_id"],
-                                                                               "Needs": float("inf"),
-                                                                               "resources": "NOT PROCESSED DUE TO CLASH",
-                                                                               "Request": float("inf"),
-                                                                               "Retrieve": float("inf"),
-                                                                               "Start": float("inf"),
-                                                                               "Finish": float("inf")}
+            self.logger.info.log(self.plan.products[act["product_index"]].id, act["activity_id"], act["product_index"],
+                                 float("inf"), "NOT PROCESSED DUE TO CLASH",
+                                 float("inf"), float("inf"), float("inf"), float("inf"))
 
         # Create the factory that is a SimPy FilterStore object
         self.factory = simpy.FilterStore(self.env, capacity=sum(self.capacity))
@@ -224,24 +210,17 @@ class Simulator:
         self.env.process(self.activity_generator())
         self.env.run(until=sim_time)
 
-        # Process results
-        resource_usage_df = []
-        for i in self.resource_usage:
-            resource_usage_df.append(self.resource_usage[i])
-
-        self.resource_usage = pd.DataFrame(resource_usage_df)
-
         if self.printing:
-            print(f' \nSIMULATION OUTPUT\n {self.resource_usage}')
-        finish_times = self.resource_usage["Finish"].tolist()
-        finish_times = [i for i in finish_times if i != float("inf")]
+            print(f' \nSIMULATION OUTPUT\n {self.logger.info.print()}')
+
+        finish_times = [entry.end_time for entry in self.logger.info.entries if entry.end_time != float("inf")]
         makespan = max(finish_times)
         lateness = 0
 
         nr_unfinished_products = 0
         for p in range(len(self.plan.products)):
-            schedule = self.resource_usage[self.resource_usage["ProductIndex"] == p]
-            finish = max(schedule["Finish"])
+            schedule = list(filter(lambda entry: entry.product_idx == p, self.logger.info.entries))
+            finish = max([entry.end_time for entry in schedule])
             if finish == float("inf"):
                 nr_unfinished_products += 1
                 if self.printing:
@@ -259,6 +238,6 @@ class Simulator:
             print(f"The number of unfinished products is {nr_unfinished_products}")
 
         if write:
-            self.resource_usage.to_csv(output_location)
+            self.logger.info.to_csv(output_location)
 
         return makespan, lateness, nr_unfinished_products

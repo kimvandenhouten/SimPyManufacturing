@@ -7,6 +7,8 @@ import numpy as np
 
 from enum import Enum
 
+from IPython.core.display_functions import display
+
 from classes.distributions import Distribution, get_distribution
 
 
@@ -117,7 +119,8 @@ class Product:
             for relation in relations:
                 if (isinstance(relation, dict)):
                     temporal_relations[(relation['predecessor'], relation['successor'])] = TemporalRelation(
-                        relation['min_lag'], relation['max_lag'] if 'max_lag' in relation.keys() else None)
+                        relation['min_lag'] if 'min_lag' in relation.keys() else None,
+                        relation['max_lag'] if 'max_lag' in relation.keys() else None)
                 elif (isinstance(relation, tuple)):
                     temporal_relations[relation] = relations[relation]
                 else:
@@ -149,11 +152,13 @@ class Factory:
 
     def set_compatibility_constraints(self):
         for constraint in self.compatibility_constraints:
-            if isinstance(constraint[0],CompatibilityConstraint) and isinstance(constraint[1],CompatibilityConstraint):
-                self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]].constraints.append(constraint[1])
+            if isinstance(constraint[0], CompatibilityConstraint) and isinstance(constraint[1],
+                                                                                 CompatibilityConstraint):
+                self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]].constraints.append(
+                    constraint[1])
                 self.products[constraint[1]["product_id"]].activities[constraint[1]["activity_id"]]._set_constraint(
                     CompatibilityConstraint(constraint[0]))
-            elif isinstance(constraint[0],dict) and isinstance(constraint[1],dict):
+            elif isinstance(constraint[0], dict) and isinstance(constraint[1], dict):
                 self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]]._set_constraint(
                     CompatibilityConstraint(**constraint[1]))
                 self.products[constraint[1]["product_id"]].activities[constraint[1]["activity_id"]]._set_constraint(
@@ -183,6 +188,7 @@ class ProductionPlan:
         self.sequence = sequence
         self.earliest_start = earliest_start
         self._set_factory(factory, products)
+        self.list_products()
 
     def list_products(self):
         """
@@ -246,6 +252,8 @@ class ProductionPlan:
                 "max_lag": plan.factory.products[i].temporal_relations[rel].max_lag
             }, plan.factory.products[i].temporal_relations.keys()))
             plan.factory.products[i].temporal_relations = temporal_relations
+            for activity in plan.factory.products[i].activities:
+                del activity.constraints
         plan.list_products()
         return json.dumps(plan, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
@@ -305,6 +313,54 @@ class LogEntry:
         self.timestamp = timestamp
 
 
+class LogInfoEntry:
+    def __init__(self, product_id, activity_id, product_idx, needs, resources, request_time, retrieve_time, start_time,
+                 end_time):
+        self.product_id = product_id
+        self.activity_id = activity_id
+        self.product_idx = product_idx
+        self.needs = needs
+        self.resources = resources
+        self.request_time = request_time
+        self.retrieve_time = retrieve_time
+        self.start_time = start_time
+        self.end_time = end_time
+
+
+class LogInfo:
+    def __init__(self):
+        self.entries = []
+
+    def log(self, product_id, activity_id, product_idx, needs, resources, request_time, retrieve_time, start_time,
+            end_time):
+        self.entries.append(
+            LogInfoEntry(product_id, activity_id, product_idx, needs, resources, request_time, retrieve_time,
+                         start_time,
+                         end_time))
+
+    def to_df(self):
+        info_df = []
+        for entry in self.entries:
+            info_r = {"ProductIndex": entry.product_idx,
+                      "ProductId": entry.product_id,
+                      "Activity": entry.activity_id,
+                      "Needs": entry.needs,
+                      "Resources": entry.resources,
+                      "Request": entry.request_time,
+                      "Retrieve": entry.retrieve_time,
+                      "Start": entry.start_time,
+                      "Finish": entry.end_time}
+            info_df.append(info_r)
+
+        return pd.DataFrame(info_df)
+
+    def to_csv(self, output_location):
+        self.to_df().to_csv(output_location)
+
+    def print(self):
+        display(self.to_df().to_string())
+
+
 class SimulatorLogger:
 
     def __init__(self, class_name):
@@ -312,6 +368,7 @@ class SimulatorLogger:
         self.class_name = class_name
         self.log = []
         self.failure_code = None
+        self.info = LogInfo()
 
     def log_activity(self, product_id, activity_id, product_index, action, timestamp=time.time()):
         self.log.append(LogEntry(product_id, activity_id, product_index, action, timestamp))
@@ -329,4 +386,3 @@ class SimulatorLogger:
             return entries[-1]
         else:
             return None
-

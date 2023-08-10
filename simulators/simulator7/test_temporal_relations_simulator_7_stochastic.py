@@ -42,7 +42,7 @@ if printing:
     print(f'The number of unfinished products {nr_unfinished}')
     print(f'The number of clashes (i.e. activities that could not be processed) is {my_simulator.nr_clashes}')
 
-gannt = my_simulator.resource_usage
+gannt = my_simulator.logger.info.to_df()
 
 # Afterwards you can check the temporal relations
 print('------------------------------------------------------------ \n CONSTRAINT CHECKING \n')
