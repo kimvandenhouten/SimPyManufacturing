@@ -55,14 +55,14 @@ class Simulator:
             else:
                 if is_parallel_successor:
                     pass
-                elif temp_rel.min_lag and self.env.now - start_pred_log.timestamp <= min_lag:
+                elif temp_rel.min_lag and self.env.now - start_pred_log.timestamp < min_lag:
                     if self.printing:
                         print(
                             f'At time {self.env.now}: product {product_index} with id {self.plan.products[product_index].id}, activity {activity_id} cannot start because '
                             f' minimal time lag with {product_index}, {pred_activity_id} is not satisfied')
 
                     return FailureCode.MIN_LAG
-                elif temp_rel.max_lag and self.env.now - start_pred_log.timestamp >= temp_rel.max_lag:
+                elif temp_rel.max_lag and self.env.now - start_pred_log.timestamp > temp_rel.max_lag:
                     if self.printing:
                         print(
                             f'At time {self.env.now}: product {product_index} with id {self.plan.products[product_index].id}, activity {activity_id} cannot start because '
@@ -190,10 +190,10 @@ class Simulator:
         # Reset environment
         self.env = simpy.Environment()
 
-        for act in self.plan.earliest_start:
-            self.logger.info.log(self.plan.products[act["product_index"]].id, act["activity_id"], act["product_index"],
-                                 float("inf"), "NOT PROCESSED DUE TO CLASH",
-                                 float("inf"), float("inf"), float("inf"), float("inf"))
+        # for act in self.plan.earliest_start:
+        #     # self.logger.info.log(self.plan.products[act["product_index"]].id, act["activity_id"], act["product_index"],
+        #     #                      float("inf"), "NOT PROCESSED DUE TO CLASH",
+        #     #                      float("inf"), float("inf"), float("inf"), float("inf"))
 
         # Create the factory that is a SimPy FilterStore object
         self.factory = simpy.FilterStore(self.env, capacity=sum(self.capacity))
@@ -213,6 +213,15 @@ class Simulator:
 
         if self.printing:
             print(f' \nSIMULATION OUTPUT\n {self.logger.info.print()}')
+
+        for act in self.plan.earliest_start:
+            entry = self.logger.info.fetch_latest_entry(self.plan.products[act["product_index"]].id, act["activity_id"],
+                                                        act["product_index"])
+            if entry is None:
+                self.logger.info.log(self.plan.products[act["product_index"]].id, act["activity_id"],
+                                     act["product_index"],
+                                     float("inf"), "NOT PROCESSED DUE TO CLASH",
+                                     float("inf"), float("inf"), float("inf"), float("inf"))
 
         finish_times = [entry.end_time for entry in self.logger.info.entries if entry.end_time != float("inf")]
         makespan = max(finish_times)
