@@ -23,7 +23,7 @@ class MyTestCase(unittest.TestCase):
                              product_id="0", needs=[0, 1, 0], distribution=NormalDistribution(0, 2))
         product.add_activity(activity=activity0)
         product.add_activity(activity=activity1)
-        product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1, 2)})
+        product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(0, 2)})
         my_factory.add_product(product=product)
         activity0 = Activity(id=0, processing_time=[3, 3], product="Enzyme_2",
                              product_id="1", needs=[1, 0, 1])
@@ -36,7 +36,6 @@ class MyTestCase(unittest.TestCase):
         product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1)})
         my_factory.add_product(product=product)
 
-        my_factory.set_compatibility_constraints(compatibility_constraints)
         # Set up a production plan for this factory
         my_productionplan = ProductionPlan(id=0, size=2, name="ProductionPlanJanuary", factory=my_factory,
                                            product_ids=[0, 1], deadlines=[8, 20])
@@ -44,7 +43,7 @@ class MyTestCase(unittest.TestCase):
 
         # Define partial schedule that includes earliest start times
         earliest_start = [{"product_index": 0, "activity_id": 0, "earliest_start": 0},
-                          {"product_index": 0, "activity_id": 1, "earliest_start": 2},
+                          {"product_index": 0, "activity_id": 1, "earliest_start": 0},
                           {"product_index": 1, "activity_id": 0, "earliest_start": 6},
                           {"product_index": 1, "activity_id": 1, "earliest_start": 7}]
         my_productionplan.set_earliest_start_times(earliest_start)
@@ -57,9 +56,9 @@ class MyTestCase(unittest.TestCase):
         my_simulator = Simulator(plan=scenario.production_plan, operator=operator, printing=True)
         makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=1000, random_seed=1, write=False, )
 
-        self.assertEqual(int(makespan), 7)
+        self.assertEqual(int(makespan), 10)
         self.assertEqual(lateness, 0)
-        self.assertEqual(nr_unfinished, 1)
+        self.assertEqual(nr_unfinished, 2)
         self.assertEqual(my_simulator.nr_clashes, 1)
 
 

@@ -140,8 +140,7 @@ class Factory:
         self._set_products(products)
         self.resource_names = resource_names
         self.capacity = capacity
-        self.compatibility_constraints = compatibility_constraints
-        self.set_compatibility_constraints()
+        self.set_compatibility_constraints(compatibility_constraints)
 
     def add_product(self, product):
         """
@@ -150,8 +149,8 @@ class Factory:
         """
         self.products.append(product)
 
-    def set_compatibility_constraints(self):
-        for constraint in self.compatibility_constraints:
+    def set_compatibility_constraints(self,compatibility_constraints):
+        for constraint in compatibility_constraints:
             if isinstance(constraint[0], CompatibilityConstraint) and isinstance(constraint[1],
                                                                                  CompatibilityConstraint):
                 self.products[constraint[0]["product_id"]].activities[constraint[0]["activity_id"]].constraints.append(

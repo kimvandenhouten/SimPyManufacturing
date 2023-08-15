@@ -3,7 +3,6 @@ from collections import namedtuple
 
 import simpy
 import random
-import pandas as pd
 
 from classes.classes import SimulatorLogger, Action, FailureCode
 
@@ -44,7 +43,9 @@ class Simulator:
             start_pred_log = self.logger.fetch_latest_entry(product_index,
                                                             pred_activity_id, Action.START)
 
-            if start_pred_log is None:
+            is_parallel_successor = start_pred_log is None and min_lag == 0
+
+            if start_pred_log is None and min_lag != 0:
                 if self.printing:
                     print(
                         f'At time {self.env.now}: product {product_index}, activity {activity_id} cannot start because '
@@ -52,20 +53,21 @@ class Simulator:
 
                 return FailureCode.PRECEDENCE
             else:
-                start_pred = start_pred_log.timestamp
-                if temp_rel.min_lag and self.env.now - start_pred < min_lag:
+                if is_parallel_successor:
+                    pass
+                elif temp_rel.min_lag and self.env.now - start_pred_log.timestamp <= min_lag:
                     if self.printing:
                         print(
                             f'At time {self.env.now}: product {product_index} with id {self.plan.products[product_index].id}, activity {activity_id} cannot start because '
                             f' minimal time lag with {product_index}, {pred_activity_id} is not satisfied')
-                    start_processing = False
-                    self.logger.failure_code = FailureCode.MIN_LAG
-                elif temp_rel.max_lag and self.env.now - start_pred > temp_rel.max_lag:
+
+                    return FailureCode.MIN_LAG
+                elif temp_rel.max_lag and self.env.now - start_pred_log.timestamp >= temp_rel.max_lag:
                     if self.printing:
                         print(
                             f'At time {self.env.now}: product {product_index} with id {self.plan.products[product_index].id}, activity {activity_id} cannot start because '
                             f' maximal time lag with {product_index}, {pred_activity_id} is not satisfied')
-                    start_processing = False
+
                     return FailureCode.MAX_LAG
         return None
 
@@ -84,8 +86,7 @@ class Simulator:
         :param activity_id: id of the activity (int)
         :param product_index: id of the product (int)
         :param proc_time: processing time of this activity (int)
-        :param resources_required: list with SimPy processes for resource requests (list)
-        :param resources_names: list with the corresponding resource names (list)
+        :param needs: needs of the task
         :return: generator
         """
         # Trace back the moment in time that the resources are requested
