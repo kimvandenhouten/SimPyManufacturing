@@ -337,6 +337,16 @@ class LogInfo:
                          start_time,
                          end_time))
 
+    def fetch_latest_entry(self, product_id, activity_id, product_idx):
+        entries = list(filter(lambda
+                                  entry: entry.product_id == product_id and entry.activity_id ==
+                                         activity_id and entry.product_idx == product_idx,
+                              self.entries))
+        if len(entries) > 0:
+            return entries[-1]
+        else:
+            return None
+
     def to_df(self):
         info_df = []
         for entry in self.entries:
