@@ -69,7 +69,6 @@ class Simulator:
                             f' maximal time lag with {product_index}, {pred_activity_id} is not satisfied')
 
                     return FailureCode.MAX_LAG
-        return None
 
     def _compatibility_constraint_check(self, product_index, activity_id):
         for constraint in self.plan.products[product_index].activities[activity_id].constraints:

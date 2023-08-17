@@ -74,6 +74,7 @@ class Operator:
             for i, dict in enumerate(self.plan.earliest_start):
                 earliest_start_times.append(dict["earliest_start"])
             earliest_start_times_argsort = np.argsort(earliest_start_times)
+            earliest_start_times_argsort = self._temporal_sort(earliest_start_times_argsort)
 
             # Compute the start time of the next activity
             i = earliest_start_times_argsort[0]
@@ -112,3 +113,28 @@ class Operator:
                 activity_id, product_index, proc_time, needs = None, None, None, None
 
         return send_activity, delay, activity_id, product_index, proc_time, needs, finish
+
+    def _temporal_sort(self, earliest_start_times_argsort):
+        i = earliest_start_times_argsort[0]
+        count = 1
+        while len(earliest_start_times_argsort) > count and self.plan.earliest_start[i]["earliest_start"] == \
+                self.plan.earliest_start[i + count][
+                    "earliest_start"]:
+            j = earliest_start_times_argsort[count]
+            if self._is_parallel_successor(i, j):
+                earliest_start_times_argsort[1] = i
+                earliest_start_times_argsort[0] = j
+        return earliest_start_times_argsort
+
+    def _is_parallel_successor(self, i, j):
+        is_parallel_successor = self.plan.earliest_start[i]['product_id'] == self.plan.earliest_start[j][
+            'product_id']
+        is_parallel_successor = is_parallel_successor and (self.plan.earliest_start[j]['activity_id'],
+                                                           self.plan.earliest_start[i]['activity_id']) in \
+                                self.plan.products[
+                                    self.plan.earliest_start[i]['product_index']].temporal_relations.keys()
+        is_parallel_successor = is_parallel_successor and \
+                                self.plan.products[self.plan.earliest_start[i]['product_index']].temporal_relations[
+                                    (self.plan.earliest_start[j]['activity_id'],
+                                     self.plan.earliest_start[i]['activity_id'])].min_lag == 0
+        return is_parallel_successor
