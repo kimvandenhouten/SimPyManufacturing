@@ -2,7 +2,7 @@ import json
 import unittest
 from deepdiff import DeepDiff
 
-from classes.classes import Factory, ProductionPlan
+from classes.classes import Factory, ProductionPlan, TemporalRelation, Activity
 
 fp = open('./resources-test/data_stochastic.json', 'r')
 factory = Factory(**json.load(fp))

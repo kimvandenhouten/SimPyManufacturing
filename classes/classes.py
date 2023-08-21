@@ -149,7 +149,7 @@ class Factory:
         """
         self.products.append(product)
 
-    def set_compatibility_constraints(self,compatibility_constraints):
+    def set_compatibility_constraints(self, compatibility_constraints):
         for constraint in compatibility_constraints:
             if isinstance(constraint[0], CompatibilityConstraint) and isinstance(constraint[1],
                                                                                  CompatibilityConstraint):
@@ -243,6 +243,8 @@ class ProductionPlan:
 
     def to_json(self):
         plan = copy.deepcopy(self)
+        constraints = []
+        constraints_obj = []
         for i in range(len(plan.factory.products)):
             temporal_relations = list(map(lambda rel: {
                 "predecessor": rel[0],
@@ -252,7 +254,13 @@ class ProductionPlan:
             }, plan.factory.products[i].temporal_relations.keys()))
             plan.factory.products[i].temporal_relations = temporal_relations
             for activity in plan.factory.products[i].activities:
+                for constraint in activity.constraints:
+                    if (plan.factory.products[i].id, activity.id) not in constraints:
+                        constraints.append((constraint.product_id, constraint.activity_id))
+                        constraints_obj.append([CompatibilityConstraint(constraint.product_id, constraint.activity_id),
+                                            CompatibilityConstraint(plan.factory.products[i].id, activity.id)])
                 del activity.constraints
+            plan.factory.compatibility_constraints = constraints_obj
         plan.list_products()
         return json.dumps(plan, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
