@@ -211,7 +211,8 @@ class Simulator:
         self.env.run(until=sim_time)
 
         if self.printing:
-            print(f' \nSIMULATION OUTPUT\n {self.logger.info.print()}')
+            print(f' \nSIMULATION OUTPUT\n ')
+            self.logger.info.print()
 
         for act in self.plan.earliest_start:
             entry = self.logger.info.fetch_latest_entry(self.plan.products[act["product_index"]].id, act["activity_id"],

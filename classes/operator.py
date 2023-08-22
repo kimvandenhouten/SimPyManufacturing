@@ -29,8 +29,7 @@ class Operator:
                 f'{activity_id} got cancelled, so we apply policy {self.policy_type}')
             print(f'At time {current_time}: the current plan is {self.plan.earliest_start}')
 
-        if self.policy_type == 1:
-
+        if self.policy_type == 1 or failure_code == FailureCode.MAX_LAG:
             # Remove activities from plan that are from the same product_id as the cancelled activity
             if self.printing:
                 print(f'At time {current_time}: the repair policy removes all activities from product {product_index} '
@@ -40,16 +39,8 @@ class Operator:
                     del self.plan.earliest_start[i]
 
         elif self.policy_type == 2:  # Postpone for all except for max time,
-            # If failure_code = Max_Lag, then remove all activities
-            if failure_code == FailureCode.MAX_LAG:
-                for i, act in enumerate(self.plan.earliest_start):
-                    if act['product_index'] == product_index:
-                        del self.plan.earliest_start[i]
-
-            # Otherwise, postpone
-            else:
-                self.plan.earliest_start.append(
-                    {'product_index': product_index, "activity_id": activity_id, "earliest_start": current_time + 1})
+            self.plan.earliest_start.append(
+                {'product_index': product_index, "activity_id": activity_id, "earliest_start": current_time + 1,"product_id":self.plan.products[product_index].id})
 
         if self.printing:
             print(f'At time {current_time}: the updated plan is {self.plan.earliest_start}')
@@ -118,12 +109,14 @@ class Operator:
         i = earliest_start_times_argsort[0]
         count = 1
         while len(earliest_start_times_argsort) > count and self.plan.earliest_start[i]["earliest_start"] == \
-                self.plan.earliest_start[i + count][
+                self.plan.earliest_start[earliest_start_times_argsort[count]][
                     "earliest_start"]:
             j = earliest_start_times_argsort[count]
             if self._is_parallel_successor(i, j):
                 earliest_start_times_argsort[1] = i
                 earliest_start_times_argsort[0] = j
+                break
+            count+=1
         return earliest_start_times_argsort
 
     def _is_parallel_successor(self, i, j):
