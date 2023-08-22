@@ -4,14 +4,11 @@ import numpy as np
 nodes, edges = [], []
 
 # We use indices for the nodes in the network
-nodes = [0, 1, 2, 3, 4, 5]
-translation_dict = {0: "z", 1: "e1", 2: "e3", 3: "c1", 4: "c2", 5: "b"}
-edges = [(1, 0, 0), (3, 0, 0),
-         (1, 2, 5), (2, 1, -4),
-         (3, 4, 3), (4, 3, -2),
-         (2, 5, 8), (5, 2, 0),
-         (4, 5, 5), (5, 4, 0),
-         (0, 5, 15)]
+nodes = [1, 2 , 3 ,4]
+edges = [(1, 2, 3), (2, 1, 8),
+         (1, 4, 7), (4, 1, 2),
+         (3, 1, 5), (3, 4, 1),
+         (2, 3, 2)]
 
 print(f'edges {edges}')
 
@@ -26,8 +23,7 @@ w = np.full((n, n), np.inf)
 np.fill_diagonal(w, 0)
 for edge in edges:
     u, v, weight = edge
-    w[u, v] = weight
-
+    w[u-1, v-1] = weight
 print(w)
 D = [np.full((n, n), np.inf) for _ in range(n+1)]
 D[0] = w
@@ -38,5 +34,4 @@ for k in range(1, n+1):
 if any(np.diag(D[n]) < 0):
     print("The graph contains negative cycles.")
 print(D[n])
-
-print(f'A valid schedule is {D[n][0]}')
+print(f'The minimum time needed to finish this product is {D[n][0][n-1]}')
