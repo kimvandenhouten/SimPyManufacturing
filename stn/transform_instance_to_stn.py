@@ -38,7 +38,7 @@ for a in p.activities:
     a_finish = idx
     idx += 1
     nodes.append(a_finish)
-    translation_dict[idx] = {"product_index": p.product_index,
+    translation_dict[a_finish] = {"product_index": p.product_index,
                              "activity_index": a.id,
                              "event": EVENT_FINISH}
     translation_dict_reversed[(p.product_index, a.id, EVENT_FINISH)] = a_finish
