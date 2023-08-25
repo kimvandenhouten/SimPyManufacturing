@@ -2,6 +2,9 @@ import json
 from classes.classes import ProductionPlan
 import numpy as np
 
+EVENT_START = "start"
+EVENT_FINISH = "finish"
+
 instance_size = 10
 instance_id = 1
 instance_name = f"{instance_size}_{instance_id}_factory_1"
@@ -23,24 +26,26 @@ translation_dict_reversed = {}
 p = my_productionplan.products[0]
 for a in p.activities:
     # Add node that refers to start of activity
-    nodes.append(idx)
-    translation_dict[idx] = {"product_index": p.product_index,
-                             "activity_index": a.id,
-                             "event": "start"}
-    translation_dict_reversed[(p.product_index, a.id, "start")] = idx
+    a_start = idx
     idx += 1
+    nodes.append(a_start)
+    translation_dict[a_start] = {"product_index": p.product_index,
+                             "activity_index": a.id,
+                             "event": EVENT_START}
+    translation_dict_reversed[(p.product_index, a.id, EVENT_START)] = a_start
 
     # Add finish node
-    nodes.append(idx)
+    a_finish = idx
+    idx += 1
+    nodes.append(a_finish)
     translation_dict[idx] = {"product_index": p.product_index,
                              "activity_index": a.id,
-                             "event": "finish"}
-    translation_dict_reversed[(p.product_index, a.id, "finish")] = idx
-    idx += 1
+                             "event": EVENT_FINISH}
+    translation_dict_reversed[(p.product_index, a.id, EVENT_FINISH)] = a_finish
 
     # Add edge between start and finish with processing time
-    edges.append((idx - 2, idx - 1, a.processing_time[0]))
-    edges.append((idx - 1, idx - 2, -a.processing_time[0]))
+    edges.append((a_start, a_finish, a.processing_time[0]))
+    edges.append((a_finish, a_start, -a.processing_time[0]))
 
 
 print(f'nodes {nodes}')
@@ -53,8 +58,8 @@ p = my_productionplan.products[0] # Again we now only do it for product p
 for i, j in p.temporal_relations:
     min_lag = p.temporal_relations[(i, j)].min_lag
     max_lag = p.temporal_relations[(i, j)].max_lag
-    i_idx = translation_dict_reversed[(p.product_index, i, "start")]
-    j_idx = translation_dict_reversed[(p.product_index, j, "start")]
+    i_idx = translation_dict_reversed[(p.product_index, i, EVENT_START)]
+    j_idx = translation_dict_reversed[(p.product_index, j, EVENT_START)]
     edges.append((i_idx, j_idx, max_lag))
     edges.append((j_idx, i_idx, -min_lag))
 
