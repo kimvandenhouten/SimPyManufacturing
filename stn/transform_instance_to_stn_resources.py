@@ -1,6 +1,8 @@
 import json
 from classes.classes import ProductionPlan
 import numpy as np
+import pandas as pd
+from stn.floyd_warshall import floyd_warshall
 
 EVENT_START = "start"
 EVENT_FINISH = "finish"
@@ -20,7 +22,6 @@ idx = 0
 # We keep track of two translation dictionaries to connect indices to the events
 translation_dict = {}
 translation_dict_reversed = {}
-
 
 # We create a simple temporal network only for one product (we select p)
 for p in my_productionplan.products:
@@ -47,12 +48,6 @@ for p in my_productionplan.products:
         edges.append((a_start, a_finish, a.processing_time[0]))
         edges.append((a_finish, a_start, -a.processing_time[0]))
 
-
-print(f'nodes {nodes}')
-print(f'edges {edges}')
-print(f'translation dict {translation_dict}')
-print(f'reversed translation dict {translation_dict_reversed}')
-
 # For every temporal relation in temporal relations, add edge between nodes with min and max lag
 for p in my_productionplan.products: # Again we now only do it for product p
     for i, j in p.temporal_relations:
@@ -65,25 +60,24 @@ for p in my_productionplan.products: # Again we now only do it for product p
 
 print(f'edges {edges}')
 
-'''
-Floyd-Warshall algorithm
-Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
-'''
+print(f'Apply Floyd-Warshall to STN without resource constraints')
+shortest_distances = floyd_warshall(nodes=nodes, edges=edges)
 
+# Load cp output and make production plan and convert to edges that must be added to STN
+from construct_resource_edges import construct_resource_edges
+cp_output = pd.read_csv(f"results/cp_model/development/instances_type_2/start times {instance_name}.csv")
+earliest_start = cp_output.to_dict('records')  # Convert to earliest start times
+# Run deterministic simulation with earliest start times and obtain resource predecence constraints
+edges_stn = construct_resource_edges(production_plan=my_productionplan, earliest_start=earliest_start)
+
+# Now add the edges with the correct edge weights to the STN
+for pred, suc in edges_stn:
+    # The finish of the predecessor should precede the start of the successor
+    pred_idx = translation_dict_reversed[pred]  # Get translation index from finish of predecessor
+    suc_idx = translation_dict_reversed[suc]  # Get translation index from start of successor
+    edges.append((pred_idx, suc_idx, np.inf))  # Max difference is infinity
+    edges.append((suc_idx, pred_idx, 0))  # Difference is at least 0
+
+print(f'Apply Floyd-Warshall to STN WITH resource constraints')
 # Compute shortest distance graph path for this graph
-n = len(nodes)
-w = np.full((n, n), np.inf)
-np.fill_diagonal(w, 0)
-for edge in edges:
-    u, v, weight = edge
-    w[u, v] = weight
-
-D = [np.full((n, n), np.inf) for _ in range(n+1)]
-D[0] = w
-for k in range(1, n+1):
-    for i in range(n):
-        for j in range(n):
-            D[k][i, j] = min(D[k-1][i, j], D[k-1][i, k-1] + D[k-1][k-1, j])
-if any(np.diag(D[n]) < 0):
-    print("The graph contains negative cycles.")
-
+shortest_distances = floyd_warshall(nodes=nodes, edges=edges)
