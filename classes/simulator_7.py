@@ -286,7 +286,6 @@ class Simulator:
         lateness = 0
 
         nr_unfinished_products = 0
-        self.logger.info.print()
         for p in range(len(self.plan.products)):
             schedule = list(filter(lambda entry: entry.product_idx == p, self.logger.info.entries))
             finish = max([entry.end_time for entry in schedule])
