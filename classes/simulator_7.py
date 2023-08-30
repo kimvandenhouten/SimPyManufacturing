@@ -19,6 +19,7 @@ class Simulator:
         self.nr_clashes = 0
         self.operator = operator
         self.logger = SimulatorLogger(self.__class__.__name__)
+        self.pushback_mode = False
 
     def _availability_constraint_check(self, needs, product_index, activity_id):
         # Check if all resources are available
@@ -62,7 +63,8 @@ class Simulator:
                             f' minimal time lag with {product_index}, {pred_activity_id} is not satisfied')
 
                     return FailureCode.MIN_LAG
-                elif temp_rel.max_lag and self.env.now - start_pred_log.timestamp > temp_rel.max_lag:
+                elif not (
+                        self.pushback_mode) and temp_rel.max_lag and self.env.now - start_pred_log.timestamp > temp_rel.max_lag:
                     if self.printing:
                         print(
                             f'At time {self.env.now}: product {product_index} with id {self.plan.products[product_index].id}, activity {activity_id} cannot start because '
@@ -102,7 +104,7 @@ class Simulator:
         if self.logger.failure_code is None:
             if self.printing:
                 print(
-                    f'At time {self.env.now}: product {product_index} ACTIVITY {activity_id} requested resources: {needs}')
+                    f'At time {self.env.now}: product index {product_index} with product id  with product id {self.plan.products[product_index].id} ACTIVITY {activity_id} requested resources: {needs}')
 
                 # SimPy request
             resources = []
@@ -158,7 +160,6 @@ class Simulator:
 
     def activity_generator(self):
         """Generate activities that arrive at the factory based on earliest start times."""
-
         finish = False
 
         # Ask operator about next activity
@@ -171,6 +172,63 @@ class Simulator:
 
             # Generator object that does a time-out for a time period equal to delay value
             yield self.env.timeout(delay)
+
+        if self.printing:
+            print(
+                f'At time {self.env.now}: product {product_index} ACTIVITY {activity_id} retrieved resources: {needs}')
+        if len(self.operator.pushback) > 0:
+            self.pushback_mode = True
+            for product in self.operator.pushback:
+                first_start_time = min(product, key=lambda act: act['earliest_start'])['earliest_start']
+                offset = self.env.now - first_start_time
+
+                for act in product:
+                    act['earliest_start'] += offset
+
+                self.plan.earliest_start = product
+                self.operator.plan.earliest_start = product
+
+                finish = False
+
+                # Ask operator about next activity
+                while not finish:
+                    send_activity, delay, activity_id, product_index, proc_time, needs, finish = \
+                        self.operator.send_next_activity(current_time=self.env.now)
+
+                    if send_activity:
+                        self.env.process(
+                            self.activity_processing(activity_id, product_index, proc_time, needs))
+
+                    # Generator object that does a time-out for a time period equal to delay value
+                    yield self.env.timeout(delay)
+
+    def pushback_activity_generator(self):
+        print("Staring pushback")
+        if len(self.operator.pushback) > 0:
+            self.pushback_mode = True
+            for product in self.operator.pushback:
+                first_start_time = min(product, key=lambda act: act['earliest_start'])['earliest_start']
+                offset = self.env.now - first_start_time
+
+                for act in product:
+                    act['earliest_start'] += offset
+
+                self.plan.earliest_start = product
+                self.operator.plan.earliest_start = product
+
+                finish = False
+
+                # Ask operator about next activity
+                while not finish:
+                    send_activity, delay, activity_id, product_index, proc_time, needs, finish = \
+                        self.operator.send_next_activity(current_time=self.env.now)
+
+                    if send_activity:
+                        self.env.process(
+                            self.activity_processing(activity_id, product_index, proc_time, needs))
+
+                    # Generator object that does a time-out for a time period equal to delay value
+                    yield self.env.timeout(delay)
 
     def simulate(self, sim_time=1000, random_seed=1, write=False, output_location="Results.csv"):
         """
@@ -228,6 +286,7 @@ class Simulator:
         lateness = 0
 
         nr_unfinished_products = 0
+        self.logger.info.print()
         for p in range(len(self.plan.products)):
             schedule = list(filter(lambda entry: entry.product_idx == p, self.logger.info.entries))
             finish = max([entry.end_time for entry in schedule])

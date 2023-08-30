@@ -10,7 +10,7 @@ from classes.classes import ProductionPlan
 from classes.simulator_7 import Simulator
 from classes.operator import Operator
 # Set up a factory
-my_factory = Factory(name="Myfactory", resource_names=["Filter", "Mixer", "Dryer"], capacity=[1, 1, 1])
+my_factory = Factory(name="Myfactory", resource_names=["Filter", "Mixer", "Dryer"], capacity=[10, 10, 10])
 #set id which is not index for testing
 
 product = Product(name="Enzyme_1", id=7)
@@ -20,7 +20,7 @@ activity1 = Activity(id=1, processing_time=[5, 5], product="Enzyme_1",
                      product_id="0", needs=[0, 1, 0])
 product.add_activity(activity=activity0)
 product.add_activity(activity=activity1)
-product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1)})
+product.set_temporal_relations(temporal_relations={(0, 1): TemporalRelation(1,2)})
 my_factory.add_product(product=product)
 activity0 = Activity(id=0, processing_time=[3, 3], product="Enzyme_2",
                      product_id="7", needs=[1, 0, 1])
@@ -40,9 +40,9 @@ my_productionplan.list_products()
 
 # Define partial schedule that includes earliest start times
 earliest_start = [{"product_index": 0, "activity_id": 0, "earliest_start": 0},
-                  {"product_index": 0, "activity_id": 1, "earliest_start": 1},
-                  {"product_index": 1, "activity_id": 0, "earliest_start": 2},
-                  {"product_index": 1, "activity_id": 1, "earliest_start": 4}]
+                  {"product_index": 0, "activity_id": 1, "earliest_start": 3},
+                  {"product_index": 1, "activity_id": 0, "earliest_start": 4},
+                  {"product_index": 1, "activity_id": 1, "earliest_start": 6}]
 my_productionplan.set_earliest_start_times(earliest_start)
 
 # Here you can choose policy 1 or policy 2

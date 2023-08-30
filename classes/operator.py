@@ -12,7 +12,16 @@ class Operator:
         self.initial_plan = plan
         self.plan = copy.deepcopy(plan)
         self.printing = printing
+        self.pushback = []
         self.policy_type = policy_type
+
+    def pushback_product(self, product_index):
+        pushback_product = list(filter(lambda act: act['product_index'] == product_index,
+                                       self.initial_plan.earliest_start))
+        for act in self.plan.earliest_start:
+            if act['product_index'] == product_index:
+                self.plan.earliest_start.remove(act)
+        self.pushback.append(pushback_product)
 
     def signal_failed_activity(self, product_index, activity_id, current_time, failure_code):
         """
@@ -20,7 +29,6 @@ class Operator:
         """
         if self.printing:
             print(f'Failure code received: {failure_code}')
-        # TODO: (Deepali) use above to use policy 1 for MAX_LAG
 
         if self.printing:
             print(
@@ -29,7 +37,11 @@ class Operator:
                 f'{activity_id} got cancelled, so we apply policy {self.policy_type}')
             print(f'At time {current_time}: the current plan is {self.plan.earliest_start}')
 
-        if self.policy_type == 1 or failure_code == FailureCode.MAX_LAG:
+        if failure_code == FailureCode.MAX_LAG:
+            self.pushback_product(product_index)
+            return
+
+        if self.policy_type == 1:
             # Remove activities from plan that are from the same product_id as the cancelled activity
             if self.printing:
                 print(f'At time {current_time}: the repair policy removes all activities from product {product_index} '
@@ -40,7 +52,8 @@ class Operator:
 
         elif self.policy_type == 2:  # Postpone for all except for max time,
             self.plan.earliest_start.append(
-                {'product_index': product_index, "activity_id": activity_id, "earliest_start": current_time + 1,"product_id":self.plan.products[product_index].id})
+                {'product_index': product_index, "activity_id": activity_id, "earliest_start": current_time + 1,
+                 "product_id": self.plan.products[product_index].id})
 
         if self.printing:
             print(f'At time {current_time}: the updated plan is {self.plan.earliest_start}')
@@ -116,7 +129,7 @@ class Operator:
                 earliest_start_times_argsort[1] = i
                 earliest_start_times_argsort[0] = j
                 break
-            count+=1
+            count += 1
         return earliest_start_times_argsort
 
     def _is_parallel_successor(self, i, j):
