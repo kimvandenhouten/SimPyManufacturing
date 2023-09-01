@@ -1,5 +1,5 @@
 import json
-from classes.classes import ProductionPlan
+from classes.classes import ProductionPlan, STN
 import numpy as np
 import pandas as pd
 from stn.floyd_warshall import floyd_warshall
@@ -81,3 +81,15 @@ for pred, suc in edges_stn:
 print(f'Apply Floyd-Warshall to STN WITH resource constraints')
 # Compute shortest distance graph path for this graph
 shortest_distances = floyd_warshall(nodes=nodes, edges=edges)
+
+# Here's the equivalent code using the STN class:
+stn = STN.from_production_plan(my_productionplan)
+for pred, suc in edges_stn:
+    pred_idx = translation_dict_reversed[pred]  # Get translation index from finish of predecessor
+    suc_idx = translation_dict_reversed[suc]  # Get translation index from start of successor
+    stn.add_interval_constraint(pred_idx, suc_idx, 0, np.inf)
+
+# Check if the output is the same:
+print(f'nodes equal? {stn.nodes == nodes}')
+print(f'edges equal? {sorted(stn.edges) == sorted(edges)}')
+print(f'floyd-warshall equal? {np.array_equal(shortest_distances, stn.floyd_warshall())}')

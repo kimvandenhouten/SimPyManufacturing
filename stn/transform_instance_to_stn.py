@@ -1,5 +1,5 @@
 import json
-from classes.classes import ProductionPlan
+from classes.classes import ProductionPlan, STN
 import numpy as np
 
 EVENT_START = "start"
@@ -87,3 +87,11 @@ for k in range(1, n+1):
 if any(np.diag(D[n]) < 0):
     print("The graph contains negative cycles.")
 
+# The following is equivalent code using the STN class:
+stn = STN.from_production_plan(my_productionplan)
+matrix = stn.floyd_warshall()
+
+# Check if the output is the same:
+print(f'nodes equal? {stn.nodes == nodes}')
+print(f'edges equal? {sorted(stn.edges) == sorted(edges)}')
+print(f'floyd-warshall equal? {np.array_equal(D[n], matrix)}')
