@@ -11,12 +11,33 @@ from IPython.core.display_functions import display
 
 from classes.distributions import Distribution, get_distribution
 
-
 EVENT_START = "start"
 EVENT_FINISH = "finish"
 
+
 class STN:
-    def __init__(self, production_plan=None):
+    @classmethod
+    def from_production_plan(cls, production_plan):
+        stn = cls()
+        for product in production_plan.products:
+            for activity in product.activities:
+                # Add nodes that refer to start and end of activity
+                a_start = stn.add_node(product.product_index, activity.id, EVENT_START)
+                a_finish = stn.add_node(product.product_index, activity.id, EVENT_FINISH)
+                # Add edge between start and finish with processing time
+                stn.add_tight_constraint(a_start, a_finish, activity.processing_time[0])
+
+            # For every temporal relation in this product's temporal_relations, add edge between nodes with min and max lag
+            for i, j in product.temporal_relations:
+                min_lag = product.temporal_relations[(i, j)].min_lag
+                max_lag = product.temporal_relations[(i, j)].max_lag
+                i_idx = stn.translation_dict_reversed[(product.product_index, i, EVENT_START)]
+                j_idx = stn.translation_dict_reversed[(product.product_index, j, EVENT_START)]
+                stn.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
+
+        return stn
+
+    def __init__(self):
         # Set-up nodes and edges
         self.nodes = []
         self.edges = []
@@ -28,53 +49,11 @@ class STN:
         self.translation_dict = {}
         self.translation_dict_reversed = {}
 
-        if production_plan:
-            # We create a simple temporal network only for one product (we select p)
-            p = production_plan.products[0]
-            for a in p.activities:
-                # Add node that refers to start of activity
-                a_start = self.idx
-                self.idx += 1
-                self.nodes.append(a_start)
-                self.translation_dict[a_start] = {"product_index": p.product_index,
-                                                  "activity_index": a.id,
-                                                  "event": EVENT_START}
-                self.translation_dict_reversed[(p.product_index, a.id, EVENT_START)] = a_start
-
-                # Add finish node
-                a_finish = self.idx
-                self.idx += 1
-                self.nodes.append(a_finish)
-                self.translation_dict[a_finish] = {"product_index": p.product_index,
-                                                   "activity_index": a.id,
-                                                   "event": EVENT_FINISH}
-                self.translation_dict_reversed[(p.product_index, a.id, EVENT_FINISH)] = a_finish
-
-                # Add edge between start and finish with processing time
-                self.edges.append((a_start, a_finish, a.processing_time[0]))
-                self.edges.append((a_finish, a_start, -a.processing_time[0]))
-
-                # For every temporal relation in temporal relations, add edge between nodes with min and max lag
-                p = production_plan.products[0]  # Again we now only do it for product p
-                for i, j in p.temporal_relations:
-                    min_lag = p.temporal_relations[(i, j)].min_lag
-                    max_lag = p.temporal_relations[(i, j)].max_lag
-                    i_idx = self.translation_dict_reversed[(p.product_index, i, EVENT_START)]
-                    j_idx = self.translation_dict_reversed[(p.product_index, j, EVENT_START)]
-                    self.edges.append((i_idx, j_idx, max_lag))
-                    self.edges.append((j_idx, i_idx, -min_lag))
-
-        print(f'nodes {self.nodes}')
-        print(f'edges {self.edges}')
-        print(f'translation dict {self.translation_dict}')
-        print(f'reversed translation dict {self.translation_dict_reversed}')
-
+    '''
+    Floyd-Warshall algorithm
+    Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
+    '''
     def floyd_warshall(self):
-        '''
-        Floyd-Warshall algorithm
-        Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
-        '''
-
         # Compute shortest distance graph path for this graph
         n = len(self.nodes)
         w = np.full((n, n), np.inf)
@@ -90,8 +69,26 @@ class STN:
                     D[k][i, j] = min(D[k - 1][i, j], D[k - 1][i, k - 1] + D[k - 1][k - 1, j])
         if any(np.diag(D[n]) < 0):
             print("The graph contains negative cycles.")
+        return D[n]
 
-        print(f'The minimum time needed to finish this product is {D[n][0][n - 1]}')
+    def add_node(self, *description):
+        node_idx = self.idx
+        self.idx += 1
+        self.nodes.append(node_idx)
+        self.translation_dict[node_idx] = description
+        self.translation_dict_reversed[description] = node_idx
+        return node_idx
+
+    def add_edge(self, node_from, node_to, distance):
+        self.edges.append((node_from, node_to, distance))
+
+    def add_interval_constraint(self, node_from, node_to, min_distance, max_distance):
+        self.add_edge(node_from, node_to, max_distance)
+        self.add_edge(node_to, node_from, -min_distance)
+
+    def add_tight_constraint(self, node_from, node_to, distance):
+        self.add_edge(node_from, node_to, distance)
+        self.add_edge(node_to, node_from, -distance)
 
 
 class CompatibilityConstraint:
