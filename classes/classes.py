@@ -11,19 +11,19 @@ from IPython.core.display_functions import display
 
 from classes.distributions import Distribution, get_distribution
 
-EVENT_START = "start"
-EVENT_FINISH = "finish"
-
 
 class STN:
+    EVENT_START = "start"
+    EVENT_FINISH = "finish"
+
     @classmethod
     def from_production_plan(cls, production_plan):
         stn = cls()
         for product in production_plan.products:
             for activity in product.activities:
                 # Add nodes that refer to start and end of activity
-                a_start = stn.add_node(product.product_index, activity.id, EVENT_START)
-                a_finish = stn.add_node(product.product_index, activity.id, EVENT_FINISH)
+                a_start = stn.add_node(product.product_index, activity.id, cls.EVENT_START)
+                a_finish = stn.add_node(product.product_index, activity.id, cls.EVENT_FINISH)
                 # Add edge between start and finish with processing time
                 stn.add_tight_constraint(a_start, a_finish, activity.processing_time[0])
 
@@ -31,8 +31,8 @@ class STN:
             for i, j in product.temporal_relations:
                 min_lag = product.temporal_relations[(i, j)].min_lag
                 max_lag = product.temporal_relations[(i, j)].max_lag
-                i_idx = stn.translation_dict_reversed[(product.product_index, i, EVENT_START)]
-                j_idx = stn.translation_dict_reversed[(product.product_index, j, EVENT_START)]
+                i_idx = stn.translation_dict_reversed[(product.product_index, i, cls.EVENT_START)]
+                j_idx = stn.translation_dict_reversed[(product.product_index, j, cls.EVENT_START)]
                 stn.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
 
         return stn
@@ -424,6 +424,7 @@ class LogInfo:
                          start_time,
                          end_time))
 
+    '''Returns the latest entry with the given product ID, activity ID and product index, if any.'''
     def fetch_latest_entry(self, product_id, activity_id, product_idx):
         entries = list(filter(lambda
                                   entry: entry.product_id == product_id and entry.activity_id ==
