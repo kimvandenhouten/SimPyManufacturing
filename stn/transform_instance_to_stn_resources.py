@@ -15,17 +15,17 @@ print(f'Apply Floyd-Warshall to STN without resource constraints')
 shortest_distances = stn.floyd_warshall()
 
 # Load cp output and make production plan and convert to edges that must be added to STN
-from construct_resource_edges import construct_resource_edges
+from get_resource_chains import get_resource_chains
 cp_output = pd.read_csv(f"results/cp_model/development/instances_type_2/start times {instance_name}.csv")
 earliest_start = cp_output.to_dict('records')  # Convert to earliest start times
 # Run deterministic simulation with earliest start times and obtain resource predecence constraints
-edges_stn = construct_resource_edges(production_plan=my_productionplan, earliest_start=earliest_start)
+resource_chains = get_resource_chains(production_plan=my_productionplan, earliest_start=earliest_start)
 
 # Now add the edges with the correct edge weights to the STN
-for pred, suc in edges_stn:
+for pred_p, pred_a, succ_p, succ_a in resource_chains:
     # The finish of the predecessor should precede the start of the successor
-    pred_idx = stn.translation_dict_reversed[pred]  # Get translation index from finish of predecessor
-    suc_idx = stn.translation_dict_reversed[suc]  # Get translation index from start of successor
+    pred_idx = stn.translation_dict_reversed[(pred_p, pred_a, STN.EVENT_FINISH)]  # Get translation index from finish of predecessor
+    suc_idx = stn.translation_dict_reversed[(succ_p, succ_a, STN.EVENT_START)]  # Get translation index from start of successor
     stn.add_interval_constraint(pred_idx, suc_idx, 0, np.inf)
 
 print(f'Apply Floyd-Warshall to STN WITH resource constraints')
