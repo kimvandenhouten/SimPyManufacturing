@@ -68,7 +68,7 @@ class STN:
                 for j in range(n):
                     D[k][i, j] = min(D[k - 1][i, j], D[k - 1][i, k - 1] + D[k - 1][k - 1, j])
         if any(np.diag(D[n]) < 0):
-            print("The graph contains negative cycles.")
+            raise ValueError("The graph contains negative cycles.")
         return D[n]
 
     def add_node(self, *description):
