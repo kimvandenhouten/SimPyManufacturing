@@ -63,8 +63,7 @@ class Simulator:
                             f' minimal time lag with {product_index}, {pred_activity_id} is not satisfied')
 
                     return FailureCode.MIN_LAG
-                elif not (
-                        self.pushback_mode) and temp_rel.max_lag and self.env.now - start_pred_log.timestamp > temp_rel.max_lag:
+                elif temp_rel.max_lag and self.env.now - start_pred_log.timestamp > temp_rel.max_lag:
                     if self.printing:
                         print(
                             f'At time {self.env.now}: product {product_index} with id {self.plan.products[product_index].id}, activity {activity_id} cannot start because '
@@ -174,11 +173,14 @@ class Simulator:
             yield self.env.timeout(delay)
 
         if self.printing:
-            print(
-                f'At time {self.env.now}: product {product_index} ACTIVITY {activity_id} retrieved resources: {needs}')
-        if len(self.operator.pushback) > 0:
+            print(f'Starting pushback activity. Pushback list is {self.operator.pushback}')
+
+        pushback = copy.deepcopy(self.operator.pushback)
+        initial_earliest_starts = copy.deepcopy(self.plan.earliest_start)
+
+        if len(pushback) > 0:
             self.pushback_mode = True
-            for product in self.operator.pushback:
+            for product in pushback:
                 first_start_time = min(product, key=lambda act: act['earliest_start'])['earliest_start']
                 offset = self.env.now - first_start_time
 
@@ -201,34 +203,11 @@ class Simulator:
 
                     # Generator object that does a time-out for a time period equal to delay value
                     yield self.env.timeout(delay)
-
-    def pushback_activity_generator(self):
-        print("Staring pushback")
-        if len(self.operator.pushback) > 0:
-            self.pushback_mode = True
-            for product in self.operator.pushback:
-                first_start_time = min(product, key=lambda act: act['earliest_start'])['earliest_start']
-                offset = self.env.now - first_start_time
-
-                for act in product:
-                    act['earliest_start'] += offset
-
-                self.plan.earliest_start = product
-                self.operator.plan.earliest_start = product
-
-                finish = False
-
-                # Ask operator about next activity
-                while not finish:
-                    send_activity, delay, activity_id, product_index, proc_time, needs, finish = \
-                        self.operator.send_next_activity(current_time=self.env.now)
-
-                    if send_activity:
-                        self.env.process(
-                            self.activity_processing(activity_id, product_index, proc_time, needs))
-
-                    # Generator object that does a time-out for a time period equal to delay value
-                    yield self.env.timeout(delay)
+                if self.printing:
+                    print(f'Pushback completed. Activites that did not succeed in pushback mode are:')
+                    for i in self.operator.pushback:
+                        print(i)
+                self.plan.earliest_start = initial_earliest_starts
 
     def simulate(self, sim_time=1000, random_seed=1, write=False, output_location="Results.csv"):
         """
@@ -247,10 +226,6 @@ class Simulator:
         # Reset environment
         self.env = simpy.Environment()
 
-        # for act in self.plan.earliest_start:
-        #     # self.logger.info.log(self.plan.products[act["product_index"]].id, act["activity_id"], act["product_index"],
-        #     #                      float("inf"), "NOT PROCESSED DUE TO CLASH",
-        #     #                      float("inf"), float("inf"), float("inf"), float("inf"))
 
         # Create the factory that is a SimPy FilterStore object
         self.factory = simpy.FilterStore(self.env, capacity=sum(self.capacity))
