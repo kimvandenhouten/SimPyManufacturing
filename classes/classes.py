@@ -12,85 +12,6 @@ from IPython.core.display_functions import display
 from classes.distributions import Distribution, get_distribution
 
 
-class STN:
-    EVENT_START = "start"
-    EVENT_FINISH = "finish"
-
-    @classmethod
-    def from_production_plan(cls, production_plan):
-        stn = cls()
-        for product in production_plan.products:
-            for activity in product.activities:
-                # Add nodes that refer to start and end of activity
-                a_start = stn.add_node(product.product_index, activity.id, cls.EVENT_START)
-                a_finish = stn.add_node(product.product_index, activity.id, cls.EVENT_FINISH)
-                # Add edge between start and finish with processing time
-                stn.add_tight_constraint(a_start, a_finish, activity.processing_time[0])
-
-            # For every temporal relation in this product's temporal_relations, add edge between nodes with min and max lag
-            for i, j in product.temporal_relations:
-                min_lag = product.temporal_relations[(i, j)].min_lag
-                max_lag = product.temporal_relations[(i, j)].max_lag
-                i_idx = stn.translation_dict_reversed[(product.product_index, i, cls.EVENT_START)]
-                j_idx = stn.translation_dict_reversed[(product.product_index, j, cls.EVENT_START)]
-                stn.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
-
-        return stn
-
-    def __init__(self):
-        # Set-up nodes and edges
-        self.nodes = []
-        self.edges = []
-
-        # We use indices for the nodes in the network
-        self.idx = 0
-
-        # We keep track of two translation dictionaries to connect indices to the events
-        self.translation_dict = {}
-        self.translation_dict_reversed = {}
-
-    '''
-    Floyd-Warshall algorithm
-    Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
-    '''
-    def floyd_warshall(self):
-        # Compute shortest distance graph path for this graph
-        n = len(self.nodes)
-        w = np.full((n, n), np.inf)
-        np.fill_diagonal(w, 0)
-        for u, v, weight in self.edges:
-            w[u, v] = weight
-
-        D = [np.full((n, n), np.inf) for _ in range(n + 1)]
-        D[0] = w
-        for k in range(1, n + 1):
-            for i in range(n):
-                for j in range(n):
-                    D[k][i, j] = min(D[k - 1][i, j], D[k - 1][i, k - 1] + D[k - 1][k - 1, j])
-        if any(np.diag(D[n]) < 0):
-            raise ValueError("The graph contains negative cycles.")
-        return D[n]
-
-    def add_node(self, *description):
-        node_idx = self.idx
-        self.idx += 1
-        self.nodes.append(node_idx)
-        self.translation_dict[node_idx] = description
-        self.translation_dict_reversed[description] = node_idx
-        return node_idx
-
-    def add_edge(self, node_from, node_to, distance):
-        self.edges.append((node_from, node_to, distance))
-
-    def add_interval_constraint(self, node_from, node_to, min_distance, max_distance):
-        self.add_edge(node_from, node_to, max_distance)
-        self.add_edge(node_to, node_from, -min_distance)
-
-    def add_tight_constraint(self, node_from, node_to, distance):
-        self.add_edge(node_from, node_to, distance)
-        self.add_edge(node_to, node_from, -distance)
-
-
 class CompatibilityConstraint:
     def __init__(self, product_id=None, activity_id=None):
         self.activity_id = activity_id
@@ -483,3 +404,82 @@ class SimulatorLogger:
             return entries[-1]
         else:
             return None
+
+
+class STN:
+    EVENT_START = "start"
+    EVENT_FINISH = "finish"
+
+    @classmethod
+    def from_production_plan(cls, production_plan: ProductionPlan) -> 'STN':
+        stn = cls()
+        for product in production_plan.products:
+            for activity in product.activities:
+                # Add nodes that refer to start and end of activity
+                a_start = stn.add_node(product.product_index, activity.id, cls.EVENT_START)
+                a_finish = stn.add_node(product.product_index, activity.id, cls.EVENT_FINISH)
+                # Add edge between start and finish with processing time
+                stn.add_tight_constraint(a_start, a_finish, activity.processing_time[0])
+
+            # For every temporal relation in this product's temporal_relations, add edge between nodes with min and max lag
+            for i, j in product.temporal_relations:
+                min_lag = product.temporal_relations[(i, j)].min_lag
+                max_lag = product.temporal_relations[(i, j)].max_lag
+                i_idx = stn.translation_dict_reversed[(product.product_index, i, cls.EVENT_START)]
+                j_idx = stn.translation_dict_reversed[(product.product_index, j, cls.EVENT_START)]
+                stn.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
+
+        return stn
+
+    def __init__(self):
+        # Set-up nodes and edges
+        self.nodes = []
+        self.edges = []
+
+        # We use indices for the nodes in the network
+        self.idx = 0
+
+        # We keep track of two translation dictionaries to connect indices to the events
+        self.translation_dict = {}
+        self.translation_dict_reversed = {}
+
+    '''
+    Floyd-Warshall algorithm
+    Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
+    '''
+    def floyd_warshall(self):
+        # Compute shortest distance graph path for this graph
+        n = len(self.nodes)
+        w = np.full((n, n), np.inf)
+        np.fill_diagonal(w, 0)
+        for u, v, weight in self.edges:
+            w[u, v] = weight
+
+        D = [np.full((n, n), np.inf) for _ in range(n + 1)]
+        D[0] = w
+        for k in range(1, n + 1):
+            for i in range(n):
+                for j in range(n):
+                    D[k][i, j] = min(D[k - 1][i, j], D[k - 1][i, k - 1] + D[k - 1][k - 1, j])
+        if any(np.diag(D[n]) < 0):
+            raise ValueError("The graph contains negative cycles.")
+        return D[n]
+
+    def add_node(self, *description):
+        node_idx = self.idx
+        self.idx += 1
+        self.nodes.append(node_idx)
+        self.translation_dict[node_idx] = description
+        self.translation_dict_reversed[description] = node_idx
+        return node_idx
+
+    def add_edge(self, node_from, node_to, distance):
+        self.edges.append((node_from, node_to, distance))
+
+    def add_interval_constraint(self, node_from, node_to, min_distance, max_distance):
+        self.add_edge(node_from, node_to, max_distance)
+        self.add_edge(node_to, node_from, -min_distance)
+
+    def add_tight_constraint(self, node_from, node_to, distance):
+        self.add_edge(node_from, node_to, distance)
+        self.add_edge(node_to, node_from, -distance)
