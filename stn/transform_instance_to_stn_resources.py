@@ -13,6 +13,7 @@ stn = STN.from_production_plan(my_productionplan)
 
 print(f'Apply Floyd-Warshall to STN without resource constraints')
 shortest_distances = stn.floyd_warshall()
+print(f'Makespan: {-shortest_distances[stn.HORIZON_IDX, stn.ORIGIN_IDX]}')
 
 # Load cp output and make production plan and convert to edges that must be added to STN
 from get_resource_chains import get_resource_chains
@@ -31,3 +32,4 @@ for pred_p, pred_a, succ_p, succ_a in resource_chains:
 print(f'Apply Floyd-Warshall to STN WITH resource constraints')
 # Compute shortest distance graph path for this graph
 shortest_distances = stn.floyd_warshall()
+print(f'Makespan: {-shortest_distances[stn.HORIZON_IDX, stn.ORIGIN_IDX]}')
