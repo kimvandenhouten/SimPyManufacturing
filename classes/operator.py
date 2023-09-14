@@ -37,11 +37,7 @@ class Operator:
                 f'{activity_id} got cancelled, so we apply policy {self.policy_type}')
             print(f'At time {current_time}: the current plan is {self.plan.earliest_start}')
 
-        if failure_code == FailureCode.MAX_LAG:
-            self.pushback_product(product_index)
-            return
-
-        if self.policy_type == 1:
+        if self.policy_type == 1 or (self.policy_type == 2 and failure_code == FailureCode.MAX_LAG):
             # Remove activities from plan that are from the same product_id as the cancelled activity
             if self.printing:
                 print(f'At time {current_time}: the repair policy removes all activities from product {product_index} '
@@ -50,10 +46,13 @@ class Operator:
                 if act['product_index'] == product_index:
                     del self.plan.earliest_start[i]
 
-        elif self.policy_type == 2:  # Postpone for all except for max time,
+        elif (self.policy_type == 2 or self.policy_type == 3) and (
+                failure_code != FailureCode.MAX_LAG):  # Postpone for all except for max time,
             self.plan.earliest_start.append(
                 {'product_index': product_index, "activity_id": activity_id, "earliest_start": current_time + 1,
                  "product_id": self.plan.products[product_index].id})
+        elif self.policy_type == 3 and failure_code == FailureCode.MAX_LAG:
+            self.pushback_product(product_index)
 
         if self.printing:
             print(f'At time {current_time}: the updated plan is {self.plan.earliest_start}')
