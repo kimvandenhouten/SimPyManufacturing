@@ -144,7 +144,7 @@ class Simulator:
                     f'At time {self.env.now}: product index {product_index} with id {self.plan.products[product_index].id} ACTIVITY {activity_id} released resources: {needs}')
 
             self.logger.info.log(self.plan.products[product_index].id, activity_id, product_index, needs, resources,
-                                 request_time, retrieve_time, start_time, end_time)
+                                 request_time, retrieve_time, start_time, end_time, self.pushback_mode)
             # print(self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].start_time)
             # print(self.resource_usage[(product_ID, activity_ID)])
         # If it is not available then we don't process this activity, so we avoid that there starts a queue in the
@@ -226,7 +226,6 @@ class Simulator:
         # Reset environment
         self.env = simpy.Environment()
 
-
         # Create the factory that is a SimPy FilterStore object
         self.factory = simpy.FilterStore(self.env, capacity=sum(self.capacity))
 
@@ -247,6 +246,8 @@ class Simulator:
             print(f' \nSIMULATION OUTPUT\n ')
             self.logger.info.print()
 
+        num_pushback = 0
+
         for act in self.plan.earliest_start:
             entry = self.logger.info.fetch_latest_entry(self.plan.products[act["product_index"]].id, act["activity_id"],
                                                         act["product_index"])
@@ -254,7 +255,9 @@ class Simulator:
                 self.logger.info.log(self.plan.products[act["product_index"]].id, act["activity_id"],
                                      act["product_index"],
                                      float("inf"), "NOT PROCESSED DUE TO CLASH",
-                                     float("inf"), float("inf"), float("inf"), float("inf"))
+                                     float("inf"), float("inf"), float("inf"), float("inf"), pushback=False)
+            elif entry.pushback:
+                num_pushback += 1
 
         finish_times = [entry.end_time for entry in self.logger.info.entries if entry.end_time != float("inf")]
         makespan = max(finish_times)
@@ -279,6 +282,8 @@ class Simulator:
             print(f"The makespan corresponding to this schedule is {makespan}")
             print(f"The lateness corresponding to this schedule is {lateness}")
             print(f"The number of unfinished products is {nr_unfinished_products}")
+            print(f"Number of activities processed during push back mode are {num_pushback}")
+            print(f"Number of activities that failed during push back mode are {len(self.operator.pushback)}")
 
         if write:
             self.logger.info.to_csv(output_location)
