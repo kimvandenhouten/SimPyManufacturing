@@ -258,7 +258,7 @@ class ProductionPlan:
                     if (plan.factory.products[i].id, activity.id) not in constraints:
                         constraints.append((constraint.product_id, constraint.activity_id))
                         constraints_obj.append([CompatibilityConstraint(constraint.product_id, constraint.activity_id),
-                                            CompatibilityConstraint(plan.factory.products[i].id, activity.id)])
+                                                CompatibilityConstraint(plan.factory.products[i].id, activity.id)])
                 del activity.constraints
             plan.factory.compatibility_constraints = constraints_obj
         plan.list_products()
@@ -322,7 +322,7 @@ class LogEntry:
 
 class LogInfoEntry:
     def __init__(self, product_id, activity_id, product_idx, needs, resources, request_time, retrieve_time, start_time,
-                 end_time):
+                 end_time, pushback=False):
         self.product_id = product_id
         self.activity_id = activity_id
         self.product_idx = product_idx
@@ -332,6 +332,7 @@ class LogInfoEntry:
         self.retrieve_time = retrieve_time
         self.start_time = start_time
         self.end_time = end_time
+        self.pushback = pushback
 
 
 class LogInfo:
@@ -339,13 +340,14 @@ class LogInfo:
         self.entries = []
 
     def log(self, product_id, activity_id, product_idx, needs, resources, request_time, retrieve_time, start_time,
-            end_time):
+            end_time, pushback):
         self.entries.append(
             LogInfoEntry(product_id, activity_id, product_idx, needs, resources, request_time, retrieve_time,
                          start_time,
-                         end_time))
+                         end_time, pushback))
 
     '''Returns the latest entry with the given product ID, activity ID and product index, if any.'''
+
     def fetch_latest_entry(self, product_id, activity_id, product_idx):
         entries = list(filter(lambda
                                   entry: entry.product_id == product_id and entry.activity_id ==
@@ -367,7 +369,8 @@ class LogInfo:
                       "Request": entry.request_time,
                       "Retrieve": entry.retrieve_time,
                       "Start": entry.start_time,
-                      "Finish": entry.end_time}
+                      "Finish": entry.end_time,
+                      "Pushback": entry.pushback}
             info_df.append(info_r)
 
         return pd.DataFrame(info_df)
@@ -450,6 +453,7 @@ class STN:
     Floyd-Warshall algorithm
     Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
     '''
+
     def floyd_warshall(self):
         # Compute shortest distance graph path for this graph
         n = len(self.nodes)
