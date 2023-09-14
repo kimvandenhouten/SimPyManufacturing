@@ -409,6 +409,8 @@ class SimulatorLogger:
 class STN:
     EVENT_START = "start"
     EVENT_FINISH = "finish"
+    ORIGIN_IDX = 0
+    HORIZON_IDX = 1
 
     @classmethod
     def from_production_plan(cls, production_plan: ProductionPlan) -> 'STN':
@@ -433,15 +435,16 @@ class STN:
 
     def __init__(self):
         # Set-up nodes and edges
-        self.nodes = []
-        self.edges = []
+        self.nodes = [self.ORIGIN_IDX, self.HORIZON_IDX]
 
         # We use indices for the nodes in the network
-        self.idx = 0
+        self.idx = 2
 
         # We keep track of two translation dictionaries to connect indices to the events
         self.translation_dict = {}
         self.translation_dict_reversed = {}
+
+        self.edges = [(self.HORIZON_IDX, self.ORIGIN_IDX, 0)]
 
     '''
     Floyd-Warshall algorithm
@@ -471,6 +474,10 @@ class STN:
         self.nodes.append(node_idx)
         self.translation_dict[node_idx] = description
         self.translation_dict_reversed[description] = node_idx
+
+        # This node / event must occur between ORIGIN and HORIZON
+        self.add_edge(node_idx, self.ORIGIN_IDX, 0)
+        self.add_edge(self.HORIZON_IDX, node_idx, 0)
         return node_idx
 
     def add_edge(self, node_from, node_to, distance):
