@@ -9,15 +9,15 @@ from matplotlib import pyplot as plt
 
 # In this script we test the instances type 2 that do have a max time lag
 
-
 # Settings
-nr_scenarios = 1000
+nr_scenarios = 1
 scenario_seeds = random.randint(100000, size=nr_scenarios)
-policy_type = 2
+policy_type = 3
 printing = False
+printing_output = True
 
-for instance_size in [10, 20]:
-    for instance_id in range(1, 10):
+for instance_size in [10]:
+    for instance_id in range(1, 2):
         # Read CP output and convert
         instance_name = f"{instance_size}_{instance_id}_factory_1"
         file_name = instance_name
@@ -35,28 +35,29 @@ for instance_size in [10, 20]:
         my_productionplan.set_sequence(sequence=np.arange(instance_size))
 
         # Set printing to True if you want to print all events
-        operator = Operator(plan=my_productionplan, policy_type=policy_type, printing=False)
-        my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=False)
+        operator = Operator(plan=my_productionplan, policy_type=policy_type, printing=printing)
+        my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=printing)
 
         # Run simulation
         makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False)
 
-        print(f'According to the deterministic simulation, the makespan is {makespan}')
-        print(f'The number of unfinished products {nr_unfinished}')
-        print(f'The number of clashes (i.e. activities that could not be processed) is {my_simulator.nr_clashes}')
+        if printing:
+            print(f'According to the deterministic simulation, the makespan is {makespan}')
+            print(f'The number of unfinished products {nr_unfinished}')
+            print(f'The number of clashes (i.e. activities that could not be processed) is {my_simulator.nr_clashes}')
 
         for seed in scenario_seeds:
             # Generate scenario
             scenario_1 = my_productionplan.create_scenario(seed)
 
             # Set printing to True if you want to print all events
-            operator = Operator(plan=scenario_1.production_plan, policy_type=policy_type, printing=False)
-            my_simulator = Simulator(plan=scenario_1.production_plan, operator=operator, printing=False)
+            operator = Operator(plan=scenario_1.production_plan, policy_type=policy_type, printing=True)
+            my_simulator = Simulator(plan=scenario_1.production_plan, operator=operator, printing=True)
 
             # Run simulation
             makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False)
 
-            if printing:
+            if printing_output:
                 print(f'According to the simulation, the makespan is {makespan} and the lateness is {lateness}')
                 print(f'The number of unfinished products {nr_unfinished}')
                 print(f'The number of clashes (i.e. activities that could not be processed) is {my_simulator.nr_clashes}')
