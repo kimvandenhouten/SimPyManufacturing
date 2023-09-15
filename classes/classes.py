@@ -439,6 +439,7 @@ class STN:
     def __init__(self):
         # Set-up nodes and edges
         self.nodes = [self.ORIGIN_IDX, self.HORIZON_IDX]
+        self.edges = {node: {} for node in self.nodes}
 
         # We use indices for the nodes in the network
         self.idx = 2
@@ -447,7 +448,7 @@ class STN:
         self.translation_dict = {}
         self.translation_dict_reversed = {}
 
-        self.edges = [(self.HORIZON_IDX, self.ORIGIN_IDX, 0)]
+        self.set_edge(self.HORIZON_IDX, self.ORIGIN_IDX, 0)
 
     '''
     Floyd-Warshall algorithm
@@ -459,8 +460,9 @@ class STN:
         n = len(self.nodes)
         w = np.full((n, n), np.inf)
         np.fill_diagonal(w, 0)
-        for u, v, weight in self.edges:
-            w[u, v] = weight
+        for u, edge_dict in self.edges.items():
+            for v, weight in edge_dict.items():
+                w[u, v] = weight
 
         D = [np.full((n, n), np.inf) for _ in range(n + 1)]
         D[0] = w
@@ -476,21 +478,22 @@ class STN:
         node_idx = self.idx
         self.idx += 1
         self.nodes.append(node_idx)
+        self.edges[node_idx] = {}
         self.translation_dict[node_idx] = description
         self.translation_dict_reversed[description] = node_idx
 
         # This node / event must occur between ORIGIN and HORIZON
-        self.add_edge(node_idx, self.ORIGIN_IDX, 0)
-        self.add_edge(self.HORIZON_IDX, node_idx, 0)
+        self.set_edge(node_idx, self.ORIGIN_IDX, 0)
+        self.set_edge(self.HORIZON_IDX, node_idx, 0)
         return node_idx
 
-    def add_edge(self, node_from, node_to, distance):
-        self.edges.append((node_from, node_to, distance))
+    def set_edge(self, node_from, node_to, distance):
+        self.edges[node_from][node_to] = distance
 
     def add_interval_constraint(self, node_from, node_to, min_distance, max_distance):
-        self.add_edge(node_from, node_to, max_distance)
-        self.add_edge(node_to, node_from, -min_distance)
+        self.set_edge(node_from, node_to, max_distance)
+        self.set_edge(node_to, node_from, -min_distance)
 
     def add_tight_constraint(self, node_from, node_to, distance):
-        self.add_edge(node_from, node_to, distance)
-        self.add_edge(node_to, node_from, -distance)
+        self.set_edge(node_from, node_to, distance)
+        self.set_edge(node_to, node_from, -distance)
