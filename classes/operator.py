@@ -2,7 +2,53 @@ import random
 import numpy as np
 import copy
 
-from classes.classes import FailureCode
+from classes.classes import FailureCode, STN
+
+
+class OperatorSTN:
+    def __init__(self, plan, name="stn_operator", printing=True):
+        self.current_time = 0
+        self.name = name
+        self.initial_plan = plan
+        self.printing = printing
+        self.pushback = []
+        self.stn = STN()
+        self.shortest_distances = self.stn.floyd_warshall()
+
+    def update_stn(self, stn):
+        self.stn = stn
+        self.shortest_distances = self.stn.floyd_warshall()
+
+    def send_next_activity(self, current_time):
+        """
+        Send new activities to factory
+        """
+        finish = False
+
+        activities_that_can_start = []
+
+        for i in self.stn.translation_dict:
+
+            product_id, activity_id, event = self.stn.translation_dict[i]
+
+            if event == "start":
+
+                es = -self.shortest_distances[i][0]
+
+                if es == current_time:
+                    print(f'Product {product_id}, {activity_id} can start now')
+                    activities_that_can_start.append((product_id, activity_id))
+
+        return activities_that_can_start
+
+    def signal_failed_activity(self, product_index, activity_id, current_time, failure_code):
+        """
+        Process signal about a failed activity
+        """
+
+        # TODO: implement failed activity
+        if self.printing:
+            print(f'At time {current_time}: Failure code received: {failure_code}')
 
 
 class Operator:
@@ -28,7 +74,7 @@ class Operator:
         Process signal about a failed activity
         """
         if self.printing:
-            print(f'Failure code received: {failure_code}')
+            print(f'At time {current_time}: Failure code received: {failure_code}')
 
         if self.printing:
             print(
@@ -62,8 +108,8 @@ class Operator:
         Send new activities to factory
         """
         finish = False
-        if self.printing:
-            print(f'At time {current_time}: the operator is asked for the next decision')
+        #if self.printing:
+            #print(f'At time {current_time}: the operator is asked for the next decision')
 
         # Check if there are still activities in the plan
         if len(self.plan.earliest_start) == 0:
@@ -96,7 +142,8 @@ class Operator:
 
                 if self.printing:
                     print(
-                        f'At time {current_time}: the next event is product index {product_index} with id {self.plan.products[product_index].id} ACTIVITY {activity_id}'
+                        f'At time {current_time}: the next event is product index {product_index} with id '
+                        f'{self.plan.products[product_index].id} activity {activity_id}'
                         f' and should start now')
 
                 # Remove this activity from plan
