@@ -31,7 +31,7 @@ class OperatorSTN:
 
             product_id, activity_id, event = self.stn.translation_dict[i]
 
-            if event == "start":
+            if event == STN.EVENT_START:
 
                 es = -self.shortest_distances[i][0]
 
