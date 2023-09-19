@@ -7,8 +7,8 @@ def get_resource_chains(production_plan, earliest_start):
     
     # Set printing to True if you want to print all events
     policy_type = 2
-    operator = Operator(plan=production_plan, policy_type=policy_type, printing=True)
-    my_simulator = Simulator(plan=production_plan, operator=operator, printing=True)
+    operator = Operator(plan=production_plan, policy_type=policy_type, printing=False)
+    my_simulator = Simulator(plan=production_plan, operator=operator, printing=False)
     
     # Run simulation
     makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False)

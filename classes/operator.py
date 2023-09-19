@@ -45,7 +45,6 @@ class OperatorSTN:
         """
         Process signal about a failed activity
         """
-
         # TODO: implement failed activity
         if self.printing:
             print(f'At time {current_time}: Failure code received: {failure_code}')
