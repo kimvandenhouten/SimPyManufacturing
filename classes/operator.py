@@ -45,14 +45,14 @@ class OperatorSTN:
         print(f"setting start time for prod {product_index} act {activity_id}")
         node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_START)]
         self.stn.set_edge(STN.ORIGIN_IDX, node_idx, start_time)
-        self.stn.set_edge(node_idx, STN.ORIGIN_IDX, start_time)
+        self.stn.set_edge(node_idx, STN.ORIGIN_IDX, -start_time)
         # TODO we probably want to propagate this information through the STN immediately
 
     def set_end_time(self, activity_id, product_index, end_time):
         print(f"setting end time for prod {product_index} act {activity_id}")
         node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_FINISH)]
         self.stn.set_edge(STN.ORIGIN_IDX, node_idx, end_time)
-        self.stn.set_edge(node_idx, STN.ORIGIN_IDX, end_time)
+        self.stn.set_edge(node_idx, STN.ORIGIN_IDX, -end_time)
         # TODO we probably want to propagate this information through the STN immediately
 
     def signal_failed_activity(self, product_index, activity_id, current_time, failure_code):
