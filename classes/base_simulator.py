@@ -98,23 +98,25 @@ class BaseSimulator:
         if self.printing:
             print(f'At time {self.env.now}: the available resources are {self.factory.items}')
 
-        self.logger.failure_code = self._availability_constraint_check(needs, product_index, activity_id) or \
-                                   self._precedence_constraint_check(product_index, activity_id) or \
-                                   self._compatibility_constraint_check(product_index, activity_id)
+        self.logger.failure_code = (
+            self._availability_constraint_check(needs, product_index, activity_id)
+            or self._precedence_constraint_check(product_index, activity_id)
+            or self._compatibility_constraint_check(product_index, activity_id)
+        )
 
         # If it is available start the request and processing
         if self.logger.failure_code is None:
             if self.printing:
                 print(
-                    f'At time {self.env.now}: product index {product_index} with product id  with product id {self.plan.products[product_index].id} ACTIVITY {activity_id} requested resources: {needs}')
+                    f'At time {self.env.now}: product index {product_index} with product id {self.plan.products[product_index].id} ACTIVITY {activity_id} requested resources: {needs}')
 
                 # SimPy request
             resources = []
-            for r, need in enumerate(needs):
+            assert len(needs) == len(self.resource_names)
+            for need, resource_name in zip(needs, self.resource_names):
                 if need > 0:
-                    resource_names = self.resource_names[r]
                     for _ in range(0, need):
-                        resource = yield self.factory.get(lambda resource: resource.resource_group == resource_names)
+                        resource = yield self.factory.get(lambda resource: resource.resource_group == resource_name)
                         resources.append(resource)
             # Trace back the moment in time that the resources are retrieved
             retrieve_time = self.env.now

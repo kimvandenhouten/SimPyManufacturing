@@ -57,15 +57,15 @@ class Operator:
         self.initial_plan = plan
         self.plan = copy.deepcopy(plan)
         self.printing = printing
-        self.pushback = []
+        self.pushback = []   # list of lists of activities to be pushed back
         self.policy_type = policy_type
 
     def pushback_product(self, product_index):
-        pushback_product = list(filter(lambda act: act['product_index'] == product_index,
-                                       self.initial_plan.earliest_start))
+        pushback_product = []
         for act in self.plan.earliest_start:
             if act['product_index'] == product_index:
                 self.plan.earliest_start.remove(act)
+                pushback_product.append(act)
         self.pushback.append(pushback_product)
 
     def signal_failed_activity(self, product_index, activity_id, current_time, failure_code):
