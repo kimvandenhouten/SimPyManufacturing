@@ -41,6 +41,20 @@ class OperatorSTN:
 
         return activities_that_can_start
 
+    def set_start_time(self, activity_id, product_index, start_time):
+        print(f"setting start time for prod {product_index} act {activity_id}")
+        node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_START)]
+        self.stn.set_edge(STN.ORIGIN_IDX, node_idx, start_time)
+        self.stn.set_edge(node_idx, STN.ORIGIN_IDX, start_time)
+        # TODO we probably want to propagate this information through the STN immediately
+
+    def set_end_time(self, activity_id, product_index, end_time):
+        print(f"setting end time for prod {product_index} act {activity_id}")
+        node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_FINISH)]
+        self.stn.set_edge(STN.ORIGIN_IDX, node_idx, end_time)
+        self.stn.set_edge(node_idx, STN.ORIGIN_IDX, end_time)
+        # TODO we probably want to propagate this information through the STN immediately
+
     def signal_failed_activity(self, product_index, activity_id, current_time, failure_code):
         """
         Process signal about a failed activity
@@ -57,15 +71,15 @@ class Operator:
         self.initial_plan = plan
         self.plan = copy.deepcopy(plan)
         self.printing = printing
-        self.pushback = []
+        self.pushback = []   # list of lists of activities to be pushed back
         self.policy_type = policy_type
 
     def pushback_product(self, product_index):
-        pushback_product = list(filter(lambda act: act['product_index'] == product_index,
-                                       self.initial_plan.earliest_start))
+        pushback_product = []
         for act in self.plan.earliest_start:
             if act['product_index'] == product_index:
                 self.plan.earliest_start.remove(act)
+                pushback_product.append(act)
         self.pushback.append(pushback_product)
 
     def signal_failed_activity(self, product_index, activity_id, current_time, failure_code):

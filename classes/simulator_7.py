@@ -34,9 +34,9 @@ class Simulator(BaseSimulator):
         initial_earliest_starts = copy.deepcopy(self.plan.earliest_start)
 
         if len(pushback) > 0:
-            self.pushback_mode = True
+            self.pushback_mode = True   # We remember that we have done pushback so we can report this later
             for product in pushback:
-                first_start_time = min(product, key=lambda act: act['earliest_start'])['earliest_start']
+                first_start_time = min(act['earliest_start'] for act in product)
                 offset = self.env.now - first_start_time
 
                 for act in product:
