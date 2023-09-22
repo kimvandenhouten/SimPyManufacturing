@@ -125,19 +125,12 @@ class BaseSimulator:
                 print(
                     f'At time {self.env.now}: product {product_index} ACTIVITY {activity_id} retrieved resources: {needs}')
 
-            # Trace back the moment in time that the activity starts processing
-            start_time = self.env.now
-            self.logger.log_activity(self.plan.products[product_index].id,
-                                     activity_id, product_index, Action.START, start_time)
-            # self.log_start_times[(product_id, activity_id)] = start_time
+            start_time = self.activity_start(activity_id, product_index)
 
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
 
-            # Trace back the moment in time that the activity ends processing
-            end_time = self.env.now
-            self.logger.log_activity(self.plan.products[product_index].id,
-                                     activity_id, product_index, Action.END, end_time)
+            end_time = self.activity_end(activity_id, product_index)
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object
@@ -245,3 +238,18 @@ class BaseSimulator:
             self.logger.info.to_csv(output_location)
 
         return makespan, lateness, nr_unfinished_products
+
+    def activity_start(self, activity_id, product_index):
+        # Trace back the moment in time that the activity starts processing
+        start_time = self.env.now
+        self.logger.log_activity(self.plan.products[product_index].id,
+                                 activity_id, product_index, Action.START, start_time)
+        # self.log_start_times[(product_id, activity_id)] = start_time
+        return start_time
+
+    def activity_end(self, activity_id, product_index):
+        # Trace back the moment in time that the activity ends processing
+        end_time = self.env.now
+        self.logger.log_activity(self.plan.products[product_index].id,
+                                 activity_id, product_index, Action.END, end_time)
+        return end_time
