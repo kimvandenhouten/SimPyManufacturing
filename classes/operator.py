@@ -14,7 +14,7 @@ class OperatorSTN:
         self.pushback = []
         self.stn = STN()
         self.shortest_distances = self.stn.floyd_warshall()
-        self.sent_activities = []
+        self.sent_activities = set()
 
     def update_stn(self, stn):
         self.stn = stn
@@ -28,36 +28,9 @@ class OperatorSTN:
 
         activities_that_can_start = []
 
-        for i in self.stn.translation_dict:
-
-            product_id, activity_id, event = self.stn.translation_dict[i]
-
+        for index, (product_index, activity_id, event) in self.stn.translation_dict.items():
             if event == STN.EVENT_START:
-
-                es = -self.shortest_distances[i][0]
-
-                if es == current_time:
-                    print(f'Product {product_id}, {activity_id} can start now')
-                    activities_that_can_start.append((product_id, activity_id))
-
-        return activities_that_can_start
-
-    def send_next_activity(self, current_time):
-        """
-        Send new activities to factory
-        """
-        finish = False
-
-        activities_that_can_start = []
-
-        for i in self.stn.translation_dict:
-
-            product_index, activity_id, event = self.stn.translation_dict[i]
-
-            if event == STN.EVENT_START:
-
-                es = -self.shortest_distances[i][0]
-
+                es = -self.shortest_distances[index][0]
                 if es == current_time:
                     if (product_index, activity_id) not in self.sent_activities:
                         activities_that_can_start.append((product_index, activity_id))
@@ -68,7 +41,7 @@ class OperatorSTN:
         else:
             time_out = 0
             print(f'current time {current_time} {[activities_that_can_start[0]]}')
-            self.sent_activities.append(activities_that_can_start[0])
+            self.sent_activities.add(activities_that_can_start[0])
             return [activities_that_can_start[0]], time_out
 
     def set_start_time(self, activity_id, product_index, start_time):
