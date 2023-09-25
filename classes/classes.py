@@ -494,12 +494,49 @@ class STN:
         return node_idx
 
     def set_edge(self, node_from, node_to, distance):
+        prev = self.edges[node_from].get(node_to, np.inf)
         self.edges[node_from][node_to] = distance
+        if prev > distance:
+            return True
+        elif prev == distance:
+            return False
+        else:
+            assert prev < distance
+            print(f"STN warning: loosening constraint edge {node_from}->{node_to} from {prev} to {distance}")
+            return True
 
     def add_interval_constraint(self, node_from, node_to, min_distance, max_distance):
         self.set_edge(node_from, node_to, max_distance)
         self.set_edge(node_to, node_from, -min_distance)
 
-    def add_tight_constraint(self, node_from, node_to, distance):
-        self.set_edge(node_from, node_to, distance)
-        self.set_edge(node_to, node_from, -distance)
+    def add_tight_constraint(self, node_from, node_to, distance, propagate=False):
+        if self.set_edge(node_from, node_to, distance) and propagate:
+            self.ifpc(node_from, node_to, distance)
+        if self.set_edge(node_to, node_from, -distance) and propagate:
+            self.ifpc(node_to, node_from, distance)
+
+    def ifpc(self, node_from, node_to, distance):
+        from_list = []
+        to_list = []
+        for idx in self.nodes:
+            if idx in (node_from, node_to):
+                continue
+            d = self.shortest_distances[idx][node_from]
+            new_d = d + distance
+            if new_d < self.shortest_distances[idx][node_to]:
+                self.shortest_distances[idx][node_to] = new_d
+                from_list.append(idx)
+            d = self.shortest_distances[node_to][idx]
+            new_d = distance + d
+            if new_d < self.shortest_distances[node_from][idx]:
+                self.shortest_distances[node_from][idx] = new_d
+                to_list.append(idx)
+
+        for idx1 in from_list:
+            d = self.shortest_distances[idx1][node_from]
+            for idx2 in to_list:
+                if idx2 == idx1:
+                    continue
+                new_d = d + self.shortest_distances[node_from][idx2]
+                if new_d < self.shortest_distances[idx1][idx2]:
+                    self.shortest_distances[idx1][idx2] = new_d
