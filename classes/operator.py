@@ -6,19 +6,14 @@ from classes.classes import FailureCode, STN
 
 
 class OperatorSTN:
-    def __init__(self, plan, name="stn_operator", printing=True):
+    def __init__(self, plan, stn, name="stn_operator", printing=True):
         self.current_time = 0
         self.name = name
         self.initial_plan = plan
         self.printing = printing
         self.pushback = []
-        self.stn = STN()
-        self.shortest_distances = self.stn.floyd_warshall()
-        self.sent_activities = []
-
-    def update_stn(self, stn):
         self.stn = stn
-        self.shortest_distances = self.stn.floyd_warshall()
+        self.sent_activities = set()
 
     def send_next_activity(self, current_time):
         """
@@ -28,36 +23,9 @@ class OperatorSTN:
 
         activities_that_can_start = []
 
-        for i in self.stn.translation_dict:
-
-            product_id, activity_id, event = self.stn.translation_dict[i]
-
+        for index, (product_index, activity_id, event) in self.stn.translation_dict.items():
             if event == STN.EVENT_START:
-
-                es = -self.shortest_distances[i][0]
-
-                if es == current_time:
-                    print(f'Product {product_id}, {activity_id} can start now')
-                    activities_that_can_start.append((product_id, activity_id))
-
-        return activities_that_can_start
-
-    def send_next_activity(self, current_time):
-        """
-        Send new activities to factory
-        """
-        finish = False
-
-        activities_that_can_start = []
-
-        for i in self.stn.translation_dict:
-
-            product_index, activity_id, event = self.stn.translation_dict[i]
-
-            if event == STN.EVENT_START:
-
-                es = -self.shortest_distances[i][0]
-
+                es = -self.stn.shortest_distances[index][0]
                 if es == current_time:
                     if (product_index, activity_id) not in self.sent_activities:
                         activities_that_can_start.append((product_index, activity_id))
@@ -68,7 +36,7 @@ class OperatorSTN:
         else:
             time_out = 0
             print(f'current time {current_time} {[activities_that_can_start[0]]}')
-            self.sent_activities.append(activities_that_can_start[0])
+            self.sent_activities.add(activities_that_can_start[0])
             return [activities_that_can_start[0]], time_out
 
     def set_start_time(self, activity_id, product_index, start_time):
@@ -76,14 +44,14 @@ class OperatorSTN:
         node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_START)]
         self.stn.set_edge(STN.ORIGIN_IDX, node_idx, start_time)
         self.stn.set_edge(node_idx, STN.ORIGIN_IDX, -start_time)
-        # TODO we probably want to propagate this information through the STN immediately
+        self.stn.floyd_warshall()
 
     def set_end_time(self, activity_id, product_index, end_time):
         print(f"setting end time for prod {product_index} act {activity_id}")
         node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_FINISH)]
         self.stn.set_edge(STN.ORIGIN_IDX, node_idx, end_time)
         self.stn.set_edge(node_idx, STN.ORIGIN_IDX, -end_time)
-        # TODO we probably want to propagate this information through the STN immediately
+        self.stn.floyd_warshall()
 
     def signal_failed_activity(self, product_index, activity_id, current_time, failure_code):
         """

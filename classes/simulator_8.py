@@ -31,11 +31,9 @@ class Simulator(BaseSimulator):
     def activity_start(self, activity_id, product_index):
         start_time = super().activity_start(activity_id, product_index)
         self.operator.set_start_time(activity_id, product_index, start_time)
-        self.shortest_distances = self.operator.stn.floyd_warshall()
         return start_time
 
     def activity_end(self, activity_id, product_index):
         end_time = super().activity_end(activity_id, product_index)
         self.operator.set_end_time(activity_id, product_index, end_time)
-        self.shortest_distances = self.operator.stn.floyd_warshall()
         return end_time
