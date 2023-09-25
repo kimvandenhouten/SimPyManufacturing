@@ -73,6 +73,8 @@ for instance_size in [10]:
                         suc_idx = stn.translation_dict_reversed[(product_index_0, activity_id_0, STN.EVENT_START)]
                     stn.add_interval_constraint(pred_idx, suc_idx, 0, np.inf)
 
+        stn.floyd_warshall()   # Perform initial computation of shortest paths
+
         # Create
         my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=printing)
 
