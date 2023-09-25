@@ -34,8 +34,8 @@ for instance_size in [10]:
         earliest_start = cp_output.to_dict('records')
 
         # Set up operator and initial STN
-        operator = OperatorSTN(plan=my_productionplan, printing=printing)
         stn = STN.from_production_plan(my_productionplan)
+        operator = OperatorSTN(my_productionplan, stn, printing=printing)
 
         # Add resource constraints between incompatible pairs using sequencing decision from CP:
         resource_chains = get_resource_chains(production_plan=my_productionplan, earliest_start=earliest_start)
@@ -73,7 +73,6 @@ for instance_size in [10]:
                         suc_idx = stn.translation_dict_reversed[(product_index_0, activity_id_0, STN.EVENT_START)]
                     stn.add_interval_constraint(pred_idx, suc_idx, 0, np.inf)
 
-        operator.update_stn(stn)
         # Create
         my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=printing)
 

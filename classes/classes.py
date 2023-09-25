@@ -452,6 +452,8 @@ class STN:
 
         self.set_edge(self.HORIZON_IDX, self.ORIGIN_IDX, 0)
 
+        self.shortest_distances = None
+
     '''
     Floyd-Warshall algorithm
     Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
@@ -474,7 +476,9 @@ class STN:
                     D[k][i, j] = min(D[k - 1][i, j], D[k - 1][i, k - 1] + D[k - 1][k - 1, j])
         if any(np.diag(D[n]) < 0):
             raise ValueError("The graph contains negative cycles.")
-        return D[n]
+
+        self.shortest_distances = D[n]
+        return self.shortest_distances
 
     def add_node(self, *description):
         node_idx = self.idx
