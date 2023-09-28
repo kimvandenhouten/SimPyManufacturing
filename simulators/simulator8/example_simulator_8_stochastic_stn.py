@@ -35,8 +35,6 @@ for instance_size in [10]:
 
         # Set up operator and initial STN
         stn = STN.from_production_plan(my_productionplan)
-        operator = OperatorSTN(my_productionplan, stn, printing=printing)
-
         # Add resource constraints between incompatible pairs using sequencing decision from CP:
         resource_chains = get_resource_chains(production_plan=my_productionplan, earliest_start=earliest_start)
 
@@ -75,12 +73,15 @@ for instance_size in [10]:
 
         stn.floyd_warshall()   # Perform initial computation of shortest paths
 
+        operator = OperatorSTN(my_productionplan, stn, printing=printing)
+
         # Create
-        my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=printing)
+        scenario_1 = my_productionplan.create_scenario(seed=1)
+        my_simulator = Simulator(plan=scenario_1.production_plan, operator=operator, printing=printing)
 
         # Run simulation
-        makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False)
+        makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=25000, write=False)
 
-        distances = stn.shortest_distances
+        distances = stn.shortest_distances  # is this really using the stn that is updated from the operator?
         # Check that the incremental method is correct
         assert np.array_equal(distances, stn.floyd_warshall())

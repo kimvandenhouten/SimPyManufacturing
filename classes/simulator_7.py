@@ -12,6 +12,9 @@ class Simulator(BaseSimulator):
     def __init__(self, plan, operator, printing=False):
         super().__init__(plan, operator, printing)
 
+    def activity_fail(self, product_index, activity_id):
+        self.nr_clashes += 1
+
     def activity_generator(self):
         """Generate activities that arrive at the factory based on earliest start times."""
         finish = False

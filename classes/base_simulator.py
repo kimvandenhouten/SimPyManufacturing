@@ -150,10 +150,14 @@ class BaseSimulator:
         else:
             if self.printing:
                 print(
-                    f"At time {self.env.now}: there are no resources available for product {product_index} ACTIVITY {activity_id}, so it cannot start")
+                    f"At time {self.env.now}: there are no resources available for product index {product_index} activity {activity_id}, so it cannot start")
+            self.activity_fail(product_index, activity_id)
             self.operator.signal_failed_activity(product_index=product_index, activity_id=activity_id,
                                                  current_time=self.env.now, failure_code=self.logger.failure_code)
-            self.nr_clashes += 1
+
+            yield self.env.timeout(0)
+        return "check"
+
 
     def activity_generator(self):
         raise NotImplementedError()

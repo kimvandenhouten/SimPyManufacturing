@@ -13,31 +13,41 @@ class OperatorSTN:
         self.printing = printing
         self.pushback = []
         self.stn = stn
-        self.sent_activities = set()
+        self.sent_activities = []
+        self.calculating = False
 
     def send_next_activity(self, current_time):
         """
         Send new activities to factory
         """
-        finish = False
-
-        activities_that_can_start = []
-
-        for index, (product_index, activity_id, event) in self.stn.translation_dict.items():
-            if event == STN.EVENT_START:
-                es = -self.stn.shortest_distances[index][0]
-                if es == current_time:
-                    if (product_index, activity_id) not in self.sent_activities:
-                        activities_that_can_start.append((product_index, activity_id))
-
-        if len(activities_that_can_start) == 0:
-            time_out = 1
-            return [], time_out
+        if self.calculating:
+            send_activity = False
+            activity_id, product_index = None, None
+            delay = 0
         else:
-            time_out = 0
-            print(f'current time {current_time} {[activities_that_can_start[0]]}')
-            self.sent_activities.add(activities_that_can_start[0])
-            return [activities_that_can_start[0]], time_out
+            print(f'At time {current_time}: operator is asked for next activity')
+            finish = False
+            activities_that_can_start = []
+            for index, (product_index, activity_id, event) in self.stn.translation_dict.items():
+                if event == STN.EVENT_START:
+                    es = -self.stn.shortest_distances[index][STN.ORIGIN_IDX]
+                    if es == current_time:
+
+                        if (product_index, activity_id) not in self.sent_activities:
+                            activities_that_can_start.append((product_index, activity_id))
+
+            if len(activities_that_can_start) == 0:
+                delay = 1
+                send_activity = False
+                activity_id, product_index = None, None
+
+            else:
+                delay = 0
+                send_activity = True
+                (product_index, activity_id) = activities_that_can_start[0]
+                self.sent_activities.append((product_index, activity_id))
+
+        return send_activity, delay, activity_id, product_index, finish
 
     def set_start_time(self, activity_id, product_index, start_time):
         print(f"setting start time for prod {product_index} act {activity_id}")
@@ -54,8 +64,24 @@ class OperatorSTN:
         Process signal about a failed activity
         """
         # TODO: implement failed activity
+        self.calculating = True
         if self.printing:
             print(f'At time {current_time}: Failure code received: {failure_code}')
+        print(f'At time {current_time}: remove this activity from self.sent_activities')
+        print(self.sent_activities)
+        self.sent_activities.remove((product_index, activity_id))
+        print(self.sent_activities)
+
+        # Update the STN by adding distance from origin to start of this activity
+        node_idx = self.stn.translation_dict_reversed[
+            (product_index, activity_id, self.stn.EVENT_START)]
+
+        node_from = self.stn.ORIGIN_IDX
+        node_to = node_idx
+        min_distance = current_time + 1
+        self.stn.set_edge(node_from, node_to, min_distance)
+        self.stn.floyd_warshall()
+        self.calculating = False
 
 
 class Operator:
