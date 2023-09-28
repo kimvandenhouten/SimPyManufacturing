@@ -30,7 +30,7 @@ for instance_size in [10]:
         my_productionplan.set_sequence(sequence=np.arange(instance_size))
         cp_output = pd.read_csv(f"results/cp_model/development/instances_type_2/start times {file_name}.csv")
         makespan_cp_output = max(cp_output["end"].tolist())
-        print(f'Makespan according to CP outout is {makespan_cp_output}')
+        print(f'Makespan according to CP output is {makespan_cp_output}')
         earliest_start = cp_output.to_dict('records')
 
         # Set up operator and initial STN
@@ -81,3 +81,6 @@ for instance_size in [10]:
         # Run simulation
         makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False)
 
+        distances = stn.shortest_distances
+        # Check that the incremental method is correct
+        assert np.array_equal(distances, stn.floyd_warshall())
