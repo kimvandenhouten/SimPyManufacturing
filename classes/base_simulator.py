@@ -130,7 +130,7 @@ class BaseSimulator:
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
 
-            end_time = self.activity_end(activity_id, product_index)
+            end_time = self.activity_end(activity_id, product_index, start_time)
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object
@@ -251,7 +251,7 @@ class BaseSimulator:
         # self.log_start_times[(product_id, activity_id)] = start_time
         return start_time
 
-    def activity_end(self, activity_id, product_index):
+    def activity_end(self, activity_id, product_index, start_time):
         # Trace back the moment in time that the activity ends processing
         end_time = self.env.now
         self.logger.log_activity(self.plan.products[product_index].id,

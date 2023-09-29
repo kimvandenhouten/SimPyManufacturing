@@ -34,7 +34,7 @@ for instance_size in [10]:
         earliest_start = cp_output.to_dict('records')
 
         # Set up operator and initial STN
-        stn = STN.from_production_plan(my_productionplan)
+        stn = STN.from_production_plan(my_productionplan, stochastic=True)
         # Add resource constraints between incompatible pairs using sequencing decision from CP:
         resource_chains = get_resource_chains(production_plan=my_productionplan, earliest_start=earliest_start)
 

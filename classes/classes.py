@@ -43,6 +43,7 @@ class Activity:
 
     def sample_and_set_scenario(self):
         sample = self.sample_processing_time()
+        sample = round(sample)
         self.processing_time = [sample, sample]
 
     def set_distribution(self, distribution):
@@ -418,15 +419,22 @@ class STN:
     HORIZON_IDX = 1
 
     @classmethod
-    def from_production_plan(cls, production_plan: ProductionPlan) -> 'STN':
+    def from_production_plan(cls, production_plan: ProductionPlan, stochastic=False) -> 'STN':
         stn = cls()
         for product in production_plan.products:
             for activity in product.activities:
                 # Add nodes that refer to start and end of activity
                 a_start = stn.add_node(product.product_index, activity.id, cls.EVENT_START)
                 a_finish = stn.add_node(product.product_index, activity.id, cls.EVENT_FINISH)
+
                 # Add edge between start and finish with processing time
-                stn.add_tight_constraint(a_start, a_finish, activity.processing_time[0])
+                if stochastic is False:
+                    stn.add_tight_constraint(a_start, a_finish, activity.processing_time[0])
+                else:
+                    # Possibly add function to distribution to convert distribution to uncertainty set
+                    lower_bound = max(round(activity.distribution.mean - 10 * activity.distribution.variance), 0)
+                    upper_bound = round(activity.distribution.mean + 10 * activity.distribution.variance)
+                    stn.add_interval_constraint(a_start, a_finish, lower_bound, upper_bound)
 
             # For every temporal relation in this product's temporal_relations, add edge between nodes with min and max lag
             for i, j in product.temporal_relations:
@@ -475,7 +483,6 @@ class STN:
                 for j in range(n):
                     D[k][i, j] = min(D[k - 1][i, j], D[k - 1][i, k - 1] + D[k - 1][k - 1, j])
         if any(np.diag(D[n]) < 0):
-            print(np.diag(D[n]))
             raise ValueError("The graph contains negative cycles.")
 
         self.shortest_distances = D[n]

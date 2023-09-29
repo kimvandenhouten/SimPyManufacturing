@@ -56,7 +56,7 @@ class OperatorSTN:
 
     def set_end_time(self, activity_id, product_index, end_time):
         print(f"setting end time for prod {product_index} act {activity_id}")
-        node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_FINISH)]
+        node_idx  = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_FINISH)]
         self.stn.add_tight_constraint(STN.ORIGIN_IDX, node_idx, end_time, propagate=True)
 
     def signal_failed_activity(self, product_index, activity_id, current_time, failure_code):
@@ -67,24 +67,13 @@ class OperatorSTN:
         self.calculating = True
         if self.printing:
             print(f'At time {current_time}: Failure code received: {failure_code}')
-        print(f'At time {current_time}: remove this activity from self.sent_activities')
-        print(self.sent_activities)
-        self.sent_activities.remove((product_index, activity_id))
-        print(self.sent_activities)
 
         # Update the STN by adding distance from origin to start of this activity
         node_idx = self.stn.translation_dict_reversed[
             (product_index, activity_id, self.stn.EVENT_START)]
-
         node_from = self.stn.ORIGIN_IDX
         node_to = node_idx
         min_distance = current_time + 1
-        print(f'If we now check shortest distances diagonal')
-        print(np.diag(self.stn.shortest_distances))
-        print(f'If we recompute floyd warshall and check shortest distances diagonoal')
-        self.stn.floyd_warshall()
-        print(np.diag(self.stn.shortest_distances))
-        print(f'If we add constraint and recompute floyd warshall and check shortest distances diagonoal')
         self.stn.add_interval_constraint(node_from, node_to, min_distance, np.inf)
         self.stn.floyd_warshall()
         self.calculating = False
