@@ -443,6 +443,8 @@ class STN:
         self.nodes = [self.ORIGIN_IDX, self.HORIZON_IDX]
         self.edges = {node: {} for node in self.nodes}
 
+        self.shortest_distances = None
+
         # We use indices for the nodes in the network
         self.idx = 2
 
@@ -451,8 +453,6 @@ class STN:
         self.translation_dict_reversed = {}
 
         self.set_edge(self.HORIZON_IDX, self.ORIGIN_IDX, 0)
-
-        self.shortest_distances = None
 
     '''
     Floyd-Warshall algorithm
@@ -496,6 +496,10 @@ class STN:
 
     def set_edge(self, node_from, node_to, distance):
         prev = self.edges[node_from].get(node_to, np.inf)
+        reverse = np.inf if self.shortest_distances is None else self.shortest_distances[node_to][node_from]
+        if reverse + distance < 0:
+            raise ValueError(f"Introducing negative cycle: "
+                             f"{-reverse} <= node_{node_to} - node_{node_from} <= {distance}")
         self.edges[node_from][node_to] = distance
         if prev > distance:
             return True
@@ -511,14 +515,19 @@ class STN:
         self.set_edge(node_to, node_from, -min_distance)
 
     def add_tight_constraint(self, node_from, node_to, distance, propagate=False):
+        if self.shortest_distances is not None:
+            lower_bound = -self.shortest_distances[node_to][node_from]
+            if distance < lower_bound:
+                raise ValueError(f"Can't set upper bound of {distance} between node_{node_from} and node_{node_to}: "
+                                 f"lower bound is {lower_bound}")
+            upper_bound = self.shortest_distances[node_from][node_to]
+            if distance > upper_bound:
+                raise ValueError(f"Can't set lower bound of {distance} between node_{node_from} and node_{node_to}: "
+                                 f"upper bound is {upper_bound}")
         if self.set_edge(node_from, node_to, distance) and propagate:
             self.ifpc(node_from, node_to, distance)
         if self.set_edge(node_to, node_from, -distance) and propagate:
             self.ifpc(node_to, node_from, distance)
-        if self.shortest_distances[node_from][node_to] - distance < 0:
-            raise ValueError("help")
-        if self.shortest_distances[node_to][node_from] + distance < 0:
-            raise ValueError("help!")
 
     def ifpc(self, node_from, node_to, distance):
         from_list = []
