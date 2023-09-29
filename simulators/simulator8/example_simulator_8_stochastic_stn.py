@@ -82,6 +82,6 @@ for instance_size in [10]:
         # Run simulation
         makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=25000, write=False)
 
-        distances = stn.shortest_distances  # is this really using the stn that is updated from the operator?
+        distances = my_simulator.operator.stn.shortest_distances  # is this really using the stn that is updated from the operator?
         # Check that the incremental method is correct
-        assert np.array_equal(distances, stn.floyd_warshall())
+        assert np.array_equal(distances, my_simulator.operator.stn.floyd_warshall())

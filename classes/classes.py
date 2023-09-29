@@ -475,6 +475,7 @@ class STN:
                 for j in range(n):
                     D[k][i, j] = min(D[k - 1][i, j], D[k - 1][i, k - 1] + D[k - 1][k - 1, j])
         if any(np.diag(D[n]) < 0):
+            print(np.diag(D[n]))
             raise ValueError("The graph contains negative cycles.")
 
         self.shortest_distances = D[n]
@@ -514,6 +515,10 @@ class STN:
             self.ifpc(node_from, node_to, distance)
         if self.set_edge(node_to, node_from, -distance) and propagate:
             self.ifpc(node_to, node_from, distance)
+        if self.shortest_distances[node_from][node_to] - distance < 0:
+            raise ValueError("help")
+        if self.shortest_distances[node_to][node_from] + distance < 0:
+            raise ValueError("help!")
 
     def ifpc(self, node_from, node_to, distance):
         from_list = []
