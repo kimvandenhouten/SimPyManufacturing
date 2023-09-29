@@ -74,8 +74,7 @@ class OperatorSTN:
         node_from = self.stn.ORIGIN_IDX
         node_to = node_idx
         min_distance = current_time + 1
-        self.stn.add_interval_constraint(node_from, node_to, min_distance, np.inf)
-        self.stn.floyd_warshall()
+        self.stn.add_interval_constraint(node_from, node_to, min_distance, np.inf, propagate=True)
         self.calculating = False
 
 

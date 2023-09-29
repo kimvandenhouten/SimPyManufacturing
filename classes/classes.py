@@ -413,6 +413,7 @@ class SimulatorLogger:
 
 
 class STN:
+    VERIFY_PROBABILITY = 0.1  # In 10% of cases, verify that computed distances were correct
     EVENT_START = "start"
     EVENT_FINISH = "finish"
     ORIGIN_IDX = 0
@@ -517,26 +518,23 @@ class STN:
             print(f"STN warning: loosening constraint edge {node_from}->{node_to} from {prev} to {distance}")
             return True
 
-    def add_interval_constraint(self, node_from, node_to, min_distance, max_distance):
-        self.set_edge(node_from, node_to, max_distance)
-        self.set_edge(node_to, node_from, -min_distance)
+    def add_interval_constraint(self, node_from, node_to, min_distance, max_distance, propagate=False):
+        self.bounds_check(node_from, node_to, min_distance, max_distance)
+
+        if self.set_edge(node_from, node_to, max_distance) and propagate:
+            self.ifpc(node_from, node_to, max_distance)
+        if self.set_edge(node_to, node_from, -min_distance) and propagate:
+            self.ifpc(node_to, node_from, -min_distance)
+
+        assert self._verify_distances()
 
     def add_tight_constraint(self, node_from, node_to, distance, propagate=False):
-        if self.shortest_distances is not None:
-            lower_bound = -self.shortest_distances[node_to][node_from]
-            if distance < lower_bound:
-                raise ValueError(f"Can't set upper bound of {distance} between node_{node_from} and node_{node_to}: "
-                                 f"lower bound is {lower_bound}")
-            upper_bound = self.shortest_distances[node_from][node_to]
-            if distance > upper_bound:
-                raise ValueError(f"Can't set lower bound of {distance} between node_{node_from} and node_{node_to}: "
-                                 f"upper bound is {upper_bound}")
-        if self.set_edge(node_from, node_to, distance) and propagate:
-            self.ifpc(node_from, node_to, distance)
-        if self.set_edge(node_to, node_from, -distance) and propagate:
-            self.ifpc(node_to, node_from, distance)
+        self.add_interval_constraint(node_from, node_to, distance, distance, propagate)
 
     def ifpc(self, node_from, node_to, distance):
+        if self.shortest_distances[node_from][node_to] <= distance:
+            return
+        self.shortest_distances[node_from][node_to] = distance
         from_list = []
         to_list = []
         for idx in self.nodes:
@@ -561,3 +559,23 @@ class STN:
                 new_d = d + self.shortest_distances[node_from][idx2]
                 if new_d < self.shortest_distances[idx1][idx2]:
                     self.shortest_distances[idx1][idx2] = new_d
+
+    def _verify_distances(self, force=False):
+        if self.shortest_distances is None:
+            return True
+        elif not force and np.random.random() > STN.VERIFY_PROBABILITY:
+            return True
+
+        distances = self.shortest_distances
+        return np.array_equal(distances, self.floyd_warshall())
+
+    def bounds_check(self, node_from, node_to, min_distance, max_distance):
+        if self.shortest_distances is not None:
+            lower_bound = -self.shortest_distances[node_to][node_from]
+            upper_bound = self.shortest_distances[node_from][node_to]
+            if max_distance < lower_bound:
+                raise ValueError(f"Can't set upper bound of {max_distance} between node_{node_from} and "
+                                 f"node_{node_to}: lower bound is {lower_bound}")
+            if min_distance > upper_bound:
+                raise ValueError(f"Can't set lower bound of {min_distance} between node_{node_from} and "
+                                 f"node_{node_to}: upper bound is {upper_bound}")
