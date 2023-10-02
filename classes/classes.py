@@ -413,7 +413,7 @@ class SimulatorLogger:
 
 
 class STN:
-    VERIFY_PROBABILITY = 0.1  # In 10% of cases, verify that computed distances were correct
+    VERIFY_PROBABILITY = 0 # In 10% of cases, verify that computed distances were correct
     EVENT_START = "start"
     EVENT_FINISH = "finish"
     ORIGIN_IDX = 0
@@ -433,8 +433,8 @@ class STN:
                     stn.add_tight_constraint(a_start, a_finish, activity.processing_time[0])
                 else:
                     # Possibly add function to distribution to convert distribution to uncertainty set
-                    lower_bound = max(round(activity.distribution.mean - 10 * activity.distribution.variance), 0)
-                    upper_bound = round(activity.distribution.mean + 10 * activity.distribution.variance)
+                    lower_bound = max(round(activity.distribution.mean - 5 * activity.distribution.variance), 1)
+                    upper_bound = round(activity.distribution.mean + 5 * activity.distribution.variance)
                     stn.add_interval_constraint(a_start, a_finish, lower_bound, upper_bound)
 
             # For every temporal relation in this product's temporal_relations, add edge between nodes with min and max lag
@@ -444,6 +444,7 @@ class STN:
                 i_idx = stn.translation_dict_reversed[(product.product_index, i, cls.EVENT_START)]
                 j_idx = stn.translation_dict_reversed[(product.product_index, j, cls.EVENT_START)]
                 stn.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
+                #stn.add_interval_constraint(i_idx, j_idx, min_lag, np.inf)
 
         return stn
 

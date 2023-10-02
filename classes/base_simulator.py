@@ -66,6 +66,7 @@ class BaseSimulator:
                             f' minimal time lag with {product_index}, {pred_activity_id} is not satisfied')
 
                     return FailureCode.MIN_LAG
+
                 elif temp_rel.max_lag and self.env.now - start_pred_log.timestamp > temp_rel.max_lag:
                     if self.printing:
                         print(
@@ -95,14 +96,10 @@ class BaseSimulator:
         # Trace back the moment in time that the resources are requested
         request_time = self.env.now
 
-        if self.printing:
-            print(f'At time {self.env.now}: the available resources are {self.factory.items}')
-
         self.logger.failure_code = (
-            self._availability_constraint_check(needs, product_index, activity_id)
-            or self._precedence_constraint_check(product_index, activity_id)
-            or self._compatibility_constraint_check(product_index, activity_id)
-        )
+                self._availability_constraint_check(needs, product_index, activity_id)
+                or self._precedence_constraint_check(product_index, activity_id)
+                or self._compatibility_constraint_check(product_index, activity_id))
 
         # If it is available start the request and processing
         if self.logger.failure_code is None:
@@ -130,7 +127,7 @@ class BaseSimulator:
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
 
-            end_time = self.activity_end(activity_id, product_index, start_time)
+            end_time = self.activity_end(activity_id, product_index)
 
             # Release the resources that were used during processing the activity
             # For releasing use the SimPy put function from the FilterStore object
@@ -145,19 +142,18 @@ class BaseSimulator:
                                  request_time, retrieve_time, start_time, end_time, self.pushback_mode)
             # print(self.plan.PRODUCTS[product_ID].ACTIVITIES[activity_ID].start_time)
             # print(self.resource_usage[(product_ID, activity_ID)])
+
         # If it is not available then we don't process this activity, so we avoid that there starts a queue in the
         # factory
         else:
             if self.printing:
                 print(
-                    f"At time {self.env.now}: there are no resources available for product index {product_index} activity {activity_id}, so it cannot start")
+                    f"At time {self.env.now}: we receive failure {self.logger.failure_code.name} for product index {product_index} activity {activity_id}, so it cannot start with ")
             self.activity_fail(product_index, activity_id)
             self.operator.signal_failed_activity(product_index=product_index, activity_id=activity_id,
                                                  current_time=self.env.now, failure_code=self.logger.failure_code)
 
             yield self.env.timeout(0)
-        return "check"
-
 
     def activity_generator(self):
         raise NotImplementedError()
@@ -248,10 +244,9 @@ class BaseSimulator:
         start_time = self.env.now
         self.logger.log_activity(self.plan.products[product_index].id,
                                  activity_id, product_index, Action.START, start_time)
-        # self.log_start_times[(product_id, activity_id)] = start_time
         return start_time
 
-    def activity_end(self, activity_id, product_index, start_time):
+    def activity_end(self, activity_id, product_index):
         # Trace back the moment in time that the activity ends processing
         end_time = self.env.now
         self.logger.log_activity(self.plan.products[product_index].id,

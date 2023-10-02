@@ -25,7 +25,7 @@ class OperatorSTN:
             activity_id, product_index = None, None
             delay = 0
         else:
-            print(f'At time {current_time}: operator is asked for next activity')
+
             finish = False
             activities_that_can_start = []
             for index, (product_index, activity_id, event) in self.stn.translation_dict.items():
@@ -42,6 +42,7 @@ class OperatorSTN:
                 activity_id, product_index = None, None
 
             else:
+                print(f'At time {current_time}: activities that can start {activities_that_can_start}')
                 delay = 0
                 send_activity = True
                 (product_index, activity_id) = activities_that_can_start[0]
@@ -50,13 +51,13 @@ class OperatorSTN:
         return send_activity, delay, activity_id, product_index, finish
 
     def set_start_time(self, activity_id, product_index, start_time):
-        print(f"setting start time for prod {product_index} act {activity_id}")
         node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_START)]
+        print(f"setting start time for prod {product_index} act {activity_id} with node index {node_idx}")
         self.stn.add_tight_constraint(STN.ORIGIN_IDX, node_idx, start_time, propagate=True)
 
     def set_end_time(self, activity_id, product_index, end_time):
-        print(f"setting end time for prod {product_index} act {activity_id}")
-        node_idx  = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_FINISH)]
+        node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_FINISH)]
+        print(f"setting end time for prod {product_index} act {activity_id} with node index {node_idx}")
         self.stn.add_tight_constraint(STN.ORIGIN_IDX, node_idx, end_time, propagate=True)
 
     def signal_failed_activity(self, product_index, activity_id, current_time, failure_code):
@@ -75,6 +76,7 @@ class OperatorSTN:
         node_to = node_idx
         min_distance = current_time + 1
         self.stn.add_interval_constraint(node_from, node_to, min_distance, np.inf, propagate=True)
+        self.sent_activities.remove((product_index, activity_id))
         self.calculating = False
 
 
