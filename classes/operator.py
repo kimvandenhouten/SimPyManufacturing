@@ -64,16 +64,16 @@ class OperatorSTN:
         """
         Process signal about a failed activity
         """
-        # TODO: implement failed activity
+        if product_index == 8 and activity_id == 1:
+            print('debug')
         self.calculating = True
         if self.printing:
-            print(f'At time {current_time}: Failure code received: {failure_code}')
+            print(f'At time {current_time}: Failure code received: {failure_code} for product index {product_index} activity {activity_id}')
 
         # Update the STN by adding distance from origin to start of this activity
-        node_idx = self.stn.translation_dict_reversed[
-            (product_index, activity_id, self.stn.EVENT_START)]
         node_from = self.stn.ORIGIN_IDX
-        node_to = node_idx
+        node_to = self.stn.translation_dict_reversed[
+            (product_index, activity_id, self.stn.EVENT_START)]
         min_distance = current_time + 1
         self.stn.add_interval_constraint(node_from, node_to, min_distance, np.inf, propagate=True)
         self.sent_activities.remove((product_index, activity_id))

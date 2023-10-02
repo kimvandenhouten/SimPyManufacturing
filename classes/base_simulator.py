@@ -11,7 +11,7 @@ class BaseSimulator:
     """This is a base class for versions 7 and 8 of the simulator. It implements everything except for the method
     activity_generator, which must be overridden by the subclasses."""
 
-    def __init__(self, plan, operator, printing=False):
+    def __init__(self, plan, operator, check_max_time_lag, printing=False):
         self.plan = plan
         self.resource_names = plan.factory.resource_names
         self.nr_resources = len(self.resource_names)
@@ -23,6 +23,7 @@ class BaseSimulator:
         self.operator = operator
         self.logger = SimulatorLogger(self.__class__.__name__)
         self.pushback_mode = False
+        self.check_max_time_lag = check_max_time_lag
 
     def _availability_constraint_check(self, needs, product_index, activity_id):
         # Check if all resources are available
@@ -33,7 +34,7 @@ class BaseSimulator:
                 available_machines = [i.resource_group for i in self.factory.items].count(resource_names)
                 if self.printing:
                     print(
-                        f'At time {self.env.now}: we need {need} {resource_names} for product index {product_index} with product id {self.plan.products[product_index].id}, activity {activity_id} and currently '
+                        f'At time {self.env.now}: we need {need} {resource_names} for product index {product_index} activity {activity_id} and currently '
                         f'in the factory we have {available_machines} available')
                 if available_machines < need:
                     failure_code = FailureCode.AVAILABILITY
@@ -62,15 +63,15 @@ class BaseSimulator:
                 elif temp_rel.min_lag and self.env.now - start_pred_log.timestamp < min_lag:
                     if self.printing:
                         print(
-                            f'At time {self.env.now}: product {product_index} with id {self.plan.products[product_index].id}, activity {activity_id} cannot start because '
+                            f'At time {self.env.now}: product index {product_index} activity {activity_id} cannot start because '
                             f' minimal time lag with {product_index}, {pred_activity_id} is not satisfied')
 
                     return FailureCode.MIN_LAG
 
-                elif temp_rel.max_lag and self.env.now - start_pred_log.timestamp > temp_rel.max_lag:
+                elif self.check_max_time_lag and temp_rel.max_lag and self.env.now - start_pred_log.timestamp > temp_rel.max_lag:
                     if self.printing:
                         print(
-                            f'At time {self.env.now}: product {product_index} with id {self.plan.products[product_index].id}, activity {activity_id} cannot start because '
+                            f'At time {self.env.now}: product index {product_index} activity {activity_id} cannot start because '
                             f' maximal time lag with {product_index}, {pred_activity_id} is not satisfied')
 
                     return FailureCode.MAX_LAG
@@ -97,17 +98,17 @@ class BaseSimulator:
         request_time = self.env.now
 
         self.logger.failure_code = (
-                self._availability_constraint_check(needs, product_index, activity_id)
-                or self._precedence_constraint_check(product_index, activity_id)
+                self._precedence_constraint_check(product_index, activity_id)
+                or self._availability_constraint_check(needs, product_index, activity_id)
                 or self._compatibility_constraint_check(product_index, activity_id))
 
         # If it is available start the request and processing
         if self.logger.failure_code is None:
             if self.printing:
                 print(
-                    f'At time {self.env.now}: product index {product_index} with product id {self.plan.products[product_index].id} ACTIVITY {activity_id} requested resources: {needs}')
+                    f'At time {self.env.now}: product index {product_index} activity {activity_id} requested resources: {needs}')
 
-                # SimPy request
+            # SimPy request
             resources = []
             assert len(needs) == len(self.resource_names)
             for need, resource_name in zip(needs, self.resource_names):
@@ -120,7 +121,7 @@ class BaseSimulator:
 
             if self.printing:
                 print(
-                    f'At time {self.env.now}: product {product_index} ACTIVITY {activity_id} retrieved resources: {needs}')
+                    f'At time {self.env.now}: product index {product_index} activity {activity_id} retrieved resources: {needs}')
 
             start_time = self.activity_start(activity_id, product_index)
 
@@ -136,7 +137,7 @@ class BaseSimulator:
 
             if self.printing:
                 print(
-                    f'At time {self.env.now}: product index {product_index} with id {self.plan.products[product_index].id} ACTIVITY {activity_id} released resources: {needs}')
+                    f'At time {self.env.now}: product index {product_index}  activity {activity_id} released resources: {needs}')
 
             self.logger.info.log(self.plan.products[product_index].id, activity_id, product_index, needs, resources,
                                  request_time, retrieve_time, start_time, end_time, self.pushback_mode)

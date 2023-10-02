@@ -420,7 +420,7 @@ class STN:
     HORIZON_IDX = 1
 
     @classmethod
-    def from_production_plan(cls, production_plan: ProductionPlan, stochastic=False) -> 'STN':
+    def from_production_plan(cls, production_plan: ProductionPlan, stochastic=False, max_time_lag=True) -> 'STN':
         stn = cls()
         for product in production_plan.products:
             for activity in product.activities:
@@ -433,8 +433,9 @@ class STN:
                     stn.add_tight_constraint(a_start, a_finish, activity.processing_time[0])
                 else:
                     # Possibly add function to distribution to convert distribution to uncertainty set
-                    lower_bound = max(round(activity.distribution.mean - 5 * activity.distribution.variance), 1)
-                    upper_bound = round(activity.distribution.mean + 5 * activity.distribution.variance)
+
+                    lower_bound = max(round(activity.distribution.mean - 10 * activity.distribution.variance), 0)
+                    upper_bound = round(activity.distribution.mean + 10 * activity.distribution.variance)
                     stn.add_interval_constraint(a_start, a_finish, lower_bound, upper_bound)
 
             # For every temporal relation in this product's temporal_relations, add edge between nodes with min and max lag
@@ -443,9 +444,12 @@ class STN:
                 max_lag = product.temporal_relations[(i, j)].max_lag
                 i_idx = stn.translation_dict_reversed[(product.product_index, i, cls.EVENT_START)]
                 j_idx = stn.translation_dict_reversed[(product.product_index, j, cls.EVENT_START)]
-                stn.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
-                #stn.add_interval_constraint(i_idx, j_idx, min_lag, np.inf)
 
+                # TODO: make sure that the simulator - operator also works when max_time_lag = True
+                if max_time_lag:
+                    stn.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
+                else:
+                    stn.add_interval_constraint(i_idx, j_idx, min_lag, np.inf)
         return stn
 
     def __init__(self):
