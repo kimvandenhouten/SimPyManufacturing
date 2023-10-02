@@ -76,7 +76,7 @@ for instance_size in [10]:
         stn.floyd_warshall()   # Perform initial computation of shortest paths
 
         # Create
-        my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=printing)
+        my_simulator = Simulator(plan=my_productionplan, operator=operator, printing=printing, check_max_time_lag=True)
 
         # Run simulation
         makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False)
