@@ -152,7 +152,7 @@ class BaseSimulator:
                     f"At time {self.env.now}: we receive failure {self.logger.failure_code.name} for product index {product_index} activity {activity_id}, so it cannot start with ")
             self.activity_fail(product_index, activity_id)
             self.operator.signal_failed_activity(product_index=product_index, activity_id=activity_id,
-                                                 current_time=self.env.now, failure_code=self.logger.failure_code)
+                                                 current_time=self.env.now, logger=self.logger)
 
             yield self.env.timeout(0)
 
