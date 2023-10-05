@@ -2,7 +2,7 @@ from classes.operator import Operator
 from classes.simulator_7 import Simulator
 
 
-def get_resource_chains(production_plan, earliest_start):
+def get_resource_chains(production_plan, earliest_start, complete=False):
     production_plan.set_earliest_start_times(earliest_start)
     
     # Set printing to True if you want to print all events
@@ -19,16 +19,28 @@ def get_resource_chains(production_plan, earliest_start):
         for resource in row["Resources"]:
             users = resource_use.setdefault((resource.resource_group, resource.id), [])
             users.append({"ProductIndex": row["ProductIndex"], "Activity": row["Activity"], "Start": row["Start"]})
-    
     resource_chains = []
-    for resource_activities in resource_use.values():
-        if len(resource_activities) > 1: # Check if there are multiple activities assigned to the same resource
-            # Sort by start time
-            resource_activities = sorted(resource_activities, key=lambda x: x["Start"])
-    
-            # To do keep track of edges that should be added to STN
-            for i in range(1, len(resource_activities)):
-                predecessor = resource_activities[i-1]
-                successor = resource_activities[i]
-                resource_chains.append((predecessor["ProductIndex"], predecessor["Activity"], successor["ProductIndex"], successor["Activity"]))
+    if complete:
+        for resource_activities in resource_use.values():
+            if len(resource_activities) > 1:  # Check if there are multiple activities assigned to the same resource
+                # Sort by start time
+                resource_activities = sorted(resource_activities, key=lambda x: x["Start"])
+                # To do keep track of edges that should be added to STN
+                for i in range(1, len(resource_activities)):
+                    for j in range(0, i):
+                        predecessor = resource_activities[j]
+                        successor = resource_activities[i]
+                        resource_chains.append((predecessor["ProductIndex"], predecessor["Activity"],
+                                                successor["ProductIndex"], successor["Activity"]))
+    else:
+        for resource_activities in resource_use.values():
+            if len(resource_activities) > 1: # Check if there are multiple activities assigned to the same resource
+                # Sort by start time
+                resource_activities = sorted(resource_activities, key=lambda x: x["Start"])
+
+                # To do keep track of edges that should be added to STN
+                for i in range(1, len(resource_activities)):
+                    predecessor = resource_activities[i-1]
+                    successor = resource_activities[i]
+                    resource_chains.append((predecessor["ProductIndex"], predecessor["Activity"], successor["ProductIndex"], successor["Activity"]))
     return resource_chains

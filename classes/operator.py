@@ -5,6 +5,7 @@ import copy
 from classes.classes import FailureCode, STN
 from classes.classes import SimulatorLogger, Action, FailureCode
 
+
 class OperatorSTN:
     def __init__(self, plan, stn, name="stn_operator", printing=True):
         self.current_time = 0
