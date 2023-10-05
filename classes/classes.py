@@ -434,8 +434,8 @@ class STN:
                 else:
                     # Possibly add function to distribution to convert distribution to uncertainty set
 
-                    lower_bound = max(round(activity.distribution.mean - 10 * activity.distribution.variance), 0)
-                    upper_bound = round(activity.distribution.mean + 10 * activity.distribution.variance)
+                    lower_bound = max(round(activity.distribution.mean - 3 * activity.distribution.variance), 0)
+                    upper_bound = round(activity.distribution.mean + 5 * activity.distribution.variance)
                     stn.add_interval_constraint(a_start, a_finish, lower_bound, upper_bound)
 
             # For every temporal relation in this product's temporal_relations, add edge between nodes with min and max lag
@@ -584,3 +584,4 @@ class STN:
             if min_distance > upper_bound:
                 raise ValueError(f"Can't set lower bound of {min_distance} between node_{node_from} and "
                                  f"node_{node_to}: upper bound is {upper_bound}")
+

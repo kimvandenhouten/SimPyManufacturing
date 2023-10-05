@@ -17,7 +17,7 @@ policy_type = 1
 printing = True
 printing_output = True
 compatibility = True
-max_time_lag = True
+max_time_lag = False
 
 
 for instance_size in [10]:
@@ -45,10 +45,10 @@ for instance_size in [10]:
         for pred_p, pred_a, succ_p, succ_a in resource_chains:
             # The finish of the predecessor should precede the start of the successor
             pred_idx = stn.translation_dict_reversed[
-                (pred_p, pred_a, STN.EVENT_START)]  # Get translation index from finish of predecessor
+                (pred_p, pred_a, STN.EVENT_FINISH)]  # Get translation index from finish of predecessor
             suc_idx = stn.translation_dict_reversed[
                 (succ_p, succ_a, STN.EVENT_START)]  # Get translation index from start of successor
-            stn.add_interval_constraint(pred_idx, suc_idx, 1, np.inf)
+            stn.add_interval_constraint(pred_idx, suc_idx, 0, np.inf)
 
         # Add compatibility constraints between incompatible pairs using sequencing decision from CP:
         if compatibility:

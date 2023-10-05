@@ -60,12 +60,18 @@ class OperatorSTN:
         print(f"setting end time for prod {product_index} act {activity_id} with node index {node_idx}")
         self.stn.add_tight_constraint(STN.ORIGIN_IDX, node_idx, end_time, propagate=True)
 
+    def update_lower_bound_activity(self, activity_id, product_index, lb):
+        node_idx_start = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_START)]
+        node_idx_finish = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_FINISH)]
+        lb_old = -self.stn.edges[node_idx_finish][node_idx_start]
+        ub = self.stn.edges[node_idx_start][node_idx_finish]
+        if lb > lb_old:
+            self.stn.add_interval_constraint(node_idx_start, node_idx_finish, lb, ub, propagate=True)
+
     def signal_failed_activity(self, product_index, activity_id, current_time, logger):
         """
         Process signal about a failed activity
         """
-
-
         # TODO: check if adding this distance is possible
         max_lag_problem = False
         predecessors = self.plan.products[product_index].predecessors[activity_id]
@@ -73,6 +79,7 @@ class OperatorSTN:
             temp_rel = self.plan.products[product_index].temporal_relations[(pred_activity_id, activity_id)]
             start_pred_log = logger.fetch_latest_entry(product_index,
                                                             pred_activity_id, Action.START)
+
             if temp_rel.max_lag and current_time + 1 - start_pred_log.timestamp > temp_rel.max_lag:
                 max_lag_problem = True
         if max_lag_problem:
