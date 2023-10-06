@@ -505,16 +505,17 @@ class STN:
             for v, weight in edge_dict.items():
                 w[u, v] = weight
 
-        D = [np.full((n, n), np.inf) for _ in range(n + 1)]
-        D[0] = w
         for k in range(1, n + 1):
+            w_old = w
+            w = np.full((n, n), np.inf)
             for i in range(n):
                 for j in range(n):
-                    D[k][i, j] = min(D[k - 1][i, j], D[k - 1][i, k - 1] + D[k - 1][k - 1, j])
-        if any(np.diag(D[n]) < 0):
+                    w[i, j] = min(w_old[i, j], w_old[i, k - 1] + w_old[k - 1, j])
+
+        if any(np.diag(w) < 0):
             raise ValueError("The graph contains negative cycles.")
 
-        self.shortest_distances = D[n]
+        self.shortest_distances = w
         return self.shortest_distances
 
     def add_node(self, *description):
