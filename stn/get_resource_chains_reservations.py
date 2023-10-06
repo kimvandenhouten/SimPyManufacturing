@@ -48,7 +48,7 @@ def get_resource_chains(production_plan, earliest_start, complete=False):
     return resource_chains
 
 
-def add_resource_chains(stn, resource_chains):
+def add_resource_chains(stn, resource_chains, reservation_factor=0.75):
     for pred_p, pred_a, succ_p, succ_a in resource_chains:
         # add a reservation node
         stn.add_node(pred_p, pred_a, STN.EVENT_RESERVATION)
@@ -61,13 +61,18 @@ def add_resource_chains(stn, resource_chains):
             (succ_p, succ_a, STN.EVENT_START)]  # Get translation index from start of successor
 
         reservation_idx = stn.translation_dict_reversed[(pred_p, pred_a, STN.EVENT_RESERVATION)]
-        lb = 0  # TODO based on uncertainty interval processing time and policy add lower bound
-        ub = np.inf  # TODO based on uncertainty interval processing time and policy add lower bound
-        # TODO: add interval constraint between start of predecessor and reservation node based on policy
+        # Obtain information about processing time predecessor
+        lb_pred = -stn.edges[pred_idx_finish][pred_idx_start]
+        ub_pred = stn.edges[pred_idx_start][pred_idx_finish]
+
+        # based on uncertainty interval processing time and policy add lower bound
+        lb = round((ub_pred-lb_pred) * reservation_factor)
+        ub = ub_pred
+
+        # add interval constraint between start of predecessor and reservation node based on policy
         stn.add_interval_constraint(pred_idx_start, reservation_idx, lb, ub)
         # add interval constraint between reservation node and start of successor (0, inf)
         stn.add_interval_constraint(reservation_idx, suc_idx_start, 0, np.inf)
         # add interval constraint between finish of predecessor and reservation node (0, inf)
-        # TODO: change 1 to 0 once reservation security works
-        stn.add_interval_constraint(pred_idx_finish, reservation_idx, 1, np.inf)
+        stn.add_interval_constraint(pred_idx_finish, reservation_idx, 0, np.inf)
     return stn

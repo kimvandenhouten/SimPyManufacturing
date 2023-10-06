@@ -6,7 +6,6 @@ from classes.simulator_8 import Simulator
 from stn.get_resource_chains_reservations import get_resource_chains, add_resource_chains
 import numpy as np
 
-
 """
 In this script we test the instances type 2 that do have a max time lag
 """
@@ -40,7 +39,7 @@ for instance_size in [10]:
 
         # Add resource constraints between incompatible pairs using sequencing decision from CP
         resource_chains = get_resource_chains(production_plan=my_productionplan, earliest_start=earliest_start, complete=True)
-        stn = add_resource_chains(stn=stn, resource_chains=resource_chains)
+        stn = add_resource_chains(stn=stn, resource_chains=resource_chains, reservation_factor=0.75)
         print(resource_chains)
 
         # Add compatibility constraints between incompatible pairs using sequencing decision from CP:

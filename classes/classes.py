@@ -499,6 +499,7 @@ class STN:
     def floyd_warshall(self):
         # Compute shortest distance graph path for this graph
         n = self.index
+        print(n)
         assert n >= len(self.nodes)
         w = np.full((n, n), np.inf)
         np.fill_diagonal(w, 0)
