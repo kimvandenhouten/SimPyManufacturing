@@ -17,8 +17,8 @@ policy_type = 1
 printing = True
 printing_output = True
 compatibility = True
-max_time_lag = True
-
+max_time_lag = False
+seed = 3
 
 for instance_size in [10]:
     for instance_id in range(1, 2):
@@ -46,9 +46,11 @@ for instance_size in [10]:
         for pred_p, pred_a, succ_p, succ_a in resource_chains:
             # The finish of the predecessor should precede the start of the successor
             pred_idx = stn.translation_dict_reversed[
-                (pred_p, pred_a, STN.EVENT_START)]  # Get translation index from finish of predecessor
+                (pred_p, pred_a, STN.EVENT_FINISH)]  # Get translation index from finish of predecessor
             suc_idx = stn.translation_dict_reversed[
                 (succ_p, succ_a, STN.EVENT_START)]  # Get translation index from start of successor
+
+            # TODO: is this really the best modelling choice having the 0 as lowerbound instead of the 1?
             stn.add_interval_constraint(pred_idx, suc_idx, 1, np.inf)
 
         # Add compatibility constraints between incompatible pairs using sequencing decision from CP:
@@ -82,7 +84,7 @@ for instance_size in [10]:
         operator = OperatorSTN(my_productionplan, stn, printing=printing)
 
         # Create
-        scenario_1 = my_productionplan.create_scenario(seed=5)
+        scenario_1 = my_productionplan.create_scenario(seed=seed)
 
         # TODO: make it also work when check_max_time_lag=True
         my_simulator = Simulator(plan=scenario_1.production_plan, operator=operator, printing=printing, check_max_time_lag=max_time_lag)

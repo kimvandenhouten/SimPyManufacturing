@@ -90,7 +90,7 @@ class Simulator(BaseSimulator):
 
             # Generator for processing the activity
             for t in range(1, 1 + proc_time):
-                self.activity_processing_time(activity_id, product_index, 1 * t)
+                self.activity_processing_time(activity_id, product_index,  1 * t)
                 yield self.env.timeout(1)
 
             end_time = self.activity_end(activity_id, product_index)

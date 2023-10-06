@@ -433,8 +433,7 @@ class STN:
                     stn.add_tight_constraint(a_start, a_finish, activity.processing_time[0])
                 else:
                     # Possibly add function to distribution to convert distribution to uncertainty set
-
-                    lower_bound = max(round(activity.distribution.mean - 5 * activity.distribution.variance), 0)
+                    lower_bound = max(round(activity.distribution.mean - 5 * activity.distribution.variance), 1)
                     upper_bound = round(activity.distribution.mean + 5 * activity.distribution.variance)
                     stn.add_interval_constraint(a_start, a_finish, lower_bound, upper_bound)
 
