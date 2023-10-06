@@ -17,7 +17,7 @@ policy_type = 1
 printing = True
 printing_output = True
 compatibility = True
-max_time_lag = False
+max_time_lag = True
 
 
 for instance_size in [10]:

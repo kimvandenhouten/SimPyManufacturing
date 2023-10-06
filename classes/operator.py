@@ -83,17 +83,27 @@ class OperatorSTN:
 
             if temp_rel.max_lag and current_time + 1 - start_pred_log.timestamp > temp_rel.max_lag:
                 max_lag_problem = True
-        if max_lag_problem:
-            print(f'Operator Warning: postponing with 1 time unit will not work')
 
-        # Update the STN by adding distance from origin to start of this activity
-        node_from = self.stn.ORIGIN_IDX
-        node_to = self.stn.translation_dict_reversed[
-            (product_index, activity_id, self.stn.EVENT_START)]
-        min_distance = current_time + 1
-        self.stn.add_interval_constraint(node_from, node_to, min_distance, np.inf, propagate=True)
-        self.sent_activities.remove((product_index, activity_id))
-        self.calculating = False
+        if max_lag_problem:
+            print(f'Operator Warning for product {product_index} activity {activity_id}: postponing with 1 time unit will not work')
+
+            # TODO remove all nodes from this activity
+            for activity in self.plan.products[product_index].activities:
+                if (product_index, activity.id) not in self.sent_activities:
+                    print(f'remove start and finish node and including edges from {(product_index, activity_id)}')
+                    start_node = self.stn.translation_dict_reversed[(product_index, activity_id, self.stn.EVENT_START)]
+                    end_node = self.stn.translation_dict_reversed[(product_index, activity_id, self.stn.EVENT_FINISH)]
+                    print(f'start node {start_node} and end node {end_node}')
+
+        else:
+            # Update the STN by adding distance from origin to start of this activity
+            node_from = self.stn.ORIGIN_IDX
+            node_to = self.stn.translation_dict_reversed[
+                (product_index, activity_id, self.stn.EVENT_START)]
+            min_distance = current_time + 1
+            self.stn.add_interval_constraint(node_from, node_to, min_distance, np.inf, propagate=True)
+            self.sent_activities.remove((product_index, activity_id))
+            self.calculating = False
 
 
 class Operator:
