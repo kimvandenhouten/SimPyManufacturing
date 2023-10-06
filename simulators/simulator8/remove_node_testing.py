@@ -84,6 +84,7 @@ for instance_size in [10]:
         # TODO: update indexing such that Floyd-Warshall still works
         stn.remove_node(10)
         print(stn.nodes)
-        print(stn.edges)
+        finite_edges = {x: {y: z} for (x, d) in stn.edges.items() for y, z in d.items() if z < np.inf}
+        print(finite_edges)
 
         stn.floyd_warshall()
