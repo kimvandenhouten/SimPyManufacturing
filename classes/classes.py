@@ -417,6 +417,7 @@ class STN:
     VERIFY_PROBABILITY = 0 # In 10% of cases, verify that computed distances were correct
     EVENT_START = "start"
     EVENT_FINISH = "finish"
+    EVENT_RESERVATION = "reservation"
     ORIGIN_IDX = 0
     HORIZON_IDX = 1
 

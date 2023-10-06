@@ -50,12 +50,24 @@ def get_resource_chains(production_plan, earliest_start, complete=False):
 
 def add_resource_chains(stn, resource_chains):
     for pred_p, pred_a, succ_p, succ_a in resource_chains:
-        # The finish of the predecessor should precede the start of the successor
-        pred_idx = stn.translation_dict_reversed[
+        # add a reservation node
+        stn.add_node(pred_p, pred_a, STN.EVENT_RESERVATION)
+        # the finish of the predecessor should precede the start of the successor
+        pred_idx_start = stn.translation_dict_reversed[
+            (pred_p, pred_a, STN.EVENT_START)]  # Get translation index from start of predecessor
+        pred_idx_finish = stn.translation_dict_reversed[
             (pred_p, pred_a, STN.EVENT_FINISH)]  # Get translation index from finish of predecessor
-        suc_idx = stn.translation_dict_reversed[
+        suc_idx_start = stn.translation_dict_reversed[
             (succ_p, succ_a, STN.EVENT_START)]  # Get translation index from start of successor
 
-        # TODO: is this really the best modelling choice having the 0 as lowerbound instead of the 1?
-        stn.add_interval_constraint(pred_idx, suc_idx, 1, np.inf)
+        reservation_idx = stn.translation_dict_reversed[(pred_p, pred_a, STN.EVENT_RESERVATION)]
+        lb = 0  # TODO based on uncertainty interval processing time and policy add lower bound
+        ub = np.inf  # TODO based on uncertainty interval processing time and policy add lower bound
+        # TODO: add interval constraint between start of predecessor and reservation node based on policy
+        stn.add_interval_constraint(pred_idx_start, reservation_idx, lb, ub)
+        # add interval constraint between reservation node and start of successor (0, inf)
+        stn.add_interval_constraint(reservation_idx, suc_idx_start, 0, np.inf)
+        # add interval constraint between finish of predecessor and reservation node (0, inf)
+        # TODO: change 1 to 0 once reservation security works
+        stn.add_interval_constraint(pred_idx_finish, reservation_idx, 1, np.inf)
     return stn
