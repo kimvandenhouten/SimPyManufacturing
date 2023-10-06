@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 
 from enum import Enum
+from typing import Union, Any
 
 from IPython.core.display_functions import display
 
@@ -419,6 +420,14 @@ class STN:
     ORIGIN_IDX = 0
     HORIZON_IDX = 1
 
+    nodes: set[int]
+    edges: dict[int, dict[int, float]]
+    removed_nodes: list[int]
+    shortest_distances: Union[np.ndarray, None]
+    index: int
+    translation_dict: dict[int, Any]
+    translation_dict_reversed: dict[Any, int]
+
     @classmethod
     def from_production_plan(cls, production_plan: ProductionPlan, stochastic=False, max_time_lag=True) -> 'STN':
         stn = cls()
@@ -453,13 +462,15 @@ class STN:
 
     def __init__(self):
         # Set-up nodes and edges
-        self.nodes = [self.ORIGIN_IDX, self.HORIZON_IDX]
+        self.nodes = {self.ORIGIN_IDX, self.HORIZON_IDX}
         self.edges = {node: {} for node in self.nodes}
+
+        self.removed_nodes = []
 
         self.shortest_distances = None
 
         # We use indices for the nodes in the network
-        self.idx = 2
+        self.index = max(self.nodes) + 1
 
         # We keep track of two translation dictionaries to connect indices to the events
         self.translation_dict = {}
@@ -472,17 +483,22 @@ class STN:
     Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
     '''
     def remove_node(self, node_idx):
-        # Remove a certain node and corresponding edges from the dictionairy
+        # Remove a certain node and corresponding edges from the dictionary
         self.nodes.remove(node_idx)
-        self.edges.pop(node_idx)
-        for key in self.edges:
-            self.edges[key].pop(node_idx, None)
+        self.removed_nodes.append(node_idx)
 
-        # TODO: should we adjust the indexing?
+        edge_dict = self.edges.pop(node_idx)
+        for key in edge_dict.keys():
+            self.edges[key].pop(node_idx)
+        assert not(any(node_idx in d for d in self.edges.values()))
+
+        description = self.translation_dict.pop(node_idx)
+        self.translation_dict_reversed.pop(description)
 
     def floyd_warshall(self):
         # Compute shortest distance graph path for this graph
-        n = len(self.nodes)
+        n = self.index
+        assert n >= len(self.nodes)
         w = np.full((n, n), np.inf)
         np.fill_diagonal(w, 0)
         for u, edge_dict in self.edges.items():
@@ -502,9 +518,13 @@ class STN:
         return self.shortest_distances
 
     def add_node(self, *description):
-        node_idx = self.idx
-        self.idx += 1
-        self.nodes.append(node_idx)
+        if self.removed_nodes:
+            node_idx = self.removed_nodes.pop()
+        else:
+            node_idx = self.index
+            self.index += 1
+
+        self.nodes.add(node_idx)
         self.edges[node_idx] = {}
         self.translation_dict[node_idx] = description
         self.translation_dict_reversed[description] = node_idx
@@ -515,7 +535,10 @@ class STN:
         return node_idx
 
     def set_edge(self, node_from, node_to, distance):
-        prev = self.edges[node_from].get(node_to, np.inf)
+        if node_to not in self.edges[node_from]:
+            assert node_from not in self.edges[node_to]
+            self.edges[node_from][node_to] = self.edges[node_to][node_from] = np.inf
+        prev = self.edges[node_from][node_to]
         reverse = np.inf if self.shortest_distances is None else self.shortest_distances[node_to][node_from]
         if reverse + distance < 0:
             raise ValueError(f"Introducing negative cycle: "
