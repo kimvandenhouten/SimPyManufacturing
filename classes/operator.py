@@ -66,6 +66,8 @@ class OperatorSTN:
         node_idx_finish = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_FINISH)]
         lb_old = -self.stn.edges[node_idx_finish][node_idx_start]
         ub = self.stn.edges[node_idx_start][node_idx_finish]
+        if lb > ub:
+            print(f'lb is larger that ub for prod {product_index} act {activity_id}')
         if lb > lb_old:
             self.stn.add_interval_constraint(node_idx_start, node_idx_finish, lb, ub, propagate=True)
 
@@ -93,6 +95,8 @@ class OperatorSTN:
                     print(f'remove start and finish node and including edges from {(product_index, activity_id)}')
                     start_node = self.stn.translation_dict_reversed[(product_index, activity_id, self.stn.EVENT_START)]
                     end_node = self.stn.translation_dict_reversed[(product_index, activity_id, self.stn.EVENT_FINISH)]
+                    self.stn.remove_node(start_node)
+                    self.stn.remove_node(end_node)
                     print(f'start node {start_node} and end node {end_node}')
 
         else:

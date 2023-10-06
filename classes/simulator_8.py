@@ -35,8 +35,6 @@ class Simulator(BaseSimulator):
         return start_time
 
     def activity_end(self, activity_id, product_index):
-        if product_index == 0 and activity_id == 2:
-            print('debug')
         end_time = super().activity_end(activity_id, product_index)
         self.operator.set_end_time(activity_id, product_index, end_time)
         return end_time
