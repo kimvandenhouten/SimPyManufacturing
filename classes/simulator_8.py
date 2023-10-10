@@ -44,8 +44,6 @@ class Simulator(BaseSimulator):
         self.nr_clashes += 1
         return failed
 
-    def activity_processing_time(self, activity_id, product_index, lb):
-        self.operator.update_lower_bound_activity(activity_id, product_index, lb)
 
     def activity_processing(self, activity_id, product_index, proc_time, needs):
         """
@@ -87,9 +85,7 @@ class Simulator(BaseSimulator):
             start_time = self.activity_start(activity_id, product_index)
 
             # Generator for processing the activity
-            for t in range(1, 1 + proc_time):
-                self.activity_processing_time(activity_id, product_index,  1 * t)
-                yield self.env.timeout(1)
+            yield self.env.timeout(proc_time)
 
             end_time = self.activity_end(activity_id, product_index)
 

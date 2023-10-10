@@ -17,7 +17,7 @@ printing_output = True
 compatibility = True
 max_time_lag = True
 seed = 3
-reservation_factor = 0.7
+reservation_factor = 0.6
 for instance_size in [10]:
     for instance_id in range(1, 2):
         # Read CP output and convert

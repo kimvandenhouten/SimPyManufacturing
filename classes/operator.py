@@ -61,35 +61,24 @@ class OperatorSTN:
         print(f"setting end time for prod {product_index} act {activity_id} with node index {node_idx}")
         self.stn.add_tight_constraint(STN.ORIGIN_IDX, node_idx, end_time, propagate=True)
 
-    def update_lower_bound_activity(self, activity_id, product_index, lb):
-        node_idx_start = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_START)]
-        node_idx_finish = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_FINISH)]
-        lb_old = -self.stn.edges[node_idx_finish][node_idx_start]
-        ub = self.stn.edges[node_idx_start][node_idx_finish]
-        if lb > ub:
-            print(f'lb is larger that ub for prod {product_index} act {activity_id}')
-        if lb > lb_old:
-            self.stn.add_interval_constraint(node_idx_start, node_idx_finish, lb, ub, propagate=True)
-
     def signal_failed_activity(self, product_index, activity_id, current_time, logger):
         """
         Process signal about a failed activity
         """
-        # TODO: check if adding this distance is possible
         max_lag_problem = False
+
+        # TODO: can/should this be done with information from STN instead of operator/instance information?
         predecessors = self.plan.products[product_index].predecessors[activity_id]
         for pred_activity_id in predecessors:
             temp_rel = self.plan.products[product_index].temporal_relations[(pred_activity_id, activity_id)]
             start_pred_log = logger.fetch_latest_entry(product_index,
                                                             pred_activity_id, Action.START)
-
             if temp_rel.max_lag and current_time + 1 - start_pred_log.timestamp > temp_rel.max_lag:
                 max_lag_problem = True
 
         if max_lag_problem:
             print(f'Operator Warning for product {product_index} activity {activity_id}: postponing with 1 time unit will not work')
 
-            # TODO remove all nodes from this activity
             for activity in self.plan.products[product_index].activities:
                 if (product_index, activity.id) not in self.sent_activities:
                     print(f'remove start and finish node and including edges from {(product_index, activity_id)}')
@@ -97,7 +86,8 @@ class OperatorSTN:
                     end_node = self.stn.translation_dict_reversed[(product_index, activity_id, self.stn.EVENT_FINISH)]
                     self.stn.remove_node(start_node)
                     self.stn.remove_node(end_node)
-                    print(f'start node {start_node} and end node {end_node}')
+            print(f'Recalculate floyd warshall')
+            self.stn.floyd_warshall()
 
         else:
             # Update the STN by adding distance from origin to start of this activity
@@ -168,8 +158,6 @@ class Operator:
         Send new activities to factory
         """
         finish = False
-        #if self.printing:
-            #print(f'At time {current_time}: the operator is asked for the next decision')
 
         # Check if there are still activities in the plan
         if len(self.plan.earliest_start) == 0:
@@ -198,7 +186,6 @@ class Operator:
                 # Obtain information about resource needs and processing time
                 needs = self.plan.products[product_index].activities[activity_id].needs
                 proc_time = max(self.plan.products[product_index].activities[activity_id].processing_time[0], 1)
-                # proc_time = np.ceil(proc_time)
 
                 if self.printing:
                     print(
