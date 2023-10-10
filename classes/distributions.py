@@ -54,6 +54,16 @@ class LogNormalDistribution(Distribution):
         return np.random.lognormal(self.mean, self.variance, 1000)[0]
 
 
+class UniformDiscreteDistribution(Distribution):
+    def __init__(self, lb, ub):
+        self.type = "UNIFORMDISCRETE"
+        self.lb = lb
+        self.ub = ub
+
+    def sample(self):
+        return np.random.randint(self.lb, self.ub)
+
+
 def get_distribution(dist_type, arg_dict):
     if dist_type == "NORMAL":
         return NormalDistribution(**arg_dict)
@@ -63,4 +73,6 @@ def get_distribution(dist_type, arg_dict):
         return PoissonDistribution(**arg_dict)
     elif dist_type == "LOGNORMAL":
         return LogNormalDistribution(**arg_dict)
+    elif dist_type == "UNIFORMDISCRETE":
+        return UniformDiscreteDistribution(**arg_dict)
     raise TypeError("Illegal type for distribution: ", type)

@@ -15,9 +15,9 @@ policy_type = 1
 printing = True
 printing_output = True
 compatibility = True
-max_time_lag = False
+max_time_lag = True
 seed = 3
-
+reservation_factor = 0.7
 for instance_size in [10]:
     for instance_id in range(1, 2):
         # Read CP output and convert
@@ -27,7 +27,7 @@ for instance_size in [10]:
         # Deterministic check:
         # Read CP output and instance
         my_productionplan = ProductionPlan(
-            **json.load(open('factory_data/development/instances_type_2/instance_' + instance_name + '.json')))
+            **json.load(open('factory_data/development/instances_type_2_uniform/instance_' + instance_name + '.json')))
         my_productionplan.set_sequence(sequence=np.arange(instance_size))
         cp_output = pd.read_csv(f"results/cp_model/development/instances_type_2/start times {file_name}.csv")
         makespan_cp_output = max(cp_output["end"].tolist())
@@ -39,8 +39,7 @@ for instance_size in [10]:
 
         # Add resource constraints between incompatible pairs using sequencing decision from CP
         resource_chains = get_resource_chains(production_plan=my_productionplan, earliest_start=earliest_start, complete=True)
-        stn = add_resource_chains(stn=stn, resource_chains=resource_chains, reservation_factor=0.75)
-        print(resource_chains)
+        stn = add_resource_chains(stn=stn, resource_chains=resource_chains, reservation_factor=reservation_factor)
 
         # Add compatibility constraints between incompatible pairs using sequencing decision from CP:
         if compatibility:

@@ -9,17 +9,19 @@ from classes.classes import ProductionPlan, Factory, Scenario, Activity
 import pickle
 import json
 import numpy as np
-from classes.distributions import NormalDistribution, PoissonDistribution
+from classes.distributions import UniformDiscreteDistribution
 
 
 def produce_json_data(source_path, output_path):
-    production_plan = pd.read_pickle(source_path)
+    fp = open(source_path, 'r')
+    production_plan = ProductionPlan(**json.load(fp))
     for i in range(len(production_plan.factory.products)):
         activities = []
         for activity in production_plan.factory.products[i].activities:
             processing_time = activity.processing_time[0]
-            default_variance = np.sqrt(processing_time)
-            distribution = NormalDistribution(processing_time, default_variance)
+            lb = round(0.9 * processing_time)
+            ub = round(1.1 * processing_time)
+            distribution = UniformDiscreteDistribution(lb, ub)
             activity_stoch = Activity(activity.id, activity.processing_time, activity.product, activity.product_id,
                                       activity.needs, distribution, activity.sequence_id)
             activities.append(activity_stoch)
@@ -35,8 +37,8 @@ def produce_json_data(source_path, output_path):
 
 
 if __name__ == '__main__':
-    base_path = 'factory_data/instances_legacy/instances_new/'
-    output_path = f'factory_data/instances_legacy/stochastic/json_instances/'
+    base_path = 'factory_data/development/instances_type_2/'
+    output_path = 'factory_data/development/instances_type_2_uniform/'
 
     source_instances = os.listdir(base_path)
     error_count = 0

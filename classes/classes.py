@@ -443,9 +443,16 @@ class STN:
                     stn.add_tight_constraint(a_start, a_finish, activity.processing_time[0])
                 else:
                     # Possibly add function to distribution to convert distribution to uncertainty set
-                    lower_bound = max(round(activity.distribution.mean - 5 * activity.distribution.variance), 0)
-                    upper_bound = round(activity.distribution.mean + 10 * activity.distribution.variance)
-                    stn.add_interval_constraint(a_start, a_finish, lower_bound, upper_bound)
+                    if activity.distribution.type == "UNIFORMDISCRETE":
+                        lower_bound = activity.distribution.lb
+                        upper_bound = activity.distribution.ub
+                        stn.add_interval_constraint(a_start, a_finish, lower_bound, upper_bound)
+                    elif activity.distribution.type == "NORMAL":
+                        lower_bound = max(round(activity.distribution.mean - 5 * activity.distribution.variance), 0)
+                        upper_bound = round(activity.distribution.mean + 10 * activity.distribution.variance)
+                        stn.add_interval_constraint(a_start, a_finish, lower_bound, upper_bound)
+                    else:
+                        ValueError("Uncertainty set not implemented for this distribution")
 
             # For every temporal relation in this product's temporal_relations, add edge between nodes with min and max lag
             for i, j in product.temporal_relations:
@@ -499,7 +506,6 @@ class STN:
     def floyd_warshall(self):
         # Compute shortest distance graph path for this graph
         n = self.index
-        print(n)
         assert n >= len(self.nodes)
         w = np.full((n, n), np.inf)
         np.fill_diagonal(w, 0)

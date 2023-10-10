@@ -66,7 +66,8 @@ def add_resource_chains(stn, resource_chains, reservation_factor=0.75):
         ub_pred = stn.edges[pred_idx_start][pred_idx_finish]
 
         # based on uncertainty interval processing time and policy add lower bound
-        lb = round((ub_pred-lb_pred) * reservation_factor)
+        lb = round(reservation_factor * (ub_pred - lb_pred) + lb_pred)
+        #print(f'true lb {lb_pred} and ub {ub_pred} but set lb is {lb}')
         ub = ub_pred
 
         # add interval constraint between start of predecessor and reservation node based on policy
