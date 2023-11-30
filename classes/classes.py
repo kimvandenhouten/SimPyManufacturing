@@ -463,7 +463,10 @@ class STN:
 
                 # TODO: make sure that the simulator - operator also works when max_time_lag = True
                 if max_time_lag:
-                    stn.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
+                    if max_lag != None:
+                        stn.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
+                    else:
+                        stn.add_interval_constraint(i_idx, j_idx, min_lag, np.inf)
                 else:
                     stn.add_interval_constraint(i_idx, j_idx, min_lag, np.inf)
         return stn
@@ -621,6 +624,15 @@ class STN:
                 raise ValueError(f"Can't set upper bound of {max_distance} between node_{node_from} and "
                                  f"node_{node_to}: lower bound is {lower_bound}")
             if min_distance > upper_bound:
+                # Print more information about errors:
+                if node_from > 1:
+                    print(f'Node from info {self.translation_dict[node_from]}')
+                else:
+                    print(f'Node from info {node_from}')
+                if node_to > 1:
+                    print(f'Node to info {self.translation_dict[node_to]}')
+                else:
+                    print(f'Node to info {node_to}')
                 raise ValueError(f"Can't set lower bound of {min_distance} between node_{node_from} and "
                                  f"node_{node_to}: upper bound is {upper_bound}")
 

@@ -7,6 +7,8 @@ from classes.classes import SimulatorLogger, Action, FailureCode
 
 
 class OperatorSTN:
+    # FIXME Can we make this operator send activity more efficient? How does it scale to larger problem instances
+
     def __init__(self, plan, stn, name="stn_operator", printing=True):
         self.current_time = 0
         self.name = name

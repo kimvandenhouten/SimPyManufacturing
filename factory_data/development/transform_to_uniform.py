@@ -37,8 +37,8 @@ def produce_json_data(source_path, output_path):
 
 
 if __name__ == '__main__':
-    base_path = 'factory_data/development/instances_type_2/'
-    output_path = 'factory_data/development/instances_type_2_uniform/'
+    base_path = 'factory_data/development/instances_type_1/'
+    output_path = 'factory_data/development/instances_type_1_uniform/'
 
     source_instances = os.listdir(base_path)
     error_count = 0

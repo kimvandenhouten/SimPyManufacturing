@@ -5,6 +5,7 @@ from classes.operator import OperatorSTN
 from classes.simulator_8 import Simulator
 from stn.get_resource_chains_reservations import get_resource_chains, add_resource_chains
 import numpy as np
+from solvers.RCPSP_CP import solve_rcpsp_cp, convert_instance_to_cp_input
 
 """
 In this script we test the instances type 2 that do have a max time lag
@@ -15,9 +16,11 @@ policy_type = 1
 printing = True
 printing_output = True
 compatibility = True
-max_time_lag = True
+max_time_lag = False
 seed = 3
-reservation_factor = 0.6
+reservation_factor = 1
+read_output = False
+
 for instance_size in [10]:
     for instance_id in range(1, 2):
         # Read CP output and convert
@@ -27,9 +30,28 @@ for instance_size in [10]:
         # Deterministic check:
         # Read CP output and instance
         my_productionplan = ProductionPlan(
-            **json.load(open('factory_data/development/instances_type_2_uniform/instance_' + instance_name + '.json')))
+            **json.load(open('factory_data/development/instances_type_1_uniform/instance_' + instance_name + '.json')))
         my_productionplan.set_sequence(sequence=np.arange(instance_size))
-        cp_output = pd.read_csv(f"results/cp_model/development/instances_type_2/start times {file_name}.csv")
+        if read_output:
+            cp_output = pd.read_csv(f"results/cp_model/development/instances_type_2/start times {file_name}.csv")
+        else:
+            resources, capacity, durations, successors, min_lag, max_lag, durations, capacity, deadlines, \
+            product_index_translation, product_id_translation, activity_id_translation, incompatible_tasks \
+                = convert_instance_to_cp_input(my_productionplan)
+
+            solution, callback, data_df = solve_rcpsp_cp(demands=resources, capacities=capacity, durations=durations,
+                                                successors=successors,
+                                                min_lag=min_lag, max_lag=max_lag, nb_tasks=len(durations),
+                                                nb_resources=len(capacity),
+                                                deadlines=deadlines,
+                                                product_index_translation=product_index_translation,
+                                                product_id_translation=product_id_translation,
+                                                activity_id_translation=activity_id_translation,
+                                                incompatible_tasks=incompatible_tasks, time_limit=60, l1=1,
+                                                l2=0,
+                                                output_file=f"start times {instance_name}.csv")
+            cp_output = data_df
+
         makespan_cp_output = max(cp_output["end"].tolist())
         print(f'Makespan according to CP output is {makespan_cp_output}')
         earliest_start = cp_output.to_dict('records')
@@ -83,3 +105,26 @@ for instance_size in [10]:
         distances = my_simulator.operator.stn.shortest_distances  # is this really using the stn that is updated from the operator?
         # Check that the incremental method is correct
         assert np.array_equal(distances, my_simulator.operator.stn.floyd_warshall())
+
+        # Can we also check what the true optimal makespan would have been with perfect information?
+        resources, capacity, durations, successors, min_lag, max_lag, durations, capacity, deadlines, \
+        product_index_translation, product_id_translation, activity_id_translation, incompatible_tasks \
+            = convert_instance_to_cp_input(scenario_1.production_plan)
+
+        solution, callback, data_df = solve_rcpsp_cp(demands=resources, capacities=capacity, durations=durations,
+                                                     successors=successors,
+                                                     min_lag=min_lag, max_lag=max_lag, nb_tasks=len(durations),
+                                                     nb_resources=len(capacity),
+                                                     deadlines=deadlines,
+                                                     product_index_translation=product_index_translation,
+                                                     product_id_translation=product_id_translation,
+                                                     activity_id_translation=activity_id_translation,
+                                                     incompatible_tasks=incompatible_tasks, time_limit=60, l1=1,
+                                                     l2=0,
+                                                     output_file=f"start times {instance_name}.csv")
+        cp_output = data_df
+
+        makespan_cp_output = max(cp_output["end"].tolist())
+
+        print(f'makespan under perfect information for this scenario is {makespan_cp_output}')
+
