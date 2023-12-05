@@ -387,7 +387,6 @@ class LogInfo:
 
 
 class SimulatorLogger:
-
     def __init__(self, class_name):
         self.active_processes = []
         self.class_name = class_name
@@ -463,7 +462,7 @@ class STN:
 
                 # TODO: make sure that the simulator - operator also works when max_time_lag = True
                 if max_time_lag:
-                    if max_lag != None:
+                    if max_lag is not None:
                         stn.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
                     else:
                         stn.add_interval_constraint(i_idx, j_idx, min_lag, np.inf)
@@ -606,6 +605,8 @@ class STN:
                 new_d = d + self.shortest_distances[node_from][idx2]
                 if new_d < self.shortest_distances[idx1][idx2]:
                     self.shortest_distances[idx1][idx2] = new_d
+        print(f'At current lower bound between 0 and 173 is {-self.shortest_distances[173][0]}')
+        print(f'At current upper bound between 0 and 173 is {self.shortest_distances[0][173]}')
 
     def _verify_distances(self, force=False):
         if self.shortest_distances is None:

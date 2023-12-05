@@ -18,7 +18,7 @@ printing_output = True
 compatibility = True
 max_time_lag = False
 seed = 3
-reservation_factor = 1
+reservation_factor = 0.7
 read_output = False
 
 for instance_size in [10]:
@@ -62,7 +62,7 @@ for instance_size in [10]:
         # Add resource constraints between incompatible pairs using sequencing decision from CP
         resource_chains = get_resource_chains(production_plan=my_productionplan, earliest_start=earliest_start, complete=True)
         stn = add_resource_chains(stn=stn, resource_chains=resource_chains, reservation_factor=reservation_factor)
-
+        print('resource chains added')
         # Add compatibility constraints between incompatible pairs using sequencing decision from CP:
         if compatibility:
             for constraint in my_productionplan.factory.compatibility_constraints:
@@ -90,7 +90,7 @@ for instance_size in [10]:
                         stn.add_interval_constraint(pred_idx, suc_idx, 0, np.inf)
 
         stn.floyd_warshall()   # Perform initial computation of shortest paths
-
+        print(f'floyd warshall finished')
         operator = OperatorSTN(my_productionplan, stn, printing=printing)
 
         # Create

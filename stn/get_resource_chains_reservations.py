@@ -13,7 +13,7 @@ def get_resource_chains(production_plan, earliest_start, complete=False):
     my_simulator = Simulator(plan=production_plan, operator=operator, printing=False)
     
     # Run simulation
-    makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=2000, write=False)
+    makespan, lateness, nr_unfinished = my_simulator.simulate(sim_time=999999, write=False)
     logger = my_simulator.logger.info.to_df()
 
     resource_use = {}
@@ -45,6 +45,7 @@ def get_resource_chains(production_plan, earliest_start, complete=False):
                     predecessor = resource_activities[i-1]
                     successor = resource_activities[i]
                     resource_chains.append((predecessor["ProductIndex"], predecessor["Activity"], successor["ProductIndex"], successor["Activity"]))
+    print(f'resource chains found')
     return resource_chains
 
 

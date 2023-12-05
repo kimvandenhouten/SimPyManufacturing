@@ -86,7 +86,6 @@ class Simulator(BaseSimulator):
 
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
-
             end_time = self.activity_end(activity_id, product_index)
 
             # Release the resources that were used during processing the activity
