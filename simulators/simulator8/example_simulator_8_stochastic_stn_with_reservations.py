@@ -5,7 +5,7 @@ from classes.operator import OperatorSTN
 from classes.simulator_8 import Simulator
 from stn.get_resource_chains_reservations import get_resource_chains, add_resource_chains
 import numpy as np
-from solvers.RCPSP_CP import solve_rcpsp_cp, convert_instance_to_cp_input
+from solvers.RCPSP_CP import RCPSP_CP
 
 """
 In this script we test the instances type 2 that do have a max time lag
@@ -35,21 +35,8 @@ for instance_size in [10]:
         if read_output:
             cp_output = pd.read_csv(f"results/cp_model/development/instances_type_2/start times {file_name}.csv")
         else:
-            resources, capacity, durations, successors, min_lag, max_lag, durations, capacity, deadlines, \
-            product_index_translation, product_id_translation, activity_id_translation, incompatible_tasks \
-                = convert_instance_to_cp_input(my_productionplan)
-
-            solution, callback, data_df = solve_rcpsp_cp(demands=resources, capacities=capacity, durations=durations,
-                                                successors=successors,
-                                                min_lag=min_lag, max_lag=max_lag, nb_tasks=len(durations),
-                                                nb_resources=len(capacity),
-                                                deadlines=deadlines,
-                                                product_index_translation=product_index_translation,
-                                                product_id_translation=product_id_translation,
-                                                activity_id_translation=activity_id_translation,
-                                                incompatible_tasks=incompatible_tasks, time_limit=60, l1=1,
-                                                l2=0,
-                                                output_file=f"start times {instance_name}.csv")
+            rcpsp = RCPSP_CP(my_productionplan)
+            solution, callback, data_df = rcpsp.solve(time_limit=60, l1=1, l2=0, output_file=f"start times {instance_name}.csv")
             cp_output = data_df
 
         makespan_cp_output = max(cp_output["end"].tolist())
@@ -107,21 +94,9 @@ for instance_size in [10]:
         assert np.array_equal(distances, my_simulator.operator.stn.floyd_warshall())
 
         # Can we also check what the true optimal makespan would have been with perfect information?
-        resources, capacity, durations, successors, min_lag, max_lag, durations, capacity, deadlines, \
-        product_index_translation, product_id_translation, activity_id_translation, incompatible_tasks \
-            = convert_instance_to_cp_input(scenario_1.production_plan)
-
-        solution, callback, data_df = solve_rcpsp_cp(demands=resources, capacities=capacity, durations=durations,
-                                                     successors=successors,
-                                                     min_lag=min_lag, max_lag=max_lag, nb_tasks=len(durations),
-                                                     nb_resources=len(capacity),
-                                                     deadlines=deadlines,
-                                                     product_index_translation=product_index_translation,
-                                                     product_id_translation=product_id_translation,
-                                                     activity_id_translation=activity_id_translation,
-                                                     incompatible_tasks=incompatible_tasks, time_limit=60, l1=1,
-                                                     l2=0,
-                                                     output_file=f"start times {instance_name}.csv")
+        rcpsp = RCPSP_CP(scenario_1.production_plan)
+        solution, callback, data_df = rcpsp.solve(time_limit=60, l1=1, l2=0,
+                                                  output_file=f"start times {instance_name}.csv")
         cp_output = data_df
 
         makespan_cp_output = max(cp_output["end"].tolist())
