@@ -29,9 +29,9 @@ class Simulator(BaseSimulator):
             # Generator object that does a time-out for a time period equal to delay value
             yield self.env.timeout(delay)
 
-    def activity_start(self, activity_id, product_index):
+    def activity_start(self, activity_id, product_index, resources):
         start_time = super().activity_start(activity_id, product_index)
-        self.operator.set_start_time(activity_id, product_index, start_time)
+        self.operator.set_start_time(activity_id, product_index, start_time, resources)
         return start_time
 
     def activity_end(self, activity_id, product_index):
@@ -43,7 +43,6 @@ class Simulator(BaseSimulator):
         failed = True
         self.nr_clashes += 1
         return failed
-
 
     def activity_processing(self, activity_id, product_index, proc_time, needs):
         """
@@ -65,7 +64,7 @@ class Simulator(BaseSimulator):
         if self.logger.failure_code is None:
             if self.printing:
                 print(
-                    f'At time {self.env.now}: product index {product_index} activity {activity_id} requested resources: {needs}')
+                    f'At time {self.env.now}: product index {product_index} activity {activity_id} requests resources')
 
             # SimPy request
             resources = []
@@ -75,14 +74,15 @@ class Simulator(BaseSimulator):
                     for _ in range(0, need):
                         resource = yield self.factory.get(lambda resource: resource.resource_group == resource_name)
                         resources.append(resource)
+
             # Trace back the moment in time that the resources are retrieved
             retrieve_time = self.env.now
 
             if self.printing:
                 print(
-                    f'At time {self.env.now}: product index {product_index} activity {activity_id} retrieved resources: {needs}')
+                    f'At time {self.env.now}: product index {product_index} activity {activity_id} retrieved resource {resources}')
 
-            start_time = self.activity_start(activity_id, product_index)
+            start_time = self.activity_start(activity_id, product_index, resources)
 
             # Generator for processing the activity
             yield self.env.timeout(proc_time)
@@ -95,7 +95,7 @@ class Simulator(BaseSimulator):
 
             if self.printing:
                 print(
-                    f'At time {self.env.now}: product index {product_index}  activity {activity_id} released resources: {needs}')
+                    f'At time {self.env.now}: product index {product_index}  activity {activity_id} released resources: {resources}')
 
             self.logger.info.log(self.plan.products[product_index].id, activity_id, product_index, needs, resources,
                                  request_time, retrieve_time, start_time, end_time, self.pushback_mode)

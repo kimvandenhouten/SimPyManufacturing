@@ -9,7 +9,7 @@ from classes.classes import SimulatorLogger, Action, FailureCode
 class OperatorSTN:
     # FIXME Can we make this operator send activity more efficient? How does it scale to larger problem instances
 
-    def __init__(self, plan, stn, name="stn_operator", printing=True):
+    def __init__(self, plan, stn, resource_use_cp, name="stn_operator", printing=True):
         self.current_time = 0
         self.name = name
         self.plan = plan
@@ -18,6 +18,8 @@ class OperatorSTN:
         self.stn = stn
         self.sent_activities = []
         self.calculating = False
+        self.resource_use_cp = resource_use_cp
+        self.resource_use_factory = []
 
     def send_next_activity(self, current_time):
         """
@@ -53,9 +55,14 @@ class OperatorSTN:
 
         return send_activity, delay, activity_id, product_index, finish
 
-    def set_start_time(self, activity_id, product_index, start_time):
+    def set_start_time(self, activity_id, product_index, start_time, resources):
         node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_START)]
         print(f"setting start time for prod {product_index} act {activity_id} with node index {node_idx}")
+        for resource in resources:
+            self.resource_use_factory.append({'product': product_index,
+                                              'activity': activity_id,
+                                              "resource_group": resource.resource_group,
+                                              "id": resource.id})
         self.stn.add_tight_constraint(STN.ORIGIN_IDX, node_idx, start_time, propagate=True)
 
     def set_end_time(self, activity_id, product_index, end_time):

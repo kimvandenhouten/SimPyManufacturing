@@ -47,9 +47,11 @@ for instance_size in [10]:
         stn = STN.from_production_plan(my_productionplan, stochastic=True, max_time_lag=max_time_lag)
 
         # Add resource constraints between incompatible pairs using sequencing decision from CP
-        resource_chains = get_resource_chains(production_plan=my_productionplan, earliest_start=earliest_start, complete=True)
+        resource_chains, resource_use = get_resource_chains(production_plan=my_productionplan, earliest_start=earliest_start, complete=True)
+        print(resource_use)
         stn = add_resource_chains(stn=stn, resource_chains=resource_chains, reservation_factor=reservation_factor)
         print('resource chains added')
+
         # Add compatibility constraints between incompatible pairs using sequencing decision from CP:
         if compatibility:
             for constraint in my_productionplan.factory.compatibility_constraints:
@@ -78,7 +80,7 @@ for instance_size in [10]:
 
         stn.floyd_warshall()   # Perform initial computation of shortest paths
         print(f'floyd warshall finished')
-        operator = OperatorSTN(my_productionplan, stn, printing=printing)
+        operator = OperatorSTN(my_productionplan, stn, printing=printing, resource_use_cp=resource_use)
 
         # Create
         scenario_1 = my_productionplan.create_scenario(seed=seed)

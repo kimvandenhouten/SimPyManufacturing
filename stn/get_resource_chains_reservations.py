@@ -6,7 +6,9 @@ import numpy as np
 
 def get_resource_chains(production_plan, earliest_start, complete=False):
     production_plan.set_earliest_start_times(earliest_start)
-    
+
+    # FIXME: now we run an old version of the simulator to get the resource assignment
+    # this can be smoother
     # Set printing to True if you want to print all events
     policy_type = 2
     operator = Operator(plan=production_plan, policy_type=policy_type, printing=False)
@@ -46,7 +48,7 @@ def get_resource_chains(production_plan, earliest_start, complete=False):
                     successor = resource_activities[i]
                     resource_chains.append((predecessor["ProductIndex"], predecessor["Activity"], successor["ProductIndex"], successor["Activity"]))
     print(f'resource chains found')
-    return resource_chains
+    return resource_chains, resource_use
 
 
 def add_resource_chains(stn, resource_chains, reservation_factor=0.75):
