@@ -63,6 +63,12 @@ class OperatorSTN:
                                               'activity': activity_id,
                                               "resource_group": resource.resource_group,
                                               "id": resource.id})
+        # Check whether this matches with the original CP resource assignment
+        if {'product': product_index, 'activity': activity_id, "resource_group": resource.resource_group, "id": resource.id} in self.resource_use_cp:
+            print(f'Resource assignment matches')
+        else:
+            print(f'Resource assignment does not match')
+
         self.stn.add_tight_constraint(STN.ORIGIN_IDX, node_idx, start_time, propagate=True)
 
     def set_end_time(self, activity_id, product_index, end_time):

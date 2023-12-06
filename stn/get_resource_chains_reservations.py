@@ -19,10 +19,15 @@ def get_resource_chains(production_plan, earliest_start, complete=False):
     logger = my_simulator.logger.info.to_df()
 
     resource_use = {}
+    resource_assignment = []
     for index, row in logger.iterrows():
         for resource in row["Resources"]:
             users = resource_use.setdefault((resource.resource_group, resource.id), [])
             users.append({"ProductIndex": row["ProductIndex"], "Activity": row["Activity"], "Start": row["Start"]})
+            resource_assignment.append({'product': row["ProductIndex"],
+                                        'activity': row["Activity"],
+                                         "resource_group": resource.resource_group,
+                                         "id": resource.id})
     resource_chains = []
     if complete:
         for resource_activities in resource_use.values():
@@ -48,7 +53,7 @@ def get_resource_chains(production_plan, earliest_start, complete=False):
                     successor = resource_activities[i]
                     resource_chains.append((predecessor["ProductIndex"], predecessor["Activity"], successor["ProductIndex"], successor["Activity"]))
     print(f'resource chains found')
-    return resource_chains, resource_use
+    return resource_chains, resource_assignment
 
 
 def add_resource_chains(stn, resource_chains, reservation_factor=0.75):
