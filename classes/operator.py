@@ -53,7 +53,10 @@ class OperatorSTN:
                 (product_index, activity_id) = activities_that_can_start[0]
                 self.sent_activities.append((product_index, activity_id))
 
-        return send_activity, delay, activity_id, product_index, finish
+                # TODO: obtain preferred machines according to CP output
+            preferred_resources = []
+
+        return send_activity, delay, activity_id, product_index, finish, preferred_resources
 
     def set_start_time(self, activity_id, product_index, start_time, resources):
         node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_START)]
@@ -64,10 +67,12 @@ class OperatorSTN:
                                               "resource_group": resource.resource_group,
                                               "id": resource.id})
         # Check whether this matches with the original CP resource assignment
-        if {'product': product_index, 'activity': activity_id, "resource_group": resource.resource_group, "id": resource.id} in self.resource_use_cp:
-            print(f'Resource assignment matches')
-        else:
-            print(f'Resource assignment does not match')
+            if {'product': product_index, 'activity': activity_id, "resource_group": resource.resource_group, "id": resource.id} in self.resource_use_cp:
+                print(f'Resource assignment matches')
+            else:
+                print(f'Resource assignment does not match')
+
+            # TODO: should we have a CP rescheduling here
 
         self.stn.add_tight_constraint(STN.ORIGIN_IDX, node_idx, start_time, propagate=True)
 

@@ -11,7 +11,7 @@ from classes.classes import ProductionPlan
 import json
 
 # Set up a factory
-fp = open('factory_data/instances_legacy/stochastic/data_stochastic.json', 'r')
+fp = open('factory_data/stochastic/data_stochastic.json', 'r')
 factory = Factory(**json.load(fp))
 
 # Set up a production plan for this factory
@@ -23,10 +23,10 @@ my_productionplan.list_products()
 my_productionplan.set_sequence(sequence=[0, 1])
 
 # This is the new format for the simulator input
-earliest_start = [{"product_index": 0, "activity_id": 0, "earliest_start": 0},
-                  {"product_index": 0, "activity_id": 1, "earliest_start": 1},
-                  {"product_index": 1, "activity_id": 0, "earliest_start": 2},
-                  {"product_index": 1, "activity_id": 1, "earliest_start": 3}]
+earliest_start = [{"product_id": 0, "activity_id": 0, "earliest_start": 0},
+                  {"product_id": 0, "activity_id": 1, "earliest_start": 1},
+                  {"product_id": 1, "activity_id": 0, "earliest_start": 2},
+                  {"product_id": 1, "activity_id": 1, "earliest_start": 3}]
 my_productionplan.set_earliest_start_times(earliest_start)
 
 # create scenario and store
@@ -61,13 +61,13 @@ if constraint_checking:
         for (i, j) in product.temporal_relations:
             print(i, j)
             print(f'The difference between the start time of activity {i} and activity {j} '
-                  f'from product {p} should be exactly {product.temporal_relations[(i, j)].min_lag}')
+                  f'from product {p} should be exactly {product.temporal_relations[(i, j)]}')
             start_i = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == i)]['Start'].values[0]
             start_j = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == j)]['Start'].values[0]
 
             print(
                 f'The simulated difference between the start time of activity {i} and activity {j} is {start_j - start_i}')
-            if start_j - start_i == product.temporal_relations[(i, j)].min_lag:
+            if start_j - start_i == product.temporal_relations[(i, j)]:
                 print("CONSTRAINT SATISFIED")
             else:
                 print("CONSTRAINT VIOLATED")

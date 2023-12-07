@@ -18,8 +18,8 @@ class Simulator(BaseSimulator):
 
         # Ask operator about next activity
         while not finish:
-
-            send_activity, delay, activity_id, product_index, finish = self.operator.send_next_activity(current_time=self.env.now)
+            send_activity, delay, activity_id, product_index, finish, preferred_resources\
+                = self.operator.send_next_activity(current_time=self.env.now)
 
             if send_activity:
                 needs = self.plan.products[product_index].activities[activity_id].needs
@@ -54,7 +54,7 @@ class Simulator(BaseSimulator):
         """
         # Trace back the moment in time that the resources are requested
         request_time = self.env.now
-
+        self.logger.info.to_csv('simulators/simulator8/logger_info.csv')
         self.logger.failure_code = (
                 self._precedence_constraint_check(product_index, activity_id)
                 or self._availability_constraint_check(needs, product_index, activity_id)
@@ -66,6 +66,7 @@ class Simulator(BaseSimulator):
                 print(
                     f'At time {self.env.now}: product index {product_index} activity {activity_id} requests resources')
 
+            # TODO: should we here also have an option where we request a specific resource ID
             # SimPy request
             resources = []
             assert len(needs) == len(self.resource_names)

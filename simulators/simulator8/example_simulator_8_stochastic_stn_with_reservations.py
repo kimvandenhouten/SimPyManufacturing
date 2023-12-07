@@ -97,10 +97,8 @@ for instance_size in [10]:
 
         # Can we also check what the true optimal makespan would have been with perfect information?
         rcpsp = RCPSP_CP(scenario_1.production_plan)
-        solution, callback, data_df = rcpsp.solve(time_limit=60, l1=1, l2=0,
+        solution, callback, cp_output = rcpsp.solve(time_limit=60, l1=1, l2=0,
                                                   output_file=f"start times {instance_name}.csv")
-        cp_output = data_df
-
         makespan_cp_output = max(cp_output["end"].tolist())
 
         print(f'makespan under perfect information for this scenario is {makespan_cp_output}')

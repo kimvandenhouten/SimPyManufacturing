@@ -7,7 +7,7 @@ import numpy as np
 size = 10
 id = 1
 instance_name = f"{size}_{id}_factory_1"
-my_productionplan = pd.read_pickle(f"factory_data/instances_legacy/instances_new/instance_{instance_name}.pkl")
+my_productionplan = pd.read_pickle(f"factory_data/instances_new/instance_{instance_name}.pkl")
 my_productionplan.set_sequence(sequence=np.arange(size))
 
 from classes.simulator_3 import Simulator
@@ -27,12 +27,12 @@ for p, product in enumerate(my_productionplan.products):
     for (i, j) in product.temporal_relations:
         print(i, j)
         print(f'The difference between the start time of activity {i} and activity {j} '
-              f'from product {p} should be exactly {product.temporal_relations[(i, j)].min_lag}')
+              f'from product {p} should be exactly {product.temporal_relations[(i, j)]}')
         start_i = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == i)]['Start'].values[0]
         start_j = gannt.loc[(gannt['Product'] == p) & (gannt['Activity'] == j)]['Start'].values[0]
 
         print(f'The simulated difference between the start time of activity {i} and activity {j} is {start_j-start_i}')
-        if start_j-start_i == product.temporal_relations[(i, j)].min_lag:
+        if start_j-start_i == product.temporal_relations[(i, j)]:
             print("CONSTRAINT SATISFIED")
         else:
             print("CONSTRAINT VIOLATED")
