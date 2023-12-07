@@ -4,6 +4,7 @@ from classes.classes import Scenario, ProductionPlan, STN
 from classes.operator import OperatorSTN
 from classes.simulator_8 import Simulator
 from stn.get_resource_chains_reservations import get_resource_chains, add_resource_chains
+from stn.get_compatibility_chains import get_compatibility_chains
 import numpy as np
 from solvers.RCPSP_CP import RCPSP_CP
 
@@ -12,28 +13,22 @@ In this script we test the instances type 2 that do have a max time lag
 """
 
 # Settings
-policy_type = 1
 printing = True
 printing_output = True
 compatibility = True
 max_time_lag = False
 seed = 3
 reservation_factor = 0.7
-read_output = False
+read_cp_output = False
 
 for instance_size in [10]:
     for instance_id in range(1, 2):
-        # Read CP output and convert
         instance_name = f"{instance_size}_{instance_id}_factory_1"
-        file_name = instance_name
-
-        # Deterministic check:
-        # Read CP output and instance
         my_productionplan = ProductionPlan(
             **json.load(open('factory_data/development/instances_type_1_uniform/instance_' + instance_name + '.json')))
         my_productionplan.set_sequence(sequence=np.arange(instance_size))
-        if read_output:
-            cp_output = pd.read_csv(f"results/cp_model/development/instances_type_2/start times {file_name}.csv")
+        if read_cp_output:
+            cp_output = pd.read_csv(f"results/cp_model/development/instances_type_2/start times {instance_name}.csv")
         else:
             rcpsp = RCPSP_CP(my_productionplan)
             solution, callback, data_df = rcpsp.solve(time_limit=60, l1=1, l2=0, output_file=f"start times {instance_name}.csv")
@@ -48,36 +43,13 @@ for instance_size in [10]:
 
         # Add resource constraints between incompatible pairs using sequencing decision from CP
         resource_chains, resource_use = get_resource_chains(production_plan=my_productionplan, earliest_start=earliest_start, complete=True)
-        print(resource_use)
         stn = add_resource_chains(stn=stn, resource_chains=resource_chains, reservation_factor=reservation_factor)
         print('resource chains added')
 
         # Add compatibility constraints between incompatible pairs using sequencing decision from CP:
         if compatibility:
-            for constraint in my_productionplan.factory.compatibility_constraints:
-                constraint_0_activities = cp_output[(cp_output['product_id'] == constraint[0]['product_id']) & (cp_output['activity_id'] == constraint[0]['activity_id'])]
-                constraint_1_activities = cp_output[(cp_output['product_id'] == constraint[1]['product_id']) & (cp_output['activity_id'] == constraint[1]['activity_id'])]
-                if len(constraint_0_activities) > 0 and len(constraint_1_activities) > 0:
-                    for index, row in constraint_0_activities.iterrows():
-                        product_index_0 = row["product_index"]
-                        activity_id_0 = row["activity_id"]
-                        start_0 = row['earliest_start']
-
-                        for index, row in constraint_1_activities.iterrows():
-                            product_index_1 = row["product_index"]
-                            activity_id_1 = row["activity_id"]
-                            start_1 = row['earliest_start']
-
-                        if start_0 < start_1:
-                            pred_idx = stn.translation_dict_reversed[(product_index_0, activity_id_0, STN.EVENT_FINISH)]
-                            suc_idx = stn.translation_dict_reversed[(product_index_1, activity_id_1, STN.EVENT_START)]
-
-                        else:
-                            pred_idx = stn.translation_dict_reversed[(product_index_1, activity_id_1, STN.EVENT_FINISH)]
-                            suc_idx = stn.translation_dict_reversed[(product_index_0, activity_id_0, STN.EVENT_START)]
-
-                        stn.add_interval_constraint(pred_idx, suc_idx, 0, np.inf)
-
+            stn = get_compatibility_chains(stn=stn, productionplan=my_productionplan, cp_output=cp_output)
+            print(f'Compatibility chains added')
         stn.floyd_warshall()   # Perform initial computation of shortest paths
         print(f'floyd warshall finished')
         operator = OperatorSTN(my_productionplan, stn, printing=printing, resource_use_cp=resource_use)
