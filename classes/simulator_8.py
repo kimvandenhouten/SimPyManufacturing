@@ -18,13 +18,13 @@ class Simulator(BaseSimulator):
 
         # Ask operator about next activity
         while not finish:
-            send_activity, delay, activity_id, product_index, finish, preferred_resources\
+            send_activity, delay, activity_id, product_index, finish, required_resources\
                 = self.operator.send_next_activity(current_time=self.env.now)
 
             if send_activity:
                 needs = self.plan.products[product_index].activities[activity_id].needs
                 proc_time = max(self.plan.products[product_index].activities[activity_id].processing_time[0], 1)
-                self.env.process(self.activity_processing(activity_id, product_index, proc_time, needs))
+                self.env.process(self.activity_processing(activity_id, product_index, proc_time, needs, required_resources))
 
             # Generator object that does a time-out for a time period equal to delay value
             yield self.env.timeout(delay)
@@ -44,7 +44,7 @@ class Simulator(BaseSimulator):
         self.nr_clashes += 1
         return failed
 
-    def activity_processing(self, activity_id, product_index, proc_time, needs):
+    def activity_processing(self, activity_id, product_index, proc_time, needs, required_resources):
         """
         :param activity_id: id of the activity (int)
         :param product_index: id of the product (int)
@@ -66,15 +66,12 @@ class Simulator(BaseSimulator):
                 print(
                     f'At time {self.env.now}: product index {product_index} activity {activity_id} requests resources')
 
-            # TODO: should we here also have an option where we request a specific resource ID
             # SimPy request
-            resources = []
-            assert len(needs) == len(self.resource_names)
-            for need, resource_name in zip(needs, self.resource_names):
-                if need > 0:
-                    for _ in range(0, need):
-                        resource = yield self.factory.get(lambda resource: resource.resource_group == resource_name)
-                        resources.append(resource)
+            for (resource_name, resource_id) in required_resources:
+                resources = []
+                resource = yield self.factory.get(lambda resource: resource.resource_group == resource_name and
+                                                                   resource.id == resource_id)
+                resources.append(resource)
 
             # Trace back the moment in time that the resources are retrieved
             retrieve_time = self.env.now

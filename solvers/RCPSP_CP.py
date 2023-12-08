@@ -140,6 +140,7 @@ class RCPSP_CP:
         return res, callback, data_df
 
     def reschedule(self, logger_info, time_limit=10, l1=0.5, l2=0.5, output_file="results.csv"):
+        # FIXME: currently there is quite some overlap in solve and reschedule
         # TODO: adjust durations based on known activities (review)
         durations = copy.copy(self.durations)
         for index, row in logger_info.iterrows():
@@ -182,7 +183,7 @@ class RCPSP_CP:
         mdl.add(minimize(l1 * max(end_of(t) for t in tasks) + l2 * sum(
             max(end_of(tasks[t]) - self.deadlines[t], 0) for t in range(nb_tasks))))
 
-        # TODO: add constraints on realized start times and end times
+        # TODO: add constraints on realized start times and end times (review)
         for index, row in logger_info.iterrows():
             product_index = row["ProductIndex"]
             activity_id = row["Activity"]

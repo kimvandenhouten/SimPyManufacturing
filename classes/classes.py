@@ -605,8 +605,6 @@ class STN:
                 new_d = d + self.shortest_distances[node_from][idx2]
                 if new_d < self.shortest_distances[idx1][idx2]:
                     self.shortest_distances[idx1][idx2] = new_d
-        print(f'At current lower bound between 0 and 173 is {-self.shortest_distances[173][0]}')
-        print(f'At current upper bound between 0 and 173 is {self.shortest_distances[0][173]}')
 
     def _verify_distances(self, force=False):
         if self.shortest_distances is None:
@@ -625,15 +623,6 @@ class STN:
                 raise ValueError(f"Can't set upper bound of {max_distance} between node_{node_from} and "
                                  f"node_{node_to}: lower bound is {lower_bound}")
             if min_distance > upper_bound:
-                # Print more information about errors:
-                if node_from > 1:
-                    print(f'Node from info {self.translation_dict[node_from]}')
-                else:
-                    print(f'Node from info {node_from}')
-                if node_to > 1:
-                    print(f'Node to info {self.translation_dict[node_to]}')
-                else:
-                    print(f'Node to info {node_to}')
                 raise ValueError(f"Can't set lower bound of {min_distance} between node_{node_from} and "
                                  f"node_{node_to}: upper bound is {upper_bound}")
 

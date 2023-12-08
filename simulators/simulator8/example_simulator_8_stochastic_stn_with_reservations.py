@@ -18,7 +18,7 @@ printing_output = True
 compatibility = True
 max_time_lag = False
 seed = 3
-reservation_factor = 0.7
+reservation_factor = 0.0
 read_cp_output = False
 
 for instance_size in [10]:
