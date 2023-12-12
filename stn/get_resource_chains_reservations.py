@@ -34,7 +34,6 @@ def get_resource_chains(production_plan, earliest_start, complete=False):
         activity = activities[(p.id, d['activity_id'])]
         for resource_index, required in enumerate(activity.needs):
             resource_group = resource_names[resource_index]
-            users = resource_use.setdefault((resource_group, resource_index), [])
             reservations = reserved_until[resource_index]
             assigned = []
             for idx in range(len(reservations)):
@@ -45,7 +44,8 @@ def get_resource_chains(production_plan, earliest_start, complete=False):
                     assigned.append({'product': d['product_index'],
                                      'activity': d['activity_id'],
                                      'resource_group': resource_group,
-                                     'id': resource_index})
+                                     'id': idx})
+                    users = resource_use.setdefault((resource_group, idx), [])
                     users.append({'ProductIndex': d['product_index'], 'Activity': d['activity_id'], 'Start': d['start']})
             if len(assigned) < required:
                 print(f'ERROR: only found {len(assigned)} of {required} resources (type {resource_index}) '
