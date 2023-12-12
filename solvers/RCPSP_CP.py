@@ -89,7 +89,7 @@ class RCPSP_CP:
             start_of(tasks[s]) <= start_of(tasks[t]) + self.max_lag[(t, s)] for t in range(nb_tasks) for s in self.successors[t] if
             self.max_lag[(t, s)] != None)
 
-        # Add combatibility constraints
+        # Add compatibility constraints
         mdl.add(no_overlap([tasks[i], tasks[j]]) for (i, j) in self.incompatible_tasks)
 
         # Constrain capacity of resources
@@ -136,6 +136,9 @@ class RCPSP_CP:
                              })
             data_df = pd.DataFrame(data)
             data_df.to_csv(output_file)
+        else:
+            print('WARNING: CP solver failed')
+            data_df = None
 
         return res, callback, data_df
 

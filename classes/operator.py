@@ -93,7 +93,7 @@ class OperatorSTN:
         for pred_activity_id in predecessors:
             temp_rel = self.plan.products[product_index].temporal_relations[(pred_activity_id, activity_id)]
             start_pred_log = logger.fetch_latest_entry(product_index,
-                                                            pred_activity_id, Action.START)
+                                                       pred_activity_id, Action.START)
             if temp_rel.max_lag and current_time + 1 - start_pred_log.timestamp > temp_rel.max_lag:
                 max_lag_problem = True
 

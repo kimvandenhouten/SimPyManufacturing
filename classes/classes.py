@@ -184,7 +184,7 @@ class Factory:
 class ProductionPlan:
     def __init__(self, id, size, name, factory, product_ids, deadlines, products=[], sequence=[], earliest_start=None):
         self.id = id
-        self.size = size
+        self.size = size  # FIXME: Remove this attribute: it is overwritten in list_products() and isn't used anywhere.
         self.name = name
         self.product_ids = product_ids
         self.deadlines = deadlines
@@ -228,7 +228,7 @@ class ProductionPlan:
         elif isinstance(factory, Factory):
             self.factory = factory
         else:
-            raise TypeError("Invalid type of data provided needed: product or dict provided:",
+            raise TypeError("Invalid type of data provided. Needed: Factory or dict. Provided:",
                             type(factory))
 
         products_obj = []
@@ -238,12 +238,10 @@ class ProductionPlan:
             elif isinstance(products, Product):
                 products_obj.append(product)
             else:
-                raise TypeError("Invalid type of data provided needed: product or dict provided:",
+                raise TypeError("Invalid type of data provided. Needed: Product or dict. Provided:",
                                 type(product))
 
         self.products = products_obj
-
-        x = 1
 
     def to_json(self):
         plan = copy.deepcopy(self)
@@ -488,10 +486,6 @@ class STN:
 
         self.set_edge(self.HORIZON_IDX, self.ORIGIN_IDX, 0)
 
-    '''
-    Floyd-Warshall algorithm
-    Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
-    '''
     def remove_node(self, node_idx):
         # Remove a certain node and corresponding edges from the dictionary
         self.nodes.remove(node_idx)
@@ -505,6 +499,10 @@ class STN:
         description = self.translation_dict.pop(node_idx)
         self.translation_dict_reversed.pop(description)
 
+    '''
+    Floyd-Warshall algorithm
+    Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
+    '''
     def floyd_warshall(self):
         # Compute shortest distance graph path for this graph
         n = self.index

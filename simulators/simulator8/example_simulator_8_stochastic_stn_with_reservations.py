@@ -31,8 +31,7 @@ for instance_size in [10]:
             cp_output = pd.read_csv(f"results/cp_model/development/instances_type_2/start times {instance_name}.csv")
         else:
             rcpsp = RCPSP_CP(my_productionplan)
-            solution, callback, data_df = rcpsp.solve(time_limit=60, l1=1, l2=0, output_file=f"start times {instance_name}.csv")
-            cp_output = data_df
+            _, _, cp_output = rcpsp.solve(time_limit=60, l1=1, l2=0, output_file=f"start times {instance_name}.csv")
 
         makespan_cp_output = max(cp_output["end"].tolist())
         print(f'Makespan according to CP output is {makespan_cp_output}')
@@ -69,7 +68,7 @@ for instance_size in [10]:
 
         # Can we also check what the true optimal makespan would have been with perfect information?
         rcpsp = RCPSP_CP(scenario_1.production_plan)
-        solution, callback, cp_output = rcpsp.solve(time_limit=60, l1=1, l2=0,
+        _, _, cp_output = rcpsp.solve(time_limit=60, l1=1, l2=0,
                                                   output_file=f"start times {instance_name}.csv")
         makespan_cp_output = max(cp_output["end"].tolist())
 
