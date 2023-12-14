@@ -60,7 +60,15 @@ class UniformDiscreteDistribution(Distribution):
         self.lb = lb
         self.ub = ub
 
+        # FIXME: it should be clearer in the input what exactly means lb and ub
+        if self.ub < self.lb:
+            print(f'WARNING LB IS LARGER THAN UB')
+        elif self.ub == self.lb:
+            self.ub = self.lb + 1
+
     def sample(self):
+        if self.ub < self.lb:
+            print(f'WARNING LB IS LARGER THAN UB')
         return np.random.randint(self.lb, self.ub)
 
 
