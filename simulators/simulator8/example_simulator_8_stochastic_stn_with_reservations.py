@@ -19,7 +19,7 @@ max_time_lag = False
 reservation_factor = 0.0
 
 # Load instance data
-instance_size = 20
+instance_size = 10
 instance_id = 1
 instance_name = f"{instance_size}_{instance_id}_factory_1"
 my_productionplan = ProductionPlan(
