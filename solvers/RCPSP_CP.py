@@ -69,9 +69,8 @@ class RCPSP_CP:
             for a in indices_1:
                 for b in indices_2:
                     self.incompatible_tasks.append((a, b))
-        print(self.incompatible_tasks)
 
-    def solve(self, time_limit=10, l1=0.5, l2=0.5, output_file="results.csv"):
+    def solve(self, time_limit=10, l1=0.5, l2=0.5, write=False, output_file="results.csv"):
         demands = self.resources
         capacities = self.capacity
         nb_tasks = len(self.durations)
@@ -122,7 +121,7 @@ class RCPSP_CP:
 
         # Solve model
         print('Solving model...')
-        res = mdl.solve(TimeLimit=time_limit, Workers=1, )
+        res = mdl.solve(TimeLimit=time_limit, Workers=1, LogVerbosity="Quiet")
 
         data = []
         if res:
@@ -135,7 +134,8 @@ class RCPSP_CP:
                              'product_id': self.product_id_translation[i]
                              })
             data_df = pd.DataFrame(data)
-            data_df.to_csv(output_file)
+            if write:
+                data_df.to_csv(output_file)
         else:
             print('WARNING: CP solver failed')
             data_df = None

@@ -53,7 +53,8 @@ class OperatorSTN:
                 activity_id, product_index, required_resources = None, None, None
 
             else:
-                print(f'At time {current_time}: activities that can start {activities_that_can_start}')
+                if self.printing:
+                    print(f'At time {current_time}: activities that can start {activities_that_can_start}')
                 delay = 0
                 send_activity = True
                 (product_index, activity_id) = activities_that_can_start[0]
@@ -64,7 +65,8 @@ class OperatorSTN:
 
     def set_start_time(self, activity_id, product_index, start_time, resources):
         node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_START)]
-        print(f"setting start time for prod {product_index} act {activity_id} with node index {node_idx}")
+        if self.printing:
+            print(f"setting start time for prod {product_index} act {activity_id} with node index {node_idx}")
         for resource in resources:
             self.resource_use_factory.append({'product': product_index,
                                               'activity': activity_id,
@@ -79,7 +81,8 @@ class OperatorSTN:
 
     def set_end_time(self, activity_id, product_index, end_time):
         node_idx = self.stn.translation_dict_reversed[(product_index, activity_id, STN.EVENT_FINISH)]
-        print(f"setting end time for prod {product_index} act {activity_id} with node index {node_idx}")
+        if self.printing:
+            print(f"setting end time for prod {product_index} act {activity_id} with node index {node_idx}")
         self.stn.add_tight_constraint(STN.ORIGIN_IDX, node_idx, end_time, propagate=True)
 
     def signal_failed_activity(self, product_index, activity_id, current_time, logger):

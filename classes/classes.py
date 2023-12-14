@@ -192,6 +192,7 @@ class ProductionPlan:
         self.earliest_start = earliest_start
         self._set_factory(factory, products)
         self.list_products()
+        self.set_sequence(np.arange(self.size))
 
     def list_products(self):
         """
@@ -207,6 +208,7 @@ class ProductionPlan:
         self.size = len(self.product_ids)
 
     def set_sequence(self, sequence):
+        # FIXME: we no longer use this sequence but still the production plan breaks down if we don't have it
         """
         Give the sequence in which the products will be processed
         :param sequence: list of integers
