@@ -74,7 +74,22 @@ class Activity:
             return TypeError("Illegal distribution type: ", type(constraint))
 
 
-class Product:
+class JSONParseable:
+    @classmethod
+    def parse_if_needed(cls, items):
+        result = []
+        for obj in items:
+            if isinstance(obj, cls):
+                result.append(obj)
+            elif isinstance(obj, dict):
+                result.append(cls(**obj))
+            else:
+                raise TypeError(f"Invalid type of data provided. Needed: {cls.__name__} or dict. "
+                                f"Provided: {type(obj).__name__}")
+        return result
+
+
+class Product(JSONParseable):
     def __init__(self, id, name, activities=None, temporal_relations=None, deadline=int(), predecessors=None,
                  successors=None, product_index=None):
         self.id = id
@@ -138,11 +153,11 @@ class Product:
 class Factory:
     def __init__(self, name, resource_names, capacity, compatibility_constraints=[], products=None):
         self.name = name
-        self._set_products(products)
+        self.products = Product.parse_if_needed(products)
         self.resource_names = resource_names
         self.capacity = capacity
         self.compatibility_constraints = compatibility_constraints
-        #self.set_compatibility_constraints(compatibility_constraints)
+        # self.set_compatibility_constraints(compatibility_constraints)
 
     def add_product(self, product):
         """
