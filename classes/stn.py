@@ -3,6 +3,9 @@ from typing import Union, Any
 import numpy as np
 
 from classes.classes import ProductionPlan
+import classes.general
+
+logger = classes.general.get_logger()
 
 
 class STN:
@@ -101,6 +104,8 @@ class STN:
     def floyd_warshall(self):
         # Compute shortest distance graph path for this graph
         n = self.index
+        logger.debug(f"Running Floyd-Warshall on instance with {n} nodes and {sum(1 for d in self.edges.values() for _ in d)} edges")
+
         assert n >= len(self.nodes)
         w = np.full((n, n), np.inf)
         np.fill_diagonal(w, 0)
