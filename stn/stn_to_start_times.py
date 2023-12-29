@@ -1,5 +1,6 @@
 import json
-from classes.classes import ProductionPlan, STN
+from classes.classes import ProductionPlan
+from classes.stn import STN
 import numpy as np
 import pandas as pd
 

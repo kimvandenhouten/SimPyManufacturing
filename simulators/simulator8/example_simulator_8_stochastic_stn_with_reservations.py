@@ -1,5 +1,6 @@
 import json
-from classes.classes import ProductionPlan, STN
+from classes.classes import ProductionPlan
+from classes.stn import STN
 from classes.operator import OperatorSTN
 from classes.simulator_8 import Simulator
 from stn.get_resource_chains_reservations import get_resource_chains, add_resource_chains

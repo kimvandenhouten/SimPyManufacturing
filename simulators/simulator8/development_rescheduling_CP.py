@@ -1,5 +1,5 @@
 import json
-from classes.classes import Scenario, ProductionPlan, STN
+from classes.classes import ProductionPlan
 import numpy as np
 from solvers.RCPSP_CP import RCPSP_CP
 import pandas as pd

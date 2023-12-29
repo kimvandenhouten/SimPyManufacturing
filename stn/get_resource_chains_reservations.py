@@ -1,6 +1,4 @@
-from classes.operator import Operator
-from classes.simulator_7 import Simulator
-from classes.classes import STN
+from classes.stn import STN
 import numpy as np
 
 

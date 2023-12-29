@@ -2,8 +2,8 @@ import random
 import numpy as np
 import copy
 
-from classes.classes import FailureCode, STN
-from classes.classes import SimulatorLogger, Action, FailureCode
+from classes.stn import STN
+from classes.classes import Action, FailureCode
 
 
 class OperatorSTN:
