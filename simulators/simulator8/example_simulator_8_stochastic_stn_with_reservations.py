@@ -20,6 +20,7 @@ printing_output = True
 compatibility = True
 max_time_lag = False
 reservation_factor = 0.0
+use_p3c = True
 
 # Load instance data
 instance_size = 10
@@ -40,9 +41,15 @@ resource_chains, resource_use = get_resource_chains(my_productionplan, earliest_
 stn = STN.from_production_plan(my_productionplan, stochastic=True, max_time_lag=max_time_lag)
 stn = add_resource_chains(stn=stn, resource_chains=resource_chains, reservation_factor=reservation_factor)
 stn = get_compatibility_chains(stn=stn, productionplan=my_productionplan, cp_output=cp_output)
-logger.info(f'start floyd warshall')
-stn.floyd_warshall()   # Perform initial computation of shortest paths
-logger.info(f'floyd warshall finished')
+
+if use_p3c:
+    logger.info('start p3c')
+    stn.p3c()   # Perform initial computation of shortest paths
+    logger.info('p3c finished')
+else:
+    logger.info(f'start floyd warshall')
+    stn.floyd_warshall()   # Perform initial computation of shortest paths
+    logger.info(f'floyd warshall finished')
 
 # Create
 for seed in range(0, 200):

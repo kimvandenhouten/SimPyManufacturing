@@ -1,4 +1,6 @@
-from typing import Union, Any
+import itertools
+from abc import ABC
+from typing import Any, Iterable, Union
 
 import numpy as np
 
@@ -6,6 +8,24 @@ from classes.classes import ProductionPlan
 import classes.general
 
 logger = classes.general.get_logger()
+
+
+class VertexOrdering(Iterable[int], ABC):
+    """Abstract base class for vertex orderings"""
+    def __init__(self, stn: "STN"):
+        self.stn = stn
+
+
+class StaticMinDegree(VertexOrdering):
+    order: list[int]
+
+    def __init__(self, stn: "STN"):
+        super().__init__(stn)
+        self.order = [x for x in stn.nodes]
+        self.order.sort(key=lambda x: len(stn.edges[x]))
+
+    def __iter__(self):
+        return iter(self.order)
 
 
 class STN:
@@ -19,7 +39,7 @@ class STN:
     nodes: set[int]
     edges: dict[int, dict[int, float]]
     removed_nodes: list[int]
-    shortest_distances: Union[np.ndarray, None]
+    shortest_distances: Union[np.ndarray, dict[int, dict[int, float]], None]
     index: int
     translation_dict: dict[int, Any]
     translation_dict_reversed: dict[Any, int]
@@ -97,12 +117,62 @@ class STN:
         description = self.translation_dict.pop(node_idx)
         self.translation_dict_reversed.pop(description)
 
-    '''
-    Floyd-Warshall algorithm
-    Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
-    '''
+    def p3c(self, vertex_ordering: VertexOrdering = None):
+        """
+        P3C algorithm
+
+        Compute shortest paths only for the chordal graph induced by the given ordering
+        """
+        def triangle(a, b, c):
+            ab = self.shortest_distances[a].setdefault(b, self.edges[a][b])
+            bc = self.shortest_distances[b].setdefault(c, self.edges[b][c])
+            if ab + bc > self.shortest_distances[a].setdefault(c, self.edges[a][c]):
+                self.shortest_distances[a][c] = ab + bc
+                return True
+            else:
+                return False
+
+        logger.debug(f"Running P3C on instance with {len(self.nodes)} nodes and {sum(1 for d in self.edges.values() for _ in d)} edges")
+
+        if not vertex_ordering:
+            vertex_ordering = StaticMinDegree(self)
+
+        self.shortest_distances = {v: {} for v in self.nodes}
+
+        seen = set()
+        order = []
+        for u in vertex_ordering:
+            order.append(u)
+            neighbours = self.edges[u].keys() - seen
+            for (v, w) in itertools.combinations(neighbours, 2):
+                if w not in self.edges[v]:
+                    # Insert fill edges
+                    assert v not in self.edges[w]
+                    self.edges[v][w] = np.inf
+                    self.edges[w][v] = np.inf
+                triangle(v, u, w)
+                triangle(w, u, v)
+            seen.add(u)
+
+        for u in reversed(order):
+            neighbours = self.edges[u].keys() - seen
+            for (v, w) in itertools.combinations(neighbours, 2):
+                assert w in self.edges[v] and v in self.edges[w]
+                triangle(u, v, w)
+                triangle(u, w, v)
+                triangle(v, w, u)
+                triangle(w, v, u)
+            seen.remove(u)
+
+        logger.debug(f" P3C done. New edge count: {sum(1 for d in self.edges.values() for _ in d)}")
+
+
     def floyd_warshall(self):
-        # Compute shortest distance graph path for this graph
+        """
+        Floyd-Warshall algorithm
+
+        Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
+        """
         n = self.index
         logger.debug(f"Running Floyd-Warshall on instance with {n} nodes and {sum(1 for d in self.edges.values() for _ in d)} edges")
 
