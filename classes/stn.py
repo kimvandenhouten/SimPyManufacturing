@@ -1,5 +1,7 @@
+import heapq
 import itertools
 from abc import ABC
+from collections import Counter
 from typing import Any, Iterable, Union
 
 import numpy as np
@@ -12,6 +14,7 @@ logger = classes.general.get_logger()
 
 class VertexOrdering(Iterable[int], ABC):
     """Abstract base class for vertex orderings"""
+
     def __init__(self, stn: "STN"):
         self.stn = stn
 
@@ -21,11 +24,44 @@ class StaticMinDegree(VertexOrdering):
 
     def __init__(self, stn: "STN"):
         super().__init__(stn)
-        self.order = [x for x in stn.nodes]
-        self.order.sort(key=lambda x: len(stn.edges[x]))
+        self.order = sorted(stn.nodes, key=lambda x: len(stn.edges[x]))
 
     def __iter__(self):
         return iter(self.order)
+
+
+class DynamicMinDegree(VertexOrdering):
+    def __init__(self, stn: "STN"):
+        super().__init__(stn)
+        self.sorted_nodes = sorted(stn.nodes, key=lambda x: len(stn.edges[x]))
+        self.running = False
+
+    def __iter__(self):
+        if self.running:
+            raise Exception("already iterating")
+        self.running = True
+        return self._generator()
+
+    def _generator(self):
+        eliminated = set()
+
+        def active(nodes):
+            return (x for x in nodes if x not in eliminated)
+
+        def degree(v):
+            return sum(1 for _ in active(edges[v].keys()))
+
+        edges = self.stn.edges
+        if not self.running:
+            raise Exception("must be invoked through __iter__")
+        while self.sorted_nodes:
+            v = self.sorted_nodes[0]
+            yield v
+            eliminated.add(v)
+            to_update = sorted(active(edges[v].keys()), key=degree)
+            remainder = (x for x in self.sorted_nodes[1:] if x not in to_update)
+            self.sorted_nodes = list(heapq.merge(to_update, remainder, key=degree))
+        self.running = False
 
 
 class STN:
@@ -117,12 +153,32 @@ class STN:
         description = self.translation_dict.pop(node_idx)
         self.translation_dict_reversed.pop(description)
 
+    def log_graph_statistics(self):
+        logger.debug(
+            f"Running P3C on instance with {len(self.nodes)} nodes and {sum(1 for d in self.edges.values() for _ in d)} edges")
+
+        rigid_count = 0
+        degrees = Counter()
+        for v in self.edges:
+            degrees[len(self.edges[v])] += 1
+            for w in self.edges[v]:
+                if w < v:
+                    continue
+                elif w == v:
+                    assert False
+                if self.edges[v][w] + self.edges[w][v] == 0:
+                    rigid_count += 1
+
+        logger.debug(f"vertex degrees: {sorted(degrees.items(), reverse=True)}")
+        logger.debug(f"# rigid constraints: {rigid_count}")
+
     def p3c(self, vertex_ordering: VertexOrdering = None):
         """
         P3C algorithm
 
         Compute shortest paths only for the chordal graph induced by the given ordering
         """
+
         def triangle(a, b, c):
             ab = self.shortest_distances[a].setdefault(b, self.edges[a][b])
             bc = self.shortest_distances[b].setdefault(c, self.edges[b][c])
@@ -132,10 +188,10 @@ class STN:
             else:
                 return False
 
-        logger.debug(f"Running P3C on instance with {len(self.nodes)} nodes and {sum(1 for d in self.edges.values() for _ in d)} edges")
+        self.log_graph_statistics()
 
         if not vertex_ordering:
-            vertex_ordering = StaticMinDegree(self)
+            vertex_ordering = DynamicMinDegree(self)
 
         self.shortest_distances = {v: {} for v in self.nodes}
 
@@ -164,8 +220,8 @@ class STN:
                 triangle(w, v, u)
             seen.remove(u)
 
-        logger.debug(f" P3C done. New edge count: {sum(1 for d in self.edges.values() for _ in d)}")
-
+        logger.debug(f"P3C done.")
+        self.log_graph_statistics()
 
     def floyd_warshall(self):
         """
