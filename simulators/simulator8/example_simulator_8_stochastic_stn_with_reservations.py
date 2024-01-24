@@ -15,7 +15,7 @@ In this script we test the simulation that use the STN to run send activitites
 logger = classes.general.get_logger()
 
 # Settings
-printing = False
+printing = True
 printing_output = True
 compatibility = True
 max_time_lag = False
@@ -23,7 +23,7 @@ reservation_factor = 0.0
 use_p3c = True
 
 # Load instance data
-instance_size = 10
+instance_size = 40
 instance_id = 1
 instance_name = f"{instance_size}_{instance_id}_factory_1"
 my_productionplan = ProductionPlan(
@@ -51,8 +51,12 @@ else:
     stn.floyd_warshall()   # Perform initial computation of shortest paths
     logger.info(f'floyd warshall finished')
 
+#for (x, d) in stn.shortest_distances.items():
+#    for (y, w) in d.items():
+#        assert stn_copy.shortest_distances[x][y] == w
+
 # Create
-for seed in range(0, 200):
+for seed in range(0, 1):
     logger.info(f'start scenario {seed}')
     stn_copy = copy.deepcopy(stn)  # FIXME: could we avoid deepcopy
     productionplan_copy = copy.deepcopy(my_productionplan)  # FIXME: could we avoid deepcopy

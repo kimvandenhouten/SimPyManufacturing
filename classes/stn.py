@@ -7,6 +7,7 @@ from typing import Any, Iterable, Union
 import numpy as np
 
 from classes.classes import ProductionPlan
+from classes.util import ListNode
 import classes.general
 
 logger = classes.general.get_logger()
@@ -65,15 +66,17 @@ class DynamicMinDegree(VertexOrdering):
 
 
 class STN:
-    VERIFY_PROBABILITY = 0  # In 10% of cases, verify that computed distances were correct
     EVENT_START = "start"
     EVENT_FINISH = "finish"
     EVENT_RESERVATION = "reservation"
     ORIGIN_IDX = 0
     HORIZON_IDX = 1
+    SOLUTION_TYPE_FPC = "FPC"
+    SOLUTION_TYPE_PPC = "PPC"
 
     nodes: set[int]
     edges: dict[int, dict[int, float]]
+    solution_type: str
     removed_nodes: list[int]
     shortest_distances: Union[np.ndarray, dict[int, dict[int, float]], None]
     index: int
@@ -126,6 +129,7 @@ class STN:
         # Set-up nodes and edges
         self.nodes = {self.ORIGIN_IDX, self.HORIZON_IDX}
         self.edges = {node: {} for node in self.nodes}
+        self.solution_type = None
 
         self.removed_nodes = []
 
@@ -172,17 +176,23 @@ class STN:
         logger.debug(f"vertex degrees: {sorted(degrees.items(), reverse=True)}")
         logger.debug(f"# rigid constraints: {rigid_count}")
 
-    def p3c(self, vertex_ordering: VertexOrdering = None):
+    def check_solution_type(self, solution_type: str):
+        if self.solution_type not in (None, solution_type):
+            raise Exception("Incompatible solution type")
+        self.solution_type = solution_type
+
+    def p3c(self, vertex_ordering_class: type[VertexOrdering] = DynamicMinDegree):
         """
         P3C algorithm
 
         Compute shortest paths only for the chordal graph induced by the given ordering
         """
+        self.check_solution_type(self.SOLUTION_TYPE_PPC)
 
         def triangle(a, b, c):
             ab = self.shortest_distances[a].setdefault(b, self.edges[a][b])
             bc = self.shortest_distances[b].setdefault(c, self.edges[b][c])
-            if ab + bc > self.shortest_distances[a].setdefault(c, self.edges[a][c]):
+            if ab + bc < self.shortest_distances[a].setdefault(c, self.edges[a][c]):
                 self.shortest_distances[a][c] = ab + bc
                 return True
             else:
@@ -190,8 +200,7 @@ class STN:
 
         self.log_graph_statistics()
 
-        if not vertex_ordering:
-            vertex_ordering = DynamicMinDegree(self)
+        vertex_ordering = vertex_ordering_class(self)
 
         self.shortest_distances = {v: {} for v in self.nodes}
 
@@ -229,8 +238,11 @@ class STN:
 
         Compute a matrix of shortest-path weights (if the graph contains no negative cycles)
         """
+        self.check_solution_type(self.SOLUTION_TYPE_FPC)
+
         n = self.index
-        logger.debug(f"Running Floyd-Warshall on instance with {n} nodes and {sum(1 for d in self.edges.values() for _ in d)} edges")
+        logger.debug(
+            f"Running Floyd-Warshall on instance with {n} nodes and {sum(1 for d in self.edges.values() for _ in d)} edges")
 
         assert n >= len(self.nodes)
         w = np.full((n, n), np.inf)
@@ -292,16 +304,25 @@ class STN:
         self.bounds_check(node_from, node_to, min_distance, max_distance)
 
         if self.set_edge(node_from, node_to, max_distance) and propagate:
-            self.ifpc(node_from, node_to, max_distance)
+            self.incremental(node_from, node_to, max_distance)
         if self.set_edge(node_to, node_from, -min_distance) and propagate:
-            self.ifpc(node_to, node_from, -min_distance)
-
-        assert self._verify_distances()
+            self.incremental(node_to, node_from, -min_distance)
 
     def add_tight_constraint(self, node_from, node_to, distance, propagate=False):
         self.add_interval_constraint(node_from, node_to, distance, distance, propagate)
 
+    def incremental(self, node_from, node_to, distance):
+        if self.solution_type is None:
+            raise Exception("please run Floyd-Warshall or P3C first")
+        elif self.solution_type == self.SOLUTION_TYPE_FPC:
+            return self.ifpc(node_from, node_to, distance)
+        elif self.solution_type == self.SOLUTION_TYPE_PPC:
+            return self.ippc(node_from, node_to, distance)
+        else:
+            raise Exception("unknown solution type")
+
     def ifpc(self, node_from, node_to, distance):
+        self.check_solution_type(self.SOLUTION_TYPE_FPC)
         if self.shortest_distances[node_from][node_to] <= distance:
             return
         self.shortest_distances[node_from][node_to] = distance
@@ -330,14 +351,71 @@ class STN:
                 if new_d < self.shortest_distances[idx1][idx2]:
                     self.shortest_distances[idx1][idx2] = new_d
 
-    def _verify_distances(self, force=False):
-        if self.shortest_distances is None:
-            return True
-        elif not force and np.random.random() > STN.VERIFY_PROBABILITY:
-            return True
+    def ippc(self, node_a, node_b, dist_a_b):
+        self.check_solution_type(self.SOLUTION_TYPE_PPC)
 
-        distances = self.shortest_distances
-        return np.array_equal(distances, self.floyd_warshall())
+        tagged = {node_a, node_b}
+        dist_to_a: dict[int] = {v: self.shortest_distances[v][node_a] for v in self.shortest_distances[node_a].keys()}
+        dist_from_b: dict[int] = {v: d for (v, d) in self.shortest_distances[node_b].items()}
+        tagged_neighbours = {}
+
+        def tag(v):
+            assert v not in tagged
+            tagged.add(v)
+
+            change = False
+
+            for u in tagged_neighbours.pop(v):
+                assert u in tagged
+                assert u in dist_to_a and v in dist_to_a
+                assert u in dist_from_b and v in dist_from_b
+                assert u in self.shortest_distances and v in self.shortest_distances
+                assert u in self.shortest_distances[v] and v in self.shortest_distances[u]
+
+                d = dist_to_a[u] + dist_a_b + dist_from_b[v]
+                if d < self.shortest_distances[u][v]:
+                    self.shortest_distances[u][v] = d
+                    change = True
+
+                d = dist_to_a[v] + dist_a_b + dist_from_b[u]
+                if d < self.shortest_distances[v][u]:
+                    self.shortest_distances[v][u] = d
+                    change = True
+
+            if change:
+                for u in self.edges[v]:
+                    if u in tagged:
+                        continue
+
+                    d = self.shortest_distances[u].get(v, np.inf) + dist_to_a[v]
+                    if d < dist_to_a.get(u, np.inf):
+                        dist_to_a[u] = d
+
+                    d = dist_from_b[v] + self.shortest_distances.get(v, np.inf)
+                    if d < dist_from_b.get(u, np.inf):
+                        dist_from_b[u] = d
+
+                    nb_list = tagged_neighbours.get(u, [])
+                    nb_list.append(v)
+                    # TODO Here, keep track of the size of nb_list in an efficient data structure
+
+        def max_count():
+            # TODO this is a proof of concept.  Re-implement in an efficient way
+            largest = None
+            maxlen = 0
+
+            for (v, nb_list) in tagged_neighbours.items():
+                if len(nb_list) > maxlen:
+                    largest, maxlen = v, len(nb_list)
+
+            return largest, maxlen
+
+        while True:
+            v, maxlen = max_count()
+            if v is None or maxlen < 2:
+                break
+            tag(v)
+
 
     def bounds_check(self, node_from, node_to, min_distance, max_distance):
         if self.shortest_distances is not None:
