@@ -354,6 +354,10 @@ class STN:
     def ippc(self, node_a, node_b, dist_a_b):
         self.check_solution_type(self.SOLUTION_TYPE_PPC)
 
+        if self.shortest_distances[node_a][node_b] <= dist_a_b:
+            return
+        self.shortest_distances[node_a][node_b] = dist_a_b
+
         tagged = {node_a, node_b}
         dist_to_a: dict[int] = {v: self.shortest_distances[v][node_a] for v in self.shortest_distances[node_a].keys()}
         dist_from_b: dict[int] = {v: d for (v, d) in self.shortest_distances[node_b].items()}
