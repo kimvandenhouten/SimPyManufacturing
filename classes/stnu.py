@@ -70,12 +70,9 @@ class STNU:
         self.ou_edges[node_from][node_to] = distance
 
     def remove_edge(self, node_from, node_to):
-
-        if node_from in self.ou_edges[node_from].values():
-            print(f'delete node {node_from} to {node_to} in ou edges')
+        if node_to in self.ou_edges[node_from]:
             del self.ou_edges[node_from][node_to]
-        if node_from in self.ol_edges[node_from].values():
-            print(f'delete node {node_from} to {node_to} in ol edges')
+        if node_to in self.ol_edges[node_from]:
             del self.ol_edges[node_from][node_to]
 
     def add_interval_constraint(self, node_from, node_to, min_distance, max_distance):
