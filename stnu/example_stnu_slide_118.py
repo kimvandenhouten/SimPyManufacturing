@@ -1,5 +1,5 @@
 from classes.stnu import STNU
-from dc_checking import convert_to_normal_form, dc_checking
+from dc_checking import convert_to_normal_form, determine_dc
 
 # Build simple example from slide 118
 stnu = STNU()
@@ -11,5 +11,5 @@ stnu.add_contingent_link('A', 'C', 2, 9)
 print(stnu)
 print('\n')
 
-dc_checking(stnu)
+determine_dc(stnu)
 
