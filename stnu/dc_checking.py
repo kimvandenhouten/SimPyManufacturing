@@ -218,10 +218,12 @@ def determine_dc(stnu):
             # recursion, this can be reset for every backprop call (Kim's assumption), global variable
             ancestor = [float("inf") for i in range(N)]
             if dc_backprop(node) is False:
+                logger.debug(f'Network after dc-checking \n{network}')
                 logger.debug(f'Network is not DC')
                 return False
 
     logger.debug(f'Network is DC')
+    logger.debug(f'Network after dc-checking \n{network}')
     return True
 
 
