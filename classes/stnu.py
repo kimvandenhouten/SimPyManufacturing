@@ -1,5 +1,6 @@
 from typing import Any, Iterable, Union
 import numpy as np
+from classes.classes import ProductionPlan
 
 class STNU:
     EVENT_START = "start"
@@ -46,14 +47,55 @@ class STNU:
         stringy += f"Contingent links (node_from, node_to, x, y): {self.contingent_links}\n"
         return stringy
 
-    def add_node(self, description):
+    @classmethod
+    def from_production_plan(cls, production_plan: ProductionPlan, max_time_lag=True) -> 'STNU':
+        stnu = cls()
+        for product in production_plan.products:
+            for activity in product.activities:
+                # Add nodes that refer to start and end of activity
+                a_start = stnu.add_node(product.product_index, activity.id, cls.EVENT_START)
+                a_finish = stnu.add_node(product.product_index, activity.id, cls.EVENT_FINISH)
+
+                # Add contingent link
+                # Possibly add function to distribution to convert distribution to uncertainty set
+                if activity.distribution.type == "UNIFORMDISCRETE":
+                    lower_bound = activity.distribution.lb
+                    upper_bound = activity.distribution.ub
+                    stnu.add_contingent_link(a_start, a_finish, lower_bound, upper_bound)
+                elif activity.distribution.type == "NORMAL":
+                    lower_bound = max(round(activity.distribution.mean - 5 * activity.distribution.variance), 0)
+                    upper_bound = round(activity.distribution.mean + 10 * activity.distribution.variance)
+                    stnu.add_contingent_link(a_start, a_finish, lower_bound, upper_bound)
+                else:
+                    ValueError("Uncertainty set not implemented for this distribution")
+
+            # For every temporal relation in this product's temporal_relations, add edge between nodes with min and max lag
+            for i, j in product.temporal_relations:
+                min_lag = product.temporal_relations[(i, j)].min_lag
+                max_lag = product.temporal_relations[(i, j)].max_lag
+                i_idx = stnu.translation_dict_reversed[(product.product_index, i, cls.EVENT_START)]
+                j_idx = stnu.translation_dict_reversed[(product.product_index, j, cls.EVENT_START)]
+
+                # TODO: make sure that the simulator - operator also works when max_time_lag = True
+                if max_time_lag:
+                    if max_lag is not None:
+                        stnu.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
+                    else:
+                        stnu.set_edge(j_idx, i_idx, -min_lag)
+                else:
+                    stnu.set_edge(j_idx, i_idx, -min_lag)
+        return stnu
+
+    def add_node(self, *description):
 
         node_idx = self.index
         self.index += 1
-
         self.nodes.add(node_idx)
         self.ou_edges[node_idx] = {}
         self.ol_edges[node_idx] = {}
+
+        # FIXME: this is quite an ugly implementation to distinguish between tuple and str descriptions
+        description = description[0] if len(description) == 1 else description
         self.translation_dict[node_idx] = description
         self.translation_dict_reversed[description] = node_idx
 

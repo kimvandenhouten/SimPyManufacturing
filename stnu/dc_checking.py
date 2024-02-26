@@ -18,12 +18,20 @@ def convert_to_normal_form(stnu):
     for (node_from, node_to, x, y) in contingent_links:
         if x > 0:
             name = stnu.translation_dict[node_to]
-            new_node_name = name + "".join([chr(randint(97,123)) for _ in range(9)])
-            stnu.add_node(new_node_name)
+            # FIXME: this is quite an ugly implementation to distinguish between tuple and str descriptions
+            if isinstance(name, tuple):
+                new_node_name = "activation".join([chr(randint(97,123)) for _ in range(3)])
+                (prod, act, event) = name
+                stnu.add_node(prod, act, new_node_name)
+                new_node_index = stnu.translation_dict_reversed[(prod, act, new_node_name)]
+            else:
+                new_node_name = name + "".join([chr(randint(97,123)) for _ in range(9)])
+                stnu.add_node(new_node_name)
+                new_node_index = stnu.translation_dict_reversed[new_node_name]
             stnu.remove_edge(node_from, node_to)
             stnu.remove_edge(node_to, node_from)
-            stnu.add_tight_constraint(node_from, new_node_name, x)
-            stnu.add_contingent_link(new_node_name, node_to, 0, y-x)
+            stnu.add_tight_constraint(node_from, new_node_index, x)
+            stnu.add_contingent_link(new_node_index, node_to, 0, y-x)
             stnu.contingent_links.remove((node_from, node_to, x, y))
 
     return stnu
@@ -181,6 +189,11 @@ def determine_dc(stnu):
                     logger.debug(f'We found a smaller distance from v {v} ({network.translation_dict[v]})'
                                  f' to source ({network.translation_dict[source]}), which changed from {distances[v]} to {new_distance}')
                     distances[v] = new_distance
+
+                    logger.debug(f'If DISPATCHABILITY is true, add UC edge {network.translation_dict[v]} '
+                                 f'to {network.translation_dict[source]} with weight {new_distance}')
+                    # TODO: if we want the algorithm to return an EF_STNU we should also keep track of negative edges
+                    #  that are found along the way
                     heapq.heappush(p_queue, (new_distance, v))
                     logger.debug(f'The priority queue is now {p_queue}')
 
