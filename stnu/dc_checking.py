@@ -133,8 +133,16 @@ def determine_dc(stnu):
                     # MORRIS It is useful to think of the  distance  calculation as taking place in the projection  where
                     # any initial  contingent   link takes  on its maximum  duration and every other contingent link has
                     # its minimum. An unsuitable edge does not belong to that  projection.
+
+                    # KIM: from the temporal networks repository I now understand that this holds when
                     # FIXME: check if this edge is unsuitable, this is currently not implemented yet
-                    print(network.contingent_links)
+                    for (node_from, node_to, x, y) in network.contingent_links:
+                        print(f'CHECK UNSUITABILITY')
+                        print(f'node from is {node_from}, and v is {v}')
+                        print(f'node to is {node_to}, and u is {v}')
+                        if node_from == v and node_to == u:
+                            print(f'{v} is an activation point for {u} and therefore (v,u) = ({v},{u}) is an unsuitable edge')
+                            continue
 
                     # LINE 27 - 35 (numbering in pseudocode is a bit odd)
                     new_distance = distances[u] + weight
