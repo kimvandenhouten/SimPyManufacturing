@@ -1,6 +1,6 @@
 from random import randint
 from copy import deepcopy
-import random
+
 
 def convert_to_normal_form(stnu):
     """
@@ -43,9 +43,9 @@ def determine_dc(stnu):
         print(f'start backprop from {source}')
         print(f'at beginning of backprop from {source} prior is {prior}')
         # LINE 00 - 01 FROM DCBACKPROP MORRIS'14 PSEUDOCODE
-        # The whole algorithm terminates if the same source node is repeated in the recursion; thus an infinite
-        # recursion is prevented. We will show that this condition occurs if and only if the STNU has a semi - reducible
-        # negative cycle.
+        # Morris'14: "The whole algorithm terminates if the same source node is repeated in the recursion; thus an
+        # infinite recursion is prevented. We will show that this condition occurs if and only if the STNU has a
+        # semi - reducible negative cycle."
         print(f'ancestor {ancestor}')
         if ancestor[source] == source:
             print(f'ancestor of source {source} is source')
@@ -57,12 +57,15 @@ def determine_dc(stnu):
             return True  # Network can still be DC, but this node has already been checked
 
         # LINE 04 - 06 FROM DCBACKPROP MORRIS'14 PSEUDOCODE
+        # the distances should be set within a dc_backprop call, see pseudocode
+        # the distance[i] indicates the distance from i to the source
         distances = [0 if i == node else float("inf") for i in range(N)]
 
         # LINE 07 FROM DBACKPROP MORRIS'14 PSEUDOCODE
-        queue = [] # Instantiate priority queue
+        queue = []   # Instantiate priority queue
 
         # LINE 08 - 11 FROM DBBACKPROP MORRIS'14 PSEUDOCODE
+        print(F'FIND INCOMING EDGES TO THE SOURCE')
         # Find incoming edges for this source from OU graph
         incoming_edges = {}  # I have chosen now to use a dictionary to keep track of the incoming edges
         for pred_node in range(N):
@@ -88,6 +91,7 @@ def determine_dc(stnu):
         print(f'The priority queue is now {queue}')
 
         # LINE 12 - 18
+        print(f'START POPPING FROM PRIORITY QUEUE (BACKWARD PROP)')
         while len(queue) > 0:
             u = queue.pop(0)
             print(f'pop u {u}')
@@ -99,6 +103,7 @@ def determine_dc(stnu):
 
             # LINE 19 - 21
             # Check if u is a negative node
+            print(f'CHECK IF U {u} IS A NEGATIVE NODE')
             if negative_nodes[u]:
                 print(f'u {u} is a negative node')
                 ancestor[u] = source  # Here, we start backprop(u) for which reason the source is the ancestor of u
@@ -106,6 +111,7 @@ def determine_dc(stnu):
                     return False
 
                 # LINE 22: find InEdges(U)
+                print(F'FIND INCOMING EDGES OF U {u}')
                 incoming_edges = {}  # I have chosen now to use a dictionary to keep track of the incoming edges
                 # Find incoming edges of node u from OU graph
                 for pred_node in range(N):
@@ -176,11 +182,13 @@ def determine_dc(stnu):
                     negative_nodes[node] = True
 
     print(f'Negative nodes are {negative_nodes}')
+    # to keep track of whether a prior backprop call with this source terminated (global) and defined beforehand
     prior = [False for i in range(N)]
     # Apply backpropagation procedure to all nodes
     for node, negative in enumerate(negative_nodes):
         if negative:
-
+            # To keep track of within the backprop loop started from this source the same source is repeated in the
+            # recursion, this can be reset for every backprop call (Kim's assumption), global variable
             ancestor = [float("inf") for i in range(N)]
             if dc_backprop(node) is False:
                 print(f'Network is not DC')
