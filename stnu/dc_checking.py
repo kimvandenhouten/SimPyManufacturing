@@ -16,14 +16,15 @@ def convert_to_normal_form(stnu):
     """
     contingent_links = deepcopy(stnu.contingent_links)
     for (node_from, node_to, x, y) in contingent_links:
-        name = stnu.translation_dict[node_to]
-        new_node_name = name + "".join([chr(randint(97,123)) for _ in range(9)])
-        stnu.add_node(new_node_name)
-        stnu.remove_edge(node_from, node_to)
-        stnu.remove_edge(node_to, node_from)
-        stnu.add_tight_constraint(node_from, new_node_name, x)
-        stnu.add_contingent_link(new_node_name, node_to, 0, y-x)
-        stnu.contingent_links.remove((node_from, node_to, x, y))
+        if x > 0:
+            name = stnu.translation_dict[node_to]
+            new_node_name = name + "".join([chr(randint(97,123)) for _ in range(9)])
+            stnu.add_node(new_node_name)
+            stnu.remove_edge(node_from, node_to)
+            stnu.remove_edge(node_to, node_from)
+            stnu.add_tight_constraint(node_from, new_node_name, x)
+            stnu.add_contingent_link(new_node_name, node_to, 0, y-x)
+            stnu.contingent_links.remove((node_from, node_to, x, y))
 
     return stnu
 
@@ -53,6 +54,7 @@ def determine_dc(stnu):
         logger.debug(f'ancestor {ancestor}')
         if ancestor[source] == source:
             logger.debug(f'ancestor of source {source} is source')
+            logger.debug(f'negative cycle encountered')
             return False  # Network is not DC
 
         # LINE 02 - 03 FROM DCBACKPROP MORRIS'14 PSEUDOCODE
@@ -107,76 +109,87 @@ def determine_dc(stnu):
                 logger.debug(f'Ignoring stale heap entry {(d,u)}')
                 continue
             assert d == distances[u]
-            logger.debug(f'pop u {u}')
+            logger.debug(f'pop u {u} ({network.translation_dict[u]})')
             if distances[u] >= 0:
-                logger.debug(f'distance u is {distances[u]}')
+                logger.debug(f'distance from u {u} ({network.translation_dict[u]}) '
+                             f' to source ({source}) ({network.translation_dict[source]}) is {distances[u]}')
                 network.set_edge(u, source, distances[u])  # backward prop so u is predecessor of source
+                logger.debug(f'we set a new edge from from u {u} ({network.translation_dict[u]}) '
+                             f' to source ({source}) ({network.translation_dict[source]}) is {distances[u]}')
                 logger.debug(f'Now we continue')
                 continue
 
             # LINE 19 - 21
             # Check if u is a negative node
-            logger.debug(f'CHECK IF U {u} IS A NEGATIVE NODE')
+            logger.debug(f'CHECK IF U {u} ({network.translation_dict[u]}) IS A NEGATIVE NODE')
             if negative_nodes[u]:
-                logger.debug(f'u {u} is a negative node')
+                logger.debug(f'u {u} ({network.translation_dict[u]}) is a negative node')
                 ancestor[u] = source  # Here, we start backprop(u) for which reason the source is the ancestor of u
                 if dc_backprop(u) is False:
+                    logger.debug(f'dc backprop of {u} ({network.translation_dict[u]}) is false')
                     return False
 
-                # LINE 22: find InEdges(U)
-                logger.debug(F'FIND INCOMING EDGES OF U {u}')
-                incoming_edges = {}  # I have chosen now to use a dictionary to keep track of the incoming edges
-                # Find incoming edges of node u from OU graph
-                for pred_node in range(N):
-                    if u in network.ou_edges[pred_node]:
-                        weight = network.ou_edges[pred_node][u]
-                        if pred_node not in incoming_edges:
-                            incoming_edges[pred_node] = weight
+            # LINE 22: find InEdges(U)
+            logger.debug(F'FIND INCOMING EDGES OF U {u} ({network.translation_dict[u]})')
+            incoming_edges = {}  # I have chosen now to use a dictionary to keep track of the incoming edges
+            # Find incoming edges of node u from OU graph
+            for pred_node in range(N):
+                if u in network.ou_edges[pred_node]:
+                    weight = network.ou_edges[pred_node][u]
+                    if pred_node not in incoming_edges:
+                        incoming_edges[pred_node] = weight
 
-                    # Find incoming edges of node u from OL graph
-                    if u in network.ol_edges[pred_node]:
-                        weight = network.ol_edges[pred_node][u]
-                        if pred_node not in incoming_edges:  # If ordinary link the edges is now already in the dictionary
-                            incoming_edges[pred_node] = weight
+                # Find incoming edges of node u from OL graph
+                if u in network.ol_edges[pred_node]:
+                    weight = network.ol_edges[pred_node][u]
+                    if pred_node not in incoming_edges:  # If ordinary link the edges is now already in the dictionary
+                        incoming_edges[pred_node] = weight
 
-                logger.debug(f'incoming edges of u {u} are {incoming_edges}')
-                # LINE 23 - 24
-                for v in incoming_edges:  # all nodes from (v) to (u) with weight (weight)
-                    weight = incoming_edges[v]
-                    if weight < 0:
-                        logger.debug(f'the weight from v {v} to u {u} is negative ({weight}), so we can continue')
-                        continue
+            logger.debug(f'incoming edges of u {u} ({network.translation_dict[u]}) are {incoming_edges}')
+            # LINE 23 - 24
+            for v in incoming_edges:  # all nodes from (v) to (u) with weight (weight)
+                weight = incoming_edges[v]
+                if weight < 0:
+                    logger.debug(f'the weight from v {v} ({network.translation_dict[v]}) to u {u} '
+                                 f'({network.translation_dict[u]}) is negative ({weight}), so we can continue')
+                    continue
 
-                    # LINE 25 - 26
-                    # MORRIS'14: unsuitability occurs if the source edge is unusable for e (they are from the same contingent link)
-                    # MORRIS It is useful to think of the  distance  calculation as taking place in the projection  where
-                    # any initial  contingent   link takes  on its maximum  duration and every other contingent link has
-                    # its minimum. An unsuitable edge does not belong to that  projection.
+                # LINE 25 - 26
+                # MORRIS'14: unsuitability occurs if the source edge is unusable for e (they are from the same contingent link)
+                # MORRIS It is useful to think of the  distance  calculation as taking place in the projection  where
+                # any initial  contingent   link takes  on its maximum  duration and every other contingent link has
+                # its minimum. An unsuitable edge does not belong to that  projection.
+                logger.debug(f'CHECK UNSUITABILITY')
+                unsuitability = False
+                logger.debug(f'here we should check the unsuitability of {(network.translation_dict[v], network.translation_dict[u])}'
+                             f' and {(network.translation_dict[u], network.translation_dict[source])}, i.e. whether they '
+                             f'are from the same contingent link')
+                for (node_from, node_to, x, y) in network.contingent_links:
+                    if u == node_from and source == node_to and v == node_to:
+                        unsuitability = True
+                    elif v == node_from and source == node_from and u == node_to:
+                        unsuitability = True
+                if unsuitability:
+                    logger.debug(f'{(network.translation_dict[v], network.translation_dict[u])} and '
+                          f'{(network.translation_dict[u], network.translation_dict[source])}'
+                          f' are from the same contingent link')
+                    continue
 
-                    # KIM: from the temporal networks repository I now understand that this holds when
-                    # FIXME: check if this edge is unsuitable, this is currently not implemented yet
-                    for (node_from, node_to, x, y) in network.contingent_links:
-                        logger.debug(f'CHECK UNSUITABILITY')
-                        logger.debug(f'node from is {node_from}, and v is {v}')
-                        logger.debug(f'node to is {node_to}, and u is {v}')
-                        if node_from == v and node_to == u:
-                            logger.debug(f'{v} is an activation point for {u} and therefore (v,u) = ({v},{u}) is an unsuitable edge')
-                            continue
+                # LINE 27 - 35 (numbering in pseudocode is a bit odd)
+                new_distance = distances[u] + weight
+                if new_distance < distances[v]:
+                    logger.debug(f'We found a smaller distance from v {v} ({network.translation_dict[v]})'
+                                 f' to source ({network.translation_dict[source]}), which changed from {distances[v]} to {new_distance}')
+                    distances[v] = new_distance
+                    heapq.heappush(p_queue, (new_distance, v))
+                    logger.debug(f'The priority queue is now {p_queue}')
 
-                    # LINE 27 - 35 (numbering in pseudocode is a bit odd)
-                    new_distance = distances[u] + weight
-                    if new_distance < distances[v]:
-                        logger.debug(f'We found a smaller distance of v {v} to u {u}, which changed from {distances[v]} to {new_distance}')
-                        distances[v] = new_distance
-                        heapq.heappush(p_queue, (new_distance, v))
-                        logger.debug(f'The priority queue is now {p_queue}')
-
-            logger.debug(f'Return true for backprop from {source}, backprop terminated')
-            # Store that backprop procedure wrt source has terminated, this is needed to prevent infinite loops
-            prior[source] = True
-            logger.debug(prior)
-            # Line 36
-            return True
+        logger.debug(f'Return true for backprop from {source}, backprop terminated')
+        # Store that backprop procedure wrt source has terminated, this is needed to prevent infinite loops
+        prior[source] = True
+        logger.debug(prior)
+        # Line 36
+        return True
 
     # Determine which nodes are negative by looping through the OU-graph and OL-graph
     negative_nodes = [False for _ in range(N)]
@@ -197,6 +210,7 @@ def determine_dc(stnu):
     logger.debug(f'Negative nodes are {negative_nodes}')
     # to keep track of whether a prior backprop call with this source terminated (global) and defined beforehand
     prior = [False for i in range(N)]
+
     # Apply backpropagation procedure to all nodes
     for node, negative in enumerate(negative_nodes):
         if negative:

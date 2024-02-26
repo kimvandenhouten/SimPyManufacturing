@@ -19,6 +19,7 @@ class STNU:
         self.ou_edges = {node: {} for node in self.nodes}
         self.ol_edges = {node: {} for node in self.nodes}
         self.contingent_links = []
+        self.labels = {}
 
         # We use indices for the nodes in the network
         self.index = max(self.nodes) + 1
@@ -92,4 +93,6 @@ class STNU:
         self.ou_edges[node_to][node_from] = -y
         self.ol_edges[node_from][node_to] = x
         self.contingent_links.append((node_from, node_to, x, y))
+
+
 

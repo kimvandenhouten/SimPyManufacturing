@@ -6,6 +6,7 @@ stnu = STNU()
 stnu.add_node('A')
 stnu.add_node('B')
 stnu.add_node('C')
+
 stnu.set_edge('B', 'C', 5)
 stnu.add_contingent_link('A', 'C', 2, 9)
 print(stnu)
