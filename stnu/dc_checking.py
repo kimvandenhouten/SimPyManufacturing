@@ -1,6 +1,10 @@
 from random import randint
 from copy import deepcopy
+import heapq
+import classes.general
+from typing import Any
 
+logger = classes.general.get_logger()
 
 def convert_to_normal_form(stnu):
     """
@@ -35,25 +39,25 @@ def determine_dc(stnu):
     network = deepcopy(stnu)
     network = convert_to_normal_form(network)
 
-    print(f'Network converted to Normal Form')
-    print(network)
+    logger.debug(f'Network converted to Normal Form')
+    logger.debug(network)
     N = len(network.nodes)
 
     def dc_backprop(source):
-        print(f'start backprop from {source}')
-        print(f'at beginning of backprop from {source} prior is {prior}')
+        logger.debug(f'start backprop from {source}')
+        logger.debug(f'at beginning of backprop from {source} prior is {prior}')
         # LINE 00 - 01 FROM DCBACKPROP MORRIS'14 PSEUDOCODE
         # Morris'14: "The whole algorithm terminates if the same source node is repeated in the recursion; thus an
         # infinite recursion is prevented. We will show that this condition occurs if and only if the STNU has a
         # semi - reducible negative cycle."
-        print(f'ancestor {ancestor}')
+        logger.debug(f'ancestor {ancestor}')
         if ancestor[source] == source:
-            print(f'ancestor of source {source} is source')
+            logger.debug(f'ancestor of source {source} is source')
             return False  # Network is not DC
 
         # LINE 02 - 03 FROM DCBACKPROP MORRIS'14 PSEUDOCODE
         if prior[source]:
-            print(f'prior backprop call of source {source} terminated')
+            logger.debug(f'prior backprop call of source {source} terminated')
             return True  # Network can still be DC, but this node has already been checked
 
         # LINE 04 - 06 FROM DCBACKPROP MORRIS'14 PSEUDOCODE
@@ -62,10 +66,14 @@ def determine_dc(stnu):
         distances = [0 if i == node else float("inf") for i in range(N)]
 
         # LINE 07 FROM DBACKPROP MORRIS'14 PSEUDOCODE
-        queue = []   # Instantiate priority queue
+        # Set up a priority queue. We use heapq from the python standard library, but note that a fibonacci heap
+        # guarantees better asymptotic complexity. But because it is more complex, it is in practice often slower than
+        # heapq. See for example: https://github.com/danielborowski/fibonacci-heap-python
+        # TODO: Check if we need to use a fibonacci heap
+        p_queue: list[Any] = []   # Instantiate priority queue
 
         # LINE 08 - 11 FROM DBBACKPROP MORRIS'14 PSEUDOCODE
-        print(F'FIND INCOMING EDGES TO THE SOURCE')
+        logger.debug(f'FIND INCOMING EDGES TO THE SOURCE')
         # Find incoming edges for this source from OU graph
         incoming_edges = {}  # I have chosen now to use a dictionary to keep track of the incoming edges
         for pred_node in range(N):
@@ -76,7 +84,7 @@ def determine_dc(stnu):
                     # LINE 10
                     distances[pred_node] = weight # Note that this distance is the distance from pred_node to source
                     # LINE 11
-                    queue.append(pred_node)
+                    heapq.heappush(p_queue, (weight, pred_node))
 
             # Find incoming edges for this source from OL graph
             if source in network.ol_edges[pred_node]:
@@ -86,32 +94,37 @@ def determine_dc(stnu):
                     # LINE 10
                     distances[pred_node] = weight
                     # LINE 11
-                    queue.append(pred_node)
-        print(f'The incoming edges of source {source} are {incoming_edges}')
-        print(f'The priority queue is now {queue}')
+                    heapq.heappush(p_queue, (weight, pred_node))
+        logger.debug(f'The incoming edges of source {source} are {incoming_edges}')
+        logger.debug(f'The priority queue is now {p_queue}')
 
         # LINE 12 - 18
-        print(f'START POPPING FROM PRIORITY QUEUE (BACKWARD PROP)')
-        while len(queue) > 0:
-            u = queue.pop(0)
-            print(f'pop u {u}')
+        logger.debug(f'START POPPING FROM PRIORITY QUEUE (BACKWARD PROP)')
+        while len(p_queue) > 0:
+            (d, u) = heapq.heappop(p_queue)
+            if d > distances[u]:
+                # This is a stale heap entry for a node that has been popped before
+                logger.debug(f'Ignoring stale heap entry {(d,u)}')
+                continue
+            assert d == distances[u]
+            logger.debug(f'pop u {u}')
             if distances[u] >= 0:
-                print(f'distance u is {distances[u]}')
+                logger.debug(f'distance u is {distances[u]}')
                 network.set_edge(u, source, distances[u])  # backward prop so u is predecessor of source
-                print(f'Now we continue')
+                logger.debug(f'Now we continue')
                 continue
 
             # LINE 19 - 21
             # Check if u is a negative node
-            print(f'CHECK IF U {u} IS A NEGATIVE NODE')
+            logger.debug(f'CHECK IF U {u} IS A NEGATIVE NODE')
             if negative_nodes[u]:
-                print(f'u {u} is a negative node')
+                logger.debug(f'u {u} is a negative node')
                 ancestor[u] = source  # Here, we start backprop(u) for which reason the source is the ancestor of u
                 if dc_backprop(u) is False:
                     return False
 
                 # LINE 22: find InEdges(U)
-                print(F'FIND INCOMING EDGES OF U {u}')
+                logger.debug(F'FIND INCOMING EDGES OF U {u}')
                 incoming_edges = {}  # I have chosen now to use a dictionary to keep track of the incoming edges
                 # Find incoming edges of node u from OU graph
                 for pred_node in range(N):
@@ -126,12 +139,12 @@ def determine_dc(stnu):
                         if pred_node not in incoming_edges:  # If ordinary link the edges is now already in the dictionary
                             incoming_edges[pred_node] = weight
 
-                print(f'incoming edges of u {u} are {incoming_edges}')
+                logger.debug(f'incoming edges of u {u} are {incoming_edges}')
                 # LINE 23 - 24
                 for v in incoming_edges:  # all nodes from (v) to (u) with weight (weight)
                     weight = incoming_edges[v]
                     if weight < 0:
-                        print(f'the weight from v {v} to u {u} is negative ({weight}), so we can continue')
+                        logger.debug(f'the weight from v {v} to u {u} is negative ({weight}), so we can continue')
                         continue
 
                     # LINE 25 - 26
@@ -143,25 +156,25 @@ def determine_dc(stnu):
                     # KIM: from the temporal networks repository I now understand that this holds when
                     # FIXME: check if this edge is unsuitable, this is currently not implemented yet
                     for (node_from, node_to, x, y) in network.contingent_links:
-                        print(f'CHECK UNSUITABILITY')
-                        print(f'node from is {node_from}, and v is {v}')
-                        print(f'node to is {node_to}, and u is {v}')
+                        logger.debug(f'CHECK UNSUITABILITY')
+                        logger.debug(f'node from is {node_from}, and v is {v}')
+                        logger.debug(f'node to is {node_to}, and u is {v}')
                         if node_from == v and node_to == u:
-                            print(f'{v} is an activation point for {u} and therefore (v,u) = ({v},{u}) is an unsuitable edge')
+                            logger.debug(f'{v} is an activation point for {u} and therefore (v,u) = ({v},{u}) is an unsuitable edge')
                             continue
 
                     # LINE 27 - 35 (numbering in pseudocode is a bit odd)
                     new_distance = distances[u] + weight
                     if new_distance < distances[v]:
-                        print(f'We found a smaller distance of v {v} to u {u}, which changed from {distances[v]} to {new_distance}')
+                        logger.debug(f'We found a smaller distance of v {v} to u {u}, which changed from {distances[v]} to {new_distance}')
                         distances[v] = new_distance
-                        queue.append(v)
-                        print(f'The priority queue is now {queue}')
+                        heapq.heappush(p_queue, (new_distance, v))
+                        logger.debug(f'The priority queue is now {p_queue}')
 
-            print(f'Return true for backprop from {source}, backprop terminated')
+            logger.debug(f'Return true for backprop from {source}, backprop terminated')
             # Store that backprop procedure wrt source has terminated, this is needed to prevent infinite loops
             prior[source] = True
-            print(prior)
+            logger.debug(prior)
             # Line 36
             return True
 
@@ -172,16 +185,16 @@ def determine_dc(stnu):
             if node in network.ou_edges[pred_node]:
                 weight = network.ou_edges[pred_node][node]
                 if weight < 0:
-                    print(f'Node {node} ({network.translation_dict[node]}) is a negative node because it has an incoming OU edge from node {pred_node} with weight {weight}')
+                    logger.debug(f'Node {node} ({network.translation_dict[node]}) is a negative node because it has an incoming OU edge from node {pred_node} with weight {weight}')
                     negative_nodes[node] = True
 
             if node in network.ol_edges[pred_node]:
                 weight = network.ol_edges[pred_node][node]
                 if weight < 0:
-                    print(f'Node {node} ({network.translation_dict[node]}) is a negative node because it has an incoming OL edge from node {pred_node} with weight {weight}')
+                    logger.debug(f'Node {node} ({network.translation_dict[node]}) is a negative node because it has an incoming OL edge from node {pred_node} with weight {weight}')
                     negative_nodes[node] = True
 
-    print(f'Negative nodes are {negative_nodes}')
+    logger.debug(f'Negative nodes are {negative_nodes}')
     # to keep track of whether a prior backprop call with this source terminated (global) and defined beforehand
     prior = [False for i in range(N)]
     # Apply backpropagation procedure to all nodes
@@ -191,10 +204,10 @@ def determine_dc(stnu):
             # recursion, this can be reset for every backprop call (Kim's assumption), global variable
             ancestor = [float("inf") for i in range(N)]
             if dc_backprop(node) is False:
-                print(f'Network is not DC')
+                logger.debug(f'Network is not DC')
                 return False
 
-    print(f'Network is DC')
+    logger.debug(f'Network is DC')
     return True
 
 
