@@ -1,7 +1,7 @@
 from classes.stnu import STNU
 from dc_checking import convert_to_normal_form, determine_dc
 
-# Build simple example from slide 118
+# Build simple example from Morris'14 paper
 stnu = STNU()
 stnu.add_node('A')
 stnu.add_node('B')

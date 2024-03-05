@@ -6,6 +6,7 @@ from typing import Any
 
 logger = classes.general.get_logger()
 
+
 def convert_to_normal_form(stnu):
     """
     Convert to normal form STNU according to Morris'14 paper
