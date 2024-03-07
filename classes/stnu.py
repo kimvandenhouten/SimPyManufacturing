@@ -136,5 +136,44 @@ class STNU:
         self.ol_edges[node_from][node_to] = x
         self.contingent_links.append((node_from, node_to, x, y))
 
+    def get_incoming_edges(self, node_to):
+        """
+        :param u: node_to
+        :return: all predecing edges of node u
+        """
+        N = len(self.nodes)
+        incoming_edges = {}  # I have chosen now to use a dictionary to keep track of the incoming edges
+        # Find incoming edges of node u from OU graph
+        for pred_node in range(N):
+            if node_to in self.ou_edges[pred_node]:
+                weight = self.ou_edges[pred_node][node_to]
+                if pred_node not in incoming_edges:
+                    incoming_edges[pred_node] = weight
+
+            # Find incoming edges of node u from OL graph
+            if node_to in self.ol_edges[pred_node]:
+                weight = self.ol_edges[pred_node][node_to]
+                if pred_node not in incoming_edges:  # If ordinary link the edges is now already in the dictionary
+                    incoming_edges[pred_node] = weight
+
+        return incoming_edges
+
+    def find_negative_nodes(self):
+        # Determine which nodes are negative by looping through the OU-graph and OL-graph
+        N = len(self.nodes)
+        negative_nodes = [False for _ in range(N)]
+        for node in range(N):
+            for pred_node in range(N):
+                if node in self.ou_edges[pred_node]:
+                    weight = self.ou_edges[pred_node][node]
+                    if weight < 0:
+                        negative_nodes[node] = True
+
+                if node in self.ol_edges[pred_node]:
+                    weight = self.ol_edges[pred_node][node]
+                    if weight < 0:
+                        negative_nodes[node] = True
+        return negative_nodes
+
 
 

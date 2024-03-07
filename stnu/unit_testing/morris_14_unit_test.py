@@ -1,5 +1,5 @@
 import unittest
-from stnu.dc_checking import determine_dc
+from stnu.dc_checking import determine_dc, convert_to_normal_form
 from classes.stnu import STNU
 
 
@@ -66,6 +66,68 @@ class TestMorris14(unittest.TestCase):
         stnu.add_contingent_link('A1', 'C1', 1, 3)
         stnu.add_contingent_link('A2', 'C2', 1, 10)
         self.assertFalse(determine_dc(stnu))
+
+    def test_normal_form_no_contingent_links(self):
+        # Test example without contingent links
+        stnu = STNU()
+        stnu.add_node('A')
+        stnu.add_node('B')
+        stnu.set_edge('A', 'B', 10)
+
+        nf_stnu = convert_to_normal_form(stnu)
+        self.assertEqual(stnu, nf_stnu)
+
+    def test_normal_form(self):
+        # Test example without contingent links
+        stnu = STNU()
+        stnu.add_node('A')
+        stnu.add_node('B')
+        stnu.set_edge('A', 'B', 10)
+        stnu.add_node('C')
+        stnu.add_contingent_link('A', 'C', 2, 8)
+
+        last_index = stnu.index
+        nf_stnu = convert_to_normal_form(stnu)
+
+        print(nf_stnu.nodes)
+        print(nf_stnu.translation_dict)
+
+        self.assertEqual(len(nf_stnu.contingent_links), 1)
+
+        for (a, b, x, y) in nf_stnu.contingent_links:
+            node_from_idx = last_index
+            node_to_idx = stnu.translation_dict_reversed['C']
+            self.assertEqual((a, b, x, y), (node_from_idx, node_to_idx, 0, y-x))
+
+    def test_find_negative_nodes(self):
+        # Test example without contingent links
+        stnu = STNU()
+        stnu.add_node('A')
+        stnu.add_node('B')
+        stnu.set_edge('A', 'B', -10)
+
+        # there is also the origin and horizon index
+        self.assertEqual(stnu.find_negative_nodes(), [False, False, False, True])
+
+    def test_find_no_negative_nodes(self):
+        # Test example without contingent links
+        stnu = STNU()
+        stnu.add_node('A')
+        stnu.add_node('B')
+        stnu.set_edge('A', 'B', 10)
+
+        # there is also the origin and horizon index
+        self.assertEqual(stnu.find_negative_nodes(), [False, False, False, False])
+
+    def test_find_no_negative_nodes_2(self):
+        # Test example without contingent links
+        stnu = STNU()
+        stnu.add_node('A')
+        stnu.add_node('B')
+
+        # there is also the origin and horizon index
+        self.assertEqual(stnu.find_negative_nodes(), [False, False, False, False])
+
 
 if __name__ == '__main__':
     unittest.main()

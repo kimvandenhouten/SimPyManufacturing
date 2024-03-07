@@ -2,8 +2,8 @@ from random import randint
 from copy import deepcopy
 import heapq
 import classes.general
-from typing import Any
-
+from typing import Any, List
+from classes.stnu import STNU
 logger = classes.general.get_logger()
 
 
@@ -26,7 +26,7 @@ def convert_to_normal_form(stnu):
                 stnu.add_node(prod, act, new_node_name)
                 new_node_index = stnu.translation_dict_reversed[(prod, act, new_node_name)]
             else:
-                new_node_name = name + "".join([chr(randint(97,123)) for _ in range(9)])
+                new_node_name = name + "".join([chr(randint(97, 123)) for _ in range(9)])
                 stnu.add_node(new_node_name)
                 new_node_index = stnu.translation_dict_reversed[new_node_name]
             stnu.remove_edge(node_from, node_to)
@@ -140,19 +140,8 @@ def determine_dc(stnu):
 
             # LINE 22: find InEdges(U)
             logger.debug(F'FIND INCOMING EDGES OF U {u} ({network.translation_dict[u]})')
-            incoming_edges = {}  # I have chosen now to use a dictionary to keep track of the incoming edges
-            # Find incoming edges of node u from OU graph
-            for pred_node in range(N):
-                if u in network.ou_edges[pred_node]:
-                    weight = network.ou_edges[pred_node][u]
-                    if pred_node not in incoming_edges:
-                        incoming_edges[pred_node] = weight
 
-                # Find incoming edges of node u from OL graph
-                if u in network.ol_edges[pred_node]:
-                    weight = network.ol_edges[pred_node][u]
-                    if pred_node not in incoming_edges:  # If ordinary link the edges is now already in the dictionary
-                        incoming_edges[pred_node] = weight
+            incoming_edges = network.get_incoming_edges(u)
 
             logger.debug(f'incoming edges of u {u} ({network.translation_dict[u]}) are {incoming_edges}')
             # LINE 23 - 24
@@ -205,21 +194,7 @@ def determine_dc(stnu):
         # Line 36
         return True
 
-    # Determine which nodes are negative by looping through the OU-graph and OL-graph
-    negative_nodes = [False for _ in range(N)]
-    for node in range(N):
-        for pred_node in range(N):
-            if node in network.ou_edges[pred_node]:
-                weight = network.ou_edges[pred_node][node]
-                if weight < 0:
-                    logger.debug(f'Node {node} ({network.translation_dict[node]}) is a negative node because it has an incoming OU edge from node {pred_node} with weight {weight}')
-                    negative_nodes[node] = True
-
-            if node in network.ol_edges[pred_node]:
-                weight = network.ol_edges[pred_node][node]
-                if weight < 0:
-                    logger.debug(f'Node {node} ({network.translation_dict[node]}) is a negative node because it has an incoming OL edge from node {pred_node} with weight {weight}')
-                    negative_nodes[node] = True
+    negative_nodes = network.find_negative_nodes()
 
     logger.debug(f'Negative nodes are {negative_nodes}')
     # to keep track of whether a prior backprop call with this source terminated (global) and defined beforehand
