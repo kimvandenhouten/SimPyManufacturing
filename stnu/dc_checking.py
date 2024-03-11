@@ -3,7 +3,7 @@ from copy import deepcopy
 import heapq
 import classes.general
 from typing import Any, List
-from classes.stnu import STNU
+from classes.stnu import STNU, Edge
 logger = classes.general.get_logger()
 
 
@@ -29,8 +29,8 @@ def convert_to_normal_form(stnu):
                 new_node_name = name + "".join([chr(randint(97, 123)) for _ in range(9)])
                 stnu.add_node(new_node_name)
                 new_node_index = stnu.translation_dict_reversed[new_node_name]
-            stnu.remove_edge(node_from, node_to)
-            stnu.remove_edge(node_to, node_from)
+            stnu.remove_edge(node_from, node_to, type=STNU.LC_LABEL)
+            stnu.remove_edge(node_to, node_from, type=STNU.UC_LABEL)
             stnu.add_tight_constraint(node_from, new_node_index, x)
             stnu.add_contingent_link(new_node_index, node_to, 0, y-x)
             stnu.contingent_links.remove((node_from, node_to, x, y))
@@ -38,7 +38,7 @@ def convert_to_normal_form(stnu):
     return stnu
 
 
-def determine_dc(stnu):
+def determine_dc(stnu, dispatchability=True):
     """
     Implements the DC-checking algorithm by Morris'14
     Code structure based on repository "Temporal-Networks"
@@ -86,43 +86,34 @@ def determine_dc(stnu):
         # LINE 08 - 11 FROM DBBACKPROP MORRIS'14 PSEUDOCODE
         logger.debug(f'FIND INCOMING EDGES TO THE SOURCE')
         # Find incoming edges for this source from OU graph
-        incoming_edges = {}  # I have chosen now to use a dictionary to keep track of the incoming edges
-        for pred_node in range(N):
-            if source in network.ou_edges[pred_node]:
-                weight = network.ou_edges[pred_node][source]
-                if pred_node not in incoming_edges:
-                    incoming_edges[pred_node] = weight
-                    # LINE 10
-                    distances[pred_node] = weight # Note that this distance is the distance from pred_node to source
-                    # LINE 11
-                    heapq.heappush(p_queue, (weight, pred_node))
+        incoming_edges = network.get_incoming_ou_edges(source)
+        for (weight, pred_node, type, label) in incoming_edges:
+            heapq.heappush(p_queue, (weight, pred_node, type, label))
+            distances[pred_node] = weight
 
-            # Find incoming edges for this source from OL graph
-            if source in network.ol_edges[pred_node]:
-                weight = network.ol_edges[pred_node][source]
-                if pred_node not in incoming_edges:  # If ordinary link the edges is now already in the dictionary
-                    incoming_edges[pred_node] = weight
-                    # LINE 10
-                    distances[pred_node] = weight
-                    # LINE 11
-                    heapq.heappush(p_queue, (weight, pred_node))
-        logger.debug(f'The incoming edges of source {source} are {incoming_edges}')
+        logger.debug(f'The incoming OU edges of source {source} are {incoming_edges}')
         logger.debug(f'The priority queue is now {p_queue}')
 
         # LINE 12 - 18
         logger.debug(f'START POPPING FROM PRIORITY QUEUE (BACKWARD PROP)')
         while len(p_queue) > 0:
-            (d, u) = heapq.heappop(p_queue)
-            if d > distances[u]:
+            (weight_u_source, u, type_u_source, label_u_source) = heapq.heappop(p_queue)
+            if weight_u_source > distances[u]:
                 # This is a stale heap entry for a node that has been popped before
-                logger.debug(f'Ignoring stale heap entry {(d,u)}')
+                logger.debug(f'Ignoring stale heap entry {(weight_u_source, u, type_u_source)}')
                 continue
-            assert d == distances[u]
+            assert weight_u_source == distances[u]
             logger.debug(f'pop u {u} ({network.translation_dict[u]})')
             if distances[u] >= 0:
                 logger.debug(f'distance from u {u} ({network.translation_dict[u]}) '
                              f' to source ({source}) ({network.translation_dict[source]}) is {distances[u]}')
-                network.set_edge(u, source, distances[u])  # backward prop so u is predecessor of source
+
+                # FIXME: here we should properly make a new edge
+                # TODO: first check if this edge object already exists
+                # TODO: check which reduction rule applies based on the predecessor edge and source edge
+                # TODO: add the correct edge with the correct label
+                network.set_ordinary_edge(u, source, distances[u])  # backward prop so u is predecessor of source
+
                 logger.debug(f'we set a new edge from from u {u} ({network.translation_dict[u]}) '
                              f' to source ({source}) ({network.translation_dict[source]}) is {distances[u]}')
                 logger.debug(f'Now we continue')
@@ -145,11 +136,10 @@ def determine_dc(stnu):
 
             logger.debug(f'incoming edges of u {u} ({network.translation_dict[u]}) are {incoming_edges}')
             # LINE 23 - 24
-            for v in incoming_edges:  # all nodes from (v) to (u) with weight (weight)
-                weight = incoming_edges[v]
-                if weight < 0:
+            for (weight_v_u, v, type_v_u, label_v_u) in incoming_edges:  # all nodes from (v) to (u) with weight (weight)
+                if weight_v_u < 0:
                     logger.debug(f'the weight from v {v} ({network.translation_dict[v]}) to u {u} '
-                                 f'({network.translation_dict[u]}) is negative ({weight}), so we can continue')
+                                 f'({network.translation_dict[u]}) is negative ({weight_v_u}), so we can continue')
                     continue
 
                 # LINE 25 - 26
@@ -174,17 +164,57 @@ def determine_dc(stnu):
                     continue
 
                 # LINE 27 - 35 (numbering in pseudocode is a bit odd)
-                new_distance = distances[u] + weight
+                new_distance = distances[u] + weight_v_u
                 if new_distance < distances[v]:
                     logger.debug(f'We found a smaller distance from v {v} ({network.translation_dict[v]})'
                                  f' to source ({network.translation_dict[source]}), which changed from {distances[v]} to {new_distance}')
                     distances[v] = new_distance
+                    # TODO: add edge from v to source with new_distance if it is a negative edge
+                    if (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.UC_LABEL):
+                        logger.debug(f'Upper-case Reduction')
+                        new_type = STNU.UC_LABEL
+                        if type_v_u == STNU.UC_LABEL:
+                            new_label = label_v_u
+                        else:
+                            new_label = label_u_source
+                    elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.LC_LABEL):
+                        logger.debug(f'Lower-case Reduction')
+                        new_type = STNU.LC_LABEL
+                        if type_v_u == STNU.LC_LABEL:
+                            new_label = label_v_u
+                        else:
+                            new_label = label_u_source
+                    elif (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.ORDINARY_LABEL):
+                        logger.debug(f'No-case Reduction')
+                        new_type = STNU.ORDINARY_LABEL
+                        new_label = None
+                    elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.UC_LABEL) or (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.LC_LABEL):
+                        logger.debug(f'Cross-case Reduction')
+                        new_type = STNU.UC_LABEL
+                        if type_v_u == STNU.UC_LABEL:
+                            new_label = label_v_u
+                        else:
+                            new_label = label_u_source
+                    else:
+                        logger.debug(f'Reduction rule not implemented yet')
+                        logger.debug(f'type v_u {type_v_u} with label {label_v_u} type u source {type_u_source} with label {label_u_source}')
+                        raise NotImplementedError
 
-                    logger.debug(f'If DISPATCHABILITY is true, add UC edge {network.translation_dict[v]} '
-                                 f'to {network.translation_dict[source]} with weight {new_distance}')
-                    # TODO: if we want the algorithm to return an EF_STNU we should also keep track of negative edges
-                    #  that are found along the way
-                    heapq.heappush(p_queue, (new_distance, v))
+                    if new_distance < 0:
+                        if source in network.edges[v]:
+                            edge = network.edges[v][source]
+                        else:
+                            edge = Edge(v, source)
+                            logger.debug(f'Create new edge from v {v} to source {source}')
+                        if new_type == STNU.ORDINARY_LABEL:
+                            edge.set_weight(weight=new_distance)
+                        else:
+                            edge.set_labeled_weight(labeled_weight=new_distance, label=new_label, type=new_type)
+                        network.edges[v][source] = edge
+                        logger.debug(f'If DISPATCHABILITY is true, add UC edge {network.translation_dict[v]} '
+                                     f'to {network.translation_dict[source]} with weight {new_distance}')
+
+                    heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
                     logger.debug(f'The priority queue is now {p_queue}')
 
         logger.debug(f'Return true for backprop from {source}, backprop terminated')
@@ -213,7 +243,10 @@ def determine_dc(stnu):
 
     logger.debug(f'Network is DC')
     logger.debug(f'Network after dc-checking \n{network}')
-    return True
+    if dispatchability:
+        return network
+    else:
+        return True
 
 
 
