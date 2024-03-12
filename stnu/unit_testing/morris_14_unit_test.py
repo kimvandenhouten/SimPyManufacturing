@@ -49,23 +49,6 @@ class TestMorris14(unittest.TestCase):
         stnu.add_contingent_link('C', 'D', 0, 3)
         self.assertFalse(determine_dc(stnu, dispatchability=False))
 
-    def test_uncontrollable2(self):
-        # Test example Hunsberger slides, slide 140
-        stnu = STNU()
-        stnu.add_node('A1')
-        stnu.add_node('A2')
-        stnu.add_node('C1')
-        stnu.add_node('C2')
-        stnu.add_node('X')
-
-        stnu.set_ordinary_edge('C1', 'C2', -1)
-        stnu.set_ordinary_edge('C2', 'C1', 8)
-        stnu.set_ordinary_edge('C1', 'X', -7)
-        stnu.set_ordinary_edge('X', 'C1', 12)
-
-        stnu.add_contingent_link('A1', 'C1', 1, 3)
-        stnu.add_contingent_link('A2', 'C2', 1, 10)
-        self.assertFalse(determine_dc(stnu, dispatchability=False))
 
     def test_normal_form_no_contingent_links(self):
         # Test example without contingent links

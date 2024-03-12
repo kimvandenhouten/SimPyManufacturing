@@ -41,7 +41,7 @@ def convert_to_normal_form(stnu: STNU):
     return stnu
 
 
-def determine_dc(stnu, dispatchability=True):
+def determine_dc(stnu, dispatchability=False):
     """
     Implements the DC-checking algorithm by Morris'14
     Code structure based on repository "Temporal-Networks"
@@ -169,11 +169,7 @@ def determine_dc(stnu, dispatchability=True):
                           f' are from the same contingent link')
                     continue
 
-                # FIXME Comment Kim: this is the part of the code where we should keep track of which labels belong
-                #  to possible new edges. If we properly use heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
-                #  we can use that while popping from the priority queue and executing LINE 17 from the morris'14 pseudo
-                #  currently we don't cover all possible reduction cases or have a mistake in our normal form transformation
-                #  perhaps we can try to understand this with the example in test_uncontrollable from morris_14_unit_test.py
+                #
                 # LINE 27 - 35 (numbering in pseudocode is a bit odd)
                 new_distance = distances[u] + weight_v_u
                 if new_distance < distances[v]:
@@ -181,38 +177,48 @@ def determine_dc(stnu, dispatchability=True):
                                  f' to source ({network.translation_dict[source]}), which changed from {distances[v]} to {new_distance}')
                     distances[v] = new_distance
 
-                    if (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.UC_LABEL):
-                        logger.debug(f'Upper-case Reduction')
-                        new_type = STNU.UC_LABEL
-                        if type_v_u == STNU.UC_LABEL:
-                            new_label = label_v_u
-                        else:
-                            new_label = label_u_source
-                    elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.LC_LABEL):
-                        logger.debug(f'Lower-case Reduction')
-                        new_type = STNU.LC_LABEL
-                        if type_v_u == STNU.LC_LABEL:
-                            new_label = label_v_u
-                        else:
-                            new_label = label_u_source
-                    elif (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.ORDINARY_LABEL):
-                        logger.debug(f'No-case Reduction')
-                        new_type = STNU.ORDINARY_LABEL
-                        new_label = None
+                    if dispatchability:
+                        # FIXME Comment Kim: this is the part of the code where we should keep track of which labels  belong
+                        #  to possible new edges. If we properly use heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
+                        #  we can use that while popping from the priority queue and executing LINE 17 from the morris'14 pseudo
+                        #  currently we don't cover all possible reduction cases or have a mistake in our normal form transformation
+                        #  perhaps we can try to understand this with the example in test_uncontrollable from morris_14_unit_test.py
+                        if (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.UC_LABEL):
+                            logger.debug(f'Upper-case Reduction')
+                            new_type = STNU.UC_LABEL
+                            if type_v_u == STNU.UC_LABEL:
+                                new_label = label_v_u
+                            else:
+                                new_label = label_u_source
+                        elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.LC_LABEL):
+                            logger.debug(f'Lower-case Reduction')
+                            new_type = STNU.LC_LABEL
+                            if type_v_u == STNU.LC_LABEL:
+                                new_label = label_v_u
+                            else:
+                                new_label = label_u_source
+                        elif (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.ORDINARY_LABEL):
+                            logger.debug(f'No-case Reduction')
+                            new_type = STNU.ORDINARY_LABEL
+                            new_label = None
 
-                    elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.UC_LABEL) or (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.LC_LABEL):
-                        logger.debug(f'Cross-case Reduction')
-                        new_type = STNU.UC_LABEL
-                        if type_v_u == STNU.UC_LABEL:
-                            new_label = label_v_u
+                        elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.UC_LABEL) or (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.LC_LABEL):
+                            logger.debug(f'Cross-case Reduction')
+                            new_type = STNU.UC_LABEL
+                            if type_v_u == STNU.UC_LABEL:
+                                new_label = label_v_u
+                            else:
+                                new_label = label_u_source
                         else:
-                            new_label = label_u_source
+                            logger.debug(f'Reduction rule not implemented yet')
+                            logger.debug(f'{network.translation_dict}')
+                            logger.debug(f'we have v is {v} and u is {u} and source is {source}')
+                            logger.debug(f'type v_u {type_v_u} with label {label_v_u} type u source {type_u_source} with label {label_u_source}')
+                            raise NotImplementedError
+                        heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
+
                     else:
-                        logger.debug(f'Reduction rule not implemented yet')
-                        logger.debug(f'type v_u {type_v_u} with label {label_v_u} type u source {type_u_source} with label {label_u_source}')
-                        raise NotImplementedError
-
-                    heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
+                        heapq.heappush(p_queue, (new_distance, v, "TypeNotImplemented", "LabelNotImplemented"))
                     logger.debug(f'The priority queue is now {p_queue}')
 
         logger.debug(f'Return true for backprop from {source}, backprop terminated')
