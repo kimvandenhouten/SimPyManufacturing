@@ -146,20 +146,38 @@ class STNU:
         self.edges[node_from][node_to] = edge
 
     def remove_edge(self, node_from, node_to, type):
-        if node_to in self.edges[node_from]:
-            edge = self.edges[node_from][node_to]
-            if type == self.LC_LABEL:
-                edge.lc_weight = None
-                edge.lc_label = None
-            elif type == self.UC_LABEL:
-                edge.uc_weight = None
-                edge.uc_label = None
-            elif type == self.ORDINARY_LABEL:
-                edge.weight = None
-            self.edges[node_from][node_to] = edge
+        """Removes edge of the given type (if it exists)
+
+        :return: Whether an edge was succesfully removed
+        """
+
+        if node_to not in self.edges[node_from]:
+            return False
+
+        edge = self.edges[node_from][node_to]
+        if type == self.LC_LABEL:
+            if edge.lc_weight is None or edge.lc_label is None:
+                assert edge.lc_weight is None and edge.lc_label is None
+                return False
+            edge.lc_weight = None
+            edge.lc_label = None
+        elif type == self.UC_LABEL:
+            if edge.uc_weight is None or edge.uc_label is None:
+                assert edge.uc_weight is None and edge.uc_label is None
+                return False
+            edge.uc_weight = None
+            edge.uc_label = None
+        elif type == self.ORDINARY_LABEL:
+            if edge.weight is None:
+                return False
+            edge.weight = None
+        else:
+            raise ValueError("Unknown edge type")
 
         if edge.lc_weight is None and edge.uc_weight is None and edge.weight is None:
             del self.edges[node_from][node_to]
+
+        return True
 
     def add_interval_constraint(self, node_from, node_to, min_distance, max_distance):
         node_from = self.translation_dict_reversed[node_from] if type(node_from) == str else node_from
