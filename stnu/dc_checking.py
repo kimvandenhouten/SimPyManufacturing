@@ -52,12 +52,12 @@ def determine_dc(stnu, dispatchability=False):
     network = deepcopy(stnu)
     network = convert_to_normal_form(network)
 
-    logger.debug(f'Network converted to Normal Form')
+    logger.debug(f'network converted to Normal Form')
     logger.debug(network)
     N = len(network.nodes)
 
     def dc_backprop(source):
-        logger.debug(f'start backprop from {source}')
+        logger.debug(f'START BACKPROP FROM NEW SOURCE {source} ({network.translation_dict[source]})')
         logger.debug(f'at beginning of backprop from {source} prior is {prior}')
         # LINE 00 - 01 FROM DCBACKPROP MORRIS'14 PSEUDOCODE
         # Morris'14: "The whole algorithm terminates if the same source node is repeated in the recursion; thus an
@@ -87,47 +87,62 @@ def determine_dc(stnu, dispatchability=False):
         p_queue: list[Any] = []   # Instantiate priority queue
 
         # LINE 08 - 11 FROM DBBACKPROP MORRIS'14 PSEUDOCODE
-        logger.debug(f'FIND INCOMING EDGES TO THE SOURCE')
+        logger.debug(f'find incoming edges to the source')
         # Find incoming edges for this source from OU graph
         incoming_edges = network.get_incoming_ou_edges(source)
         for (weight, pred_node, type, label) in incoming_edges:
             heapq.heappush(p_queue, (weight, pred_node, type, label))
             distances[pred_node] = weight
 
-        logger.debug(f'The incoming OU edges of source {source} are {incoming_edges}')
-        logger.debug(f'The priority queue is now {p_queue}')
+        logger.debug(f'the incoming OU edges of source {source} ({network.translation_dict[source]}):')
+        for (weight, pred_node, type, label) in incoming_edges:
+            logger.debug(f'edge {network.translation_dict[pred_node]} -- {type} {label}: {weight} --> {network.translation_dict[source]}')
+        logger.debug(f'the priority queue four edges to source {network.translation_dict[source]} is now'
+                     f' (weight, pred_node, type_pred, label_pred) {p_queue}')
 
         # LINE 12 - 18
-        logger.debug(f'START POPPING FROM PRIORITY QUEUE (BACKWARD PROP)')
+        logger.debug(f'start popping from priority queue (backward prop) ')
         while len(p_queue) > 0:
             (weight_u_source, u, type_u_source, label_u_source) = heapq.heappop(p_queue)
             if weight_u_source > distances[u]:
                 # This is a stale heap entry for a node that has been popped before
-                logger.debug(f'Ignoring stale heap entry {(weight_u_source, u, type_u_source)}')
+                logger.debug(f'ignoring stale heap entry {(weight_u_source, u, type_u_source)}')
                 continue
             assert weight_u_source == distances[u]
-            logger.debug(f'pop u {u} ({network.translation_dict[u]})')
+            logger.debug(f'pop u {u} ({network.translation_dict[u]}) that is edge {network.translation_dict[u]} -- {type_u_source} {label_u_source}: {weight_u_source} --> {network.translation_dict[source]}')
             if distances[u] >= 0:
                 logger.debug(f'distance from u {u} ({network.translation_dict[u]}) '
                              f' to source ({source}) ({network.translation_dict[source]}) is {distances[u]}')
 
-                # FIXME: here we should properly make a new edge
-                # TODO: first check if this edge object already exists
-                # TODO: check which reduction rule applies based on the predecessor edge and source edge
-                # TODO: add the correct edge with the correct label
                 # LINE 17
-                network.set_ordinary_edge(u, source, distances[u])  # backward prop so u is predecessor of source
+                if dispatchability:
+                    if type_u_source == STNU.UC_LABEL or type_u_source == STNU.LC_LABEL:
+                        # FIXME: reduction rules are not always working
+                        logger.debug(f'we set a labeled edge from from u {u} ({network.translation_dict[u]}) '
+                                     f' to source {source} ({network.translation_dict[source]}) with distance {distances[u]}')
+                        logger.debug(
+                            f'we should set this edge with  with type {type_u_source} and label {label_u_source}')
+                        network.set_labeled_edge(node_from=u, node_to=source, distance=distances[u], label=label_u_source, label_type=type_u_source)
 
-                logger.debug(f'we set a new edge from from u {u} ({network.translation_dict[u]}) '
-                             f' to source ({source}) ({network.translation_dict[source]}) is {distances[u]}')
-                logger.debug(f'Now we continue')
+                    else:
+                        network.set_ordinary_edge(u, source,
+                                                  distances[u])  # backward prop so u is predecessor of source
+                        logger.debug(f'we set an ordinary edge from from u {u} ({network.translation_dict[u]}) '
+                                     f' to source {source} ({network.translation_dict[source]}) with distance {distances[u]}')
+
+                else:
+                    network.set_ordinary_edge(u, source, distances[u])  # backward prop so u is predecessor of source
+                    logger.debug(f'we set an ordinary edge from from u {u} ({network.translation_dict[u]}) '
+                                 f' to source {source} ({network.translation_dict[source]}) with distance {distances[u]}')
+
+                logger.debug(f'now we continue')
                 continue
 
             # TODO: also insert edge if it is negative if we want to implement dispatchablility (return extended form)
 
             # LINE 19 - 21
             # Check if u is a negative node
-            logger.debug(f'CHECK IF U {u} ({network.translation_dict[u]}) IS A NEGATIVE NODE')
+            logger.debug(f'check if u {u} ({network.translation_dict[u]}) is a negative node')
             if negative_nodes[u]:
                 logger.debug(f'u {u} ({network.translation_dict[u]}) is a negative node')
                 ancestor[u] = source  # Here, we start backprop(u) for which reason the source is the ancestor of u
@@ -136,11 +151,14 @@ def determine_dc(stnu, dispatchability=False):
                     return False
 
             # LINE 22: find InEdges(U)
-            logger.debug(F'FIND INCOMING EDGES OF U {u} ({network.translation_dict[u]})')
+            logger.debug(F'find incoming edges of u {u} ({network.translation_dict[u]})')
 
             incoming_edges = network.get_incoming_edges(u)
 
-            logger.debug(f'incoming edges of u {u} ({network.translation_dict[u]}) are {incoming_edges}')
+            logger.debug(f'incoming edges of u {u} ({network.translation_dict[u]})')
+            for (weight, pred_node, type, label) in incoming_edges:
+                logger.debug(
+                    f'edge {network.translation_dict[pred_node]} -- {type} {label}: {weight} --> {network.translation_dict[u]}')
             # LINE 23 - 24
             for (weight_v_u, v, type_v_u, label_v_u) in incoming_edges:  # all nodes from (v) to (u) with weight (weight)
                 if weight_v_u < 0:
@@ -153,7 +171,6 @@ def determine_dc(stnu, dispatchability=False):
                 # MORRIS It is useful to think of the  distance  calculation as taking place in the projection  where
                 # any initial  contingent   link takes  on its maximum  duration and every other contingent link has
                 # its minimum. An unsuitable edge does not belong to that  projection.
-                logger.debug(f'CHECK UNSUITABILITY')
                 unsuitability = False
                 logger.debug(f'here we should check the unsuitability of {(network.translation_dict[v], network.translation_dict[u])}'
                              f' and {(network.translation_dict[u], network.translation_dict[source])}, i.e. whether they '
@@ -173,7 +190,7 @@ def determine_dc(stnu, dispatchability=False):
                 # LINE 27 - 35 (numbering in pseudocode is a bit odd)
                 new_distance = distances[u] + weight_v_u
                 if new_distance < distances[v]:
-                    logger.debug(f'We found a smaller distance from v {v} ({network.translation_dict[v]})'
+                    logger.debug(f'we found a smaller distance from v {v} ({network.translation_dict[v]})'
                                  f' to source ({network.translation_dict[source]}), which changed from {distances[v]} to {new_distance}')
                     distances[v] = new_distance
 
@@ -184,44 +201,62 @@ def determine_dc(stnu, dispatchability=False):
                         #  currently we don't cover all possible reduction cases or have a mistake in our normal form transformation
                         #  perhaps we can try to understand this with the example in test_uncontrollable from morris_14_unit_test.py
                         if (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.UC_LABEL):
-                            logger.debug(f'Upper-case Reduction')
+                            logger.debug(f'upper-case reduction')
                             new_type = STNU.UC_LABEL
                             if type_v_u == STNU.UC_LABEL:
                                 new_label = label_v_u
                             else:
                                 new_label = label_u_source
+                            heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
+
                         elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.LC_LABEL):
-                            logger.debug(f'Lower-case Reduction')
+                            logger.debug(f'lower-case reduction')
                             new_type = STNU.LC_LABEL
                             if type_v_u == STNU.LC_LABEL:
-                                new_label = label_v_u
+                                if weight_v_u > 0:
+                                    logger.debug(f'WARNING: lower-case reduction but weight > 0')
+                                else:
+                                    new_label = label_v_u
                             else:
-                                new_label = label_u_source
+                                if distances[u] > 0:
+                                    logger.debug(f'WARNING: lower-case reduction but weight > 0')
+                                else:
+                                    new_label = label_u_source
+                            heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
+
                         elif (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.ORDINARY_LABEL):
-                            logger.debug(f'No-case Reduction')
+                            logger.debug(f'no-case reduction')
                             new_type = STNU.ORDINARY_LABEL
                             new_label = None
+                            heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
 
                         elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.UC_LABEL) or (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.LC_LABEL):
-                            logger.debug(f'Cross-case Reduction')
+                            logger.debug(f'cross-case reduction')
                             new_type = STNU.UC_LABEL
+                            if label_v_u == label_u_source:
+                                logger.debug(f'WARNING: but from the same contingent link')
                             if type_v_u == STNU.UC_LABEL:
-                                new_label = label_v_u
+                                if weight_v_u < 0:
+                                    new_label = label_v_u
+                                else:
+                                    logger.debug(f'WARNING: but x > 0 (UC labeled weight)')
                             else:
-                                new_label = label_u_source
+                                if distances[u] > 0:
+                                    logger.debug(f'WARNING: cross-case but x > 0 (UC labeled weight)')
+                                else:
+                                    new_label = label_u_source
+                            heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
+                        # TODO: label removal implementation
                         else:
-                            logger.debug(f'Reduction rule not implemented yet')
-                            logger.debug(f'{network.translation_dict}')
-                            logger.debug(f'we have v is {v} and u is {u} and source is {source}')
-                            logger.debug(f'type v_u {type_v_u} with label {label_v_u} type u source {type_u_source} with label {label_u_source}')
-                            raise NotImplementedError
-                        heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
+                            logger.debug(f'WARNING: no reduction rule can be applied edge v to u {network.translation_dict[v]} -- {type_v_u} {label_v_u}: {weight_v_u} --> {network.translation_dict[u]}')
+                            logger.debug(f'and u to source edge {network.translation_dict[u]} -- {type_u_source} {label_u_source}: {weight_u_source} --> {network.translation_dict[source]}')
 
                     else:
                         heapq.heappush(p_queue, (new_distance, v, "TypeNotImplemented", "LabelNotImplemented"))
-                    logger.debug(f'The priority queue is now {p_queue}')
+                    logger.debug(f'the priority queue four edges to source {network.translation_dict[source]} is now'
+                                 f' (weight, pred_node, type_pred, label_pred) {p_queue}')
 
-        logger.debug(f'Return true for backprop from {source}, backprop terminated')
+        logger.debug(f'RETURN TRUE FOR BACKPROP FROM {source} ({network.translation_dict[source]}) BACKPROP TERMINATED')
         # Store that backprop procedure wrt source has terminated, this is needed to prevent infinite loops
         prior[source] = True
         logger.debug(prior)
@@ -230,7 +265,7 @@ def determine_dc(stnu, dispatchability=False):
 
     negative_nodes = network.find_negative_nodes()
 
-    logger.debug(f'Negative nodes are {negative_nodes}')
+    logger.debug(f'negative nodes are {negative_nodes}')
     # to keep track of whether a prior backprop call with this source terminated (global) and defined beforehand
     prior = [False for i in range(N)]
 
@@ -241,12 +276,12 @@ def determine_dc(stnu, dispatchability=False):
             # recursion, this can be reset for every backprop call (Kim's assumption), global variable
             ancestor = [float("inf") for i in range(N)]
             if dc_backprop(node) is False:
-                logger.debug(f'Network after dc-checking \n{network}')
-                logger.debug(f'Network is not DC')
+                logger.debug(f'network after dc-checking \n{network}')
+                logger.debug(f'network is not DC')
                 return False
 
-    logger.debug(f'Network is DC')
-    logger.debug(f'Network after dc-checking \n{network}')
+    logger.debug(f'network is DC')
+    logger.debug(f'network after dc-checking \n{network}')
     if dispatchability:
         return network
     else:

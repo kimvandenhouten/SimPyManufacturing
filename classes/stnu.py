@@ -17,11 +17,11 @@ class Edge:
         self.lc_label = None
         self.lc_weight = None
 
-    def set_labeled_weight(self, labeled_weight, label, type):
-        if type == self.UC_LABEL:
+    def set_labeled_weight(self, labeled_weight, label, label_type):
+        if label_type == self.UC_LABEL:
             self.uc_weight = labeled_weight
             self.uc_label = label
-        elif type == self.LC_LABEL:
+        elif label_type == self.LC_LABEL:
             self.lc_weight = labeled_weight
             self.lc_label = label
         else:
@@ -133,6 +133,19 @@ class STNU:
         #self.set_edge(self.HORIZON_IDX, node_idx, 0)
         return node_idx
 
+    def set_labeled_edge(self, node_from, node_to, distance, label, label_type):
+
+        node_from = self.translation_dict_reversed[node_from] if type(node_from) == str else node_from
+        node_to = self.translation_dict_reversed[node_to] if type(node_to) == str else node_to
+
+        if node_to in self.edges[node_from]:
+            edge = self.edges[node_from][node_to]
+        else:
+            edge = Edge(node_from, node_to)
+
+        edge.set_labeled_weight(labeled_weight=distance, label=label, label_type=label_type)
+        self.edges[node_from][node_to] = edge
+
     def set_ordinary_edge(self, node_from, node_to, distance):
 
         node_from = self.translation_dict_reversed[node_from] if type(node_from) == str else node_from
@@ -144,6 +157,8 @@ class STNU:
             edge = Edge(node_from, node_to)
         edge.set_weight(weight=distance)
         self.edges[node_from][node_to] = edge
+
+
 
     def remove_edge(self, node_from, node_to, type):
         """Removes edge of the given type (if it exists)
@@ -201,14 +216,14 @@ class STNU:
         else:
             edge = Edge(node_to, node_from)
 
-        edge.set_labeled_weight(labeled_weight=-y, label=label, type=self.UC_LABEL)
+        edge.set_labeled_weight(labeled_weight=-y, label=label, label_type=self.UC_LABEL)
         self.edges[node_to][node_from] = edge
 
         if node_from in self.edges[node_from]:
             edge = self.edges[node_from][node_to]
         else:
             edge = Edge(node_from, node_to)
-        edge.set_labeled_weight(labeled_weight=x, label=label, type=self.LC_LABEL)
+        edge.set_labeled_weight(labeled_weight=x, label=label, label_type=self.LC_LABEL)
         self.edges[node_from][node_to] = edge
 
         self.contingent_links.append((node_from, node_to, x, y))
