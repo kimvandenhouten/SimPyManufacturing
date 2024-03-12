@@ -112,12 +112,15 @@ def determine_dc(stnu, dispatchability=True):
                 # TODO: first check if this edge object already exists
                 # TODO: check which reduction rule applies based on the predecessor edge and source edge
                 # TODO: add the correct edge with the correct label
+                # LINE 17
                 network.set_ordinary_edge(u, source, distances[u])  # backward prop so u is predecessor of source
 
                 logger.debug(f'we set a new edge from from u {u} ({network.translation_dict[u]}) '
                              f' to source ({source}) ({network.translation_dict[source]}) is {distances[u]}')
                 logger.debug(f'Now we continue')
                 continue
+
+            # TODO: also insert edge if it is negative if we want to implement dispatchablility (return extended form)
 
             # LINE 19 - 21
             # Check if u is a negative node
@@ -163,13 +166,18 @@ def determine_dc(stnu, dispatchability=True):
                           f' are from the same contingent link')
                     continue
 
+                # FIXME Comment Kim: this is the part of the code where we should keep track of which labels belong
+                #  to possible new edges. If we properly use heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
+                #  we can use that while popping from the priority queue and executing LINE 17 from the morris'14 pseudo
+                #  currently we don't cover all possible reduction cases or have a mistake in our normal form transformation
+                #  perhaps we can try to understand this with the example in test_uncontrollable from morris_14_unit_test.py
                 # LINE 27 - 35 (numbering in pseudocode is a bit odd)
                 new_distance = distances[u] + weight_v_u
                 if new_distance < distances[v]:
                     logger.debug(f'We found a smaller distance from v {v} ({network.translation_dict[v]})'
                                  f' to source ({network.translation_dict[source]}), which changed from {distances[v]} to {new_distance}')
                     distances[v] = new_distance
-                    # TODO: add edge from v to source with new_distance if it is a negative edge
+
                     if (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.UC_LABEL):
                         logger.debug(f'Upper-case Reduction')
                         new_type = STNU.UC_LABEL
@@ -188,6 +196,7 @@ def determine_dc(stnu, dispatchability=True):
                         logger.debug(f'No-case Reduction')
                         new_type = STNU.ORDINARY_LABEL
                         new_label = None
+
                     elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.UC_LABEL) or (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.LC_LABEL):
                         logger.debug(f'Cross-case Reduction')
                         new_type = STNU.UC_LABEL
@@ -199,20 +208,6 @@ def determine_dc(stnu, dispatchability=True):
                         logger.debug(f'Reduction rule not implemented yet')
                         logger.debug(f'type v_u {type_v_u} with label {label_v_u} type u source {type_u_source} with label {label_u_source}')
                         raise NotImplementedError
-
-                    if new_distance < 0:
-                        if source in network.edges[v]:
-                            edge = network.edges[v][source]
-                        else:
-                            edge = Edge(v, source)
-                            logger.debug(f'Create new edge from v {v} to source {source}')
-                        if new_type == STNU.ORDINARY_LABEL:
-                            edge.set_weight(weight=new_distance)
-                        else:
-                            edge.set_labeled_weight(labeled_weight=new_distance, label=new_label, type=new_type)
-                        network.edges[v][source] = edge
-                        logger.debug(f'If DISPATCHABILITY is true, add UC edge {network.translation_dict[v]} '
-                                     f'to {network.translation_dict[source]} with weight {new_distance}')
 
                     heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
                     logger.debug(f'The priority queue is now {p_queue}')
