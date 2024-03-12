@@ -190,8 +190,8 @@ def determine_dc(stnu, dispatchability=False):
                 # LINE 27 - 35 (numbering in pseudocode is a bit odd)
                 new_distance = distances[u] + weight_v_u
                 if new_distance < distances[v]:
-                    logger.debug(f'we found a smaller distance from v {v} ({network.translation_dict[v]})'
-                                 f' to source ({network.translation_dict[source]}), which changed from {distances[v]} to {new_distance}')
+                    logger.debug(f"Update distance from {network.translation_dict[v]} to {network.translation_dict[source]} using edge value {weight_v_u} and distance {distances[u]}: old value: {distances[v]} and new value {new_distance}")
+
                     distances[v] = new_distance
 
                     if dispatchability:
@@ -200,6 +200,7 @@ def determine_dc(stnu, dispatchability=False):
                         #  we can use that while popping from the priority queue and executing LINE 17 from the morris'14 pseudo
                         #  currently we don't cover all possible reduction cases or have a mistake in our normal form transformation
                         #  perhaps we can try to understand this with the example in test_uncontrollable from morris_14_unit_test.py
+                        # Upper-case reduction
                         if (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.UC_LABEL):
                             logger.debug(f'upper-case reduction')
                             new_type = STNU.UC_LABEL
@@ -209,6 +210,7 @@ def determine_dc(stnu, dispatchability=False):
                                 new_label = label_u_source
                             heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
 
+                        # Lower-case reduction
                         elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.LC_LABEL):
                             logger.debug(f'lower-case reduction')
                             new_type = STNU.LC_LABEL
@@ -224,12 +226,14 @@ def determine_dc(stnu, dispatchability=False):
                                     new_label = label_u_source
                             heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
 
+                        # No-case reduction
                         elif (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.ORDINARY_LABEL):
                             logger.debug(f'no-case reduction')
                             new_type = STNU.ORDINARY_LABEL
                             new_label = None
                             heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
 
+                        # Cross-case reduction
                         elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.UC_LABEL) or (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.LC_LABEL):
                             logger.debug(f'cross-case reduction')
                             new_type = STNU.UC_LABEL
@@ -250,9 +254,11 @@ def determine_dc(stnu, dispatchability=False):
                         else:
                             logger.debug(f'WARNING: no reduction rule can be applied edge v to u {network.translation_dict[v]} -- {type_v_u} {label_v_u}: {weight_v_u} --> {network.translation_dict[u]}')
                             logger.debug(f'and u to source edge {network.translation_dict[u]} -- {type_u_source} {label_u_source}: {weight_u_source} --> {network.translation_dict[source]}')
-
+                            heapq.heappush(p_queue, (new_distance, v, "TypeNotImplemented", "LabelNotImplemented"))
                     else:
+                        # This is the version if you would not have implemented the specific reduction rules
                         heapq.heappush(p_queue, (new_distance, v, "TypeNotImplemented", "LabelNotImplemented"))
+
                     logger.debug(f'the priority queue four edges to source {network.translation_dict[source]} is now'
                                  f' (weight, pred_node, type_pred, label_pred) {p_queue}')
 
