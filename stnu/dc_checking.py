@@ -41,6 +41,74 @@ def convert_to_normal_form(stnu: STNU):
     return stnu
 
 
+def apply_reduction_rule(network, source, u, v, type_u_source, type_v_u, weight_u_source, weight_v_u, label_u_source, label_v_u, new_distance):
+    # Upper-case reduction
+    if (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (
+    STNU.ORDINARY_LABEL, STNU.UC_LABEL):
+        logger.debug(f'upper-case reduction')
+        new_type = STNU.UC_LABEL
+        if type_v_u == STNU.UC_LABEL:
+            new_label = label_v_u
+        else:
+            new_label = label_u_source
+
+    # Lower-case reduction
+    elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (
+    STNU.ORDINARY_LABEL, STNU.LC_LABEL):
+        logger.debug(f'lower-case reduction')
+        new_type = STNU.LC_LABEL
+        if type_v_u == STNU.LC_LABEL:
+            if weight_v_u > 0:
+                logger.debug(f'WARNING: lower-case reduction but weight > 0')
+            else:
+                new_label = label_v_u
+        else:
+            if weight_u_source > 0:
+                logger.debug(f'WARNING: lower-case reduction but weight > 0')
+            else:
+                new_label = label_u_source
+
+    # No-case reduction
+    elif (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.ORDINARY_LABEL):
+        logger.debug(f'no-case reduction')
+        new_type = STNU.ORDINARY_LABEL
+        new_label = None
+
+    # Cross-case reduction
+    elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.UC_LABEL) or (type_v_u, type_u_source) == (
+    STNU.UC_LABEL, STNU.LC_LABEL):
+        logger.debug(f'cross-case reduction')
+        new_type = STNU.UC_LABEL
+        if label_v_u == label_u_source:
+            logger.debug(f'WARNING: but from the same contingent link')
+        if type_v_u == STNU.UC_LABEL:
+            if weight_v_u < 0:
+                new_label = label_v_u
+            else:
+                logger.debug(f'WARNING: but x > 0 (UC labeled weight)')
+        else:
+            if weight_u_source > 0:
+                logger.debug(f'WARNING: cross-case but x > 0 (UC labeled weight)')
+            else:
+                new_label = label_u_source
+
+    else:
+        logger.debug(
+            f'WARNING: no reduction rule can be applied edge v to u {network.translation_dict[v]} -- {type_v_u} {label_v_u}: {weight_v_u} --> {network.translation_dict[u]}')
+        logger.debug(
+            f'and u to source edge {network.translation_dict[u]} -- {type_u_source} {label_u_source}: {weight_u_source} --> {network.translation_dict[source]}')
+        new_type = "TypeNotImplemented"
+        new_label = "LabelNotImplemented"
+
+    # Label removal
+    if new_type == STNU.UC_LABEL and new_distance >= 0:
+        logger.debug(f'label removal applies')
+        new_type = STNU.ORDINARY_LABEL
+        new_label = None
+
+    return new_distance, v, new_type, new_label
+
+
 def determine_dc(stnu, dispatchability=False):
     """
     Implements the DC-checking algorithm by Morris'14
@@ -116,8 +184,8 @@ def determine_dc(stnu, dispatchability=False):
 
                 # LINE 17
                 if dispatchability:
+                    # TODO: also insert edge if it is negative if we want to implement dispatchablility (return extended form)
                     if type_u_source == STNU.UC_LABEL or type_u_source == STNU.LC_LABEL:
-                        # FIXME: reduction rules are not always working
                         logger.debug(f'we set a labeled edge from from u {u} ({network.translation_dict[u]}) '
                                      f' to source {source} ({network.translation_dict[source]}) with distance {distances[u]}')
                         logger.debug(
@@ -138,8 +206,6 @@ def determine_dc(stnu, dispatchability=False):
                 logger.debug(f'now we continue')
                 continue
 
-            # TODO: also insert edge if it is negative if we want to implement dispatchablility (return extended form)
-
             # LINE 19 - 21
             # Check if u is a negative node
             logger.debug(f'check if u {u} ({network.translation_dict[u]}) is a negative node')
@@ -152,7 +218,6 @@ def determine_dc(stnu, dispatchability=False):
 
             # LINE 22: find InEdges(U)
             logger.debug(F'find incoming edges of u {u} ({network.translation_dict[u]})')
-
             incoming_edges = network.get_incoming_edges(u)
 
             logger.debug(f'incoming edges of u {u} ({network.translation_dict[u]})')
@@ -171,6 +236,7 @@ def determine_dc(stnu, dispatchability=False):
                 # MORRIS It is useful to think of the  distance  calculation as taking place in the projection  where
                 # any initial  contingent   link takes  on its maximum  duration and every other contingent link has
                 # its minimum. An unsuitable edge does not belong to that  projection.
+                # TODO: write unit tests for unsuitability module
                 unsuitability = False
                 logger.debug(f'here we should check the unsuitability of {(network.translation_dict[v], network.translation_dict[u])}'
                              f' and {(network.translation_dict[u], network.translation_dict[source])}, i.e. whether they '
@@ -186,79 +252,18 @@ def determine_dc(stnu, dispatchability=False):
                           f' are from the same contingent link')
                     continue
 
-                #
                 # LINE 27 - 35 (numbering in pseudocode is a bit odd)
                 new_distance = distances[u] + weight_v_u
                 if new_distance < distances[v]:
-                    logger.debug(f"Update distance from {network.translation_dict[v]} to {network.translation_dict[source]} using edge value {weight_v_u} and distance {distances[u]}: old value: {distances[v]} and new value {new_distance}")
+                    logger.debug(f"Update distance from {network.translation_dict[v]} to {network.translation_dict[source]} "
+                                 f"using edge value {weight_v_u} and distance {distances[u]}: old value: {distances[v]} and new value {new_distance}")
 
                     distances[v] = new_distance
 
                     if dispatchability:
-                        # FIXME Comment Kim: this is the part of the code where we should keep track of which labels  belong
-                        #  to possible new edges. If we properly use heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
-                        #  we can use that while popping from the priority queue and executing LINE 17 from the morris'14 pseudo
-                        #  currently we don't cover all possible reduction cases or have a mistake in our normal form transformation
-                        #  perhaps we can try to understand this with the example in test_uncontrollable from morris_14_unit_test.py
-                        # Upper-case reduction
-                        if (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.UC_LABEL):
-                            logger.debug(f'upper-case reduction')
-                            new_type = STNU.UC_LABEL
-                            if type_v_u == STNU.UC_LABEL:
-                                new_label = label_v_u
-                            else:
-                                new_label = label_u_source
-
-                        # Lower-case reduction
-                        elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.LC_LABEL):
-                            logger.debug(f'lower-case reduction')
-                            new_type = STNU.LC_LABEL
-                            if type_v_u == STNU.LC_LABEL:
-                                if weight_v_u > 0:
-                                    logger.debug(f'WARNING: lower-case reduction but weight > 0')
-                                else:
-                                    new_label = label_v_u
-                            else:
-                                if distances[u] > 0:
-                                    logger.debug(f'WARNING: lower-case reduction but weight > 0')
-                                else:
-                                    new_label = label_u_source
-
-                        # No-case reduction
-                        elif (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.ORDINARY_LABEL):
-                            logger.debug(f'no-case reduction')
-                            new_type = STNU.ORDINARY_LABEL
-                            new_label = None
-
-                        # Cross-case reduction
-                        elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.UC_LABEL) or (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.LC_LABEL):
-                            logger.debug(f'cross-case reduction')
-                            new_type = STNU.UC_LABEL
-                            if label_v_u == label_u_source:
-                                logger.debug(f'WARNING: but from the same contingent link')
-                            if type_v_u == STNU.UC_LABEL:
-                                if weight_v_u < 0:
-                                    new_label = label_v_u
-                                else:
-                                    logger.debug(f'WARNING: but x > 0 (UC labeled weight)')
-                            else:
-                                if distances[u] > 0:
-                                    logger.debug(f'WARNING: cross-case but x > 0 (UC labeled weight)')
-                                else:
-                                    new_label = label_u_source
-
-                        else:
-                            logger.debug(f'WARNING: no reduction rule can be applied edge v to u {network.translation_dict[v]} -- {type_v_u} {label_v_u}: {weight_v_u} --> {network.translation_dict[u]}')
-                            logger.debug(f'and u to source edge {network.translation_dict[u]} -- {type_u_source} {label_u_source}: {weight_u_source} --> {network.translation_dict[source]}')
-                            new_type = "TypeNotImplemented"
-                            new_label = "LabelNotImplemented"
-
-                        # Label removal
-                        if new_type == STNU.UC_LABEL and new_distance >= 0:
-                            logger.debug(f'label removal applies')
-                            new_type = STNU.ORDINARY_LABEL
-                            new_label = None
-
+                        # TODO: transform this to one function and develop unit tests
+                        new_distance, v, new_type, new_label = apply_reduction_rule(network, source, u, v, type_u_source, type_v_u,
+                                                                                    weight_u_source, weight_v_u,  label_u_source, label_v_u, new_distance)
                         heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
                     else:
                         # This is the version if you would not have implemented the specific reduction rules
