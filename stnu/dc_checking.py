@@ -208,7 +208,6 @@ def determine_dc(stnu, dispatchability=False):
                                 new_label = label_v_u
                             else:
                                 new_label = label_u_source
-                            heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
 
                         # Lower-case reduction
                         elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.LC_LABEL):
@@ -224,14 +223,12 @@ def determine_dc(stnu, dispatchability=False):
                                     logger.debug(f'WARNING: lower-case reduction but weight > 0')
                                 else:
                                     new_label = label_u_source
-                            heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
 
                         # No-case reduction
                         elif (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.ORDINARY_LABEL):
                             logger.debug(f'no-case reduction')
                             new_type = STNU.ORDINARY_LABEL
                             new_label = None
-                            heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
 
                         # Cross-case reduction
                         elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.UC_LABEL) or (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.LC_LABEL):
@@ -249,12 +246,20 @@ def determine_dc(stnu, dispatchability=False):
                                     logger.debug(f'WARNING: cross-case but x > 0 (UC labeled weight)')
                                 else:
                                     new_label = label_u_source
-                            heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
-                        # TODO: label removal implementation
+
                         else:
                             logger.debug(f'WARNING: no reduction rule can be applied edge v to u {network.translation_dict[v]} -- {type_v_u} {label_v_u}: {weight_v_u} --> {network.translation_dict[u]}')
                             logger.debug(f'and u to source edge {network.translation_dict[u]} -- {type_u_source} {label_u_source}: {weight_u_source} --> {network.translation_dict[source]}')
-                            heapq.heappush(p_queue, (new_distance, v, "TypeNotImplemented", "LabelNotImplemented"))
+                            new_type = "TypeNotImplemented"
+                            new_label = "LabelNotImplemented"
+
+                        # Label removal
+                        if new_type == STNU.UC_LABEL and new_distance >= 0:
+                            logger.debug(f'label removal applies')
+                            new_type = STNU.ORDINARY_LABEL
+                            new_label = None
+
+                        heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
                     else:
                         # This is the version if you would not have implemented the specific reduction rules
                         heapq.heappush(p_queue, (new_distance, v, "TypeNotImplemented", "LabelNotImplemented"))
