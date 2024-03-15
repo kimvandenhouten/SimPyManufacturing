@@ -3,14 +3,13 @@ from stnu.dc_checking import determine_dc, convert_to_normal_form
 from classes.stnu import STNU
 
 
-class TestMorris14(unittest.TestCase):
+class TestMorris14Basic(unittest.TestCase):
     def test_controllable(self):
         # Test example from slides Hunsberger, page 118
         stnu = STNU()
         stnu.add_node('A')
         stnu.add_node('B')
         stnu.add_node('C')
-
         stnu.set_ordinary_edge('B', 'C', 5)
         stnu.add_contingent_link('A', 'C', 2, 9)
         self.assertTrue(determine_dc(stnu, dispatchability=False))

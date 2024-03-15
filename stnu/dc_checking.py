@@ -289,12 +289,15 @@ def determine_dc(stnu, dispatchability=False):
             if dc_backprop(node) is False:
                 logger.debug(f'network after dc-checking \n{network}')
                 logger.debug(f'network is not DC')
-                return False
+                if dispatchability:
+                    return False, network
+                else:
+                    return False
 
     logger.debug(f'network is DC')
     logger.debug(f'network after dc-checking \n{network}')
     if dispatchability:
-        return network
+        return True, network
     else:
         return True
 
