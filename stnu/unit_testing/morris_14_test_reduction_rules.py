@@ -7,7 +7,7 @@ class TestMorris14ReductionRules(unittest.TestCase):
     #def test_reduction_rule(self):
 
     def test_no_case(self):
-        # Test example from slides Hunsberger, page 118
+        # Test no case (slide 131)
         stnu = STNU()
         stnu.add_node('Q')
         stnu.add_node('S')
@@ -22,8 +22,8 @@ class TestMorris14ReductionRules(unittest.TestCase):
 
         type_u_source = STNU.ORDINARY_LABEL
         type_v_u = STNU.ORDINARY_LABEL
-        weight_u_source = 4
-        weight_v_u = 3
+        weight_u_source = 3
+        weight_v_u = 4
         label_u_source = None
         label_v_u = None
 
@@ -32,9 +32,10 @@ class TestMorris14ReductionRules(unittest.TestCase):
         new_distance, v, new_type, new_label = apply_reduction_rule(stnu, source, u, v, type_u_source, type_v_u, weight_u_source, weight_v_u, label_u_source, label_v_u, new_distance)
 
         self.assertEqual(new_type, STNU.ORDINARY_LABEL)
+        self.assertEqual(new_distance, 7)
 
-    def upper_case(self):
-        # Test example from slides Hunsberger, page 118
+    def test_upper_case(self):
+        # Test upper case (slide 132)
         stnu = STNU()
         stnu.add_node('Q')
         stnu.add_node('C')
@@ -42,24 +43,82 @@ class TestMorris14ReductionRules(unittest.TestCase):
 
         # To do, set contingent edge
         stnu.set_ordinary_edge('Q', 'C', 3)
-        stnu.set_ordinary_edge('S', 'T', 4)
+        stnu.set_labeled_edge('C', 'A', -10, 'C', STNU.UC_LABEL)
 
-        source = stnu.translation_dict_reversed['T']
-        u = stnu.translation_dict_reversed['S']
+        source = stnu.translation_dict_reversed['A']
+        u = stnu.translation_dict_reversed['C']
         v = stnu.translation_dict_reversed['Q']
 
-        type_u_source = STNU.ORDINARY_LABEL
+        type_u_source = STNU.UC_LABEL
         type_v_u = STNU.ORDINARY_LABEL
-        weight_u_source = 4
+        weight_u_source = -10
         weight_v_u = 3
-        label_u_source = None
+        label_u_source = 'C'
         label_v_u = None
 
-        new_distance = 7
-
+        new_distance = -7
         new_distance, v, new_type, new_label = apply_reduction_rule(stnu, source, u, v, type_u_source, type_v_u, weight_u_source, weight_v_u, label_u_source, label_v_u, new_distance)
 
+        self.assertEqual(new_type, STNU.UC_LABEL)
+        self.assertEqual(new_distance, -7)
+
+    def test_lower_case(self):
+        # Test lower case (slide 133)
+        stnu = STNU()
+        stnu.add_node('A')
+        stnu.add_node('C')
+        stnu.add_node('X')
+
+        # To do, set contingent edge
+        stnu.set_ordinary_edge('C', 'X', -5)
+        stnu.set_labeled_edge('A', 'C', 3, 'C', STNU.LC_LABEL)
+
+        source = stnu.translation_dict_reversed['X']
+        u = stnu.translation_dict_reversed['C']
+        v = stnu.translation_dict_reversed['A']
+
+        type_u_source = STNU.ORDINARY_LABEL
+        type_v_u = STNU.LC_LABEL
+        weight_u_source = -5
+        weight_v_u = 3
+        label_u_source = None
+        label_v_u = 'C'
+
+        new_distance = -2
+        new_distance, v, new_type, new_label = apply_reduction_rule(stnu, source, u, v, type_u_source, type_v_u,
+                                                                    weight_u_source, weight_v_u, label_u_source,
+                                                                    label_v_u, new_distance)
+
         self.assertEqual(new_type, STNU.ORDINARY_LABEL)
+        self.assertEqual(new_distance, -2)
+
+    def test_cross_case(self):
+        # Test cross case (slide 134)
+        stnu = STNU()
+        stnu.add_node('A')
+        stnu.add_node('C')
+        stnu.add_node('A_d')
+
+        # To do, set contingent edge
+        stnu.set_labeled_edge('C', 'A_d', -8, 'K', STNU.UC_LABEL)
+        stnu.set_labeled_edge('A', 'C', 3, 'C', STNU.LC_LABEL)
+
+        source = stnu.translation_dict_reversed['A']
+        u = stnu.translation_dict_reversed['C']
+        v = stnu.translation_dict_reversed['A_d']
+
+        type_u_source = STNU.UC_LABEL
+        type_v_u = STNU.LC_LABEL
+        weight_u_source = -8
+        weight_v_u = 3
+        label_u_source = 'D'
+        label_v_u = 'C'
+
+        new_distance = -5
+        new_distance, v, new_type, new_label = apply_reduction_rule(stnu, source, u, v, type_u_source, type_v_u, weight_u_source, weight_v_u, label_u_source, label_v_u, new_distance)
+
+        self.assertEqual(new_type, STNU.UC_LABEL)
+        self.assertEqual(new_distance, -5)
 
 if __name__ == '__main__':
     unittest.main()

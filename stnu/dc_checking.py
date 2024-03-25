@@ -57,17 +57,18 @@ def apply_reduction_rule(network, source, u, v, type_u_source, type_v_u, weight_
     elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (
     STNU.ORDINARY_LABEL, STNU.LC_LABEL):
         logger.debug(f'lower-case reduction')
-        new_type = STNU.LC_LABEL
-        if type_v_u == STNU.LC_LABEL:
+        new_type = STNU.ORDINARY_LABEL
+        if type_u_source == STNU.LC_LABEL and type_v_u == STNU.ORDINARY_LABEL:
             if weight_v_u > 0:
-                logger.debug(f'WARNING: lower-case reduction but weight > 0')
+                logger.debug(f'WARNING: lower-case reduction but weight ordinary edge > 0')
             else:
-                new_label = label_v_u
-        else:
+                new_label = None
+
+        elif type_u_source == STNU.ORDINARY_LABEL and type_v_u == STNU.LC_LABEL:
             if weight_u_source > 0:
-                logger.debug(f'WARNING: lower-case reduction but weight > 0')
+                logger.debug(f'WARNING: lower-case reduction but weight ordinary edge > 0')
             else:
-                new_label = label_u_source
+                new_label = None
 
     # No-case reduction
     elif (type_v_u, type_u_source) == (STNU.ORDINARY_LABEL, STNU.ORDINARY_LABEL):
@@ -103,6 +104,7 @@ def apply_reduction_rule(network, source, u, v, type_u_source, type_v_u, weight_
         raise NotImplementedError
 
     # Label removal
+    # TODO: check if we also need the original label removal reduction rule
     if new_type == STNU.UC_LABEL and new_distance >= 0:
         logger.debug(f'label removal applies')
         new_type = STNU.ORDINARY_LABEL
