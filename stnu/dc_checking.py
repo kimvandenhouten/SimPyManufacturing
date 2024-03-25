@@ -183,33 +183,40 @@ def determine_dc(stnu, dispatchability=False):
                 continue
             assert weight_u_source == distances[u]
             logger.debug(f'pop u {u} ({network.translation_dict[u]}) that is edge {network.translation_dict[u]} -- {type_u_source} {label_u_source}: {weight_u_source} --> {network.translation_dict[source]}')
-            if distances[u] >= 0:
-                logger.debug(f'distance from u {u} ({network.translation_dict[u]}) '
-                             f' to source ({source}) ({network.translation_dict[source]}) is {distances[u]}')
 
-                # LINE 17
-                if dispatchability:
-                    # TODO: also insert edge if it is negative if we want to implement dispatchablility (return extended form)
-                    if type_u_source == STNU.UC_LABEL or type_u_source == STNU.LC_LABEL:
-                        logger.debug(f'we set a labeled edge from from u {u} ({network.translation_dict[u]}) '
-                                     f' to source {source} ({network.translation_dict[source]}) with distance {distances[u]}')
-                        logger.debug(
-                            f'we should set this edge with  with type {type_u_source} and label {label_u_source}')
-                        network.set_labeled_edge(node_from=u, node_to=source, distance=distances[u], label=label_u_source, label_type=type_u_source)
-
-                    else:
-                        network.set_ordinary_edge(u, source,
-                                                  distances[u])  # backward prop so u is predecessor of source
-                        logger.debug(f'we set an ordinary edge from from u {u} ({network.translation_dict[u]}) '
-                                     f' to source {source} ({network.translation_dict[source]}) with distance {distances[u]}')
+            if dispatchability:
+                # In the extended form of the algorithm both negative and positive edges will be stored along the way
+                # TODO: when we set a new edge use edge types as "derived" or "wait"
+                if type_u_source == STNU.UC_LABEL or type_u_source == STNU.LC_LABEL:
+                    logger.debug(f'we set a labeled edge from from u {u} ({network.translation_dict[u]}) '
+                                 f' to source {source} ({network.translation_dict[source]}) with distance {distances[u]}')
+                    logger.debug(
+                        f'we should set this edge with  with type {type_u_source} and label {label_u_source}')
+                    network.set_labeled_edge(node_from=u, node_to=source, distance=distances[u], label=label_u_source,
+                                             label_type=type_u_source)
 
                 else:
-                    network.set_ordinary_edge(u, source, distances[u])  # backward prop so u is predecessor of source
+                    network.set_ordinary_edge(u, source,
+                                              distances[u])  # backward prop so u is predecessor of source
                     logger.debug(f'we set an ordinary edge from from u {u} ({network.translation_dict[u]}) '
                                  f' to source {source} ({network.translation_dict[source]}) with distance {distances[u]}')
 
-                logger.debug(f'now we continue')
-                continue
+                if distances[u] >= 0:
+                    logger.debug(f'now we continue')
+                    continue
+
+            else:
+                # LINE 17
+                if distances[u] >= 0:
+                    logger.debug(f'distance from u {u} ({network.translation_dict[u]}) '
+                                 f' to source ({source}) ({network.translation_dict[source]}) is {distances[u]}')
+                    network.set_ordinary_edge(u, source, distances[u])  # backward prop so u is predecessor of source
+                    logger.debug(f'we set an edge from from u {u} ({network.translation_dict[u]}) '
+                                 f' to source {source} ({network.translation_dict[source]}) with distance {distances[u]}')
+
+
+                    logger.debug(f'now we continue')
+                    continue
 
             # LINE 19 - 21
             # Check if u is a negative node
@@ -266,7 +273,6 @@ def determine_dc(stnu, dispatchability=False):
                     distances[v] = new_distance
 
                     if dispatchability:
-                        # TODO: transform this to one function and develop unit tests
                         new_distance, v, new_type, new_label = apply_reduction_rule(network, source, u, v, type_u_source, type_v_u,
                                                                                     weight_u_source, weight_v_u,  label_u_source, label_v_u, new_distance)
                         heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
