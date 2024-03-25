@@ -48,7 +48,6 @@ class TestMorris14Basic(unittest.TestCase):
         stnu.add_contingent_link('C', 'D', 0, 3)
         self.assertFalse(determine_dc(stnu, dispatchability=False))
 
-
     def test_normal_form_no_contingent_links(self):
         # Test example without contingent links
         stnu = STNU()

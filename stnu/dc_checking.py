@@ -42,6 +42,7 @@ def convert_to_normal_form(stnu: STNU):
 
 
 def apply_reduction_rule(network, source, u, v, type_u_source, type_v_u, weight_u_source, weight_v_u, label_u_source, label_v_u, new_distance):
+    # TODO: can we make use of input variables cleaner
     # Upper-case reduction
     if (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (
     STNU.ORDINARY_LABEL, STNU.UC_LABEL):
@@ -99,6 +100,7 @@ def apply_reduction_rule(network, source, u, v, type_u_source, type_v_u, weight_
             f'and u to source edge {network.translation_dict[u]} -- {type_u_source} {label_u_source}: {weight_u_source} --> {network.translation_dict[source]}')
         new_type = "TypeNotImplemented"
         new_label = "LabelNotImplemented"
+        raise NotImplementedError
 
     # Label removal
     if new_type == STNU.UC_LABEL and new_distance >= 0:
@@ -114,7 +116,8 @@ def determine_dc(stnu, dispatchability=False):
     Implements the DC-checking algorithm by Morris'14
     Code structure based on repository "Temporal-Networks"
     https://github.com/sudaismoorad/temporal-networks
-    :param stnu:
+    :param stnu: STNU
+    :param dispatchability: Boolean
     :return:
     """
     network = deepcopy(stnu)
