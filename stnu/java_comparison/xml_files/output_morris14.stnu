@@ -47,22 +47,58 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <data key="NetworkType">STNU</data>
 <data key="nEdges">8</data>
 <data key="nVertices">5</data>
-<data key="Name">example_morris14_paper.stnu</data>
+<data key="Name">morris14.stnu</data>
 <node id="A">
-<data key="x">122.47933959960938</data>
-<data key="y">182.58677673339844</data>
+<data key="x">175</data>
+<data key="y">184</data>
 </node>
 <node id="B">
-<data key="x">267.2148742675781</data>
-<data key="y">183.33883666992188</data>
+<data key="x">138</data>
+<data key="y">159</data>
 </node>
-<edge id="eD-B" source="D" target="B">
+<node id="C">
+<data key="x">170</data>
+<data key="y">92</data>
+</node>
+<node id="D">
+<data key="x">69</data>
+<data key="y">146</data>
+</node>
+<node id="E">
+<data key="x">127</data>
+<data key="y">186</data>
+</node>
+<edge id="eA-B" source="A" target="B">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(B):0</data>
+</edge>
+<edge id="eB-A" source="B" target="A">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(B):-2</data>
+</edge>
+<edge id="eB-D" source="B" target="D">
 <data key="Type">requirement</data>
-<data key="Value">3</data>
+<data key="Value">1</data>
 </edge>
 <edge id="eB-E" source="B" target="E">
 <data key="Type">requirement</data>
 <data key="Value">-2</data>
+</edge>
+<edge id="eC-D" source="C" target="D">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(D):0</data>
+</edge>
+<edge id="eD-B" source="D" target="B">
+<data key="Type">requirement</data>
+<data key="Value">3</data>
+</edge>
+<edge id="eD-C" source="D" target="C">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(D):-3</data>
+</edge>
+<edge id="eE-B" source="E" target="B">
+<data key="Type">requirement</data>
+<data key="Value">4</data>
 </edge>
 </graph>
 </graphml>

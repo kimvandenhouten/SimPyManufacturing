@@ -43,62 +43,54 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <default> </default>
 </key>
 <graph edgedefault="directed">
-<data key="nContingent">2</data>
+<data key="nContingent">1</data>
 <data key="NetworkType">STNU</data>
-<data key="nEdges">8</data>
+<data key="nEdges">6</data>
 <data key="nVertices">5</data>
-<data key="Name">morris'14.stnu</data>
+<data key="Name">hunsberger23.stnu</data>
 <node id="A">
-<data key="x">76</data>
-<data key="y">88</data>
-</node>
-<node id="B">
-<data key="x">78</data>
-<data key="y">179</data>
+<data key="x">103</data>
+<data key="y">123</data>
 </node>
 <node id="C">
-<data key="x">184</data>
-<data key="y">155</data>
+<data key="x">67</data>
+<data key="y">198</data>
 </node>
-<node id="D">
-<data key="x">86</data>
-<data key="y">194</data>
+<node id="W">
+<data key="x">163</data>
+<data key="y">175</data>
 </node>
-<node id="E">
-<data key="x">91</data>
-<data key="y">51</data>
+<node id="X">
+<data key="x">124</data>
+<data key="y">170</data>
 </node>
-<edge id="eA-B" source="A" target="B">
+<node id="Y">
+<data key="x">171</data>
+<data key="y">95</data>
+</node>
+<edge id="eA-C" source="A" target="C">
 <data key="Type">contingent</data>
-<data key="Value">LC(B):0</data>
+<data key="LabeledValue">LC(C):1</data>
 </edge>
-<edge id="eB-A" source="B" target="A">
+<edge id="eC-A" source="C" target="A">
 <data key="Type">contingent</data>
-<data key="Value">UC(B):-2</data>
+<data key="LabeledValue">UC(C):-10</data>
 </edge>
-<edge id="eB-D" source="B" target="D">
+<edge id="eC-W" source="C" target="W">
 <data key="Type">requirement</data>
-<data key="Value">1</data>
+<data key="Value">-7</data>
 </edge>
-<edge id="eB-E" source="B" target="E">
-<data key="Type">requirement</data>
-<data key="Value">-2</data>
-</edge>
-<edge id="eC-D" source="C" target="D">
-<data key="Type">contingent</data>
-<data key="Value">LC(D):0</data>
-</edge>
-<edge id="eD-B" source="D" target="B">
+<edge id="eX-C" source="X" target="C">
 <data key="Type">requirement</data>
 <data key="Value">3</data>
 </edge>
-<edge id="eD-C" source="D" target="C">
-<data key="Type">contingent</data>
-<data key="Value">UC(D):-3</data>
-</edge>
-<edge id="eE-B" source="E" target="B">
+<edge id="eX-Y" source="X" target="Y">
 <data key="Type">requirement</data>
-<data key="Value">4</data>
+<data key="Value">-2</data>
+</edge>
+<edge id="eY-C" source="Y" target="C">
+<data key="Type">requirement</data>
+<data key="Value">1</data>
 </edge>
 </graph>
 </graphml>

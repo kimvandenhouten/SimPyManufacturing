@@ -63,7 +63,11 @@ def write_graphml(filename, ncontingent, networktype, nedges, nvertices, name, e
     for edge_id, source, target, type_, value in edges:
         edge = ET.SubElement(graph, "edge", id=edge_id, source=source, target=target)
         ET.SubElement(edge, "data", key="Type").text = type_
-        ET.SubElement(edge, "data", key="Value").text = value
+
+        if type_ == "requirement":
+            ET.SubElement(edge, "data", key="Value").text = value
+        elif type_ == "contingent":
+            ET.SubElement(edge, "data", key="LabeledValue").text = value
 
     # Get pretty XML string for elements after the root
     pretty_xml_as_string = prettify(graphml)

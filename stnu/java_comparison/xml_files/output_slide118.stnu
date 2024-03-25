@@ -47,22 +47,22 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <data key="NetworkType">STNU</data>
 <data key="nEdges">3</data>
 <data key="nVertices">3</data>
-<data key="Name">slide_118.stnu</data>
+<data key="Name">slide118.stnu</data>
 <node id="A">
-<data key="x">169</data>
-<data key="y">100</data>
+<data key="x">46</data>
+<data key="y">152</data>
 </node>
 <node id="B">
-<data key="x">196</data>
-<data key="y">168</data>
+<data key="x">110</data>
+<data key="y">101</data>
 </node>
 <node id="C">
-<data key="x">192</data>
+<data key="x">52</data>
 <data key="y">58</data>
 </node>
 <edge id="eA-C" source="A" target="C">
 <data key="Type">contingent</data>
-<data key="Value">LC(C):2</data>
+<data key="LabeledValue">LC(C):2</data>
 </edge>
 <edge id="eB-C" source="B" target="C">
 <data key="Type">requirement</data>
@@ -70,7 +70,7 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 </edge>
 <edge id="eC-A" source="C" target="A">
 <data key="Type">contingent</data>
-<data key="Value">UC(C):-9</data>
+<data key="LabeledValue">UC(C):-9</data>
 </edge>
 </graph>
 </graphml>
