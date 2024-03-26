@@ -26,7 +26,7 @@ def convert_to_normal_form(stnu: STNU):
                 stnu.add_node(prod, act, new_node_name)
                 new_node_index = stnu.translation_dict_reversed[(prod, act, new_node_name)]
             else:
-                new_node_name = name + "".join([chr(randint(97, 123)) for _ in range(9)])
+                new_node_name = name + "_act"
                 stnu.add_node(new_node_name)
                 new_node_index = stnu.translation_dict_reversed[new_node_name]
             if not stnu.remove_edge(node_from, node_to, type=STNU.LC_LABEL):
@@ -150,7 +150,8 @@ def determine_dc(stnu, dispatchability=False):
         # LINE 04 - 06 FROM DCBACKPROP MORRIS'14 PSEUDOCODE
         # the distances should be set within a dc_backprop call, see pseudocode
         # the distance[i] indicates the distance from i to the source
-        distances = [0 if i == node else float("inf") for i in range(N)]
+        distances = [0 if i == source else float("inf") for i in range(N)]
+        logger.debug(f'set distances to {distances}')
 
         # LINE 07 FROM DBACKPROP MORRIS'14 PSEUDOCODE
         # Set up a priority queue. We use heapq from the python standard library, but note that a fibonacci heap
@@ -266,6 +267,7 @@ def determine_dc(stnu, dispatchability=False):
 
                 # LINE 27 - 35 (numbering in pseudocode is a bit odd)
                 new_distance = distances[u] + weight_v_u
+                logger.debug(f'{distances}')
                 if new_distance < distances[v]:
                     logger.debug(f"Update distance from {network.translation_dict[v]} to {network.translation_dict[source]} "
                                  f"using edge value {weight_v_u} and distance {distances[u]}: old value: {distances[v]} and new value {new_distance}")

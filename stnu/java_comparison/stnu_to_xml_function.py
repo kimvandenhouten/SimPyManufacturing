@@ -92,9 +92,11 @@ def stnu_to_xml(stnu, name_graph, directory):
                 if edge.weight is not None:
                     edges.append((f'e{node_from_str}-{node_to_str}', node_from_str, node_to_str, "requirement", str(edge.weight)))
                 if edge.uc_weight is not None:
-                    edges.append((f'e{node_from_str}-{node_to_str}', node_from_str, node_to_str, "contingent", f'UC({node_from_str}):{edge.uc_weight}'))
+                    label = edge.uc_label
+                    edges.append((f'e{node_from_str}-{node_to_str}', node_from_str, node_to_str, "contingent", f'UC({label}):{edge.uc_weight}'))
                 if edge.lc_weight is not None:
-                    edges.append((f'e{node_from_str}-{node_to_str}', node_from_str, node_to_str, "contingent", f'LC({node_to_str}):{edge.lc_weight}'))
+                    label = edge.lc_label
+                    edges.append((f'e{node_from_str}-{node_to_str}', node_from_str, node_to_str, "contingent", f'LC({label}):{edge.lc_weight}'))
 
     print(edges)
 
@@ -110,6 +112,6 @@ def stnu_to_xml(stnu, name_graph, directory):
     networktype = "STNU"
     nedges = len(edges)
     nvertices = len(stnu.nodes)-2  # FIXME: horizon / origin indexing
-    write_graphml(f"{directory}/output_{name_graph}.stnu", ncontingent, networktype, nedges, nvertices, name_graph, edges, nodes)
+    write_graphml(f"{directory}/{name_graph}.stnu", ncontingent, networktype, nedges, nvertices, name_graph, edges, nodes)
 
 

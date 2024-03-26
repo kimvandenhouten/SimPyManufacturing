@@ -45,52 +45,44 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <graph edgedefault="directed">
 <data key="nContingent">1</data>
 <data key="NetworkType">STNU</data>
-<data key="nEdges">6</data>
-<data key="nVertices">5</data>
-<data key="Name">hunsberger23.stnu</data>
+<data key="nEdges">5</data>
+<data key="nVertices">4</data>
+<data key="Name">input_minimal_example_factory.stnu</data>
 <node id="A">
-<data key="x">103</data>
-<data key="y">123</data>
+<data key="x">152</data>
+<data key="y">156</data>
 </node>
 <node id="C">
-<data key="x">67</data>
-<data key="y">198</data>
+<data key="x">77</data>
+<data key="y">151</data>
 </node>
-<node id="W">
-<data key="x">163</data>
-<data key="y">175</data>
+<node id="D">
+<data key="x">186</data>
+<data key="y">117</data>
 </node>
-<node id="X">
-<data key="x">124</data>
-<data key="y">170</data>
-</node>
-<node id="Y">
-<data key="x">171</data>
-<data key="y">95</data>
+<node id="E">
+<data key="x">51</data>
+<data key="y">123</data>
 </node>
 <edge id="eA-C" source="A" target="C">
 <data key="Type">contingent</data>
-<data key="LabeledValue">LC(C):1</data>
+<data key="LabeledValue">LC(C):15</data>
 </edge>
 <edge id="eC-A" source="C" target="A">
 <data key="Type">contingent</data>
-<data key="LabeledValue">UC(C):-10</data>
+<data key="LabeledValue">UC(C):-20</data>
 </edge>
-<edge id="eC-W" source="C" target="W">
+<edge id="eD-C" source="D" target="C">
 <data key="Type">requirement</data>
-<data key="Value">-7</data>
+<data key="Value">0</data>
 </edge>
-<edge id="eX-C" source="X" target="C">
+<edge id="eD-E" source="D" target="E">
 <data key="Type">requirement</data>
-<data key="Value">3</data>
+<data key="Value">-5</data>
 </edge>
-<edge id="eX-Y" source="X" target="Y">
+<edge id="eE-D" source="E" target="D">
 <data key="Type">requirement</data>
-<data key="Value">-2</data>
-</edge>
-<edge id="eY-C" source="Y" target="C">
-<data key="Type">requirement</data>
-<data key="Value">1</data>
+<data key="Value">8</data>
 </edge>
 </graph>
 </graphml>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
+<key id="nContingent" for="graph">
+<desc>Number of contingents in the graph</desc>
+<default>0</default>
+</key>
+<key id="NetworkType" for="graph">
+<desc>Network Type</desc>
+<default>CSTNU</default>
+</key>
+<key id="nEdges" for="graph">
+<desc>Number of edges in the graph</desc>
+<default>0</default>
+</key>
+<key id="nVertices" for="graph">
+<desc>Number of vertices in the graph</desc>
+<default>0</default>
+</key>
+<key id="Name" for="graph">
+<desc>Graph Name</desc>
+<default> </default>
+</key>
+<key id="x" for="node">
+<desc>The x coordinate for the visualization. A positive value.</desc>
+<default>0</default>
+</key>
+<key id="y" for="node">
+<desc>The y coordinate for the visualization. A positive value.</desc>
+<default>0</default>
+</key>
+<key id="Type" for="edge">
+<desc>Type: Possible values: contingent|requirement|derived|internal.</desc>
+<default>requirement</default>
+</key>
+<key id="Value" for="edge">
+<desc>Value for STN edge. Format: 'integer'</desc>
+<default> </default>
+</key>
+<key id="LabeledValue" for="edge">
+<desc>Case Value. Format: 'LC(NodeName):integer' or 'UC(NodeName):integer'</desc>
+<default> </default>
+</key>
+<graph edgedefault="directed">
+<data key="nContingent">1</data>
+<data key="NetworkType">STNU</data>
+<data key="nEdges">7</data>
+<data key="nVertices">4</data>
+<data key="Name">output_estnu_python_minimized_example_factory.stnu</data>
+<node id="A">
+<data key="x">200</data>
+<data key="y">166</data>
+</node>
+<node id="C">
+<data key="x">70</data>
+<data key="y">125</data>
+</node>
+<node id="D">
+<data key="x">113</data>
+<data key="y">101</data>
+</node>
+<node id="E">
+<data key="x">135</data>
+<data key="y">155</data>
+</node>
+<edge id="eA-C" source="A" target="C">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(C):0</data>
+</edge>
+<edge id="eC-A" source="C" target="A">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(C):-20</data>
+</edge>
+<edge id="eD-A" source="D" target="A">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(C):-20</data>
+</edge>
+<edge id="eD-C" source="D" target="C">
+<data key="Type">requirement</data>
+<data key="Value">0</data>
+</edge>
+<edge id="eD-E" source="D" target="E">
+<data key="Type">requirement</data>
+<data key="Value">-5</data>
+</edge>
+<edge id="eE-A" source="E" target="A">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(C):-12</data>
+</edge>
+<edge id="eE-D" source="E" target="D">
+<data key="Type">requirement</data>
+<data key="Value">8</data>
+</edge>
+</graph>
+</graphml>
