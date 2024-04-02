@@ -4,7 +4,7 @@ import subprocess
 JAR_LOCATION = None
 
 if os.path.exists("/Users/kimvandenhouten"):
-    JAR_LOCATION = "/Users/kimvandenhouten/Documents/PhD/Repositories/CstnuTool-4.12/CSTNU-Tool-4.12.jar"
+    JAR_LOCATION = "/Users/kimvandenhouten/Documents/PhD/Repositories/CstnuTool-4.12-ai4b.io/CSTNU-Tool-4.12-ai4b.io.jar"
 elif os.path.exists("/home/leon"):
     JAR_LOCATION = "/home/leon/Projects/CstnuTool-4.12-ai4b.io/CSTNU-Tool-4.12-ai4b.io.jar"
 

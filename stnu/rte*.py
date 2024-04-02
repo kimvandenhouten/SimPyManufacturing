@@ -16,16 +16,19 @@ class RTEdata:
         # TODO: initialize time-windows for all u_x
         # TODO: initialize activated waits for all u_x
 
+
 class RTEdecision:
     def __init__(self, x, t):
         self.x = x # the executable time point
         self.t = t # the time point at which x will is determined to be executed
         # TODO: implement wait decision
 
+
 class Observation:
     def __init__(self, rho, tau):
         self.rho = rho
         self.tau = tau
+
 def rte_stnu(estnu: STNU):
     """
     This procedure should run the RTE^* algorithm such as described in Hunsberger'2024 article "Foundations of
@@ -122,3 +125,10 @@ def hxe_update(S: STNU, D: RTEdata, rho, tau):
     :param tau: contingent time-points to execute at rho
     :return: D: updated RTE data structure
     """
+    # Line 1: Add (V, t) to D.f
+    # Line 2: Add (C, rho) to D.f
+    # Line 3: Update time windows for neighbors of V
+    # Line 4: Update D.Enabled_x due to any negative incoming edges to V
+    # Line 5: If V is activation_TP for some CTP C then
+    # Line 6: Foreach (Y, C:-w, V) \in Edges_w (wait edges) do:
+    # Line 7: Insert (t+w, C) into D.AcWts(Y)
