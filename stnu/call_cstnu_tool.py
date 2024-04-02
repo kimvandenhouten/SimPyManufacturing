@@ -9,7 +9,7 @@ elif os.path.exists("/home/leon"):
     JAR_LOCATION = "/home/leon/Projects/CstnuTool-4.12-ai4b.io/CSTNU-Tool-4.12-ai4b.io.jar"
 
 if not JAR_LOCATION or not os.path.exists(JAR_LOCATION):
-    raise Exception("Could not find CSTNUTool-4.12-ai4b")
+    raise Exception("Could not find CSTNUTool")
 
 FILE_LIST = [
     ("input_hunsberger23.stnu", True),
@@ -22,11 +22,16 @@ for (file_name, dc) in FILE_LIST:
     if not os.path.exists(INSTANCE_LOCATION):
         print(f"warning: could not find {INSTANCE_LOCATION}")
         continue
-    print(f"running {INSTANCE_LOCATION}")
+    print(f"running CSTNUTool on {file_name}")
+
+    OUTPUT_LOCATION = INSTANCE_LOCATION.replace(".stnu", "-output.stnu")
 
     cmd = [
         'java', '-cp', JAR_LOCATION,
-        'it.univr.di.cstnu.algorithms.STNU', '-a', 'Morris2014', INSTANCE_LOCATION,
+        'it.univr.di.cstnu.algorithms.STNU',
+        INSTANCE_LOCATION,
+        '-a', 'Morris2014',
+        '-o', OUTPUT_LOCATION,
     ]
     if dc:
         print(f'Network should be DC')
