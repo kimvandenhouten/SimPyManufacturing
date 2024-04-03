@@ -1,9 +1,6 @@
-from random import randint
-from copy import deepcopy
-import heapq
 import classes.general
-from typing import Any, List
 from classes.stnu import STNU, Edge
+
 logger = classes.general.get_logger()
 
 
@@ -19,8 +16,8 @@ class RTEdata:
 
 class RTEdecision:
     def __init__(self, x, t):
-        self.x = x # the executable time point
-        self.t = t # the time point at which x will is determined to be executed
+        self.x = x  # the executable time point
+        self.t = t  # the time point at which x will is determined to be executed
         # TODO: implement wait decision
 
 
@@ -28,6 +25,7 @@ class Observation:
     def __init__(self, rho, tau):
         self.rho = rho
         self.tau = tau
+
 
 def rte_stnu(estnu: STNU):
     """
