@@ -1,47 +1,109 @@
+import enum
 import os
+import re
 import subprocess
 
-JAR_LOCATION = None
 
-if os.path.exists("/Users/kimvandenhouten"):
-    JAR_LOCATION = "/Users/kimvandenhouten/Documents/PhD/Repositories/CstnuTool-4.12-ai4b.io/CSTNU-Tool-4.12-ai4b.io.jar"
-elif os.path.exists("/home/leon"):
-    JAR_LOCATION = "/home/leon/Projects/CstnuTool-4.12-ai4b.io/CSTNU-Tool-4.12-ai4b.io.jar"
+class DCAlgorithm(enum.Enum):
+    FD_STNU_IMPROVED = enum.auto()
+    FD_STNU = enum.auto()
+    Morris2014Dispatchable = enum.auto()
+    Morris2014 = enum.auto()
+    RUL2018 = enum.auto()
+    RUL2021 = enum.auto()
 
-if not JAR_LOCATION or not os.path.exists(JAR_LOCATION):
-    raise Exception("Could not find CSTNUTool")
 
-FILE_LIST = [
-    ("input_hunsberger23.stnu", True),
-    ("input_morris14.stnu", False),
-    ("input_slide118.stnu", True)
-]
+class CSTNUTool:
+    JAR_LOCATION = None
 
-for (file_name, dc) in FILE_LIST:
-    INSTANCE_LOCATION = os.path.abspath(f"stnu/java_comparison/xml_files/{file_name}")
-    if not os.path.exists(INSTANCE_LOCATION):
-        print(f"warning: could not find {INSTANCE_LOCATION}")
-        continue
-    print(f"running CSTNUTool on {file_name}")
+    if os.path.exists("/Users/kimvandenhouten"):
+        JAR_LOCATION = "/Users/kimvandenhouten/Documents/PhD/Repositories/CstnuTool-4.12-ai4b.io/CSTNU-Tool-4.12-ai4b.io.jar"
+    elif os.path.exists("/home/leon"):
+        JAR_LOCATION = "/home/leon/Projects/CstnuTool-4.12-ai4b.io/CSTNU-Tool-4.12-ai4b.io.jar"
 
-    OUTPUT_LOCATION = INSTANCE_LOCATION.replace(".stnu", "-output.stnu")
+    if not JAR_LOCATION or not os.path.exists(JAR_LOCATION):
+        raise Exception("Could not find CSTNUTool")
 
-    cmd = [
-        'java', '-cp', JAR_LOCATION,
-        'it.univr.di.cstnu.algorithms.STNU',
-        INSTANCE_LOCATION,
-        '-a', 'Morris2014',
-        '-o', OUTPUT_LOCATION,
+    @classmethod
+    def _run_java(cls, java_class: str, arguments: list[str]) -> subprocess.CompletedProcess[str]:
+        cmd = [
+            'java', '-cp', cls.JAR_LOCATION,
+            java_class,
+        ]
+        cmd += arguments
+
+        res = subprocess.run(cmd, capture_output=True, text=True)
+
+        if res.stderr:
+            print("ERROR")
+            print(res.stderr)
+
+        print(res.stdout)
+        return res
+
+    @classmethod
+    def run_dc_alg(cls, instance_location, expected_dc, output_location=None,
+                   alg: DCAlgorithm = DCAlgorithm.Morris2014):
+        java_class = 'it.univr.di.cstnu.algorithms.STNU'
+        arguments = [
+            instance_location,
+            '-a', alg.name,
+        ]
+        if output_location:
+            arguments += ['-o', output_location]
+
+        res = cls._run_java(java_class, arguments)
+
+        is_dc = "The given STNU is dynamic controllable!" in res.stdout
+        if expected_dc and is_dc:
+            print('Network is DC, as expected')
+        elif not expected_dc and not is_dc:
+            print('Network is not DC, as expected')
+        else:
+            print(f'WARNING: Network was unexpectedly found {"" if is_dc else "not "} to be DC')
+
+    @classmethod
+    def run_rte(cls, instance_location):
+        java_class = 'it.univr.di.cstnu.algorithms.STNURTE'
+        arguments = [
+            instance_location,
+        ]
+
+        res = cls._run_java(java_class, arguments)
+        match = re.search(r'Final schedule: \[(.*)]', res.stdout)
+        if match:
+            schedule = {}
+            for s in match[1].split(', '):
+                var, val = s.split('=>')
+                schedule[var[1:-1]] = int(val)
+            return schedule
+        else:
+            return None
+
+
+def main():
+    file_list = [
+        ("input_hunsberger23.stnu", True),
+        ("input_morris14.stnu", False),
+        ("input_slide118.stnu", True)
     ]
-    if dc:
-        print(f'Network should be DC')
-    else:
-        print(f'Network should not be DC')
 
-    res = subprocess.run(cmd, capture_output=True, text=True)
+    for (file_name, dc) in file_list:
+        instance_location = os.path.abspath(f"stnu/java_comparison/xml_files/{file_name}")
+        if not os.path.exists(instance_location):
+            print(f"warning: could not find {instance_location}")
+            continue
+        print(f"running CSTNUTool on {file_name}")
 
-    if res.stderr:
-        print("ERROR")
-        print(res.stderr)
+        output_location = instance_location.replace(".stnu", "-output.stnu")
 
-    print(res.stdout)
+        CSTNUTool.run_dc_alg(instance_location, dc, output_location)
+        schedule = CSTNUTool.run_rte(instance_location)
+        if schedule:
+            print(f"parsed schedule: {schedule}")
+        else:
+            print("could not parse schedule")
+
+
+if __name__ == "__main__":
+    main()
