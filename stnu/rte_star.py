@@ -5,6 +5,16 @@ import random
 
 logger = classes.general.get_logger()
 
+
+def intersect_intervals(a, b, c, d):
+    x = max(a, c)
+    y = min(b, d)
+
+    if x > y:
+        return False
+    else:
+        return x, y
+
 class TimeWindow:
     def __init__(self, x, lb=0, ub=np.inf):
         self.x = x
@@ -168,6 +178,65 @@ def rte_update(S: STNU, D: RTEdata, delta: RTEdecision, observation: Observation
     # Line 10: Return D
 
 
+def hxe_update(S: STNU, D: RTEdata, t, V):
+    """
+    Handles non-contingent executions
+    :param S: extended STNU
+    :param D: RTE data structure
+    :param t: an execution time
+    :param V: executable time-point to execute at rho
+    :return: D: updated RTE data structure
+    """
+    # Line 1: Add (V, t) to D.f
+    D.f[V] = t
+
+    # Line 2: Remove (V, t) from D.u_x
+    D.u_x.remove(V)
+
+    # Line 3: Update time windows for neighbors of V
+    # for outgoing edges (V, delta, W)
+    outgoing_edges = S.get_outgoing_edges(node_from=V, ordinary=True, uc=False, lc=False)
+    for (delta, W, _, _) in outgoing_edges:
+        # TW(W) = intersection of TW(W) and (-np.inf, t + delta)
+        if W in D.time_windows:  # skip contingent tps
+            new_lb, new_ub = intersect_intervals(D.time_windows[W].lb, D.time_windows[W].ub, -np.inf, t + delta)
+            D.time_windows[W].lb = new_lb
+            D.time_windows[W].ub = new_ub
+            logger.debug(f'Update time window of {W} to [{new_lb}, {new_ub}]')
+
+    # for incoming edges (U, gamma, V)
+    incoming_edges = S.get_incoming_edges(node_to=V, ordinary=True, uc=False, lc=False)
+    for (gamma, U, _, _) in incoming_edges:
+        # TW(U) = intersection of TW(U) and [t-gamma, np.inf)
+        if U in D.time_windows:
+            new_lb, new_ub = intersect_intervals(D.time_windows[U].lb, D.time_windows[U].ub, t - gamma, np.inf)
+            D.time_windows[U].lb = new_lb
+            D.time_windows[U].ub = new_ub
+            logger.debug(f'Update time window of {U} to [{new_lb}, {new_ub}]')
+
+    # Line 4: Update D.Enabled_x due to any negative incoming edges to V
+    # FIXME: can we do this more efficient
+    D.enabled_tp = []
+    for tp in D.u_x:
+        enabled = True
+        outgoing_edges = S.get_outgoing_edges(tp)
+        for (weight, suc_node, edge_type, edge_label) in outgoing_edges:
+            if weight < 0:
+                if suc_node not in D.f:
+                    enabled = False
+        if enabled:
+            D.enabled_tp.append(tp)
+
+    # Line 5: If V is activation_TP for some CTP C then
+    if S.node_types[V] == STNU.ACTIVATION_TP:
+        # Line 6: Foreach (Y, C:-w, V) \in Edges_w (wait edges) do:
+        for (X, label, weight, Y) in S.get_wait_edges():
+            if X == V:
+                D.act_waits[X].append((t - weight, label))
+                logger.debug(f'Activated wait for {X} with {(t-weight, label)}')
+    return D
+
+
 def hce_update(S: STNU, D: RTEdata, rho, tau):
     """
     Handles contingent executions
@@ -185,19 +254,4 @@ def hce_update(S: STNU, D: RTEdata, rho, tau):
     # Line 6: Update D.Enabled_x due to incoming negative edges to C or any deleted C-waits
 
 
-def hxe_update(S: STNU, D: RTEdata, rho, tau):
-    """
-    Handles non-contingent executions
-    :param S: extended STNU
-    :param D: RTE data structure
-    :param rho: an execution time
-    :param tau: contingent time-points to execute at rho
-    :return: D: updated RTE data structure
-    """
-    # Line 1: Add (V, t) to D.f
-    # Line 2: Add (C, rho) to D.f
-    # Line 3: Update time windows for neighbors of V
-    # Line 4: Update D.Enabled_x due to any negative incoming edges to V
-    # Line 5: If V is activation_TP for some CTP C then
-    # Line 6: Foreach (Y, C:-w, V) \in Edges_w (wait edges) do:
-    # Line 7: Insert (t+w, C) into D.AcWts(Y)
+

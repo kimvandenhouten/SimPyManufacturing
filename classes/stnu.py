@@ -245,7 +245,7 @@ class STNU:
 
         self.contingent_links.append((node_from, node_to, x, y))
 
-    def get_incoming_edges(self, node_to):
+    def get_incoming_edges(self, node_to, ordinary=True, uc=True, lc=True):
         """
         :param u: node_to
         :return: all preceding edges of node u
@@ -256,16 +256,19 @@ class STNU:
         for pred_node in range(N):
             if node_to in self.edges[pred_node]:
                 edge = self.edges[pred_node][node_to]
-                if edge.weight is not None:
-                    incoming_edges.append((edge.weight, pred_node, STNU.ORDINARY_LABEL, None))
-                if edge.uc_weight is not None:
-                    incoming_edges.append((edge.uc_weight, pred_node, STNU.UC_LABEL, edge.uc_label))
-                if edge.lc_weight is not None:
-                    incoming_edges.append((edge.lc_weight, pred_node, STNU.LC_LABEL, edge.lc_label))
+                if ordinary:
+                    if edge.weight is not None:
+                        incoming_edges.append((edge.weight, pred_node, STNU.ORDINARY_LABEL, None))
+                if uc:
+                    if edge.uc_weight is not None:
+                        incoming_edges.append((edge.uc_weight, pred_node, STNU.UC_LABEL, edge.uc_label))
+                if lc:
+                    if edge.lc_weight is not None:
+                        incoming_edges.append((edge.lc_weight, pred_node, STNU.LC_LABEL, edge.lc_label))
 
         return incoming_edges
 
-    def get_outgoing_edges(self, node_from):
+    def get_outgoing_edges(self, node_from, ordinary=True, uc=True, lc=True):
         """
         :param u: node_to
         :return: all preceding edges of node u
@@ -276,16 +279,20 @@ class STNU:
         for suc_node in range(N):
             if suc_node in self.edges[node_from]:
                 edge = self.edges[node_from][suc_node]
-                if edge.weight is not None:
-                    outgoing_edges.append((edge.weight, suc_node, STNU.ORDINARY_LABEL, None))
-                if edge.uc_weight is not None:
-                    outgoing_edges.append((edge.uc_weight, suc_node, STNU.UC_LABEL, edge.uc_label))
-                if edge.lc_weight is not None:
-                    outgoing_edges.append((edge.lc_weight, suc_node, STNU.LC_LABEL, edge.lc_label))
+                if ordinary:
+                    if edge.weight is not None:
+                        outgoing_edges.append((edge.weight, suc_node, STNU.ORDINARY_LABEL, None))
+                if uc:
+                    if edge.uc_weight is not None:
+                        outgoing_edges.append((edge.uc_weight, suc_node, STNU.UC_LABEL, edge.uc_label))
+                if lc:
+                    if edge.lc_weight is not None:
+                        outgoing_edges.append((edge.lc_weight, suc_node, STNU.LC_LABEL, edge.lc_label))
 
         return outgoing_edges
 
     def get_incoming_ou_edges(self, node_to):
+        # FIXME: this method is not needed anymore, check if it is used and replace with get_incoming_edges(node_to)
         """
         :param u: node_to
         :return: all preceding edges of node u
