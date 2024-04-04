@@ -34,9 +34,11 @@ def convert_to_normal_form(stnu: STNU):
             if not stnu.remove_edge(node_to, node_from, type=STNU.UC_LABEL):
                 raise ValueError(f"Removing nonexistent UC edge in convert_to_normal_form: {node_from}->{node_to}")
 
+            stnu.node_types[node_from] = STNU.EXECUTABLE_TP
             stnu.add_tight_constraint(node_from, new_node_index, x)
             stnu.add_contingent_link(new_node_index, node_to, 0, y-x)
             stnu.contingent_links.remove((node_from, node_to, x, y))
+
 
     return stnu
 

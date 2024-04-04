@@ -1,17 +1,53 @@
 import classes.general
 from classes.stnu import STNU, Edge
+import numpy as np
+import random
 
 logger = classes.general.get_logger()
 
+class TimeWindow:
+    def __init__(self, x, lb=0, ub=np.inf):
+        self.x = x
+        self.lb = lb
+        self.ub = ub
 
 class RTEdata:
-    def __init__(self, u_x, u_c, enabled_x, now):
+    def __init__(self, u_x=[], u_c=[], enabled_x=[], now=0):
         self.u_x = u_x
         self.u_c = u_c
-        self.enabled_x = enabled_x
-        self.now = now
+        self.enabled_tp = enabled_x  # the enabled timepoints
+        self.now = now  # the current time, initialized at 0
+        self.f = {}  # variable assignments (schedule)
+        self.time_windows = {}
+        self.act_waits = {}
         # TODO: initialize time-windows for all u_x
         # TODO: initialize activated waits for all u_x
+
+    @classmethod
+    def from_estnu(cls, estnu: STNU) -> 'RTEdata':
+        # Obtain executable and contingent timepoints from the estnu
+        u_x = estnu.get_executable_time_points()
+        u_c = estnu.get_contingent_time_points()
+        rte_data = RTEdata(u_x=u_x, u_c=u_c)
+
+        # Initialize enable timepoints
+        for tp in u_x:
+            enabled = True
+            outgoing_edges = estnu.get_outgoing_edges(tp)
+            for (weight, suc_node, edge_type, edge_label) in outgoing_edges:
+                if weight < 0:
+                    if suc_node not in rte_data.f:
+                        enabled = False
+            if enabled:
+                rte_data.enabled_tp.append(tp)
+
+            # Initialize time windows
+            rte_data.time_windows[tp] = TimeWindow(x=tp)
+
+            # Initialize activated waits
+            rte_data.act_waits[tp] = []
+
+        return rte_data
 
 
 class RTEdecision:
@@ -53,17 +89,52 @@ def rte_generate_decision(D: RTEdata):
     :return: Eec decs: Wait or (t, V); or fail
     """
     # Line 1: If D.enabled_x is empty:
-    # Line 2: return wait
-    # Line 3: For each x \in D.enabled_x:
-    # Line 4: Find maximum wait for X
-    # Line 5: Find greatest lower bound for X
+    if len(D.enabled_tp) == 0:
+        # Line 2: return wait
+        return "WAIT"
+    else:
+        # Line 3: For each x \in D.enabled_x:
+        glb = {}
+        ub = {}
+        for x in D.enabled_tp:
+            act_waits = D.act_waits[x]
+            # Line 4: Find maximum wait for X
+            max_wait = max(act_waits) if len(act_waits) > 0 else 0
+            # Line 5: Find greatest lower bound for X
+            glb[x] = max(max_wait, D.time_windows[x].lb)
+            ub[x] = D.time_windows[x].ub
+
     # Line 6: Find earliest possible next execution: t_l
+    t_l = min(glb)
+    key_with_lowest_value = min(glb, key=glb.get)
     # Line 7: Find latest possible next execution: t_u
+    t_u = max(ub)
+
     # Line 8: If the intersection from [t_l, t_u] and [now, inf] is empty
-    # Line 9: Return fail
-    # Line 10: Select any point V \in D.enabled_x for which the intersection is not empty
-    # Line 11: Select any point t \in ...
-    # Line 12: Return (t,V)
+    if t_u < D.now or np.inf < t_l:
+        # Line 9: Return fail
+        return "FAIL"
+
+    # Line 10: Select any point V \in D.enabled_tp for which the intersection is not empty
+    found_v = None  # This will store the item V that meets your criteria
+
+    for V in D.enabled_tp:
+        # Check if the intersection of [glb(V), ub(V)] and [D.now, t_u] is not empty
+        if not (ub[V] < D.now or t_u < glb[V]):
+            # If the condition does not hold, remember V and exit the loop
+            found_v = V
+            break
+
+    if found_v is None:
+        return "FAIL"
+
+    else:
+        # Line 11: Select any point t in [glb(V), ub(V)] \intersection [D.now, t_u]
+        t = max(glb[found_v], D.now)  # TODO: now I implemented just the LB
+
+        # Line 12: Return (t,V)
+        return (t, found_v)
+
 
 
 def rte_oracle():

@@ -2,6 +2,7 @@ import json
 from classes.classes import ProductionPlan
 import classes.general
 from classes.stnu import STNU
+from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 
 from stnu.get_resource_chains_reservations import get_resource_chains, add_resource_chains
 from solvers.RCPSP_CP import RCPSP_CP
@@ -37,6 +38,6 @@ resource_chains, resource_use = get_resource_chains(my_productionplan, earliest_
 # Set up stn and run floyd warshall
 stnu = STNU.from_production_plan(my_productionplan, max_time_lag=max_time_lag)
 stnu = add_resource_chains(stnu=stnu, resource_chains=resource_chains)
-
-determine_dc(stnu)
+stnu_to_xml(stnu, f"input_production_plan_{instance_size}_{instance_id}", "stnu/java_comparison/xml_files")
+#determine_dc(stnu)
 

@@ -44,10 +44,14 @@ class STNU:
     index: int
     translation_dict: dict[int, Any]
     translation_dict_reversed: dict[Any, int]
+    EXECUTABLE_TP = "EXECUTABLE_TP"
+    ACTIVATION_TP = "ACTIVATION_TP"
+    CONTINGENT_TP = "CONTINGENT_TP"
 
     def __init__(self):
         # Set-up nodes and edges
         self.nodes = {self.ORIGIN_IDX, self.HORIZON_IDX}
+        self.node_types = [STNU.EXECUTABLE_TP, STNU.EXECUTABLE_TP]
         self.edges = {node: {} for node in self.nodes}
 
         self.contingent_links = []
@@ -60,7 +64,13 @@ class STNU:
         self.translation_dict = {}
         self.translation_dict_reversed = {}
 
-        #self.set_edge(self.HORIZON_IDX, self.ORIGIN_IDX, 0)
+        # FIXME: this was needed for debugging, because sometimes otherwise key error
+        self.translation_dict[STNU.ORIGIN_IDX] = "ORIGIN"
+        self.translation_dict_reversed["ORIGIN"] = STNU.ORIGIN_IDX
+        self.translation_dict[STNU.HORIZON_IDX] = "HORIZON"
+        self.translation_dict_reversed["HORIZON"] = STNU.ORIGIN_IDX
+
+        self.set_ordinary_edge(self.HORIZON_IDX, self.ORIGIN_IDX, 0)
 
     def __str__(self):
         """
@@ -111,9 +121,9 @@ class STNU:
                     if max_lag is not None:
                         stnu.add_interval_constraint(i_idx, j_idx, min_lag, max_lag)
                     else:
-                        stnu.set_edge(j_idx, i_idx, -min_lag)
+                        stnu.set_ordinary_edge(j_idx, i_idx, -min_lag)
                 else:
-                    stnu.set_edge(j_idx, i_idx, -min_lag)
+                    stnu.set_ordinary_edge(j_idx, i_idx, -min_lag)
         return stnu
 
     def add_node(self, *description):
@@ -121,6 +131,7 @@ class STNU:
         node_idx = self.index
         self.index += 1
         self.nodes.add(node_idx)
+        self.node_types.append(STNU.EXECUTABLE_TP)
         self.edges[node_idx] = {}
 
         # FIXME: this is quite an ugly implementation to distinguish between tuple and str descriptions
@@ -129,9 +140,15 @@ class STNU:
         self.translation_dict_reversed[description] = node_idx
 
         # This node / event must occur between ORIGIN and HORIZON
-        #self.set_edge(node_idx, self.ORIGIN_IDX, 0)
-        #self.set_edge(self.HORIZON_IDX, node_idx, 0)
+        self.set_ordinary_edge(node_idx, self.ORIGIN_IDX, 0)
+        self.set_ordinary_edge(self.HORIZON_IDX, node_idx, 0)
         return node_idx
+
+    def get_executable_time_points(self):
+        return [node for node in self.nodes if self.node_types[node] in (STNU.EXECUTABLE_TP, STNU.ACTIVATION_TP)]
+
+    def get_contingent_time_points(self):
+        return [node for node in self.nodes if self.node_types[node] == STNU.CONTINGENT_TP]
 
     def set_labeled_edge(self, node_from, node_to, distance, label, label_type):
 
@@ -157,8 +174,6 @@ class STNU:
             edge = Edge(node_from, node_to)
         edge.set_weight(weight=distance)
         self.edges[node_from][node_to] = edge
-
-
 
     def remove_edge(self, node_from, node_to, type):
         """Removes edge of the given type (if it exists)
@@ -208,6 +223,8 @@ class STNU:
     def add_contingent_link(self, node_from, node_to, x, y):
         node_from = self.translation_dict_reversed[node_from] if type(node_from) == str else node_from
         node_to = self.translation_dict_reversed[node_to] if type(node_to) == str else node_to
+        self.node_types[node_from] = STNU.ACTIVATION_TP
+        self.node_types[node_to] = STNU.CONTINGENT_TP
 
         label = self.translation_dict[node_to]
 
@@ -248,6 +265,26 @@ class STNU:
 
         return incoming_edges
 
+    def get_outgoing_edges(self, node_from):
+        """
+        :param u: node_to
+        :return: all preceding edges of node u
+        """
+        N = len(self.nodes)
+        outgoing_edges = []  # I have chosen now to use a dictionary to keep track of the incoming edges
+        # Find incoming edges of node u from OU graph
+        for suc_node in range(N):
+            if suc_node in self.edges[node_from]:
+                edge = self.edges[node_from][suc_node]
+                if edge.weight is not None:
+                    outgoing_edges.append((edge.weight, suc_node, STNU.ORDINARY_LABEL, None))
+                if edge.uc_weight is not None:
+                    outgoing_edges.append((edge.uc_weight, suc_node, STNU.UC_LABEL, edge.uc_label))
+                if edge.lc_weight is not None:
+                    outgoing_edges.append((edge.lc_weight, suc_node, STNU.LC_LABEL, edge.lc_label))
+
+        return outgoing_edges
+
     def get_incoming_ou_edges(self, node_to):
         """
         :param u: node_to
@@ -265,6 +302,27 @@ class STNU:
                     incoming_edges.append((edge.uc_weight, pred_node, STNU.UC_LABEL, edge.uc_label))
 
         return incoming_edges
+
+    def get_wait_edges(self):
+        """
+        :return: all (derived) wait edges of the STNU
+        """
+        N = len(self.nodes)
+        wait_edges = []  # I have chosen now to use a dictionary to keep track of the incoming edges
+        # Find incoming edges of node u from OU graph
+        for node_from in range(N):
+            for node_to in range(N):
+                if node_to in self.edges[node_from]:
+                    edge = self.edges[node_from][node_to]
+                    if edge.uc_weight is not None:
+                        node_from_label = self.translation_dict[node_from]
+                        node_to_label = self.translation_dict[node_to]
+                        if edge.uc_label in (node_from_label, node_to_label):
+                            continue
+                        else:
+                            wait_edges.append((node_from, edge.uc_label, edge.uc_weight, node_to))
+
+        return wait_edges
 
     def find_negative_nodes(self):
         # Determine which nodes are negative by looping through the OU-graph and OL-graph
