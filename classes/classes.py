@@ -103,8 +103,8 @@ class Product(JSONParseable):
 
     def add_activity(self, activity):
         """
-        Add a product to the product
-        :param product: Class product
+        Add an activity to the product
+        :param activity the activity to add
         """
         self.activities.append(activity)
 

@@ -1,6 +1,6 @@
 from typing import Any, Iterable, Union
 import numpy as np
-from classes.classes import ProductionPlan
+from classes.classes import ProductionPlan, Product
 
 
 class Edge:
@@ -39,11 +39,13 @@ class STNU:
     ORDINARY_LABEL = "ORDINARY"
     ORIGIN_IDX = 0
     HORIZON_IDX = 1
+    ORIGIN_NAME = "ORIGIN"
+    HORIZON_NAME = "HORIZON"
     nodes: set[int]
     edges: dict[int, dict[int, float]]
     index: int
-    translation_dict: dict[int, Any]
-    translation_dict_reversed: dict[Any, int]
+    translation_dict: dict[int, str]
+    translation_dict_reversed: dict[str, int]
     EXECUTABLE_TP = "EXECUTABLE_TP"
     ACTIVATION_TP = "ACTIVATION_TP"
     CONTINGENT_TP = "CONTINGENT_TP"
@@ -61,14 +63,8 @@ class STNU:
         self.index = max(self.nodes) + 1
 
         # We keep track of two translation dictionaries to connect indices to the events
-        self.translation_dict = {}
-        self.translation_dict_reversed = {}
-
-        # FIXME: this was needed for debugging, because sometimes otherwise key error
-        self.translation_dict[STNU.ORIGIN_IDX] = "ORIGIN"
-        self.translation_dict_reversed["ORIGIN"] = STNU.ORIGIN_IDX
-        self.translation_dict[STNU.HORIZON_IDX] = "HORIZON"
-        self.translation_dict_reversed["HORIZON"] = STNU.ORIGIN_IDX
+        self.translation_dict = {self.ORIGIN_IDX: self.ORIGIN_NAME, self.HORIZON_IDX: self.HORIZON_NAME}
+        self.translation_dict_reversed = {self.ORIGIN_NAME: self.ORIGIN_IDX, self.HORIZON_NAME: self.HORIZON_IDX}
 
         self.set_ordinary_edge(self.HORIZON_IDX, self.ORIGIN_IDX, 0)
 
@@ -89,12 +85,18 @@ class STNU:
 
     @classmethod
     def from_production_plan(cls, production_plan: ProductionPlan, max_time_lag=True) -> 'STNU':
+        def get_name(product: Product, activity_id: int, event_type: str):
+            """
+            Return a unique string representation of the given product, activity, and event type.
+            """
+            return f"{product.product_index}_{activity_id}_{event_type}"
+
         stnu = cls()
         for product in production_plan.products:
             for activity in product.activities:
                 # Add nodes that refer to start and end of activity
-                a_start = stnu.add_node(product.product_index, activity.id, cls.EVENT_START)
-                a_finish = stnu.add_node(product.product_index, activity.id, cls.EVENT_FINISH)
+                a_start = stnu.add_node(get_name(product, activity.id, cls.EVENT_START))
+                a_finish = stnu.add_node(get_name(product, activity.id, cls.EVENT_FINISH))
 
                 # Add contingent link
                 # Possibly add function to distribution to convert distribution to uncertainty set
@@ -113,8 +115,8 @@ class STNU:
             for i, j in product.temporal_relations:
                 min_lag = product.temporal_relations[(i, j)].min_lag
                 max_lag = product.temporal_relations[(i, j)].max_lag
-                i_idx = stnu.translation_dict_reversed[(product.product_index, i, cls.EVENT_START)]
-                j_idx = stnu.translation_dict_reversed[(product.product_index, j, cls.EVENT_START)]
+                i_idx = stnu.translation_dict_reversed[get_name(product, i, cls.EVENT_START)]
+                j_idx = stnu.translation_dict_reversed[get_name(product, j, cls.EVENT_START)]
 
                 # TODO: make sure that the simulator - operator also works when max_time_lag = True
                 if max_time_lag:
@@ -126,16 +128,13 @@ class STNU:
                     stnu.set_ordinary_edge(j_idx, i_idx, -min_lag)
         return stnu
 
-    def add_node(self, *description):
-
+    def add_node(self, description: str):
         node_idx = self.index
         self.index += 1
         self.nodes.add(node_idx)
         self.node_types.append(STNU.EXECUTABLE_TP)
         self.edges[node_idx] = {}
 
-        # FIXME: this is quite an ugly implementation to distinguish between tuple and str descriptions
-        description = description[0] if len(description) == 1 else description
         self.translation_dict[node_idx] = description
         self.translation_dict_reversed[description] = node_idx
 
@@ -151,9 +150,8 @@ class STNU:
         return [node for node in self.nodes if self.node_types[node] == STNU.CONTINGENT_TP]
 
     def set_labeled_edge(self, node_from, node_to, distance, label, label_type):
-
-        node_from = self.translation_dict_reversed[node_from] if type(node_from) == str else node_from
-        node_to = self.translation_dict_reversed[node_to] if type(node_to) == str else node_to
+        node_from = self.translation_dict_reversed[node_from]
+        node_to = self.translation_dict_reversed[node_to]
 
         if node_to in self.edges[node_from]:
             edge = self.edges[node_from][node_to]
@@ -164,9 +162,8 @@ class STNU:
         self.edges[node_from][node_to] = edge
 
     def set_ordinary_edge(self, node_from, node_to, distance):
-
-        node_from = self.translation_dict_reversed[node_from] if type(node_from) == str else node_from
-        node_to = self.translation_dict_reversed[node_to] if type(node_to) == str else node_to
+        node_from = self.translation_dict_reversed[node_from]
+        node_to = self.translation_dict_reversed[node_to]
 
         if node_to in self.edges[node_from]:
             edge = self.edges[node_from][node_to]
@@ -210,19 +207,19 @@ class STNU:
         return True
 
     def add_interval_constraint(self, node_from, node_to, min_distance, max_distance):
-        node_from = self.translation_dict_reversed[node_from] if type(node_from) == str else node_from
-        node_to = self.translation_dict_reversed[node_to] if type(node_to) == str else node_to
+        node_from = self.translation_dict_reversed[node_from]
+        node_to = self.translation_dict_reversed[node_to]
         self.set_ordinary_edge(node_from, node_to, max_distance)
         self.set_ordinary_edge(node_to, node_from, -min_distance)
 
     def add_tight_constraint(self, node_from, node_to, distance):
-        node_from = self.translation_dict_reversed[node_from] if type(node_from) == str else node_from
-        node_to = self.translation_dict_reversed[node_to] if type(node_to) == str else node_to
+        node_from = self.translation_dict_reversed[node_from]
+        node_to = self.translation_dict_reversed[node_to]
         self.add_interval_constraint(node_from, node_to, distance, distance)
 
     def add_contingent_link(self, node_from, node_to, x, y):
-        node_from = self.translation_dict_reversed[node_from] if type(node_from) == str else node_from
-        node_to = self.translation_dict_reversed[node_to] if type(node_to) == str else node_to
+        node_from = self.translation_dict_reversed[node_from]
+        node_to = self.translation_dict_reversed[node_to]
         self.node_types[node_from] = STNU.ACTIVATION_TP
         self.node_types[node_to] = STNU.CONTINGENT_TP
 

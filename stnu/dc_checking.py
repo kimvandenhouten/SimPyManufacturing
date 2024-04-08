@@ -4,6 +4,7 @@ import heapq
 import classes.general
 from typing import Any, List
 from classes.stnu import STNU, Edge
+
 logger = classes.general.get_logger()
 
 
@@ -18,17 +19,8 @@ def convert_to_normal_form(stnu: STNU):
     contingent_links = deepcopy(stnu.contingent_links)
     for (node_from, node_to, x, y) in contingent_links:
         if x > 0:
-            name = stnu.translation_dict[node_to]
-            # FIXME: this is quite an ugly implementation to distinguish between tuple and str descriptions
-            if isinstance(name, tuple):
-                new_node_name = "activation".join([chr(randint(97,123)) for _ in range(3)])
-                (prod, act, event) = name
-                stnu.add_node(prod, act, new_node_name)
-                new_node_index = stnu.translation_dict_reversed[(prod, act, new_node_name)]
-            else:
-                new_node_name = name + "_act"
-                stnu.add_node(new_node_name)
-                new_node_index = stnu.translation_dict_reversed[new_node_name]
+            new_node_index = stnu.add_node(stnu.translation_dict[node_to] + "_act")
+
             if not stnu.remove_edge(node_from, node_to, type=STNU.LC_LABEL):
                 raise ValueError(f"Removing nonexistent LC edge in convert_to_normal_form: {node_from}->{node_to}")
             if not stnu.remove_edge(node_to, node_from, type=STNU.UC_LABEL):
