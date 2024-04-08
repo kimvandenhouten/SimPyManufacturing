@@ -129,6 +129,9 @@ class STNU:
         return stnu
 
     def add_node(self, description: str):
+        if description in self.translation_dict_reversed:
+            raise ValueError(f"Node with description {description} already exists")
+
         node_idx = self.index
         self.index += 1
         self.nodes.add(node_idx)
