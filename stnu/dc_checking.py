@@ -28,37 +28,43 @@ def convert_to_normal_form(stnu: STNU):
 
             stnu.node_types[node_from] = STNU.EXECUTABLE_TP
             stnu.add_tight_constraint(node_from, new_node_index, x)
-            stnu.add_contingent_link(new_node_index, node_to, 0, y-x)
+            stnu.add_contingent_link(new_node_index, node_to, 0, y - x)
             stnu.contingent_links.remove((node_from, node_to, x, y))
-
 
     return stnu
 
 
-def apply_reduction_rule(network, source, u, v, type_u_source, type_v_u, weight_u_source, weight_v_u, label_u_source, label_v_u, new_distance):
+def apply_reduction_rule(network, source, u, v, type_u_source, type_v_u, weight_u_source, weight_v_u, label_u_source,
+                         label_v_u, new_distance):
     # TODO: can we make use of input variables cleaner
+    # TODO: split up this function into separate functions for each "case" reduction
+    new_type = "NotImplemented"
+    new_label = "NotImplemented"
+
     # Upper-case reduction
-    if (type_v_u, type_u_source) == (STNU.UC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (
-    STNU.ORDINARY_LABEL, STNU.UC_LABEL):
+    # noinspection PySetFunctionToLiteral
+    if set([type_v_u, type_u_source]) == set([STNU.UC_LABEL, STNU.ORDINARY_LABEL]):
         logger.debug(f'upper-case reduction')
         new_type = STNU.UC_LABEL
         if type_v_u == STNU.UC_LABEL:
             new_label = label_v_u
         else:
+            assert type_u_source == STNU.UC_LABEL
             new_label = label_u_source
 
     # Lower-case reduction
-    elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.ORDINARY_LABEL) or (type_v_u, type_u_source) == (
-    STNU.ORDINARY_LABEL, STNU.LC_LABEL):
+    elif {type_v_u, type_u_source} == {STNU.LC_LABEL, STNU.ORDINARY_LABEL}:
         logger.debug(f'lower-case reduction')
         new_type = STNU.ORDINARY_LABEL
-        if type_u_source == STNU.LC_LABEL and type_v_u == STNU.ORDINARY_LABEL:
+        if type_u_source == STNU.LC_LABEL:
+            assert type_v_u == STNU.ORDINARY_LABEL
             if weight_v_u > 0:
                 logger.debug(f'WARNING: lower-case reduction but weight ordinary edge > 0')
             else:
                 new_label = None
 
-        elif type_u_source == STNU.ORDINARY_LABEL and type_v_u == STNU.LC_LABEL:
+        else:
+            assert type_u_source == STNU.ORDINARY_LABEL and type_v_u == STNU.LC_LABEL
             if weight_u_source > 0:
                 logger.debug(f'WARNING: lower-case reduction but weight ordinary edge > 0')
             else:
@@ -72,7 +78,7 @@ def apply_reduction_rule(network, source, u, v, type_u_source, type_v_u, weight_
 
     # Cross-case reduction
     elif (type_v_u, type_u_source) == (STNU.LC_LABEL, STNU.UC_LABEL) or (type_v_u, type_u_source) == (
-    STNU.UC_LABEL, STNU.LC_LABEL):
+            STNU.UC_LABEL, STNU.LC_LABEL):
         logger.debug(f'cross-case reduction')
         new_type = STNU.UC_LABEL
         if label_v_u == label_u_source:
@@ -88,13 +94,11 @@ def apply_reduction_rule(network, source, u, v, type_u_source, type_v_u, weight_
             else:
                 new_label = label_u_source
 
-    else:
+    if "NotImplemented" in [new_type, new_label]:
         logger.debug(
             f'WARNING: no reduction rule can be applied edge v to u {network.translation_dict[v]} -- {type_v_u} {label_v_u}: {weight_v_u} --> {network.translation_dict[u]}')
         logger.debug(
             f'and u to source edge {network.translation_dict[u]} -- {type_u_source} {label_u_source}: {weight_u_source} --> {network.translation_dict[source]}')
-        new_type = "TypeNotImplemented"
-        new_label = "LabelNotImplemented"
         raise NotImplementedError
 
     # Label removal
@@ -152,7 +156,7 @@ def determine_dc(stnu, dispatchability=False):
         # guarantees better asymptotic complexity. But because it is more complex, it is in practice often slower than
         # heapq. See for example: https://github.com/danielborowski/fibonacci-heap-python
         # TODO: Check if we need to use a fibonacci heap
-        p_queue: list[Any] = []   # Instantiate priority queue
+        p_queue: list[Any] = []  # Instantiate priority queue
 
         # LINE 08 - 11 FROM DBBACKPROP MORRIS'14 PSEUDOCODE
         logger.debug(f'find incoming edges to the source')
@@ -164,7 +168,8 @@ def determine_dc(stnu, dispatchability=False):
 
         logger.debug(f'the incoming OU edges of source {source} ({network.translation_dict[source]}):')
         for (weight, pred_node, type, label) in incoming_edges:
-            logger.debug(f'edge {network.translation_dict[pred_node]} -- {type} {label}: {weight} --> {network.translation_dict[source]}')
+            logger.debug(
+                f'edge {network.translation_dict[pred_node]} -- {type} {label}: {weight} --> {network.translation_dict[source]}')
         logger.debug(f'the priority queue four edges to source {network.translation_dict[source]} is now'
                      f' (weight, pred_node, type_pred, label_pred) {p_queue}')
 
@@ -177,7 +182,8 @@ def determine_dc(stnu, dispatchability=False):
                 logger.debug(f'ignoring stale heap entry {(weight_u_source, u, type_u_source)}')
                 continue
             assert weight_u_source == distances[u]
-            logger.debug(f'pop u {u} ({network.translation_dict[u]}) that is edge {network.translation_dict[u]} -- {type_u_source} {label_u_source}: {weight_u_source} --> {network.translation_dict[source]}')
+            logger.debug(
+                f'pop u {u} ({network.translation_dict[u]}) that is edge {network.translation_dict[u]} -- {type_u_source} {label_u_source}: {weight_u_source} --> {network.translation_dict[source]}')
 
             if dispatchability:
                 # In the extended form of the algorithm both negative and positive edges will be stored along the way
@@ -208,7 +214,6 @@ def determine_dc(stnu, dispatchability=False):
                     network.set_ordinary_edge(u, source, distances[u])  # backward prop so u is predecessor of source
                     logger.debug(f'we set an edge from from u {u} ({network.translation_dict[u]}) '
                                  f' to source {source} ({network.translation_dict[source]}) with distance {distances[u]}')
-
 
                     logger.debug(f'now we continue')
                     continue
@@ -245,9 +250,10 @@ def determine_dc(stnu, dispatchability=False):
                 # its minimum. An unsuitable edge does not belong to that  projection.
                 # TODO: write unit tests for unsuitability module
                 unsuitability = False
-                logger.debug(f'here we should check the unsuitability of {(network.translation_dict[v], network.translation_dict[u])}'
-                             f' and {(network.translation_dict[u], network.translation_dict[source])}, i.e. whether they '
-                             f'are from the same contingent link')
+                logger.debug(
+                    f'here we should check the unsuitability of {(network.translation_dict[v], network.translation_dict[u])}'
+                    f' and {(network.translation_dict[u], network.translation_dict[source])}, i.e. whether they '
+                    f'are from the same contingent link')
                 for (node_from, node_to, x, y) in network.contingent_links:
                     if u == node_from and source == node_to and v == node_to:
                         unsuitability = True
@@ -255,22 +261,26 @@ def determine_dc(stnu, dispatchability=False):
                         unsuitability = True
                 if unsuitability:
                     logger.debug(f'{(network.translation_dict[v], network.translation_dict[u])} and '
-                          f'{(network.translation_dict[u], network.translation_dict[source])}'
-                          f' are from the same contingent link')
+                                 f'{(network.translation_dict[u], network.translation_dict[source])}'
+                                 f' are from the same contingent link')
                     continue
 
                 # LINE 27 - 35 (numbering in pseudocode is a bit odd)
                 new_distance = distances[u] + weight_v_u
                 logger.debug(f'{distances}')
                 if new_distance < distances[v]:
-                    logger.debug(f"Update distance from {network.translation_dict[v]} to {network.translation_dict[source]} "
-                                 f"using edge value {weight_v_u} and distance {distances[u]}: old value: {distances[v]} and new value {new_distance}")
+                    logger.debug(
+                        f"Update distance from {network.translation_dict[v]} to {network.translation_dict[source]} "
+                        f"using edge value {weight_v_u} and distance {distances[u]}: old value: {distances[v]} and new value {new_distance}")
 
                     distances[v] = new_distance
 
                     if dispatchability:
-                        new_distance, v, new_type, new_label = apply_reduction_rule(network, source, u, v, type_u_source, type_v_u,
-                                                                                    weight_u_source, weight_v_u,  label_u_source, label_v_u, new_distance)
+                        new_distance, v, new_type, new_label = apply_reduction_rule(network, source, u, v,
+                                                                                    type_u_source, type_v_u,
+                                                                                    weight_u_source, weight_v_u,
+                                                                                    label_u_source, label_v_u,
+                                                                                    new_distance)
                         heapq.heappush(p_queue, (new_distance, v, new_type, new_label))
                     else:
                         # This is the version if you would not have implemented the specific reduction rules
@@ -312,8 +322,3 @@ def determine_dc(stnu, dispatchability=False):
         return True, network
     else:
         return True
-
-
-
-
-
