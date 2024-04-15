@@ -1,7 +1,9 @@
-from typing import Any, Iterable, Union
-import numpy as np
+from bs4 import BeautifulSoup, Tag
 from classes.classes import ProductionPlan, Product
+from classes.general import get_logger
+import re
 
+logger = get_logger()
 
 class Edge:
     UC_LABEL = "UC"
@@ -131,6 +133,61 @@ class STNU:
                     stnu.set_ordinary_edge(j_idx, i_idx, -min_lag)
         return stnu
 
+    @classmethod
+    def from_graphml(cls, file_name) -> 'STNU':
+        stnu = cls()
+        with open(file_name, 'r') as f:
+            soup = BeautifulSoup(f, 'xml')
+        for node in soup.find_all('node'):
+            node_id = node.attrs.get('id', None)
+            if not node_id:
+                raise ValueError("node without id")
+            stnu.add_node(node_id)
+        cls.process_graphml_edges(soup, stnu)
+        return stnu
+
+    @classmethod
+    def process_graphml_edges(cls, soup: BeautifulSoup, stnu: 'STNU'):
+        labeled_value_expr = re.compile(r'(?P<label_type>UC|LC)\((?P<label>\w*)\):(?P<distance>-?\d+)', re.ASCII)
+        for edge in soup.find_all('edge'):
+            edge_id = edge.attrs.get('id', None)
+            if not edge_id:
+                raise ValueError("edge without id")
+            source = edge.attrs.get('source', None)
+            if not source:
+                raise ValueError(f"edge {edge_id} has no source")
+            node_from = stnu.translation_dict_reversed.get(source, None)
+            if not node_from:
+                raise ValueError(f"unknown node {node_from} in edge {edge_id}")
+            target = edge.attrs.get('target', None)
+            if not target:
+                raise ValueError(f"edge {edge_id} has no target")
+            node_to = stnu.translation_dict_reversed.get(target, None)
+            if not node_to:
+                raise ValueError(f"unknown node {node_to} in edge {edge_id}")
+
+            edge_type = edge.find(key='Type').text.strip()
+            match edge_type:
+                case 'requirement' | 'derived':
+                    if edge_type == 'derived':
+                        logger.warning('Derived edge interpreted as requirement')
+                    value = edge.find(key='Value').text.strip()
+                    try:
+                        stnu.set_ordinary_edge(node_from, node_to, int(value))
+                    except ValueError:
+                        raise ValueError(f"Unexpected value {value} for requirement edge {edge_id}")
+                case 'contingent':
+                    value = edge.find(key='LabeledValue').text.strip()
+                    m = labeled_value_expr.match(value)
+                    if not m:
+                        raise ValueError(f"Unexpected value {value} for contingent edge {edge_id}")
+                    stnu.set_labeled_edge(node_from, node_to, m['distance'], m['label'], m['label_type'])
+                case 'internal':
+                    raise NotImplementedError("internal edges not yet implemented")
+                    pass
+                case _:
+                    raise ValueError(f'Unknown edge type {edge_type}')
+
     def add_node(self, description: str):
         if description in self.translation_dict_reversed:
             raise ValueError(f"Node with description {description} already exists")
@@ -155,7 +212,7 @@ class STNU:
     def get_contingent_time_points(self):
         return [node for node in self.nodes if self.node_types[node] == STNU.CONTINGENT_TP]
 
-    def set_labeled_edge(self, node_from: int, node_to: int, distance, label, label_type):
+    def set_labeled_edge(self, node_from: int, node_to: int, distance: int, label: str, label_type: str):
         if node_to in self.edges[node_from]:
             edge = self.edges[node_from][node_to]
         else:
@@ -345,3 +402,4 @@ class STNU:
                             negative_nodes[node] = True
 
         return negative_nodes
+
