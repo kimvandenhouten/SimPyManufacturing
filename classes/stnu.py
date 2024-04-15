@@ -148,7 +148,7 @@ class STNU:
 
     @classmethod
     def process_graphml_edges(cls, soup: BeautifulSoup, stnu: 'STNU'):
-        labeled_value_expr = re.compile(r'(?P<label_type>UC|LC)\((?P<label>\w*)\):(?P<distance>-?\d+)', re.ASCII)
+        lv_pattern = re.compile(r'(?P<label_type>UC|LC)\((?P<label>\w*)\):(?P<distance>-?\d+)', re.ASCII)
         for edge in soup.find_all('edge'):
             edge_id = edge.attrs.get('id', None)
             if not edge_id:
@@ -167,26 +167,27 @@ class STNU:
                 raise ValueError(f"unknown node {node_to} in edge {edge_id}")
 
             edge_type = edge.find(key='Type').text.strip()
-            match edge_type:
-                case 'requirement' | 'derived':
-                    if edge_type == 'derived':
-                        logger.warning('Derived edge interpreted as requirement')
-                    value = edge.find(key='Value').text.strip()
-                    try:
-                        stnu.set_ordinary_edge(node_from, node_to, int(value))
-                    except ValueError:
-                        raise ValueError(f"Unexpected value {value} for requirement edge {edge_id}")
-                case 'contingent':
-                    value = edge.find(key='LabeledValue').text.strip()
-                    m = labeled_value_expr.match(value)
-                    if not m:
-                        raise ValueError(f"Unexpected value {value} for contingent edge {edge_id}")
-                    stnu.set_labeled_edge(node_from, node_to, m['distance'], m['label'], m['label_type'])
-                case 'internal':
-                    raise NotImplementedError("internal edges not yet implemented")
-                    pass
-                case _:
-                    raise ValueError(f'Unknown edge type {edge_type}')
+            value = edge.find(key='Value')
+            labeled_value = edge.find(key='LabeledValue')
+
+            if value and labeled_value:
+                raise ValueError(f"Edge {edge_id} has both unlabeled and labeled value")
+            elif value:
+                if edge_type not in ('requirement', 'derived'):
+                    raise ValueError(f"Unexpected edge type {edge_type} for unlabeled edge {edge_id}")
+                try:
+                    stnu.set_ordinary_edge(node_from, node_to, int(value.text.strip()))
+                except ValueError:
+                    raise ValueError(f"Unexpected value {value} for requirement edge {edge_id}")
+            elif labeled_value:
+                if edge_type not in ('contingent', 'derived'):
+                    raise ValueError(f"Unexpected edge type {edge_type} for labeled edge {edge_id}")
+                m = lv_pattern.match(labeled_value.text.strip())
+                if not m:
+                    raise ValueError(f"Unexpected value {value} for contingent edge {edge_id}")
+                stnu.set_labeled_edge(node_from, node_to, m['distance'], m['label'], m['label_type'])
+            else:
+                raise ValueError(f"Edge {edge_id} has no value")
 
     def add_node(self, description: str):
         if description in self.translation_dict_reversed:
