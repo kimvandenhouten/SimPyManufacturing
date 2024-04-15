@@ -3,35 +3,66 @@ from classes.stnu import STNU
 import classes.general
 from stnu.dc_checking import convert_to_normal_form, determine_dc
 logger = classes.general.get_logger()
-from stnu.rte_star import RTEdata, rte_generate_decision, hxe_update
+from stnu.rte_star import RTEdata, rte_generate_decision, hxe_update, hce_update
+
 
 # Example Hunsberger slide 118 (controllable)
+early_execution = True
 name = "slide118"
 stnu = STNU()
-stnu.add_node('A')
-stnu.add_node('B')
-stnu.add_node('C')
-stnu.set_ordinary_edge('B', 'C', 5)
-stnu.add_contingent_link('A', 'C', 2, 9)
+a = stnu.add_node('A')
+b = stnu.add_node('B')
+c = stnu.add_node('C')
+stnu.set_ordinary_edge(b, c, 5)
+stnu.add_contingent_link(a, c, 2, 9)
 dc, estnu = determine_dc(stnu, dispatchability=True)
 
 # TODO
 rte_data = RTEdata.from_estnu(estnu)
-logger.debug(f'enabled time points {rte_data.enabled_tp}')
 
-t, V = rte_generate_decision(rte_data)
-logger.debug(f'if we try to generate a first decision we get {t, V}')
+# First decision
+rte_decision = rte_generate_decision(rte_data)
+if rte_decision.wait is False:
+    t, V = rte_decision.t, rte_decision.x
+    logger.debug(
+        f'if we try to generate a first decision (t,V) we get {t, V} where V is node {estnu.translation_dict[V]}')
+    rte_data = hxe_update(estnu, rte_data, t, V)
+else:
+    logger.debug(f'if we try to generate a first decision we get {rte_decision}')
 
-rte_data = hxe_update(estnu, rte_data, t, V)
+# Second decision
+rte_decision = rte_generate_decision(rte_data)
+if rte_decision.wait is False:
+    t, V = rte_decision.t, rte_decision.x
+    logger.debug(
+        f'if we try to generate a second decision (t,V) we get {t, V} where V is node {estnu.translation_dict[V]}')
+    rte_data = hxe_update(estnu, rte_data, t, V)
+else:
+    logger.debug(f'if we try to generate a second decision we get {rte_decision}')
 
-t, V = rte_generate_decision(rte_data)
-logger.debug(f'if we try to generate a second decision we get {t, V}')
 
-rte_data = hxe_update(estnu, rte_data, t, V)
+# Third decision
+rte_decision = rte_generate_decision(rte_data)
+if rte_decision.wait is False:
+    t, V = rte_decision.t, rte_decision.x
+    logger.debug(
+        f'if we try to generate a third decision (t,V) we get {t, V} where V is node {estnu.translation_dict[V]}')
+    rte_data = hxe_update(estnu, rte_data, t, V)
+else:
+    logger.debug(f'if we try to generate a third decision we get {rte_decision}')
 
-t, V = rte_generate_decision(rte_data)
-logger.debug(f'if we try to generate a third decision we get {t, V}')
+if early_execution:
+    # Here we simulate that at time rho, we execute contingent time point C
+    rho = 3
+    tau = [c]
+    rte_data = hce_update(estnu, rte_data, rho, tau)
 
-rte_data = hxe_update(estnu, rte_data, t, V)
-t, V = rte_generate_decision(rte_data)
-logger.debug(f'if we try to generate a third decision we get {t, V}')
+rte_decision = rte_generate_decision(rte_data)
+if rte_decision.wait is False:
+    t, V = rte_decision.t, rte_decision.x
+    logger.debug(
+        f'if we try to generate a fourth decision (t,V) we get {t, V} where V is node {estnu.translation_dict[V]}')
+    rte_data = hxe_update(estnu, rte_data, t, V)
+else:
+    logger.debug(f'if we try to generate a fourth decision we get {rte_decision}')
+
