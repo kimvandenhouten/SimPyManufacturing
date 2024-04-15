@@ -5,11 +5,11 @@ from stnu.dc_checking import convert_to_normal_form, determine_dc
 # Example Hunsberger slide 118 (controllable)
 name = "slide118"
 stnu = STNU()
-stnu.add_node('A')
-stnu.add_node('B')
-stnu.add_node('C')
-stnu.set_ordinary_edge('B', 'C', 5)
-stnu.add_contingent_link('A', 'C', 2, 9)
+a = stnu.add_node('A')
+b = stnu.add_node('B')
+c = stnu.add_node('C')
+stnu.set_ordinary_edge(b, c, 5)
+stnu.add_contingent_link(a, c, 2, 9)
 stnu_to_xml(stnu, f"input_{name}", "stnu/java_comparison/xml_files")
 dc, estnu = determine_dc(stnu, dispatchability=True)
 if dc:
@@ -23,16 +23,16 @@ stnu_to_xml(stnu, f"input_normal_form_{name}", "stnu/java_comparison/xml_files")
 # Test example from paper Hunsberger'23, fig 7a (controllable)
 name = "hunsberger23"
 stnu = STNU()
-stnu.add_node('A')
-stnu.add_node('C')
-stnu.add_node('W')
-stnu.add_node('X')
-stnu.add_node('Y')
-stnu.set_ordinary_edge('X', 'C', 3)
-stnu.set_ordinary_edge('X', 'Y', -2)
-stnu.set_ordinary_edge('Y', 'C', 1)
-stnu.set_ordinary_edge('C', 'W', -7)
-stnu.add_contingent_link('A', 'C', 1, 10)
+a = stnu.add_node('A')
+c = stnu.add_node('C')
+w = stnu.add_node('W')
+x = stnu.add_node('X')
+y = stnu.add_node('Y')
+stnu.set_ordinary_edge(x, c, 3)
+stnu.set_ordinary_edge(x, y, -2)
+stnu.set_ordinary_edge(y, c, 1)
+stnu.set_ordinary_edge(c, w, -7)
+stnu.add_contingent_link(a, c, 1, 10)
 stnu_to_xml(stnu, f"input_{name}", "stnu/java_comparison/xml_files")
 dc, estnu = determine_dc(stnu, dispatchability=True)
 if dc:
@@ -45,18 +45,18 @@ stnu_to_xml(stnu, f"input_normal_form_{name}", "stnu/java_comparison/xml_files")
 # Test example from Morris'14 paper
 name = "morris14"
 stnu = STNU()
-stnu.add_node('A')
-stnu.add_node('B')
-stnu.add_node('C')
-stnu.add_node('D')
-stnu.add_node('E')
+a = stnu.add_node('A')
+b = stnu.add_node('B')
+c = stnu.add_node('C')
+d = stnu.add_node('D')
+e = stnu.add_node('E')
 
-stnu.set_ordinary_edge('B', 'E', -2)
-stnu.set_ordinary_edge('E', 'B', 4)
-stnu.set_ordinary_edge('B', 'D', 1)
-stnu.set_ordinary_edge('D', 'B', 3)
-stnu.add_contingent_link('A', 'B', 0, 2)
-stnu.add_contingent_link('C', 'D', 0, 3)
+stnu.set_ordinary_edge(b, e, -2)
+stnu.set_ordinary_edge(e, b, 4)
+stnu.set_ordinary_edge(b, d, 1)
+stnu.set_ordinary_edge(d, b, 3)
+stnu.add_contingent_link(a, b, 0, 2)
+stnu.add_contingent_link(c, d, 0, 3)
 stnu_to_xml(stnu, f"input_{name}", "stnu/java_comparison/xml_files")
 dc, estnu = determine_dc(stnu, dispatchability=True)
 if dc:
@@ -69,15 +69,15 @@ stnu_to_xml(stnu, f"input_normal_form_{name}", "stnu/java_comparison/xml_files")
 # Test minimal example factory
 name = "minimal_example_factory"
 stnu = STNU()
-stnu.add_node('A')
-stnu.add_node('C')
-stnu.add_node('D')
-stnu.add_node('E')
+a = stnu.add_node('A')
+c = stnu.add_node('C')
+d = stnu.add_node('D')
+e = stnu.add_node('E')
 
-stnu.set_ordinary_edge('D', 'C', 0)  # resource constraint
-stnu.set_ordinary_edge('E', 'D', 8)  # max lag precedence constraint
-stnu.set_ordinary_edge('D', 'E', -5)  # min lag precedence constraint
-stnu.add_contingent_link('A', 'C', 15, 20)
+stnu.set_ordinary_edge(d, c, 0)  # resource constraint
+stnu.set_ordinary_edge(e, d, 8)  # max lag precedence constraint
+stnu.set_ordinary_edge(d, e, -5)  # min lag precedence constraint
+stnu.add_contingent_link(a, c, 15, 20)
 stnu_to_xml(stnu, f"input_{name}", "stnu/java_comparison/xml_files")
 
 dc, estnu = determine_dc(stnu, dispatchability=True)
@@ -91,16 +91,16 @@ stnu_to_xml(stnu, f"input_normal_form_{name}", "stnu/java_comparison/xml_files")
 # Test minimal example factory
 name = "minimized_example_factory"
 stnu = STNU()
-stnu.add_node('A')
-stnu.add_node('C')
-stnu.add_node('D')
-stnu.add_node('E')
+a = stnu.add_node('A')
+c = stnu.add_node('C')
+d = stnu.add_node('D')
+e = stnu.add_node('E')
 
 
-stnu.set_ordinary_edge('D', 'C', 0)  # resource constraint
-stnu.set_ordinary_edge('E', 'D', 8)  # max lag precedence constraint
-stnu.set_ordinary_edge('D', 'E', -5)  # min lag precedence constraint
-stnu.add_contingent_link('A', 'C', 0, 20)
+stnu.set_ordinary_edge(d, c, 0)  # resource constraint
+stnu.set_ordinary_edge(e, d, 8)  # max lag precedence constraint
+stnu.set_ordinary_edge(d, e, -5)  # min lag precedence constraint
+stnu.add_contingent_link(a, c, 0, 20)
 stnu_to_xml(stnu, f"input_{name}", "stnu/java_comparison/xml_files")
 dc, estnu = determine_dc(stnu, dispatchability=True)
 if dc:
