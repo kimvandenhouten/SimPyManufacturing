@@ -173,18 +173,20 @@ class STNU:
             if value and labeled_value:
                 raise ValueError(f"Edge {edge_id} has both unlabeled and labeled value")
             elif value:
+                value = value.text.strip()
                 if edge_type not in ('requirement', 'derived'):
                     raise ValueError(f"Unexpected edge type {edge_type} for unlabeled edge {edge_id}")
                 try:
-                    stnu.set_ordinary_edge(node_from, node_to, int(value.text.strip()))
+                    stnu.set_ordinary_edge(node_from, node_to, int(value))
                 except ValueError:
                     raise ValueError(f"Unexpected value {value} for requirement edge {edge_id}")
             elif labeled_value:
+                labeled_value = labeled_value.text.strip()
                 if edge_type not in ('contingent', 'derived'):
                     raise ValueError(f"Unexpected edge type {edge_type} for labeled edge {edge_id}")
-                m = lv_pattern.match(labeled_value.text.strip())
+                m = lv_pattern.match(labeled_value)
                 if not m:
-                    raise ValueError(f"Unexpected value {value} for contingent edge {edge_id}")
+                    raise ValueError(f"Unexpected value {labeled_value} for contingent edge {edge_id}")
                 stnu.set_labeled_edge(node_from, node_to, m['distance'], m['label'], m['label_type'])
             else:
                 raise ValueError(f"Edge {edge_id} has no value")
