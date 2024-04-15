@@ -8,7 +8,10 @@ class Edge:
     LC_LABEL = "LC"
     ORDINARY_LABEL = "ORDINARY"
 
-    def __init__(self, node_from, node_to):
+    node_from: int
+    node_to: int
+
+    def __init__(self, node_from: int, node_to: int):
         self.node_from = node_from
         self.node_to = node_to
         self.weight = None
@@ -152,10 +155,7 @@ class STNU:
     def get_contingent_time_points(self):
         return [node for node in self.nodes if self.node_types[node] == STNU.CONTINGENT_TP]
 
-    def set_labeled_edge(self, node_from, node_to, distance, label, label_type):
-        node_from = self.translation_dict_reversed[node_from]
-        node_to = self.translation_dict_reversed[node_to]
-
+    def set_labeled_edge(self, node_from: int, node_to: int, distance, label, label_type):
         if node_to in self.edges[node_from]:
             edge = self.edges[node_from][node_to]
         else:
@@ -164,10 +164,7 @@ class STNU:
         edge.set_labeled_weight(labeled_weight=distance, label=label, label_type=label_type)
         self.edges[node_from][node_to] = edge
 
-    def set_ordinary_edge(self, node_from, node_to, distance):
-        node_from = self.translation_dict_reversed[node_from]
-        node_to = self.translation_dict_reversed[node_to]
-
+    def set_ordinary_edge(self, node_from: int, node_to: int, distance):
         if node_to in self.edges[node_from]:
             edge = self.edges[node_from][node_to]
         else:
@@ -175,7 +172,7 @@ class STNU:
         edge.set_weight(weight=distance)
         self.edges[node_from][node_to] = edge
 
-    def remove_edge(self, node_from, node_to, type):
+    def remove_edge(self, node_from: int, node_to: int, type):
         """Removes edge of the given type (if it exists)
 
         :return: Whether an edge was succesfully removed
@@ -209,20 +206,14 @@ class STNU:
 
         return True
 
-    def add_interval_constraint(self, node_from, node_to, min_distance, max_distance):
-        node_from = self.translation_dict_reversed[node_from]
-        node_to = self.translation_dict_reversed[node_to]
+    def add_interval_constraint(self, node_from: int, node_to: int, min_distance, max_distance):
         self.set_ordinary_edge(node_from, node_to, max_distance)
         self.set_ordinary_edge(node_to, node_from, -min_distance)
 
-    def add_tight_constraint(self, node_from, node_to, distance):
-        node_from = self.translation_dict_reversed[node_from]
-        node_to = self.translation_dict_reversed[node_to]
+    def add_tight_constraint(self, node_from: int, node_to: int, distance):
         self.add_interval_constraint(node_from, node_to, distance, distance)
 
-    def add_contingent_link(self, node_from, node_to, x, y):
-        node_from = self.translation_dict_reversed[node_from]
-        node_to = self.translation_dict_reversed[node_to]
+    def add_contingent_link(self, node_from: int, node_to: int, x, y):
         self.node_types[node_from] = STNU.ACTIVATION_TP
         self.node_types[node_to] = STNU.CONTINGENT_TP
 
@@ -245,9 +236,8 @@ class STNU:
 
         self.contingent_links.append((node_from, node_to, x, y))
 
-    def get_incoming_edges(self, node_to, ordinary=True, uc=True, lc=True):
+    def get_incoming_edges(self, node_to: int, ordinary=True, uc=True, lc=True):
         """
-        :param u: node_to
         :return: all preceding edges of node u
         """
         N = len(self.nodes)
@@ -268,7 +258,7 @@ class STNU:
 
         return incoming_edges
 
-    def get_outgoing_edges(self, node_from, ordinary=True, uc=True, lc=True):
+    def get_outgoing_edges(self, node_from: int, ordinary=True, uc=True, lc=True):
         """
         :param u: node_to
         :return: all preceding edges of node u
@@ -291,8 +281,8 @@ class STNU:
 
         return outgoing_edges
 
-    def get_incoming_ou_edges(self, node_to):
-        # FIXME: this method is not needed anymore, check if it is used and replace with get_incoming_edges(node_to)
+    def get_incoming_ou_edges(self, node_to: int):
+        # FIXME: this method is not needed anymore, check if it is used and replace with get_incoming_edges(node_to: int)
         """
         :param u: node_to
         :return: all preceding edges of node u
@@ -355,7 +345,3 @@ class STNU:
                             negative_nodes[node] = True
 
         return negative_nodes
-
-
-
-

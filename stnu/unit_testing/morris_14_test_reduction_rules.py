@@ -9,12 +9,12 @@ class TestMorris14ReductionRules(unittest.TestCase):
     def test_no_case(self):
         # Test no case (slide 131)
         stnu = STNU()
-        stnu.add_node('Q')
-        stnu.add_node('S')
-        stnu.add_node('T')
+        q = stnu.add_node('Q')
+        s = stnu.add_node('S')
+        t = stnu.add_node('T')
 
-        stnu.set_ordinary_edge('Q', 'S', 3)
-        stnu.set_ordinary_edge('S', 'T', 4)
+        stnu.set_ordinary_edge(q, s, 3)
+        stnu.set_ordinary_edge(s, t, 4)
 
         source = stnu.translation_dict_reversed['T']
         u = stnu.translation_dict_reversed['S']
@@ -37,13 +37,13 @@ class TestMorris14ReductionRules(unittest.TestCase):
     def test_upper_case(self):
         # Test upper case (slide 132)
         stnu = STNU()
-        stnu.add_node('Q')
-        stnu.add_node('C')
-        stnu.add_node('A')
+        q = stnu.add_node('Q')
+        c = stnu.add_node('C')
+        a = stnu.add_node('A')
 
         # To do, set contingent edge
-        stnu.set_ordinary_edge('Q', 'C', 3)
-        stnu.set_labeled_edge('C', 'A', -10, 'C', STNU.UC_LABEL)
+        stnu.set_ordinary_edge(q, c, 3)
+        stnu.set_labeled_edge(c, a, -10, 'C', STNU.UC_LABEL)
 
         source = stnu.translation_dict_reversed['A']
         u = stnu.translation_dict_reversed['C']
@@ -65,13 +65,13 @@ class TestMorris14ReductionRules(unittest.TestCase):
     def test_lower_case(self):
         # Test lower case (slide 133)
         stnu = STNU()
-        stnu.add_node('A')
-        stnu.add_node('C')
-        stnu.add_node('X')
+        a = stnu.add_node('A')
+        c = stnu.add_node('C')
+        x = stnu.add_node('X')
 
         # To do, set contingent edge
-        stnu.set_ordinary_edge('C', 'X', -5)
-        stnu.set_labeled_edge('A', 'C', 3, 'C', STNU.LC_LABEL)
+        stnu.set_ordinary_edge(c, x, -5)
+        stnu.set_labeled_edge(a, c, 3, 'C', STNU.LC_LABEL)
 
         source = stnu.translation_dict_reversed['X']
         u = stnu.translation_dict_reversed['C']
@@ -95,13 +95,13 @@ class TestMorris14ReductionRules(unittest.TestCase):
     def test_cross_case(self):
         # Test cross case (slide 134)
         stnu = STNU()
-        stnu.add_node('A')
-        stnu.add_node('C')
-        stnu.add_node('A_d')
+        a = stnu.add_node('A')
+        c = stnu.add_node('C')
+        a_d = stnu.add_node('A_d')
 
         # To do, set contingent edge
-        stnu.set_labeled_edge('C', 'A_d', -8, 'K', STNU.UC_LABEL)
-        stnu.set_labeled_edge('A', 'C', 3, 'C', STNU.LC_LABEL)
+        stnu.set_labeled_edge(c, a_d, -8, 'K', STNU.UC_LABEL)
+        stnu.set_labeled_edge(a, c, 3, 'C', STNU.LC_LABEL)
 
         source = stnu.translation_dict_reversed['A']
         u = stnu.translation_dict_reversed['C']
