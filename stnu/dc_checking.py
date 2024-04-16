@@ -17,7 +17,9 @@ def convert_to_normal_form(stnu: STNU):
     :return: stnu in normal form
     """
     contingent_links = deepcopy(stnu.contingent_links)
-    for (node_from, node_to, x, y) in contingent_links:
+    for (node_from, node_to) in contingent_links:
+        x = contingent_links[(node_from, node_to)]['lc_value']
+        y = contingent_links[(node_from, node_to)]['uc_value']
         if x > 0:
             new_node_index = stnu.add_node(stnu.translation_dict[node_to] + "_act")
 
@@ -29,7 +31,7 @@ def convert_to_normal_form(stnu: STNU):
             stnu.node_types[node_from] = STNU.EXECUTABLE_TP
             stnu.add_tight_constraint(node_from, new_node_index, x)
             stnu.add_contingent_link(new_node_index, node_to, 0, y - x)
-            stnu.contingent_links.remove((node_from, node_to, x, y))
+            stnu.contingent_links.pop((node_from, node_to), None)
 
     return stnu
 
@@ -254,7 +256,7 @@ def determine_dc(stnu, dispatchability=False):
                     f'here we should check the unsuitability of {(network.translation_dict[v], network.translation_dict[u])}'
                     f' and {(network.translation_dict[u], network.translation_dict[source])}, i.e. whether they '
                     f'are from the same contingent link')
-                for (node_from, node_to, x, y) in network.contingent_links:
+                for (node_from, node_to) in network.contingent_links:
                     if u == node_from and source == node_to and v == node_to:
                         unsuitability = True
                     elif v == node_from and source == node_from and u == node_to:

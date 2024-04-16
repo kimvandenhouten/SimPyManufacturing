@@ -75,7 +75,9 @@ class TestMorris14Basic(unittest.TestCase):
 
         self.assertEqual(len(nf_stnu.contingent_links), 1)
 
-        for (a, b, x, y) in nf_stnu.contingent_links:
+        for (a, b) in nf_stnu.contingent_links:
+            x = nf_stnu.contingent_links[(a, b)]["lc_value"]
+            y = nf_stnu.contingent_links[(a, b)]["uc_value"]
             node_from_idx = last_index
             node_to_idx = stnu.translation_dict_reversed['C']
             self.assertEqual((a, b, x, y), (node_from_idx, node_to_idx, 0, y-x))

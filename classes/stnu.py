@@ -61,7 +61,7 @@ class STNU:
         self.node_types = [STNU.EXECUTABLE_TP, STNU.EXECUTABLE_TP]
         self.edges = {node: {} for node in self.nodes}
 
-        self.contingent_links = []
+        self.contingent_links = {}
         self.labels = {}
 
         # We use indices for the nodes in the network
@@ -192,9 +192,18 @@ class STNU:
                     if float(m['distance']) < 0 and m['label_type'] == STNU.UC_LABEL:
                         stnu.node_types[node_from] = STNU.CONTINGENT_TP
                         stnu.node_types[node_to] = STNU.ACTIVATION_TP
+                        if (node_to, node_from) in stnu.contingent_links:
+                            stnu.contingent_links[(node_to, node_from)]["uc_value"] = -float(m['distance'])
+                        else:
+                            stnu.contingent_links[(node_to, node_from)] = {'lc_value': 'lb', 'uc_value': -float(m['distance'])}
                     elif float(m['distance']) >= 0 and m['label_type'] == STNU.LC_LABEL:
                         stnu.node_types[node_from] = STNU.ACTIVATION_TP
                         stnu.node_types[node_to] = STNU.CONTINGENT_TP
+                        if (node_from, node_to) in stnu.contingent_links:
+                            stnu.contingent_links[(node_from, node_to)]["lc_value"] = float(m['distance'])
+                        else:
+                            stnu.contingent_links[(node_from, node_to)] = {'uc_value': 'ub',
+                                                                           'lc_value': float(m['distance'])}
                     else:
                         raise ValueError(f"Unexpected distance and label type combination for contingent edge {edge_id}")
             else:
@@ -303,7 +312,7 @@ class STNU:
         edge.set_labeled_weight(labeled_weight=x, label=label, label_type=self.LC_LABEL)
         self.edges[node_from][node_to] = edge
 
-        self.contingent_links.append((node_from, node_to, x, y))
+        self.contingent_links[(node_from, node_to)] = {"lc_value": x, "uc_value": y}
 
     def get_incoming_edges(self, node_to: int, ordinary=True, uc=True, lc=True):
         """
