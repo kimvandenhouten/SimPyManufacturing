@@ -101,8 +101,7 @@ def stnu_to_xml(stnu, name_graph, directory):
     print(edges)
 
     nodes = []
-    # FIXME: horizon / origin indexing
-    for node in range(2, len(stnu.nodes)):
+    for node in range(0, len(stnu.nodes)):
         node_str = stnu.translation_dict[node]
         nodes.append((node_str, str(random.randint(40, 200)), str(random.randint(40, 200))))
 
@@ -111,7 +110,7 @@ def stnu_to_xml(stnu, name_graph, directory):
     ncontingent = len(stnu.contingent_links)
     networktype = "STNU"
     nedges = len(edges)
-    nvertices = len(stnu.nodes)-2  # FIXME: horizon / origin indexing
+    nvertices = len(stnu.nodes)
     write_graphml(f"{directory}/{name_graph}.stnu", ncontingent, networktype, nedges, nvertices, name_graph, edges, nodes)
 
 

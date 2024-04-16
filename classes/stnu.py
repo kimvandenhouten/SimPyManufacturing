@@ -55,23 +55,25 @@ class STNU:
     ACTIVATION_TP = "ACTIVATION_TP"
     CONTINGENT_TP = "CONTINGENT_TP"
 
-    def __init__(self):
+    def __init__(self, origin_horizon=True):
+        self.origin_horizon = origin_horizon
         # Set-up nodes and edges
-        self.nodes = {self.ORIGIN_IDX, self.HORIZON_IDX}
-        self.node_types = [STNU.EXECUTABLE_TP, STNU.EXECUTABLE_TP]
+        self.nodes = {self.ORIGIN_IDX, self.HORIZON_IDX} if origin_horizon else set()
+        self.node_types = [STNU.EXECUTABLE_TP, STNU.EXECUTABLE_TP] if origin_horizon else []
         self.edges = {node: {} for node in self.nodes}
 
         self.contingent_links = {}
         self.labels = {}
 
         # We use indices for the nodes in the network
-        self.index = max(self.nodes) + 1
+        self.index = max(self.nodes) + 1 if origin_horizon else 0
 
         # We keep track of two translation dictionaries to connect indices to the events
-        self.translation_dict = {self.ORIGIN_IDX: self.ORIGIN_NAME, self.HORIZON_IDX: self.HORIZON_NAME}
-        self.translation_dict_reversed = {self.ORIGIN_NAME: self.ORIGIN_IDX, self.HORIZON_NAME: self.HORIZON_IDX}
+        self.translation_dict = {self.ORIGIN_IDX: self.ORIGIN_NAME, self.HORIZON_IDX: self.HORIZON_NAME} if origin_horizon else {}
+        self.translation_dict_reversed = {self.ORIGIN_NAME: self.ORIGIN_IDX, self.HORIZON_NAME: self.HORIZON_IDX} if origin_horizon else {}
 
-        self.set_ordinary_edge(self.HORIZON_IDX, self.ORIGIN_IDX, 0)
+        if origin_horizon:
+            self.set_ordinary_edge(self.HORIZON_IDX, self.ORIGIN_IDX, 0)
 
     def __str__(self):
         """
@@ -134,8 +136,8 @@ class STNU:
         return stnu
 
     @classmethod
-    def from_graphml(cls, file_name) -> 'STNU':
-        stnu = cls()
+    def from_graphml(cls, file_name, origin_horizon=False) -> 'STNU':
+        stnu = cls(origin_horizon=False)
         with open(file_name, 'r') as f:
             soup = BeautifulSoup(f, 'xml')
         for node in soup.find_all('node'):
@@ -157,13 +159,13 @@ class STNU:
             if not source:
                 raise ValueError(f"edge {edge_id} has no source")
             node_from = stnu.translation_dict_reversed.get(source, None)
-            if not node_from:
+            if node_from is None:
                 raise ValueError(f"unknown node {node_from} in edge {edge_id}")
             target = edge.attrs.get('target', None)
             if not target:
                 raise ValueError(f"edge {edge_id} has no target")
             node_to = stnu.translation_dict_reversed.get(target, None)
-            if not node_to:
+            if node_to is None:
                 raise ValueError(f"unknown node {node_to} in edge {edge_id}")
 
             edge_type = edge.find(key='Type').text.strip()
@@ -187,23 +189,23 @@ class STNU:
                 m = lv_pattern.match(labeled_value)
                 if not m:
                     raise ValueError(f"Unexpected value {labeled_value} for {edge_type} edge {edge_id}")
-                stnu.set_labeled_edge(node_from, node_to, m['distance'], m['label'], m['label_type'])
+                stnu.set_labeled_edge(node_from, node_to, int(m['distance']), m['label'], m['label_type'])
                 if edge_type == "contingent":
-                    if float(m['distance']) < 0 and m['label_type'] == STNU.UC_LABEL:
+                    if int(m['distance']) < 0 and m['label_type'] == STNU.UC_LABEL:
                         stnu.node_types[node_from] = STNU.CONTINGENT_TP
                         stnu.node_types[node_to] = STNU.ACTIVATION_TP
                         if (node_to, node_from) in stnu.contingent_links:
-                            stnu.contingent_links[(node_to, node_from)]["uc_value"] = -float(m['distance'])
+                            stnu.contingent_links[(node_to, node_from)]["uc_value"] = -int(m['distance'])
                         else:
-                            stnu.contingent_links[(node_to, node_from)] = {'lc_value': 'lb', 'uc_value': -float(m['distance'])}
-                    elif float(m['distance']) >= 0 and m['label_type'] == STNU.LC_LABEL:
+                            stnu.contingent_links[(node_to, node_from)] = {'lc_value': 'lb', 'uc_value': -int(m['distance'])}
+                    elif int(m['distance']) >= 0 and m['label_type'] == STNU.LC_LABEL:
                         stnu.node_types[node_from] = STNU.ACTIVATION_TP
                         stnu.node_types[node_to] = STNU.CONTINGENT_TP
                         if (node_from, node_to) in stnu.contingent_links:
-                            stnu.contingent_links[(node_from, node_to)]["lc_value"] = float(m['distance'])
+                            stnu.contingent_links[(node_from, node_to)]["lc_value"] = int(m['distance'])
                         else:
                             stnu.contingent_links[(node_from, node_to)] = {'uc_value': 'ub',
-                                                                           'lc_value': float(m['distance'])}
+                                                                           'lc_value': int(m['distance'])}
                     else:
                         raise ValueError(f"Unexpected distance and label type combination for contingent edge {edge_id}")
             else:
@@ -223,8 +225,9 @@ class STNU:
         self.translation_dict_reversed[description] = node_idx
 
         # This node / event must occur between ORIGIN and HORIZON
-        self.set_ordinary_edge(node_idx, self.ORIGIN_IDX, 0)
-        self.set_ordinary_edge(self.HORIZON_IDX, node_idx, 0)
+        if self.origin_horizon:
+            self.set_ordinary_edge(node_idx, self.ORIGIN_IDX, 0)
+            self.set_ordinary_edge(self.HORIZON_IDX, node_idx, 0)
         return node_idx
 
     def get_executable_time_points(self):
