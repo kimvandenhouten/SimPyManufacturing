@@ -1,9 +1,8 @@
-from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 from classes.stnu import STNU
 import classes.general
-from stnu.dc_checking import convert_to_normal_form, determine_dc
+from stnu.algorithms.dc_checking import determine_dc
 logger = classes.general.get_logger()
-from stnu.rte_star import RTEdata, rte_generate_decision, hxe_update, hce_update
+from stnu.algorithms.rte_star import RTEdata, rte_generate_decision, hxe_update, hce_update
 
 
 # Example Hunsberger slide 118 (controllable)

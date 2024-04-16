@@ -1,5 +1,5 @@
 import unittest
-from stnu.dc_checking import determine_dc, convert_to_normal_form
+from stnu.algorithms.dc_checking import determine_dc, convert_to_normal_form
 from classes.stnu import STNU
 
 

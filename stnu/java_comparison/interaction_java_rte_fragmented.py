@@ -4,7 +4,7 @@ import subprocess
 from classes.stnu import STNU
 import classes.general
 logger = classes.general.get_logger()
-from stnu.rte_star import RTEdata, Observation, rte_generate_decision, rte_update
+from stnu.algorithms.rte_star import RTEdata, Observation, rte_generate_decision, rte_update, rte_oracle
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 class DCAlgorithm(enum.Enum):
     FD_STNU_IMPROVED = enum.auto()
@@ -113,7 +113,8 @@ rte_decision = rte_generate_decision(rte_data)
 if rte_decision.fail:
     logger.debug(f'Decision is fail')
 c = estnu.translation_dict_reversed["C"]
-observation = Observation(rho=3, tau=[c])
+observation = rte_oracle(estnu, rte_data, rte_decision, seed=10)
+#observation = Observation(rho=3, tau=[c])
 rte_data = rte_update(estnu, rte_data, rte_decision, observation)
 
 # Fourth decision

@@ -1,6 +1,6 @@
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 from classes.stnu import STNU
-from stnu.dc_checking import convert_to_normal_form, determine_dc
+from stnu.algorithms.dc_checking import convert_to_normal_form, determine_dc
 
 # Example Hunsberger slide 118 (controllable)
 name = "slide118"

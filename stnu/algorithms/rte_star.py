@@ -6,6 +6,8 @@ import typing
 logger = classes.general.get_logger()
 
 
+
+
 def intersect_intervals(a, b, c, d):
     x = max(a, c)
     y = min(b, d)
@@ -74,7 +76,7 @@ class Observation:
         self.tau = tau
 
 
-def rte_stnu(estnu: STNU):
+def rte_star(estnu: STNU):
     """
     This procedure should run the RTE^* algorithm such as described in Hunsberger'2024 article "Foundations of
     Dispatchability for Simple Temporal Networks with Uncertainty"
@@ -82,14 +84,30 @@ def rte_stnu(estnu: STNU):
     :return: function (T_x union T_c -> R) which is the schedule, or False
     """
     # Line 1: First initialise the data structure with RTE_init(T_x, T_c)
+    rte_data = RTEdata.from_estnu(estnu)
+
     # Line 2: While both U_x (unexecuted executable timepoints) and U_c (unexecuted contingent timepoints) are non-empty
-    # Line 3: Generate exec. decision (use rte_generate_decision)
-    # Line 4: If decision returns fail
-    # Line 5: Return fail
-    # Line 6: (rho, tau) = Observe contingent timepoints
-    # Line 7: Update RTE data structure
-    # Line 8: If D=fail
-    # Line 8: return fail
+    while len(rte_data.u_c) + len(rte_data.u_x) > 0:
+
+        # Line 3: Generate exec. decision (use rte_generate_decision)
+        rte_decision = rte_generate_decision(rte_data)
+
+        # Line 4: If decision returns fail
+        if rte_decision.fail:
+
+            # Line 5: Return fail
+            return False
+
+        # Line 6: (rho, tau) = Observe contingent timepoints
+        observation = rte_oracle(estnu, rte_data, rte_decision)
+
+        # Line 7: Update RTE data structure
+        rte_data = rte_update(estnu, rte_data, rte_decision, observation)
+
+        # Line 8: If D=fail
+        if rte_data is False:
+            return False
+
     return True
 
 
@@ -103,7 +121,7 @@ def rte_generate_decision(D: RTEdata):
     # Line 1: If D.enabled_x is empty:
     if len(D.enabled_tp) == 0:
         # Line 2: return wait
-        logger.debug('Decision is wait')
+        logger.debug('Generate decision returns wait')
         delta = RTEdecision(wait=True)
         return delta
     else:
@@ -128,7 +146,7 @@ def rte_generate_decision(D: RTEdata):
     # Line 8: If the intersection from [t_l, t_u] and [now, inf] is empty
     if t_u < D.now or np.inf < t_l:
         # Line 9: Return fail
-        logger.debug('Decision is fail')
+        logger.debug('Generate decision returns fail')
         delta = RTEdecision(fail=True)
         return delta
 
@@ -151,20 +169,79 @@ def rte_generate_decision(D: RTEdata):
         t = max(glb[found_v], D.now)  # TODO: now I implemented just the LB
 
         # Line 12: Return (t,V)
-        logger.debug(f'Decision is (V,t) {(found_v,t)}')
+        logger.debug(f'Generate decision returns (V,t) {(found_v,t)}')
         delta = RTEdecision(x=found_v, t=t)
         return delta
 
 
-def rte_oracle():
+def rte_oracle(S: STNU, D: RTEdata, delta: RTEdecision):
     """
     This represents the real time feedback from the system
     :return: (t_c, t) where t_c is the contingent time-points, and t is the time
     """
-    # Option 1:
-    # return (t_c, t) where t_c is the time of observation, and t is the non-empty set of timepoints
-    # return (t, empty set) where t is the time, and the empty set is returned
-    # return (inf, empty set) where we wait forever but there are no possible contingent executions
+    # Line 1: set f=D.f and now = D.now
+    f = D.f
+    now = D.now
+
+    # Line 2: get currently active contingent links
+    active_links = []
+    for (A, C) in S.contingent_links:
+        if A in f and C not in f:
+            if f[A] <= now:
+                active_links.append((A, C, S.contingent_links[(A, C)]['lc_value'], S.contingent_links[(A, C)]['uc_value']))
+    logger.debug(f'Active links are {active_links}')
+    # Line 3: check waiting forever
+    if len(active_links) == 0 and delta.wait:
+        # Line 4: return
+        logger.debug(f'Oracle returns rho = inf and tau = []')
+        observation = Observation(rho=np.inf, tau=[])
+        return observation
+
+    # Line 5: if no active links but there is a new scheduling decision
+    if len(active_links) == 0 and not delta.wait and not delta.fail:
+        # Line 6: return decision
+        observation = Observation(rho=delta.t, tau=[])
+        logger.debug(f'Oracle returns rho = {delta.t} and tau = []')
+        return observation
+
+    # Line 7 - 8: Compute bounds for possible contingent executions
+    lb, ub = {}, {}
+    for (A, C, x, y) in active_links:
+        lb[C] = f[A] + x
+        ub[C] = f[A] + y
+
+    lb_c = min(lb.values())
+    ub_c = min(ub.values())
+
+    # Line 9: select any t_c in [lb_c, ub_c]
+    t_c = random.randint(lb_c, ub_c)
+    logger.debug(f'Randomly selected {t_c} as t_c')
+
+    # Oracle decides not to execute any CTPs yet
+    # Line 10: if delta = (t,V) and t_c > t
+    if delta.wait is False and delta.fail is False:
+        if t_c > delta.t:
+            # Line 11: return
+            logger.debug(f'Oracle returns rho = {delta.t} and tau = []')
+            observation = Observation(rho=delta.t, tau=[])
+            return observation
+
+    # Oracle decides to execute one or more CTPs
+    # Line 12: form tau_star
+    tau_star = set()
+    for (A, C, x, y) in active_links:
+        if f[A] + x <= t_c <= f[A] + y:
+            tau_star.add(C)
+
+    # Line 13: select any non-empty subset of tau_star and return observation
+    subset_size = random.randint(1, len(tau_star))
+    tau = random.sample(tau_star, subset_size)
+
+    observation = Observation(rho=t_c, tau=tau)
+    logger.debug(f'Oracle returns rho = {t_c} and tau = {tau}')
+    return observation
+
+
 
 
 def rte_update(S: STNU, D: RTEdata, delta: RTEdecision, observation: Observation):
@@ -178,7 +255,7 @@ def rte_update(S: STNU, D: RTEdata, delta: RTEdecision, observation: Observation
     # Line 1: If rho = inf
     if observation.rho == np.inf:
         # Line 2: Return fail
-        return "Fail"
+        return False
 
     # Line 3: If delta = wait, or delta = (t,V) and rho < t:
     if delta.wait or (delta.wait is False and observation.rho < delta.t):

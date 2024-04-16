@@ -1,5 +1,5 @@
 import unittest
-from stnu.dc_checking import apply_reduction_rule
+from stnu.algorithms.dc_checking import apply_reduction_rule
 from classes.stnu import STNU
 
 
