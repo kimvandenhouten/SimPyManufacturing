@@ -1,11 +1,15 @@
 import enum
 import os
 import subprocess
+
+import pandas as pd
+
 from classes.stnu import STNU
 import classes.general
 logger = classes.general.get_logger()
 from stnu.algorithms.rte_star import rte_star
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
+
 class DCAlgorithm(enum.Enum):
     FD_STNU_IMPROVED = enum.auto()
     FD_STNU = enum.auto()
@@ -64,20 +68,11 @@ class CSTNUTool:
         else:
             print(f'WARNING: Network was unexpectedly found {"" if is_dc else "not "} to be DC')
 
+# Read your STNU input graph here
+instance_location = os.path.abspath(f"stnu/java_comparison/xml_files/input_production_plan_10_1.stnu")
 
-# Create your STNU here
-stnu = STNU(origin_horizon=False)
-a = stnu.add_node('A')
-b = stnu.add_node('B')
-c = stnu.add_node('C')
-stnu.set_ordinary_edge(b, c, 5)
-stnu.add_contingent_link(a, c, 2, 9)
-stnu_to_xml(stnu, f"example_network", "stnu/java_comparison/xml_files")
+# Now run Morris'14Dispatchable
 expected_dc = True
-
-# Here we run the CSTNU tool to check DC, and obtain ESTNU if DC=True
-instance_location = os.path.abspath(f"stnu/java_comparison/xml_files/example_network.stnu")
-
 if not os.path.exists(instance_location):
     print(f"warning: could not find {instance_location}")
 
@@ -88,13 +83,30 @@ else:
 
     CSTNUTool.run_dc_alg(instance_location, expected_dc, output_location)
 
-
 # Here we read the ESTNU that is the output from the morris'14 dispatchable algorithm
-estnu = STNU.from_graphml(f"stnu/java_comparison/xml_files/example_network-output.stnu")
+estnu = STNU.from_graphml(f"stnu/java_comparison/xml_files/input_production_plan_10_1-output.stnu")
 
 # Here we start testing the RTE interaction
 rte_data = rte_star(estnu)
 
 logger.debug(f'the final schedule is {rte_data.f}')
-logger.debug(f'the makespan is {max(rte_data.f.values())}')
+data = []
+for tp in rte_data.f:
+    data.append({"node_idx": tp,
+                 "assignment": rte_data.f[tp],
+                 "description": estnu.translation_dict[tp]})
+data_df = pd.DataFrame(data)
+makespan = max(rte_data.f.values())
+logger.debug(f'the makespan is {makespan}')
+data_df.to_csv(f"stnu/examples/schedules/schedule_production_plan_10_1_makespan={makespan}.csv")
+
 logger.debug(f'the sampled weights are {rte_data.sampled_weights}')
+data = []
+for cont_tp in rte_data.sampled_weights:
+    data.append({"node_idx": cont_tp,
+                 "weight": rte_data.sampled_weights[cont_tp],
+                 "description": estnu.translation_dict[cont_tp]})
+data_df = pd.DataFrame(data)
+data_df.to_csv(f"stnu/examples/schedules/sampled_weights_production_plan_10_1_makespan={makespan}.csv")
+
+

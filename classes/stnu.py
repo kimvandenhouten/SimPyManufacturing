@@ -91,14 +91,14 @@ class STNU:
         return stringy
 
     @classmethod
-    def from_production_plan(cls, production_plan: ProductionPlan, max_time_lag=True) -> 'STNU':
+    def from_production_plan(cls, production_plan: ProductionPlan, max_time_lag=True, origin_horizon=True) -> 'STNU':
         def get_name(product: Product, activity_id: int, event_type: str):
             """
             Return a unique string representation of the given product, activity, and event type.
             """
             return f"{product.product_index}_{activity_id}_{event_type}"
 
-        stnu = cls()
+        stnu = cls(origin_horizon=origin_horizon)
         for product in production_plan.products:
             for activity in product.activities:
                 # Add nodes that refer to start and end of activity

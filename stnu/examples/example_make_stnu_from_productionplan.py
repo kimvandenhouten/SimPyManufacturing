@@ -23,7 +23,7 @@ instance_size = 10
 instance_id = 1
 instance_name = f"{instance_size}_{instance_id}_factory_1"
 my_productionplan = ProductionPlan(
-    **json.load(open('factory_data/development/instances_type_1_uniform/instance_' + instance_name + '.json')))
+    **json.load(open('factory_data/development/instances_type_2_uniform/instance_' + instance_name + '.json')))
 
 # Solve deterministic CP and data
 rcpsp = RCPSP_CP(my_productionplan)
@@ -34,8 +34,8 @@ logger.info(f'makespan according to CP output is {makespan_cp_output}')
 earliest_start = cp_output.to_dict('records')
 resource_chains, resource_use = get_resource_chains(my_productionplan, earliest_start, True)
 
-# Set up stn and run floyd warshall
-stnu = STNU.from_production_plan(my_productionplan, max_time_lag=max_time_lag)
+# Set up STNU
+stnu = STNU.from_production_plan(my_productionplan, max_time_lag=max_time_lag, origin_horizon=False)
 stnu = add_resource_chains(stnu=stnu, resource_chains=resource_chains)
 stnu_to_xml(stnu, f"input_production_plan_{instance_size}_{instance_id}", "stnu/java_comparison/xml_files")
 #determine_dc(stnu)

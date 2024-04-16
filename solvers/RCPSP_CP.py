@@ -70,7 +70,10 @@ class RCPSP_CP:
                 for b in indices_2:
                     self.incompatible_tasks.append((a, b))
 
-    def solve(self, time_limit=10, l1=0.5, l2=0.5, write=False, output_file="results.csv"):
+    def solve(self, durations=None, time_limit=10, l1=0.5, l2=0.5, write=False, output_file="results.csv"):
+
+        # Set durations to self.durations if no input vector is given
+        durations = self.durations if durations is None else durations
         demands = self.resources
         capacities = self.capacity
         nb_tasks = len(self.durations)
@@ -80,7 +83,7 @@ class RCPSP_CP:
         mdl = CpoModel()
 
         # Create task interval variables
-        tasks = [interval_var(name='T{}'.format(i + 1), size=self.durations[i]) for i in range(nb_tasks)]
+        tasks = [interval_var(name='T{}'.format(i + 1), size=durations[i]) for i in range(nb_tasks)]
 
         # Add precedence constraints
         mdl.add(start_of(tasks[s]) >= start_of(tasks[t]) + self.min_lag[(t, s)] for t in range(nb_tasks) for s in self.successors[t])

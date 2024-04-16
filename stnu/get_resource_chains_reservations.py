@@ -85,9 +85,9 @@ def add_resource_chains(stnu, resource_chains):
     for pred_p, pred_a, succ_p, succ_a in resource_chains:
         # the finish of the predecessor should precede the start of the successor
         pred_idx_finish = stnu.translation_dict_reversed[
-            (pred_p, pred_a, STN.EVENT_FINISH)]  # Get translation index from finish of predecessor
+            f"{pred_p}_{pred_a}_{STN.EVENT_FINISH}"]  # Get translation index from finish of predecessor
         suc_idx_start = stnu.translation_dict_reversed[
-            (succ_p, succ_a, STN.EVENT_START)]  # Get translation index from start of successor
+            f"{succ_p}_{succ_a}_{STN.EVENT_START}"]  # Get translation index from start of successor
 
         # add interval constraint between predecessor and successor
         stnu.set_ordinary_edge(suc_idx_start, pred_idx_finish, 0)

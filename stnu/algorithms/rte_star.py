@@ -32,8 +32,7 @@ class RTEdata:
         self.f = {}  # variable assignments (schedule)
         self.time_windows = {}
         self.act_waits = {}
-        # TODO: initialize time-windows for all u_x
-        # TODO: initialize activated waits for all u_x
+        self.sampled_weights = {}
 
     @classmethod
     def from_estnu(cls, estnu: STNU) -> 'RTEdata':
@@ -108,7 +107,7 @@ def rte_star(estnu: STNU):
         if rte_data is False:
             return False
 
-    return True
+    return rte_data
 
 
 def rte_generate_decision(D: RTEdata):
@@ -205,10 +204,11 @@ def rte_oracle(S: STNU, D: RTEdata, delta: RTEdecision):
         return observation
 
     # Line 7 - 8: Compute bounds for possible contingent executions
-    lb, ub = {}, {}
+    lb, ub, f_act_tp, real_weight_c = {}, {}, {}, {}
     for (A, C, x, y) in active_links:
         lb[C] = f[A] + x
         ub[C] = f[A] + y
+        f_act_tp[C] = f[A]
 
     lb_c = min(lb.values())
     ub_c = min(ub.values())
@@ -236,12 +236,14 @@ def rte_oracle(S: STNU, D: RTEdata, delta: RTEdecision):
     # Line 13: select any non-empty subset of tau_star and return observation
     subset_size = random.randint(1, len(tau_star))
     tau = random.sample(tau_star, subset_size)
+    for C in tau:
+        D.sampled_weights[C] = t_c - f_act_tp[C]
+        logger.debug(f'{S.translation_dict[C]}')
 
     observation = Observation(rho=t_c, tau=tau)
     logger.debug(f'Oracle returns rho = {t_c} and tau = {tau}')
+    logger.debug(f'Sampled weights {D.sampled_weights}')
     return observation
-
-
 
 
 def rte_update(S: STNU, D: RTEdata, delta: RTEdecision, observation: Observation):
