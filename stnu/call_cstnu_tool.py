@@ -43,7 +43,7 @@ class CSTNUTool:
 
     @classmethod
     def run_dc_alg(cls, instance_location, expected_dc, output_location=None,
-                   alg: DCAlgorithm = DCAlgorithm.Morris2014):
+                   alg: DCAlgorithm = DCAlgorithm.Morris2014Dispatchable):
         java_class = 'it.univr.di.cstnu.algorithms.STNU'
         arguments = [
             instance_location,

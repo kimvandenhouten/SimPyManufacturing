@@ -186,8 +186,17 @@ class STNU:
                     raise ValueError(f"Unexpected edge type {edge_type} for labeled edge {edge_id}")
                 m = lv_pattern.match(labeled_value)
                 if not m:
-                    raise ValueError(f"Unexpected value {labeled_value} for contingent edge {edge_id}")
+                    raise ValueError(f"Unexpected value {labeled_value} for {edge_type} edge {edge_id}")
                 stnu.set_labeled_edge(node_from, node_to, m['distance'], m['label'], m['label_type'])
+                if edge_type == "contingent":
+                    if float(m['distance']) < 0 and m['label_type'] == STNU.UC_LABEL:
+                        stnu.node_types[node_from] = STNU.CONTINGENT_TP
+                        stnu.node_types[node_to] = STNU.ACTIVATION_TP
+                    elif float(m['distance']) >= 0 and m['label_type'] == STNU.LC_LABEL:
+                        stnu.node_types[node_from] = STNU.ACTIVATION_TP
+                        stnu.node_types[node_to] = STNU.CONTINGENT_TP
+                    else:
+                        raise ValueError(f"Unexpected distance and label type combination for contingent edge {edge_id}")
             else:
                 raise ValueError(f"Edge {edge_id} has no value")
 
