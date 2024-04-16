@@ -3,9 +3,8 @@ import itertools
 from abc import ABC
 from collections import Counter
 from typing import Any, Iterable, Union
-
+import pickle
 import numpy as np
-
 from classes.classes import ProductionPlan
 from classes.util import ListNode
 import classes.general
@@ -421,13 +420,24 @@ class STN:
             tag(v)
 
 
+    def to_pickle(self, pickle_file_path):
+        with open(pickle_file_path, 'wb') as file:
+            # Use the pickle.dump() method to serialize and write the object to the file
+            pickle.dump(self, file)
+
+        print(f"Object saved to {pickle_file_path}")
+
     def bounds_check(self, node_from, node_to, min_distance, max_distance):
         if self.shortest_distances is not None:
             lower_bound = -self.shortest_distances[node_to][node_from]
             upper_bound = self.shortest_distances[node_from][node_to]
             if max_distance < lower_bound:
+                #self.to_pickle("snapshot_stn.pkl")
+                print(node_from, node_to, min_distance, max_distance)
                 raise ValueError(f"Can't set upper bound of {max_distance} between node_{node_from} and "
                                  f"node_{node_to}: lower bound is {lower_bound}")
             if min_distance > upper_bound:
+                #self.to_pickle("snapshot_stn.pkl")
+                print(node_from, node_to, min_distance, max_distance)
                 raise ValueError(f"Can't set lower bound of {min_distance} between node_{node_from} and "
                                  f"node_{node_to}: upper bound is {upper_bound}")

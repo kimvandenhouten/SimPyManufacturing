@@ -54,7 +54,7 @@ class Simulator(BaseSimulator):
         """
         # Trace back the moment in time that the resources are requested
         request_time = self.env.now
-        self.logger.info.to_csv('simulators/simulator8/logger_info.csv')
+        #self.logger.info.to_csv('simulators/simulator8/logger_info.csv')
         self.logger.failure_code = (
                 self._precedence_constraint_check(product_index, activity_id)
                 or self._availability_constraint_check(needs, product_index, activity_id)

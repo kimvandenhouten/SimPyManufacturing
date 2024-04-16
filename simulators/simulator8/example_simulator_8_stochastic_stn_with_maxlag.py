@@ -15,19 +15,19 @@ In this script we test the simulation that use the STN to run send activitites
 logger = classes.general.get_logger()
 
 # Settings
-printing = False
+printing = True
 printing_output = True
 compatibility = True
-max_time_lag = False
+max_time_lag = True
 reservation_factor = 0.0
-use_p3c = True
+use_p3c = False
 
 # Load instance data
-instance_size = 120
+instance_size = 10
 instance_id = 1
 instance_name = f"{instance_size}_{instance_id}_factory_1"
 my_productionplan = ProductionPlan(
-    **json.load(open('factory_data/development/instances_type_1_uniform/instance_' + instance_name + '.json')))
+    **json.load(open('factory_data/development/instances_type_2_uniform/instance_' + instance_name + '.json')))
 
 # Solve deterministic CP and data
 rcpsp = RCPSP_CP(my_productionplan)
@@ -52,7 +52,7 @@ else:
     logger.info(f'floyd warshall finished')
 
 # Create
-for seed in range(0, 1):
+for seed in range(0, 200):
     logger.info(f'start scenario {seed}')
     stn_copy = copy.deepcopy(stn)  # FIXME: could we avoid deepcopy
     productionplan_copy = copy.deepcopy(my_productionplan)  # FIXME: could we avoid deepcopy
