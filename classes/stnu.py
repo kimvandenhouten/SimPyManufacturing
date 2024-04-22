@@ -172,9 +172,10 @@ class STNU:
             value = edge.find(key='Value')
             labeled_value = edge.find(key='LabeledValue')
 
-            if value and labeled_value:
-                raise ValueError(f"Edge {edge_id} has both unlabeled and labeled value")
-            elif value:
+            # FIXME: is this a problem?
+            #if value and labeled_value:
+                #raise ValueError(f"Edge {edge_id} has both unlabeled and labeled value")
+            if value:
                 value = value.text.strip()
                 if edge_type not in ('requirement', 'derived'):
                     raise ValueError(f"Unexpected edge type {edge_type} for unlabeled edge {edge_id}")

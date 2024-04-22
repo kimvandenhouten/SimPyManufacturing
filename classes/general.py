@@ -6,12 +6,15 @@ import numpy as np
 logger = None
 
 
-def get_logger():
+def get_logger(level="DEBUG"):
     global logger
     if logger is not None:
         return logger
     logger = logging.getLogger('SimPyManufacturing')
-    logger.setLevel(logging.DEBUG)
+    if level == "DEBUG":
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.CRITICAL)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     # fh = logging.FileHandler('SimPyManufacturing.log')

@@ -4,7 +4,7 @@ import numpy as np
 import random
 import typing
 
-logger = classes.general.get_logger()
+logger = classes.general.get_logger(level="INFO")
 
 
 def intersect_intervals(a, b, c, d):
@@ -84,7 +84,7 @@ class Observation:
         self.tau = tau
 
 
-def rte_star(estnu: STNU):
+def rte_star(estnu: STNU, oracle="standard", sample=None):
     """
     This procedure should run the RTE^* algorithm such as described in Hunsberger'2024 article "Foundations of
     Dispatchability for Simple Temporal Networks with Uncertainty"
@@ -106,7 +106,10 @@ def rte_star(estnu: STNU):
             return False
 
         # Line 6: (rho, tau) = Observe contingent timepoints
-        observation = rte_oracle(estnu, rte_data, rte_decision)
+        if oracle == "standard":
+            observation = rte_oracle(estnu, rte_data, rte_decision)
+        else:
+            observation = rte_oracle_sample(estnu, rte_data, rte_decision, sample)
 
         # Line 7: Update RTE data structure
         rte_data = rte_update(estnu, rte_data, rte_decision, observation)
@@ -146,9 +149,9 @@ def rte_generate_decision(D: RTEdata):
             ub[x] = D.time_windows[x].ub
 
     # Line 6: Find earliest possible next execution: t_l
-    t_l = glb[min(glb)]
+    t_l = min(glb.values())
     # Line 7: Find latest possible next execution: t_u
-    t_u = ub[max(ub)]
+    t_u = min(ub.values())
 
     # Line 8: If the intersection from [t_l, t_u] and [now, inf] is empty
     if t_u < D.now or np.inf < t_l:
@@ -198,6 +201,7 @@ def rte_oracle(S: STNU, D: RTEdata, delta: RTEdecision):
                 active_links.append(
                     (A, C, S.contingent_links[(A, C)]['lc_value'], S.contingent_links[(A, C)]['uc_value']))
     logger.debug(f'Active links are {active_links}')
+
     # Line 3: check waiting forever
     if len(active_links) == 0 and delta.wait:
         # Line 4: return
@@ -251,9 +255,74 @@ def rte_oracle(S: STNU, D: RTEdata, delta: RTEdecision):
 
     observation = Observation(rho=t_c, tau=tau)
     logger.debug(f'Oracle returns rho = {t_c} and tau = {tau}')
-    logger.debug(f'Sampled weights {D.sampled_weights}')
     return observation
 
+
+def rte_oracle_sample(S: STNU, D: RTEdata, delta: RTEdecision, sample: dict):
+    """
+    This represents the real time feedback from the system
+    :return: (t_c, t) where t_c is the contingent time-points, and t is the time
+    """
+    # Line 1: set f=D.f and now = D.now
+    f = D.f
+    now = D.now
+
+    # Line 2: get currently active contingent links
+    active_links = []
+    for (A, C) in S.contingent_links:
+        if A in f and C not in f:
+            if f[A] <= now:
+                active_links.append((A, C, S.contingent_links[(A, C)]['lc_value'], S.contingent_links[(A, C)]['uc_value']))
+    logger.debug(f'Active links are {active_links}')
+
+    # Line 3: check waiting forever
+    if len(active_links) == 0 and delta.wait:
+        # Line 4: return
+        logger.debug(f'Oracle returns rho = inf and tau = []')
+        observation = Observation(rho=np.inf, tau=[])
+        return observation
+
+    # Line 5: if no active links but there is a new scheduling decision
+    if len(active_links) == 0 and not delta.wait and not delta.fail:
+        # Line 6: return decision
+        observation = Observation(rho=delta.t, tau=[])
+        logger.debug(f'Oracle returns rho = {delta.t} and tau = []')
+        return observation
+
+    # Line 7 - 8: Compute bounds for possible contingent executions
+    lb, ub, f_act_tp, real_weight_c = {}, {}, {}, {}
+    finish = {}
+    t_c = np.inf  # Keep track of the earliest finishing contingent TP
+    for (A, C, x, y) in active_links:
+        finish[C] = f[A] + sample[C]
+        f_act_tp[C] = f[A]
+        # Keep track of the earliest finishing contingent TP
+        if finish[C] < t_c:
+            t_c = finish[C]
+
+    # Oracle decides not to execute any CTPs yet
+    # Line 10: if delta = (t,V) and t_c > t
+    if delta.wait is False and delta.fail is False:
+        if t_c > delta.t:
+            # Line 11: return
+            logger.debug(f'Oracle returns rho = {delta.t} and tau = []')
+            observation = Observation(rho=delta.t, tau=[])
+            return observation
+
+    # Define contingent timepoints that will be executed now based on sample
+    tau = []
+    for (A, C, x, y) in active_links:
+        if finish[C] == t_c:
+            tau.append(C)
+
+    # Line 13: select any non-empty subset of tau_star and return observation
+    for C in tau:
+        D.sampled_weights[C] = t_c - f_act_tp[C]
+        logger.debug(f'{S.translation_dict[C]}')
+
+    observation = Observation(rho=t_c, tau=tau)
+    logger.debug(f'Oracle returns rho = {t_c} and tau = {tau}')
+    return observation
 
 def rte_update(S: STNU, D: RTEdata, delta: RTEdecision, observation: Observation):
     """

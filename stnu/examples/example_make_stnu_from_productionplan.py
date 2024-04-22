@@ -16,7 +16,7 @@ logger = classes.general.get_logger()
 # Settings
 printing_output = True
 compatibility = True
-max_time_lag = False
+max_time_lag = True
 
 # Load instance data
 instance_size = 10
@@ -28,7 +28,7 @@ my_productionplan = ProductionPlan(
 # Solve deterministic CP and data
 rcpsp = RCPSP_CP(my_productionplan)
 print(len(rcpsp.durations))
-_, _, cp_output = rcpsp.solve(1800, 1, 0)
+_, _, cp_output = rcpsp.solve(None,1800, 1, 0)
 makespan_cp_output = max(cp_output["end"].tolist())
 logger.info(f'makespan according to CP output is {makespan_cp_output}')
 earliest_start = cp_output.to_dict('records')

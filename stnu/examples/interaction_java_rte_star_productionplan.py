@@ -9,6 +9,7 @@ import classes.general
 logger = classes.general.get_logger()
 from stnu.algorithms.rte_star import rte_star
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
+import numpy as np
 
 class DCAlgorithm(enum.Enum):
     FD_STNU_IMPROVED = enum.auto()
@@ -87,8 +88,14 @@ else:
 estnu = STNU.from_graphml(f"stnu/java_comparison/xml_files/input_production_plan_10_1-output.stnu")
 
 # Here we start testing the RTE interaction
-rte_data = rte_star(estnu)
-
+sample = {}
+# TODO: for all contingent timepoints sample the duration
+for (A, C) in estnu.contingent_links:
+    duration_sample = np.random.randint(estnu.contingent_links[(A, C)]["lc_value"], estnu.contingent_links[(A, C)]["uc_value"])
+    sample[C] = duration_sample
+logger.debug(f'Sample that will be given to RTE_star: {sample}')
+rte_data = rte_star(estnu, oracle="sample", sample=sample)
+#rte_data = rte_star(estnu, oracle="standard")
 logger.debug(f'the final schedule is {rte_data.f}')
 data = []
 for tp in rte_data.f:
@@ -101,6 +108,10 @@ logger.debug(f'the makespan is {makespan}')
 data_df.to_csv(f"stnu/examples/schedules/schedule_production_plan_10_1_makespan={makespan}.csv")
 
 logger.debug(f'the sampled weights are {rte_data.sampled_weights}')
+
+# Check if the sampled weights match the given sample
+assert rte_data.sampled_weights == sample
+
 data = []
 for cont_tp in rte_data.sampled_weights:
     data.append({"node_idx": cont_tp,
@@ -108,5 +119,22 @@ for cont_tp in rte_data.sampled_weights:
                  "description": estnu.translation_dict[cont_tp]})
 data_df = pd.DataFrame(data)
 data_df.to_csv(f"stnu/examples/schedules/sampled_weights_production_plan_10_1_makespan={makespan}.csv")
+
+# FIXME: this is all very ugly and inefficient
+durations = []
+for product in my_productionplan.products:
+    for activity in product.activities:
+        key = f'{product.product_index}_{activity.id}_finish'
+        index = keys.index(key)
+        weight = weights[index]
+        durations.append(weight)
+
+# Solve under perfect information
+rcpsp = RCPSP_CP(my_productionplan)
+print(len(rcpsp.durations))
+# TODO: set durations obtained from
+_, _, cp_output = rcpsp.solve(durations,1800, 1, 0)
+makespan_cp_output = max(cp_output["end"].tolist())
+logger.info(f'makespan under perfect information is {makespan_cp_output}, makespan obtained with STNU is 1408, regret is {1408-makespan_cp_output}')
 
 
