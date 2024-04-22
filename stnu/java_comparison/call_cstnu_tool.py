@@ -2,6 +2,9 @@ import enum
 import os
 import re
 import subprocess
+import classes.general
+
+logger = classes.general.get_logger()
 
 
 class DCAlgorithm(enum.Enum):
@@ -35,10 +38,10 @@ class CSTNUTool:
         res = subprocess.run(cmd, capture_output=True, text=True)
 
         if res.stderr:
-            print("ERROR")
-            print(res.stderr)
+            logger.error("ERROR")
+            logger.error(res.stderr)
 
-        print(res.stdout)
+        logger.debug(res.stdout)
         return res
 
     @classmethod
@@ -56,11 +59,11 @@ class CSTNUTool:
 
         is_dc = "The given STNU is dynamic controllable!" in res.stdout
         if expected_dc and is_dc:
-            print('Network is DC, as expected')
+            logger.debug('Network is DC, as expected')
         elif not expected_dc and not is_dc:
-            print('Network is not DC, as expected')
+            logger.debug('Network is not DC, as expected')
         else:
-            print(f'WARNING: Network was unexpectedly found {"" if is_dc else "not "} to be DC')
+            logger.warning(f'WARNING: Network was unexpectedly found {"" if is_dc else "not "} to be DC')
 
     @classmethod
     def run_rte(cls, instance_location):
@@ -91,18 +94,18 @@ def main():
     for (file_name, dc) in file_list:
         instance_location = os.path.abspath(f"stnu/java_comparison/xml_files/{file_name}")
         if not os.path.exists(instance_location):
-            print(f"warning: could not find {instance_location}")
+            logger.warning(f"warning: could not find {instance_location}")
             continue
-        print(f"running CSTNUTool on {file_name}")
+        logger.debug(f"running CSTNUTool on {file_name}")
 
         output_location = instance_location.replace(".stnu", "-output.stnu")
 
         CSTNUTool.run_dc_alg(instance_location, dc, output_location)
         schedule = CSTNUTool.run_rte(instance_location)
         if schedule:
-            print(f"parsed schedule: {schedule}")
+            logger.debug(f"parsed schedule: {schedule}")
         else:
-            print("could not parse schedule")
+            logger.debug("could not parse schedule")
 
 
 if __name__ == "__main__":

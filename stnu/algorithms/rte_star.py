@@ -3,9 +3,8 @@ from classes.stnu import STNU, Edge
 import numpy as np
 import random
 import typing
+
 logger = classes.general.get_logger()
-
-
 
 
 def intersect_intervals(a, b, c, d):
@@ -17,17 +16,25 @@ def intersect_intervals(a, b, c, d):
     else:
         return x, y
 
+
 class TimeWindow:
-    def __init__(self, x, lb=0, ub=np.inf):
+    def __init__(self, x: int, lb=0, ub=np.inf):
         self.x = x
         self.lb = lb
         self.ub = ub
 
+
 class RTEdata:
-    def __init__(self, u_x=[], u_c=[], enabled_x=[], now=0):
+    u_x: list[int]
+    u_c: list[int]
+
+    def __init__(self, u_x: list[int], u_c: list[int], enabled_x=None, now=0):
         self.u_x = u_x
         self.u_c = u_c
-        self.enabled_tp = enabled_x  # the enabled timepoints
+        if enabled_x is None:
+            self.enabled_tp = []
+        else:
+            self.enabled_tp = enabled_x  # the enabled timepoints
         self.now = now  # the current time, initialized at 0
         self.f = {}  # variable assignments (schedule)
         self.time_windows = {}
@@ -39,21 +46,23 @@ class RTEdata:
         # Obtain executable and contingent timepoints from the estnu
         u_x = estnu.get_executable_time_points()
         u_c = estnu.get_contingent_time_points()
-        rte_data = RTEdata(u_x=u_x, u_c=u_c)
+        rte_data = RTEdata(u_x, u_c)
 
-        # Initialize enable timepoints
+        # Initialize enabled timepoints
         for tp in u_x:
             enabled = True
             outgoing_edges = estnu.get_outgoing_edges(tp)
             for (weight, suc_node, edge_type, edge_label) in outgoing_edges:
                 if weight < 0:
                     if suc_node not in rte_data.f:
+                        # FIXME LP remove this "if"?
+                        # FIXME It seems like it is always true: I don't see anything being added to rte_data.f
                         enabled = False
             if enabled:
                 rte_data.enabled_tp.append(tp)
 
             # Initialize time windows
-            rte_data.time_windows[tp] = TimeWindow(x=tp)
+            rte_data.time_windows[tp] = TimeWindow(tp)
 
             # Initialize activated waits
             rte_data.act_waits[tp] = []
@@ -85,7 +94,7 @@ def rte_star(estnu: STNU):
     # Line 1: First initialise the data structure with RTE_init(T_x, T_c)
     rte_data = RTEdata.from_estnu(estnu)
 
-    # Line 2: While both U_x (unexecuted executable timepoints) and U_c (unexecuted contingent timepoints) are non-empty
+    # Line 2: While either U_x (unexecuted executable timepoints) or U_c (unexecuted contingent timepoints) are non-empty
     while len(rte_data.u_c) + len(rte_data.u_x) > 0:
 
         # Line 3: Generate exec. decision (use rte_generate_decision)
@@ -93,7 +102,6 @@ def rte_star(estnu: STNU):
 
         # Line 4: If decision returns fail
         if rte_decision.fail:
-
             # Line 5: Return fail
             return False
 
@@ -116,7 +124,7 @@ def rte_generate_decision(D: RTEdata):
     :param d: RTEdata structure
     :return: Eec decs: Wait or (t, V); or fail
     """
-    #logger.debug(f'Enabled timepoints are: {D.enabled_tp}')
+    # logger.debug(f'Enabled timepoints are: {D.enabled_tp}')
     # Line 1: If D.enabled_x is empty:
     if len(D.enabled_tp) == 0:
         # Line 2: return wait
@@ -168,7 +176,7 @@ def rte_generate_decision(D: RTEdata):
         t = max(glb[found_v], D.now)  # TODO: now I implemented just the LB
 
         # Line 12: Return (t,V)
-        logger.debug(f'Generate decision returns (V,t) {(found_v,t)}')
+        logger.debug(f'Generate decision returns (V,t) {(found_v, t)}')
         delta = RTEdecision(x=found_v, t=t)
         return delta
 
@@ -187,7 +195,8 @@ def rte_oracle(S: STNU, D: RTEdata, delta: RTEdecision):
     for (A, C) in S.contingent_links:
         if A in f and C not in f:
             if f[A] <= now:
-                active_links.append((A, C, S.contingent_links[(A, C)]['lc_value'], S.contingent_links[(A, C)]['uc_value']))
+                active_links.append(
+                    (A, C, S.contingent_links[(A, C)]['lc_value'], S.contingent_links[(A, C)]['uc_value']))
     logger.debug(f'Active links are {active_links}')
     # Line 3: check waiting forever
     if len(active_links) == 0 and delta.wait:
@@ -304,7 +313,7 @@ def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
             new_lb, new_ub = intersect_intervals(D.time_windows[W].lb, D.time_windows[W].ub, -np.inf, t + delta)
             D.time_windows[W].lb = new_lb
             D.time_windows[W].ub = new_ub
-            #logger.debug(f'Update time window of {W} to [{new_lb}, {new_ub}]')
+            # logger.debug(f'Update time window of {W} to [{new_lb}, {new_ub}]')
 
     # for incoming edges (U, gamma, V)
     incoming_edges = S.get_incoming_edges(node_to=V, ordinary=True, uc=False, lc=False)
@@ -314,7 +323,7 @@ def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
             new_lb, new_ub = intersect_intervals(D.time_windows[U].lb, D.time_windows[U].ub, t - gamma, np.inf)
             D.time_windows[U].lb = new_lb
             D.time_windows[U].ub = new_ub
-            #logger.debug(f'Update time window of {U} to [{new_lb}, {new_ub}]')
+            # logger.debug(f'Update time window of {U} to [{new_lb}, {new_ub}]')
 
     # Line 4: Update D.Enabled_x due to any negative incoming edges to V
     # FIXME: can we do this more efficient
@@ -339,7 +348,7 @@ def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
         for (X, label, weight, Y) in S.get_wait_edges():
             if Y == V:
                 D.act_waits[X].append((t - weight, label))
-                #logger.debug(f'Activated wait for {X} with {(t-weight, label)}')
+                # logger.debug(f'Activated wait for {X} with {(t-weight, label)}')
     return D
 
 
@@ -354,7 +363,7 @@ def hce_update(S: STNU, D: RTEdata, rho: float, tau: list):
     """
     # Line 1: for each C \in Tau do:
     for C in tau:
-        #logger.debug(f'At time {rho} we will execute contingent time point {C} which is {S.translation_dict[C]}')
+        # logger.debug(f'At time {rho} we will execute contingent time point {C} which is {S.translation_dict[C]}')
 
         # Line 2: Add (C, \rho) to D.f
         D.f[C] = rho
@@ -372,10 +381,10 @@ def hce_update(S: STNU, D: RTEdata, rho: float, tau: list):
                 new_lb, new_ub = intersect_intervals(D.time_windows[W].lb, D.time_windows[W].ub, -np.inf, rho + delta)
                 D.time_windows[W].lb = new_lb
                 D.time_windows[W].ub = new_ub
-                #logger.debug(f'Update time window of {W} to [{new_lb}, {new_ub}]')
+                # logger.debug(f'Update time window of {W} to [{new_lb}, {new_ub}]')
 
         # Line 5: Remove C-waits from all D.AcWts set
-        #logger.debug(f'We should remove the C-Waits from {D.act_waits}')
+        # logger.debug(f'We should remove the C-Waits from {D.act_waits}')
         for key, value_list in D.act_waits.items():
             # Filter tuples where the second element is not 'C'
             filtered_list = [tup for tup in value_list if tup[1] != S.translation_dict[C]]
@@ -400,6 +409,3 @@ def hce_update(S: STNU, D: RTEdata, rho: float, tau: list):
                 D.enabled_tp.append(tp)
 
     return D
-
-
-

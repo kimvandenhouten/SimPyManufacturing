@@ -1,8 +1,9 @@
 from classes.stnu import STNU
 import classes.general
 from stnu.algorithms.dc_checking import determine_dc
-logger = classes.general.get_logger()
 from stnu.algorithms.rte_star import RTEdata, Observation, rte_generate_decision, rte_update
+
+logger = classes.general.get_logger()
 
 
 # Example Hunsberger slide 118 (controllable)
