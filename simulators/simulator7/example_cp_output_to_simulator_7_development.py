@@ -7,7 +7,7 @@ import numpy as np
 from numpy import random
 from matplotlib import pyplot as plt
 
-# In this script we test the instances type 1 that do not have a max time lag
+# In this script we test the rcpsp type 1 that do not have a max time lag
 
 # Settings
 nr_scenarios = 1000

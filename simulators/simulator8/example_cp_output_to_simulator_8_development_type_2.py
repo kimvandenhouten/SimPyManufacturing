@@ -10,7 +10,7 @@ from numpy import random
 from matplotlib import pyplot as plt
 
 """
-In this script we test the instances type 2 that do have a max time lag
+In this script we test the rcpsp type 2 that do have a max time lag
 """
 
 # Settings

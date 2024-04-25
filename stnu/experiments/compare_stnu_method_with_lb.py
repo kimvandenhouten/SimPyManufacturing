@@ -2,6 +2,7 @@ import json
 from classes.classes import ProductionPlan
 import classes.general
 from classes.stnu import STNU
+from solvers.check_feasibility import check_feasibility
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 from stnu.algorithms.call_java_dc_checking import run_dc_algorithm
 from stnu.algorithms.rte_star import rte_star
@@ -12,8 +13,8 @@ import pandas as pd
 
 logger = classes.general.get_logger(level="INFO")
 collected_data = []
-n_sim = 5
-for instance_size in [20, 40]:
+n_sim = 10
+for instance_size in [1]:
     for instance_id in [1]:
         for instance_type in [1, 2]:
             # Specify instance name
@@ -27,7 +28,7 @@ for instance_size in [20, 40]:
             # Make STNU from production plan
             # Solve deterministic CP and data
             rcpsp = RCPSP_CP(my_productionplan)
-            _, _, cp_output = rcpsp.solve(None, None, 1, 0)
+            _, _, cp_output = rcpsp.solve(None, 60, 1, 0)
             makespan_cp_output = max(cp_output["end"].tolist())
             logger.info(f'makespan according to CP output is {makespan_cp_output}')
             earliest_start = cp_output.to_dict('records')
@@ -65,12 +66,27 @@ for instance_size in [20, 40]:
 
                 ## Compute makespan lower bound by computing perfect information optimum with CP solver
                 durations = []
+                start_times = []
+                finish_times = []
                 for product in my_productionplan.products:
                     for activity in product.activities:
-                        key = f'{product.product_index}_{activity.id}_finish'
-                        node_idx = estnu.translation_dict_reversed[key]
-                        weight = sample[node_idx]
+                        key_start = f'{product.product_index}_{activity.id}_start'
+                        key_finish = f'{product.product_index}_{activity.id}_finish'
+                        node_idx_start = estnu.translation_dict_reversed[key_start]
+                        node_idx_finish = estnu.translation_dict_reversed[key_finish]
+                        weight = sample[node_idx_finish]
+                        start_times.append(rte_data.f[node_idx_start])
+                        finish_times.append(rte_data.f[node_idx_finish])
                         durations.append(weight)
+
+                feasibility = check_feasibility(start_times, finish_times, durations, rcpsp.capacity, rcpsp.successors,
+                                     rcpsp.resources, rcpsp.min_lag, rcpsp.max_lag)
+                if feasibility:
+                    print(f'The schedule generate with the STNU pipeline is feasible')
+                else:
+                    Warning(f'The schedule generated with the STNU pipeline is not feasible')
+
+                assert feasibility
 
                 rcpsp = RCPSP_CP(my_productionplan)
                 print(len(rcpsp.durations))
@@ -87,4 +103,4 @@ for instance_size in [20, 40]:
 
                 # Store experiment data
                 collected_data_df = pd.DataFrame(collected_data)
-                collected_data_df.to_csv('stnu/experiments/results.csv')
+                collected_data_df.to_csv(f'stnu/experiments/results_{instance_size}.csv')

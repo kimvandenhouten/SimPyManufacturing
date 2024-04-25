@@ -98,14 +98,10 @@ def stnu_to_xml(stnu, name_graph, directory):
                     label = edge.lc_label
                     edges.append((f'e{node_from_str}-{node_to_str}', node_from_str, node_to_str, "contingent", f'LC({label}):{edge.lc_weight}'))
 
-    print(edges)
-
     nodes = []
     for node in range(0, len(stnu.nodes)):
         node_str = stnu.translation_dict[node]
         nodes.append((node_str, str(random.randint(40, 200)), str(random.randint(40, 200))))
-
-    print(nodes)
 
     ncontingent = len(stnu.contingent_links)
     networktype = "STNU"

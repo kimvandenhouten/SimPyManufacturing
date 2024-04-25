@@ -7,7 +7,7 @@ from stn.get_resource_chains import get_resource_chains
 import numpy as np
 
 """
-In this script we test the instances type 2 that do have a max time lag
+In this script we test the rcpsp type 2 that do have a max time lag
 """
 
 # Settings

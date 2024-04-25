@@ -6,8 +6,8 @@ import numpy as np
 from classes.classes import Factory, Activity, ProductionPlan
 from classes.distributions import NormalDistribution
 
-# We set the seed fixed such that we can regenerate the instances more easily
-# These instances won't have a max time lag constraint.
+# We set the seed fixed such that we can regenerate the rcpsp more easily
+# These rcpsp won't have a max time lag constraint.
 random.seed(1)
 
 

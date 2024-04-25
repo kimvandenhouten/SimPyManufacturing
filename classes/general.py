@@ -14,7 +14,7 @@ def get_logger(level="DEBUG"):
     if level == "DEBUG":
         logger.setLevel(logging.DEBUG)
     else:
-        logger.setLevel(logging.CRITICAL)
+        logger.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     # fh = logging.FileHandler('SimPyManufacturing.log')

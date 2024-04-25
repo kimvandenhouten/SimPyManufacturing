@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
+<key id="nContingent" for="graph">
+<desc>Number of contingents in the graph</desc>
+<default>0</default>
+</key>
+<key id="NetworkType" for="graph">
+<desc>Network Type</desc>
+<default>CSTNU</default>
+</key>
+<key id="nEdges" for="graph">
+<desc>Number of edges in the graph</desc>
+<default>0</default>
+</key>
+<key id="nVertices" for="graph">
+<desc>Number of vertices in the graph</desc>
+<default>0</default>
+</key>
+<key id="Name" for="graph">
+<desc>Graph Name</desc>
+<default></default>
+</key>
+<key id="x" for="node">
+<desc>The x coordinate for the visualization. A positive value.</desc>
+<default>0</default>
+</key>
+<key id="y" for="node">
+<desc>The y coordinate for the visualization. A positive value.</desc>
+<default>0</default>
+</key>
+<key id="Type" for="edge">
+<desc>Type: Possible values: contingent|requirement|derived|internal.</desc>
+<default>requirement</default>
+</key>
+<key id="Value" for="edge">
+<desc>Value for STN edge. Format: 'integer'</desc>
+<default></default>
+</key>
+<key id="LabeledValue" for="edge">
+<desc>Case Value. Format: 'LC(NodeName):integer' or 'UC(NodeName):integer'</desc>
+<default></default>
+</key>
+<graph edgedefault="directed">
+<data key="nContingent">8</data>
+<data key="NetworkType">STNU</data>
+<data key="nEdges">39</data>
+<data key="nVertices">17</data>
+<data key="Name">input_production_plan_1_1.stnu</data>
+<node id="0_0_start">
+<data key="x">74.0</data>
+<data key="y">94.0</data>
+</node>
+<node id="0_1_start">
+<data key="x">69.0</data>
+<data key="y">109.0</data>
+</node>
+<node id="0_3_start">
+<data key="x">93.0</data>
+<data key="y">172.0</data>
+</node>
+<node id="0_2_start">
+<data key="x">75.0</data>
+<data key="y">105.0</data>
+</node>
+<node id="0_7_finish">
+<data key="x">102.0</data>
+<data key="y">89.0</data>
+</node>
+<node id="0_7_start">
+<data key="x">186.0</data>
+<data key="y">141.0</data>
+</node>
+<node id="0_6_start">
+<data key="x">82.0</data>
+<data key="y">169.0</data>
+</node>
+<node id="0_6_finish">
+<data key="x">195.0</data>
+<data key="y">154.0</data>
+</node>
+<node id="0_4_start">
+<data key="x">138.0</data>
+<data key="y">65.0</data>
+</node>
+<node id="0_4_finish">
+<data key="x">118.0</data>
+<data key="y">130.0</data>
+</node>
+<node id="0_5_finish">
+<data key="x">191.0</data>
+<data key="y">187.0</data>
+</node>
+<node id="0_5_start">
+<data key="x">197.0</data>
+<data key="y">44.0</data>
+</node>
+<node id="0_0_finish">
+<data key="x">126.0</data>
+<data key="y">160.0</data>
+</node>
+<node id="0_1_finish">
+<data key="x">55.0</data>
+<data key="y">164.0</data>
+</node>
+<node id="0_3_finish">
+<data key="x">78.0</data>
+<data key="y">134.0</data>
+</node>
+<node id="0_2_finish">
+<data key="x">121.0</data>
+<data key="y">104.0</data>
+</node>
+<node id="Z">
+<data key="x">10.0</data>
+<data key="y">10.0</data>
+</node>
+<edge id="0_0_finish_Z" source="0_0_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_5_finish_Z" source="0_5_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_4_start_Z" source="0_4_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="e0_5_finish-0_5_start" source="0_5_finish" target="0_5_start">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(0_5_finish):-34</data>
+</edge>
+<edge id="e0_1_start-0_1_finish" source="0_1_start" target="0_1_finish">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(0_1_finish):19</data>
+</edge>
+<edge id="e0_1_finish-0_1_start" source="0_1_finish" target="0_1_start">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(0_1_finish):-23</data>
+</edge>
+<edge id="e0_3_start-0_3_finish" source="0_3_start" target="0_3_finish">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(0_3_finish):28</data>
+</edge>
+<edge id="e0_6_start-0_6_finish" source="0_6_start" target="0_6_finish">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(0_6_finish):28</data>
+</edge>
+<edge id="e0_4_start-0_4_finish" source="0_4_start" target="0_4_finish">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(0_4_finish):28</data>
+</edge>
+<edge id="e0_5_start-0_0_start" source="0_5_start" target="0_0_start">
+<data key="Type">requirement</data>
+<data key="Value">-75</data>
+</edge>
+<edge id="0_1_start_Z" source="0_1_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_7_start_Z" source="0_7_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_2_start_Z" source="0_2_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="e0_6_start-0_0_start" source="0_6_start" target="0_0_start">
+<data key="Type">requirement</data>
+<data key="Value">-75</data>
+</edge>
+<edge id="e0_6_finish-0_6_start" source="0_6_finish" target="0_6_start">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(0_6_finish):-34</data>
+</edge>
+<edge id="e0_2_finish-0_2_start" source="0_2_finish" target="0_2_start">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(0_2_finish):-34</data>
+</edge>
+<edge id="e0_2_start-0_0_start" source="0_2_start" target="0_0_start">
+<data key="Type">requirement</data>
+<data key="Value">-54</data>
+</edge>
+<edge id="0_5_start_Z" source="0_5_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_2_finish_Z" source="0_2_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_1_finish_Z" source="0_1_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_4_finish_Z" source="0_4_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="e0_7_finish-0_7_start" source="0_7_finish" target="0_7_start">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(0_7_finish):-114</data>
+</edge>
+<edge id="0_6_finish_Z" source="0_6_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="e0_1_start-0_0_start" source="0_1_start" target="0_0_start">
+<data key="Type">requirement</data>
+<data key="Value">-64</data>
+</edge>
+<edge id="e0_0_start-0_0_finish" source="0_0_start" target="0_0_finish">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(0_0_finish):59</data>
+</edge>
+<edge id="e0_2_start-0_2_finish" source="0_2_start" target="0_2_finish">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(0_2_finish):28</data>
+</edge>
+<edge id="e0_3_finish-0_3_start" source="0_3_finish" target="0_3_start">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(0_3_finish):-34</data>
+</edge>
+<edge id="e0_7_start-0_7_finish" source="0_7_start" target="0_7_finish">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(0_7_finish):94</data>
+</edge>
+<edge id="e0_5_start-0_5_finish" source="0_5_start" target="0_5_finish">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(0_5_finish):28</data>
+</edge>
+<edge id="e0_7_start-0_0_start" source="0_7_start" target="0_0_start">
+<data key="Type">requirement</data>
+<data key="Value">-95</data>
+</edge>
+<edge id="e0_3_start-0_0_start" source="0_3_start" target="0_0_start">
+<data key="Type">requirement</data>
+<data key="Value">-64</data>
+</edge>
+<edge id="e0_4_start-0_0_start" source="0_4_start" target="0_0_start">
+<data key="Type">requirement</data>
+<data key="Value">-64</data>
+</edge>
+<edge id="0_0_start_Z" source="0_0_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_3_finish_Z" source="0_3_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_6_start_Z" source="0_6_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_7_finish_Z" source="0_7_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_3_start_Z" source="0_3_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="e0_4_finish-0_4_start" source="0_4_finish" target="0_4_start">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(0_4_finish):-34</data>
+</edge>
+<edge id="e0_0_finish-0_0_start" source="0_0_finish" target="0_0_start">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(0_0_finish):-73</data>
+</edge>
+</graph>
+</graphml>

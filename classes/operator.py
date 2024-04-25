@@ -7,7 +7,7 @@ from classes.classes import Action, FailureCode
 
 
 class OperatorSTN:
-    # FIXME Can we make this operator send activity more efficient? How does it scale to larger problem instances
+    # FIXME Can we make this operator send activity more efficient? How does it scale to larger problem rcpsp
 
     def __init__(self, plan, stn, resource_use_cp, name="stn_operator", printing=True):
         self.current_time = 0

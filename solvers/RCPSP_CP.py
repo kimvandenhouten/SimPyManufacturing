@@ -86,7 +86,8 @@ class RCPSP_CP:
         tasks = [interval_var(name='T{}'.format(i + 1), size=durations[i]) for i in range(nb_tasks)]
 
         # Add precedence constraints
-        mdl.add(start_of(tasks[s]) >= start_of(tasks[t]) + self.min_lag[(t, s)] for t in range(nb_tasks) for s in self.successors[t])
+        mdl.add(start_of(tasks[s]) >= start_of(tasks[t]) + self.min_lag[(t, s)] for t in range(nb_tasks) for s in self.successors[t] if
+            self.min_lag[(t, s)] != None)
         mdl.add(
             start_of(tasks[s]) <= start_of(tasks[t]) + self.max_lag[(t, s)] for t in range(nb_tasks) for s in self.successors[t] if
             self.max_lag[(t, s)] != None)

@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup, Tag
 from classes.classes import ProductionPlan, Product
 from classes.general import get_logger
 import re
+import numpy as np
 
 logger = get_logger()
 
@@ -89,6 +90,25 @@ class STNU:
         stringy += f"Edges: {self.edges}\n"
         stringy += f"Contingent links (node_from, node_to, x, y): {self.contingent_links}\n"
         return stringy
+
+    @classmethod
+    def from_rcpsp_instance(cls, durations, needs, capacity, successors):
+
+        stnu = cls(origin_horizon=False)
+        for task, duration in enumerate(durations):
+            task_start = stnu.add_node(f'{task}_{STNU.EVENT_START}')
+            task_finish = stnu.add_node(f'{task}_{STNU.EVENT_FINISH}')
+            lower_bound = int(max(0, duration - np.sqrt(duration)))
+            upper_bound = int(duration + np.sqrt(duration))
+            stnu.add_contingent_link(task_start, task_finish, lower_bound, upper_bound)
+
+        for (task, task_successors) in enumerate(successors):
+            for suc in task_successors:
+                i_idx = stnu.translation_dict_reversed[f'{task}_{STNU.EVENT_FINISH}']
+                j_idx = stnu.translation_dict_reversed[f'{suc}_{STNU.EVENT_START}']
+                stnu.set_ordinary_edge(j_idx, i_idx, 0)
+
+        return stnu
 
     @classmethod
     def from_production_plan(cls, production_plan: ProductionPlan, max_time_lag=True, origin_horizon=True) -> 'STNU':
@@ -427,4 +447,12 @@ class STNU:
                             negative_nodes[node] = True
 
         return negative_nodes
+
+    def sample_contingent_weights(self):
+        sample = {}
+        for (A, C) in self.contingent_links:
+            duration_sample = np.random.randint(self.contingent_links[(A, C)]["lc_value"],
+                                                self.contingent_links[(A, C)]["uc_value"])
+            sample[C] = duration_sample
+        return sample
 
