@@ -98,15 +98,39 @@ class STNU:
         for task, duration in enumerate(durations):
             task_start = stnu.add_node(f'{task}_{STNU.EVENT_START}')
             task_finish = stnu.add_node(f'{task}_{STNU.EVENT_FINISH}')
-            lower_bound = int(max(0, duration - np.sqrt(duration)))
-            upper_bound = int(duration + np.sqrt(duration))
-            stnu.add_contingent_link(task_start, task_finish, lower_bound, upper_bound)
+            if duration == 0:
+                stnu.add_tight_constraint(task_start, task_finish, 0)
+            else:
+                lower_bound = int(max(0, duration - np.sqrt(duration)))
+                upper_bound = int(duration + np.sqrt(duration))
+                stnu.add_contingent_link(task_start, task_finish, lower_bound, upper_bound)
 
         for (task, task_successors) in enumerate(successors):
             for suc in task_successors:
                 i_idx = stnu.translation_dict_reversed[f'{task}_{STNU.EVENT_FINISH}']
                 j_idx = stnu.translation_dict_reversed[f'{suc}_{STNU.EVENT_START}']
                 stnu.set_ordinary_edge(j_idx, i_idx, 0)
+
+        return stnu
+
+    @classmethod
+    def from_rcpsp_max_instance(cls, durations, temporal_constraints):
+        stnu = cls(origin_horizon=False)
+        for task, duration in enumerate(durations):
+            task_start = stnu.add_node(f'{task}_{STNU.EVENT_START}')
+            task_finish = stnu.add_node(f'{task}_{STNU.EVENT_FINISH}')
+            if duration == 0:
+                stnu.add_tight_constraint(task_start, task_finish, 0)
+            else:
+                lower_bound = int(max(0, duration - np.sqrt(duration)))
+                upper_bound = int(duration + np.sqrt(duration))
+                stnu.add_contingent_link(task_start, task_finish, lower_bound, upper_bound)
+
+        for (pred, lag, suc) in temporal_constraints:
+            i_idx = stnu.translation_dict_reversed[f'{pred}_{STNU.EVENT_START}']
+            j_idx = stnu.translation_dict_reversed[f'{suc}_{STNU.EVENT_START}']
+            # FIXME: check if this is correct
+            stnu.set_ordinary_edge(j_idx, i_idx, -lag)
 
         return stnu
 
@@ -206,7 +230,7 @@ class STNU:
             elif labeled_value:
                 labeled_value = labeled_value.text.strip()
                 if edge_type not in ('contingent', 'derived'):
-                    raise ValueError(f"Unexpected edge type {edge_type} for labeled edge {edge_id}")
+                    logger.debug(f"WARNING: Unexpected edge type {edge_type} for labeled edge {edge_id}")
                 m = lv_pattern.match(labeled_value)
                 if not m:
                     raise ValueError(f"Unexpected value {labeled_value} for {edge_type} edge {edge_id}")

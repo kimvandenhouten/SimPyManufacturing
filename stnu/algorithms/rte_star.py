@@ -116,6 +116,7 @@ def rte_star(estnu: STNU, oracle="standard", sample=None):
 
         # Line 8: If D=fail
         if rte_data is False:
+            logger.debug("FAIL")
             return False
 
     return rte_data
@@ -335,6 +336,7 @@ def rte_update(S: STNU, D: RTEdata, delta: RTEdecision, observation: Observation
     # Line 1: If rho = inf
     if observation.rho == np.inf:
         # Line 2: Return fail
+        logger.debug('fail')
         return False
 
     # Line 3: If delta = wait, or delta = (t,V) and rho < t:
@@ -395,17 +397,17 @@ def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
             # logger.debug(f'Update time window of {U} to [{new_lb}, {new_ub}]')
 
     # Line 4: Update D.Enabled_x due to any negative incoming edges to V
-    # FIXME: can we do this more efficient
+    # FIXME: can we do this more efficient, also this code is repeated in HCE update
     D.enabled_tp = []
     for tp in D.u_x:
         enabled = True
         outgoing_edges = S.get_outgoing_edges(tp)
-        # FIXME: to discuss how edges with zero weight work in this algorithm (ordinary vs lowercase seems also important)
         for (weight, suc_node, edge_type, edge_label) in outgoing_edges:
             if weight < 0:
                 if suc_node not in D.f:
                     enabled = False
-            elif weight == 0 and edge_type == STNU.ORDINARY_LABEL:
+
+            elif weight == 0 and edge_type == STNU.ORDINARY_LABEL and False:  # TODO: this can be removed now
                 if suc_node not in D.f:
                     enabled = False
         if enabled:
@@ -460,19 +462,18 @@ def hce_update(S: STNU, D: RTEdata, rho: float, tau: list):
             D.act_waits[key] = filtered_list
 
         # Line 6: Update D.Enabled_x due to incoming negative edges to C or any deleted C-waits
-        # FIXME: can we do this more efficient
+        # FIXME: can we do this more efficient, also this code also appears in the HXE update
         # FIXME: should we implement something additional due to deleted C-waits? how can we test this
         D.enabled_tp = []
         for tp in D.u_x:
             enabled = True
             outgoing_edges = S.get_outgoing_edges(tp)
-            # FIXME: to discuss how edges with zero weight work in this algorithm (ordinary vs lowercase seems also important)
+
             for (weight, suc_node, edge_type, edge_label) in outgoing_edges:
                 if weight < 0:
                     if suc_node not in D.f:
                         enabled = False
-                elif weight == 0 and edge_type == STNU.ORDINARY_LABEL:
-                    if suc_node not in D.f:
+                elif weight == 0 and edge_type == STNU.ORDINARY_LABEL and False:  # TODO: this can be removed now
                         enabled = False
             if enabled:
                 D.enabled_tp.append(tp)
