@@ -5,7 +5,7 @@ import classes.general
 from typing import Any, List
 from classes.stnu import STNU, Edge
 
-logger = classes.general.get_logger()
+logger = classes.general.get_logger(__name__)
 
 
 def convert_to_normal_form(stnu: STNU):

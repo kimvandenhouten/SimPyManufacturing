@@ -12,7 +12,7 @@ import copy
 In this script we test the simulation that use the STN to run send activitites
 """
 
-logger = classes.general.get_logger()
+logger = classes.general.get_logger(__name__)
 
 # Settings
 printing = False

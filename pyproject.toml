@@ -1,0 +1,19 @@
+[tool.logging]
+version = 1
+incremental = true
+
+[tool.logging.formatters.formatter]
+format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+default_time_format = "%H:%M:%S"
+
+[tool.logging.root]
+# The root logger level holds for every module that doesn't have its own level.
+level = "DEBUG"
+
+[tool.logging.loggers."__main__"]
+# The special module __main__ is the script currently being executed.
+level = "DEBUG"
+
+[tool.logging.loggers."stnu.java_comparison"]
+# Module names containing dots must be fully enclosed in quotes.
+level = "WARNING"

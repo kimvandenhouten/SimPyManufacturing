@@ -4,7 +4,7 @@ import numpy as np
 import random
 import typing
 
-logger = classes.general.get_logger(level="info")
+logger = classes.general.get_logger(__name__)
 
 
 def intersect_intervals(a, b, c, d):

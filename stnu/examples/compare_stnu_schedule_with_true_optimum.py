@@ -11,7 +11,7 @@ from solvers.RCPSP_CP import RCPSP_CP
 In this script we test the simulation that use the STNU together with the morris14 algorithm
 """
 
-logger = classes.general.get_logger()
+logger = classes.general.get_logger(__name__)
 
 # Settings
 printing_output = True

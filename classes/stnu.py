@@ -4,7 +4,7 @@ from classes.general import get_logger
 import re
 import numpy as np
 
-logger = get_logger()
+logger = get_logger(__name__)
 
 class Edge:
     UC_LABEL = "UC"

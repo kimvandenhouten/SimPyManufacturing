@@ -1,32 +1,33 @@
 import copy
-import logging
+import logging, logging.config
 import numpy as np
+import tomli as tomllib
 
 
-logger = None
+def get_logger(name):
+    if not getattr(get_logger, 'configured', False):
+        with open("pyproject.toml", "rb") as f:
+            config = tomllib.load(f).get("tool", {}).get("logging", {})
+        if not config:
+            raise KeyError("No logging configuration found")
 
+        # NOTE: due to a bug in the logging library (?), handlers and formatters can't reliably be set through
+        # dictConfig(). We set them manually now.
 
-def get_logger(level="DEBUG"):
-    global logger
-    if logger is not None:
-        return logger
-    logger = logging.getLogger('SimPyManufacturing')
-    if level == "DEBUG":
-        logger.setLevel(logging.DEBUG)
-    else:
-        logger.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(1)
+        format_dict = config.pop('formatters', {}).get('formatter', {})
+        if format_dict:
+            formatter = logging.Formatter(format_dict.get('format'))
+            if 'default_time_format' in format_dict:
+                formatter.default_time_format = format_dict['default_time_format']
+            console_handler.setFormatter(formatter)
+        logging.getLogger().addHandler(console_handler)
 
-    # fh = logging.FileHandler('SimPyManufacturing.log')
-    # fh.setLevel(logging.DEBUG)
-    # fh.setFormatter(formatter)
-    # logger.addHandler(fh)
+        logging.config.dictConfig(config)
+        setattr(get_logger, 'configured', True)
 
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.DEBUG)
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
-    return logger
+    return logging.getLogger(name)
 
 
 class Settings:
