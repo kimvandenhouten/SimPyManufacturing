@@ -64,15 +64,9 @@ class RTEdata:
         rte_data = RTEdata(u_x, u_c)
 
         # Initialize enabled timepoints
-        for tp in u_x:
-            enabled = True
-            outgoing_edges = estnu.get_outgoing_edges(tp)
-            for (weight, suc_node, edge_type, edge_label) in outgoing_edges:
-                if weight < 0:
-                    enabled = False
-            if enabled:
-                rte_data.enabled_tp.append(tp)
+        rte_data.enabled_tp = get_enabled_tp(rte_data, estnu)
 
+        for tp in u_x:
             # Initialize time windows
             rte_data.time_windows[tp] = TimeWindow(tp)
 
@@ -140,7 +134,7 @@ def rte_generate_decision(D: RTEdata):
     :param d: RTEdata structure
     :return: Eec decs: Wait or (t, V); or fail
     """
-    logger.debug(f'Start generatin RTE decision at {D.now}')
+    logger.debug(f'Start generating RTE decision at {D.now}')
     logger.debug(f'when enabled timepoints are: {D.enabled_tp}')
     # Line 1: If D.enabled_x is empty:
     if len(D.enabled_tp) == 0:
@@ -154,16 +148,15 @@ def rte_generate_decision(D: RTEdata):
         ub = {}
         for x in D.enabled_tp:
             act_waits = D.act_waits[x]
-            logger.debug(f'act waits {act_waits}')
             # Line 4: Find maximum wait for X
             max_wait = max(act_waits) if len(act_waits) > 0 else -np.inf
             if isinstance(max_wait, tuple):
                 max_wait = max_wait[0]
-            logger.debug(f'max wait is {max_wait}')
             # Line 5: Find greatest lower bound for X
             glb[x] = max(max_wait, D.time_windows[x].lb)
             ub[x] = D.time_windows[x].ub
     logger.debug(f'Activated waits {D.act_waits}')
+
     logger.debug(f'Global lower bounds for nodes {glb}')
     logger.debug(f'Upper bounds for nodes {ub}')
 
@@ -394,8 +387,18 @@ def update_time_windows_neighbors(source: int, execution: float, S: STNU, D: RTE
         # TW(W) = intersection of TW(W) and (-np.inf, t + delta)
         if W in D.time_windows:  # skip contingent tps
             if D.time_windows[W].ub < execution + delta:
-                ValueError(f'Invalid time window update, already thighter upper bound exists')
-            D.time_windows[W].ub = execution + delta
+                logger.debug(f'We dont have to update because already a thighter upper bound exists ub {D.time_windows[W].ub}'
+                             f' is smaller than {execution+delta}')
+            else:
+                if W in D.f:
+                    logger.debug(f'We have to do a check because {W} {S.translation_dict[W]} was already executed at {D.f[W]}')
+                    if D.f[W] > execution + delta:
+                        raise ValueError(f'Invalid upper bound time window update ({execution + delta}) , already executed timepoint {W}. The edge from'
+                                         f' {S.translation_dict[source]} to {S.translation_dict[W]} with weight {delta} caused this issue')
+                logger.debug(
+                    f'Time window of {W} {S.translation_dict[W]} updated from [{D.time_windows[W].lb, D.time_windows[W].ub}] to [{D.time_windows[W].lb, execution + delta}]')
+
+                D.time_windows[W].ub = execution + delta
 
     # for incoming edges (U, gamma, source)
     incoming_edges = S.get_incoming_edges(node_to=source, ordinary=True, uc=False, lc=False)
@@ -403,10 +406,57 @@ def update_time_windows_neighbors(source: int, execution: float, S: STNU, D: RTE
         # TW(U) = intersection of TW(U) and [t-gamma, np.inf)
         if U in D.time_windows:
             if D.time_windows[U].lb > execution - gamma:
-                ValueError(f'Invalid time window update, already thighter lower bound exists')
-            D.time_windows[U].lb = execution - gamma
+                logger.debug(
+                    f'We dont have to update because already a thighter upper bound exists lb {D.time_windows[U].lb}'
+                    f' is greater than {execution - gamma}')
+            else:
+                if U in D.f:
+                    logger.debug(f'We have to do a check because {U} {S.translation_dict[U]} was already executed at {D.f[U]}')
+                    if D.f[U] < execution - gamma:
+                        logger.debug(f'{(execution-gamma)}')
+                        raise ValueError(f'Invalid lower bound time window update, already executed timepoint {U}. The edge from'
+                                             f' {S.translation_dict[U]} to {S.translation_dict[source]}  with weight {gamma} caused this issue')
+
+                logger.debug(
+                        f'Time window of {U} {S.translation_dict[U]} updated from [{D.time_windows[U].lb, D.time_windows[U].ub}] to [{execution-gamma, D.time_windows[U].ub}]')
+                D.time_windows[U].lb = execution - gamma
+
 
     return D
+
+
+def get_enabled_tp(D: RTEdata, S: STNU):
+    # Fixme: we can use previously enabled tp, no need to do it over again
+    logger.debug(f'Unexecuted timepoints are {D.u_x}')
+    logger.debug(f'First enabled tp is {D.enabled_tp}')
+    enabled_tp = []
+    for tp in D.u_x:
+        enabled = True
+        if tp in D.f:
+            enabled = False
+            logger.debug(f'{tp} is already executed')
+        else:
+            outgoing_edges = S.get_outgoing_edges(tp)
+            for (weight, suc_node, edge_type, edge_label) in outgoing_edges:
+                if edge_type == STNU.LC_LABEL:
+                    continue
+                if weight < 0:
+                    if suc_node not in D.f:
+                        #logger.debug(f'{tp} not enabled due to edge from {tp} ({S.translation_dict[tp]}) to {suc_node}'
+                                    # f' ({S.translation_dict[suc_node]}) with weight {weight} and label {edge_label}')
+                        enabled = False
+                if weight == 0 and suc_node not in D.f:
+                    enabled = False
+                    logger.debug(f'There is and edge with zero weight that possibly causes issues '
+                                 f'{(weight, suc_node, edge_type, edge_label)}, the edges goes '
+                                 f'from {S.translation_dict[tp]} to {S.translation_dict[suc_node]}')
+
+        if enabled:
+            enabled_tp.append(tp)
+
+    logger.debug(f'After update enabled tp will be {enabled_tp}')
+
+    return enabled_tp
 
 
 def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
@@ -424,6 +474,7 @@ def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
 
     # Line 2: Remove (V, t) from D.u_x
     D.u_x.remove(V)
+    logger.debug(f'Removed {V} from D.u_x {D.u_x}')
 
     # Line 3: Update time windows for neighbors of V
     # for outgoing edges (V, delta, W)
@@ -431,21 +482,7 @@ def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
 
     # Line 4: Update D.Enabled_x due to any negative incoming edges to V
     # FIXME: can we do this more efficient, also this code is repeated in HCE update
-    D.enabled_tp = []
-    for tp in D.u_x:
-        enabled = True
-        outgoing_edges = S.get_outgoing_edges(tp)
-        for (weight, suc_node, edge_type, edge_label) in outgoing_edges:
-            if weight < 0:
-                if suc_node not in D.f:
-                    enabled = False
-
-            elif weight == 0 and edge_type == STNU.ORDINARY_LABEL and False:  # TODO: this can be removed now
-                if suc_node not in D.f:
-                    enabled = False
-        if enabled:
-            D.enabled_tp.append(tp)
-    logger.debug(f'Enabled tp at {D.now} are {D.enabled_tp}')
+    D.enabled_tp = get_enabled_tp(D, S)
 
     # Line 5: If V is activation_TP for some CTP C then
     if S.node_types[V] == STNU.ACTIVATION_TP:
@@ -478,7 +515,6 @@ def hce_update(S: STNU, D: RTEdata, rho: float, tau: list):
         D.u_c.remove(C)
 
         # Line 4: Update time-windows for neighbors of C
-        # TODO: maybe we can make a function because these lines also occur in update_hxe
         D = update_time_windows_neighbors(source=C, execution=rho, D=D, S=S)
 
         # Line 5: Remove C-waits from all D.AcWts set
@@ -486,26 +522,9 @@ def hce_update(S: STNU, D: RTEdata, rho: float, tau: list):
         for key, value_list in D.act_waits.items():
             # Filter tuples where the second element is not 'C'
             filtered_list = [tup for tup in value_list if tup[1] != S.translation_dict[C]]
-            logger.debug(f'Before {D.act_waits[key]}, after {filtered_list}')
             D.act_waits[key] = filtered_list
 
         # Line 6: Update D.Enabled_x due to incoming negative edges to C or any deleted C-waits
-        # FIXME: can we do this more efficient, also this code also appears in the HXE update
-        # FIXME: should we implement something additional due to deleted C-waits? how can we test this
-        D.enabled_tp = []
-        for tp in D.u_x:
-            enabled = True
-            outgoing_edges = S.get_outgoing_edges(tp)
-            for (weight, suc_node, edge_type, edge_label) in outgoing_edges:
-                if weight < 0:
-                    if suc_node not in D.f:
-                        enabled = False
-
-                elif weight == 0 and edge_type == STNU.ORDINARY_LABEL and False:  # TODO: this can be removed now
-                        enabled = False
-            if enabled:
-                D.enabled_tp.append(tp)
-
-        logger.debug(f'Enabled tp at {D.now} are {D.enabled_tp}')
+        D.enabled_tp = get_enabled_tp(D, S)
 
     return D

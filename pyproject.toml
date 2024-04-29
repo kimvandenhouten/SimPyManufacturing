@@ -14,6 +14,10 @@ level = "DEBUG"
 # The special module __main__ is the script currently being executed.
 level = "DEBUG"
 
+[tool.logging.loggers."stnu.algorithms.rte_star"]
+# Module names containing dots must be fully enclosed in quotes.
+level = "INFO"
+
 [tool.logging.loggers."stnu.java_comparison"]
 # Module names containing dots must be fully enclosed in quotes.
 level = "WARNING"

@@ -118,10 +118,13 @@ class STNU:
         stnu = cls(origin_horizon=False)
         for task, duration in enumerate(durations):
             task_start = stnu.add_node(f'{task}_{STNU.EVENT_START}')
-            task_finish = stnu.add_node(f'{task}_{STNU.EVENT_FINISH}')
+
             if duration == 0:
-                stnu.add_tight_constraint(task_start, task_finish, 0)
+                logger.debug(f'This is a sink/source node from RCPSP/max')
+                #stnu.add_tight_constraint(task_start, task_finish, 0)
+                #stnu.set_ordinary_edge(task_finish, task_start, 0)
             else:
+                task_finish = stnu.add_node(f'{task}_{STNU.EVENT_FINISH}')
                 lower_bound = int(max(0, duration - np.sqrt(duration)))
                 upper_bound = int(duration + np.sqrt(duration))
                 stnu.add_contingent_link(task_start, task_finish, lower_bound, upper_bound)
