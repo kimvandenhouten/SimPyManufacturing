@@ -9,8 +9,7 @@ from stnu.algorithms.rte_star import rte_star
 import classes.general
 from benchmark_rcpsp.rcpsp.process_file import process_file
 import pandas as pd
-# TODO how do I set the level globally (I want to switch of the debugs from RTE_star)
-logger = classes.general.get_logger(level="info")
+logger = classes.general.get_logger(__name__)
 
 # Set experimental settings
 nr_samples = 10

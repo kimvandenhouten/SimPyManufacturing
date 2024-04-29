@@ -11,7 +11,7 @@ import numpy as np
 from solvers.check_feasibility import check_feasibility, check_duration_feasible, check_resources_schedule, check_precedence_schedule
 import pandas as pd
 
-logger = classes.general.get_logger(level="INFO")
+logger = classes.general.get_logger(__name__)
 collected_data = []
 n_sim = 1
 for instance_size in [10]:

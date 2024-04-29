@@ -7,7 +7,7 @@ import numpy as np
 from stnu.algorithms.call_java_dc_checking import run_dc_algorithm
 from stnu.algorithms.rte_star import rte_star
 import classes.general
-logger = classes.general.get_logger()
+logger = classes.general.get_logger(__name__)
 
 durations = [10, 20, 4, 6]
 resources = [[1, 0], [1, 0], [0, 1], [0, 1]]

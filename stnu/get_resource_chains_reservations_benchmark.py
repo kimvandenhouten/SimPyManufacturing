@@ -1,7 +1,7 @@
 from classes.stn import STN
 import numpy as np
 import classes.general
-logger = classes.general.get_logger()
+logger = classes.general.get_logger(__name__)
 
 
 def get_resource_chains(schedule, capacity, resources, complete=False):

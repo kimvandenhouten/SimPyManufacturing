@@ -6,7 +6,7 @@ from stnu.java_comparison.call_cstnu_tool import CSTNUTool
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 import numpy as np
 
-logger = classes.general.get_logger()
+logger = classes.general.get_logger(__name__)
 
 # Create your STNU here
 stnu = STNU(origin_horizon=False)

@@ -11,7 +11,7 @@ from solvers.RCPSP_CP import RCPSP_CP
 import numpy as np
 import pandas as pd
 
-logger = classes.general.get_logger(level="INFO")
+logger = classes.general.get_logger(__name__)
 collected_data = []
 n_sim = 1
 for instance_size in [2]:

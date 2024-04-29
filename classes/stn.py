@@ -9,7 +9,7 @@ from classes.classes import ProductionPlan
 from classes.util import ListNode
 import classes.general
 
-logger = classes.general.get_logger()
+logger = classes.general.get_logger(__name__)
 
 
 class VertexOrdering(Iterable[int], ABC):

@@ -3,7 +3,7 @@ import os
 import re
 import subprocess
 import classes.general
-logger = classes.general.get_logger()
+logger = classes.general.get_logger(__name__)
 
 
 class DCAlgorithm(enum.Enum):

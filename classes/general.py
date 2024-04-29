@@ -1,5 +1,8 @@
 import copy
-import logging, logging.config
+import logging
+import logging.config
+import sys
+
 import numpy as np
 import tomli as tomllib
 
@@ -14,8 +17,7 @@ def get_logger(name):
         # NOTE: due to a bug in the logging library (?), handlers and formatters can't reliably be set through
         # dictConfig(). We set them manually now.
 
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(1)
+        console_handler = logging.StreamHandler(sys.stdout)
         format_dict = config.pop('formatters', {}).get('formatter', {})
         if format_dict:
             formatter = logging.Formatter(format_dict.get('format'))
