@@ -8,7 +8,7 @@ from classes.stnu import STNU
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 import time
 import classes.general
-logger = classes.general.get_logger(level="info")
+logger = classes.general.get_logger(__name__)
 from solvers.check_feasibility import check_feasibility_rcpsp_max
 
 data = []

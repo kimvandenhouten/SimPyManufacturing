@@ -43,6 +43,26 @@ class CSTNUTool:
         logger.debug(res.stdout)
         return res
 
+
+
+    @classmethod
+    def run_rte(cls, instance_location):
+        java_class = 'it.univr.di.cstnu.algorithms.STNURTE'
+        arguments = [
+            instance_location,
+        ]
+
+        res = cls._run_java(java_class, arguments)
+        match = re.search(r'Final schedule: \[(.*)]', res.stdout)
+        if match:
+            schedule = {}
+            for s in match[1].split(', '):
+                var, val = s.split('=>')
+                schedule[var[1:-1]] = int(val)
+            return schedule
+        else:
+            return None
+
     @classmethod
     def run_dc_alg(cls, instance_location, output_location=None,
                    alg: DCAlgorithm = DCAlgorithm.Morris2014Dispatchable):
@@ -65,6 +85,7 @@ class CSTNUTool:
         return is_dc
 
 
+
 def run_dc_algorithm(directory, file_name):
     instance_location = os.path.abspath(f"{directory}/{file_name}.stnu")
     if not os.path.exists(instance_location):
@@ -79,6 +100,16 @@ def run_dc_algorithm(directory, file_name):
 
     return is_dc, output_location
 
+def run_rte_algorithm(instance_location):
+
+    schedule = CSTNUTool.run_rte(instance_location)
+
+    if schedule:
+        logger.debug(f"parsed schedule: {schedule}")
+    else:
+        logger.debug("could not parse schedule")
+
+    return schedule
 
 
 
