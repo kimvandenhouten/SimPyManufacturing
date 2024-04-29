@@ -86,9 +86,7 @@ class CSTNUTool:
 
 def main():
     file_list = [
-        ("input_hunsberger23.stnu", True),
-        ("input_morris14.stnu", False),
-        ("input_slide118.stnu", True)
+        ("example_rcpsp_max_stnu.stnu", True)
     ]
 
     for (file_name, dc) in file_list:

@@ -8,14 +8,29 @@ logger = classes.general.get_logger(level="info")
 
 
 def intersect_intervals(a, b, c, d):
-    x = max(a, c)
-    y = min(b, d)
+    if a > b or c > d:
+        logger.debug(f'[{a, b}] and [{c,d}] do not intersect')
+        return False  # At least one interval is empty
 
-    if x > y:
-        return False
+    # Check if there is an intersection
+    if max(a, c) <= min(b, d):
+        return max(a, c), min(b, d)
     else:
-        return x, y
+        logger.debug(f'[{a, b}] and [{c, d}] do not intersect')
+        return False
 
+
+def is_intersection_empty(a, b, c, d):
+    """This function returns true if the intersection is empty"""
+    # Check if either interval is empty
+    if a > b or c > d:
+        return True  # At least one interval is empty
+
+    # Check if there is an intersection
+    if max(a, c) > min(b, d):
+        return True
+    else:
+        return False
 
 class TimeWindow:
     def __init__(self, x: int, lb=0, ub=np.inf):
@@ -54,10 +69,7 @@ class RTEdata:
             outgoing_edges = estnu.get_outgoing_edges(tp)
             for (weight, suc_node, edge_type, edge_label) in outgoing_edges:
                 if weight < 0:
-                    if suc_node not in rte_data.f:
-                        # FIXME LP remove this "if"?
-                        # FIXME It seems like it is always true: I don't see anything being added to rte_data.f
-                        enabled = False
+                    enabled = False
             if enabled:
                 rte_data.enabled_tp.append(tp)
 
@@ -128,7 +140,8 @@ def rte_generate_decision(D: RTEdata):
     :param d: RTEdata structure
     :return: Eec decs: Wait or (t, V); or fail
     """
-    # logger.debug(f'Enabled timepoints are: {D.enabled_tp}')
+    logger.debug(f'Start generatin RTE decision at {D.now}')
+    logger.debug(f'when enabled timepoints are: {D.enabled_tp}')
     # Line 1: If D.enabled_x is empty:
     if len(D.enabled_tp) == 0:
         # Line 2: return wait
@@ -141,43 +154,55 @@ def rte_generate_decision(D: RTEdata):
         ub = {}
         for x in D.enabled_tp:
             act_waits = D.act_waits[x]
+            logger.debug(f'act waits {act_waits}')
             # Line 4: Find maximum wait for X
-            max_wait = max(act_waits) if len(act_waits) > 0 else 0
+            max_wait = max(act_waits) if len(act_waits) > 0 else -np.inf
             if isinstance(max_wait, tuple):
                 max_wait = max_wait[0]
+            logger.debug(f'max wait is {max_wait}')
             # Line 5: Find greatest lower bound for X
             glb[x] = max(max_wait, D.time_windows[x].lb)
             ub[x] = D.time_windows[x].ub
+    logger.debug(f'Activated waits {D.act_waits}')
+    logger.debug(f'Global lower bounds for nodes {glb}')
+    logger.debug(f'Upper bounds for nodes {ub}')
 
     # Line 6: Find earliest possible next execution: t_l
+    logger.debug(f'glb is {glb}')
+    logger.debug(f'ub is {ub}')
     t_l = min(glb.values())
+    logger.debug(f't_l is {t_l}')
+
     # Line 7: Find latest possible next execution: t_u
     t_u = min(ub.values())
+    logger.debug(f't_u is {t_u}')
 
     # Line 8: If the intersection from [t_l, t_u] and [now, inf] is empty
-    if t_u < D.now or np.inf < t_l:
+    if is_intersection_empty(t_l, t_u, D.now, np.inf):
         # Line 9: Return fail
-        logger.debug('Generate decision returns fail')
+        logger.debug(f'Fail because [{t_l}, {t_u}] and {[D.now, np.inf]} is empty')
         delta = RTEdecision(fail=True)
         return delta
 
     # Line 10: Select any point V \in D.enabled_tp for which the intersection is not empty
     found_v = None  # This will store the item V that meets your criteria
 
+    logger.debug(f'for V in {D.enabled_tp}')
     for V in D.enabled_tp:
         # Check if the intersection of [glb(V), ub(V)] and [D.now, t_u] is not empty
-        if not (ub[V] < D.now or t_u < glb[V]):
+        logger.debug(f'V is {V} and glb[V] is {glb[V]} and ub[V] is {ub[V]} and now is {D.now} and tu is {t_u} ')
+        if not (is_intersection_empty(glb[V], ub[V], D.now, t_u)):
             # If the condition does not hold, remember V and exit the loop
             found_v = V
             break
 
     if found_v is None:
-        delta = RTEdecision(wait=True)
-        return delta
+        raise ValueError(f'There is no found v')
 
     else:
         # Line 11: Select any point t in [glb(V), ub(V)] \intersection [D.now, t_u]
-        t = max(glb[found_v], D.now)  # TODO: now I implemented just the LB
+        intersection_lb, intersection_ub = intersect_intervals(glb[found_v], ub[found_v], D.now, t_u)
+        t = intersection_lb  # TODO: now I implemented just the LB
 
         # Line 12: Return (t,V)
         logger.debug(f'Generate decision returns (V,t) {(found_v, t)}')
@@ -267,6 +292,8 @@ def rte_oracle_sample(S: STNU, D: RTEdata, delta: RTEdecision, sample: dict):
     # Line 1: set f=D.f and now = D.now
     f = D.f
     now = D.now
+    logger.debug(f'Start of oracle is {now}')
+    logger.debug(f'Delta is x {delta.x} and {delta.t} and wait {delta.wait}')
 
     # Line 2: get currently active contingent links
     active_links = []
@@ -359,6 +386,29 @@ def rte_update(S: STNU, D: RTEdata, delta: RTEdecision, observation: Observation
     return D
 
 
+def update_time_windows_neighbors(source: int, execution: float, S: STNU, D: RTEdata):
+
+    # for outgoing edges (source, delta, W)
+    outgoing_edges = S.get_outgoing_edges(node_from=source, ordinary=True, uc=False, lc=False)
+    for (delta, W, _, _) in outgoing_edges:
+        # TW(W) = intersection of TW(W) and (-np.inf, t + delta)
+        if W in D.time_windows:  # skip contingent tps
+            if D.time_windows[W].ub < execution + delta:
+                ValueError(f'Invalid time window update, already thighter upper bound exists')
+            D.time_windows[W].ub = execution + delta
+
+    # for incoming edges (U, gamma, source)
+    incoming_edges = S.get_incoming_edges(node_to=source, ordinary=True, uc=False, lc=False)
+    for (gamma, U, _, _) in incoming_edges:
+        # TW(U) = intersection of TW(U) and [t-gamma, np.inf)
+        if U in D.time_windows:
+            if D.time_windows[U].lb > execution - gamma:
+                ValueError(f'Invalid time window update, already thighter lower bound exists')
+            D.time_windows[U].lb = execution - gamma
+
+    return D
+
+
 def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
     """
     Handles non-contingent executions
@@ -377,24 +427,7 @@ def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
 
     # Line 3: Update time windows for neighbors of V
     # for outgoing edges (V, delta, W)
-    outgoing_edges = S.get_outgoing_edges(node_from=V, ordinary=True, uc=False, lc=False)
-    for (delta, W, _, _) in outgoing_edges:
-        # TW(W) = intersection of TW(W) and (-np.inf, t + delta)
-        if W in D.time_windows:  # skip contingent tps
-            new_lb, new_ub = intersect_intervals(D.time_windows[W].lb, D.time_windows[W].ub, -np.inf, t + delta)
-            D.time_windows[W].lb = new_lb
-            D.time_windows[W].ub = new_ub
-            # logger.debug(f'Update time window of {W} to [{new_lb}, {new_ub}]')
-
-    # for incoming edges (U, gamma, V)
-    incoming_edges = S.get_incoming_edges(node_to=V, ordinary=True, uc=False, lc=False)
-    for (gamma, U, _, _) in incoming_edges:
-        # TW(U) = intersection of TW(U) and [t-gamma, np.inf)
-        if U in D.time_windows:
-            new_lb, new_ub = intersect_intervals(D.time_windows[U].lb, D.time_windows[U].ub, t - gamma, np.inf)
-            D.time_windows[U].lb = new_lb
-            D.time_windows[U].ub = new_ub
-            # logger.debug(f'Update time window of {U} to [{new_lb}, {new_ub}]')
+    update_time_windows_neighbors(source=V, execution=t, D=D, S=S)
 
     # Line 4: Update D.Enabled_x due to any negative incoming edges to V
     # FIXME: can we do this more efficient, also this code is repeated in HCE update
@@ -412,6 +445,7 @@ def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
                     enabled = False
         if enabled:
             D.enabled_tp.append(tp)
+    logger.debug(f'Enabled tp at {D.now} are {D.enabled_tp}')
 
     # Line 5: If V is activation_TP for some CTP C then
     if S.node_types[V] == STNU.ACTIVATION_TP:
@@ -419,7 +453,7 @@ def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
         for (X, label, weight, Y) in S.get_wait_edges():
             if Y == V:
                 D.act_waits[X].append((t - weight, label))
-                # logger.debug(f'Activated wait for {X} with {(t-weight, label)}')
+                logger.debug(f'Activated wait for {X} with {(t-weight, label)}')
     return D
 
 
@@ -445,20 +479,14 @@ def hce_update(S: STNU, D: RTEdata, rho: float, tau: list):
 
         # Line 4: Update time-windows for neighbors of C
         # TODO: maybe we can make a function because these lines also occur in update_hxe
-        outgoing_edges = S.get_outgoing_edges(node_from=C, ordinary=True, uc=False, lc=False)
-        for (delta, W, _, _) in outgoing_edges:
-            # TW(W) = intersection of TW(W) and (-np.inf, t + delta)
-            if W in D.time_windows:  # skip contingent tps
-                new_lb, new_ub = intersect_intervals(D.time_windows[W].lb, D.time_windows[W].ub, -np.inf, rho + delta)
-                D.time_windows[W].lb = new_lb
-                D.time_windows[W].ub = new_ub
-                # logger.debug(f'Update time window of {W} to [{new_lb}, {new_ub}]')
+        D = update_time_windows_neighbors(source=C, execution=rho, D=D, S=S)
 
         # Line 5: Remove C-waits from all D.AcWts set
         # logger.debug(f'We should remove the C-Waits from {D.act_waits}')
         for key, value_list in D.act_waits.items():
             # Filter tuples where the second element is not 'C'
             filtered_list = [tup for tup in value_list if tup[1] != S.translation_dict[C]]
+            logger.debug(f'Before {D.act_waits[key]}, after {filtered_list}')
             D.act_waits[key] = filtered_list
 
         # Line 6: Update D.Enabled_x due to incoming negative edges to C or any deleted C-waits
@@ -468,14 +496,16 @@ def hce_update(S: STNU, D: RTEdata, rho: float, tau: list):
         for tp in D.u_x:
             enabled = True
             outgoing_edges = S.get_outgoing_edges(tp)
-
             for (weight, suc_node, edge_type, edge_label) in outgoing_edges:
                 if weight < 0:
                     if suc_node not in D.f:
                         enabled = False
+
                 elif weight == 0 and edge_type == STNU.ORDINARY_LABEL and False:  # TODO: this can be removed now
                         enabled = False
             if enabled:
                 D.enabled_tp.append(tp)
+
+        logger.debug(f'Enabled tp at {D.now} are {D.enabled_tp}')
 
     return D

@@ -52,6 +52,8 @@ def check_duration_feasible(start_times, finish_times, durations):
     duration_feasible = True
     for (job, dur) in enumerate(durations):
         if finish_times[job] - start_times[job] != dur:
+            print(f'Infeasibility for job {job}')
+            print(f'Start time {start_times[job]} and finish time: {finish_times[job]}, diff is {finish_times[job]-start_times[job]} and duration {durations[job]}')
             duration_feasible = False
     if duration_feasible:
         print(f'This schedule is duration feasible')
@@ -65,6 +67,32 @@ def check_feasibility(start_times, finish_times, durations, capacity, successors
     if not duration_feasible:
         return False
     precedence_feasible = check_precedence_schedule(start_times, finish_times, successors)
+    if not precedence_feasible:
+        return False
+    resource_feasible = check_resources_schedule(start_times, durations, capacity, needs)
+    if not resource_feasible:
+        return False
+    return True
+
+
+def check_precedence_schedule_rcpsp_max(start_times, temporal_constraints):
+    precedence_feasible = True
+    for (pred, lag, suc) in temporal_constraints:
+        if start_times[pred] + lag > start_times[suc]:
+            print(f'Start of {pred} is {start_times[pred]} and start of {suc} is {start_times[suc]}, while lag is {lag}')
+            precedence_feasible = False
+    if precedence_feasible:
+        print(f'This schedule is precedence feasible')
+    else:
+        print(f'This schedule is not precedence feasible')
+    return precedence_feasible
+
+
+def check_feasibility_rcpsp_max(start_times, finish_times, durations, capacity, needs, temporal_constraints):
+    duration_feasible = check_duration_feasible(start_times, finish_times, durations)
+    if not duration_feasible:
+        return False
+    precedence_feasible = check_precedence_schedule_rcpsp_max(start_times, temporal_constraints)
     if not precedence_feasible:
         return False
     resource_feasible = check_resources_schedule(start_times, durations, capacity, needs)

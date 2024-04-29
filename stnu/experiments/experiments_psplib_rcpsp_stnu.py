@@ -16,8 +16,8 @@ logger = classes.general.get_logger(level="info")
 nr_samples = 10
 
 data = []
-for instance_folder in [60]:
-    for a in range(9, 49):
+for instance_folder in [30]:
+    for a in range(1, 49):
         for b in range(1, 11):
             # Read instance from PSPlib
             instance_name = f"j{instance_folder}{a}_{b}"
@@ -81,10 +81,12 @@ for instance_folder in [60]:
                     finish_times.append(rte_data.f[node_idx_finish])
                     true_durations.append(weight)
 
-                if check_feasibility(start_times, finish_times, true_durations, rcpsp.capacity, rcpsp.successors, rcpsp.resources):
+                check_feasible = check_feasibility(start_times, finish_times, true_durations, rcpsp.capacity, rcpsp.successors,
+                                  rcpsp.needs)
+                if check_feasible:
                     logger.info(f'The schedule generate with the STNU pipeline is feasible')
-                else:
-                    Warning(f'The schedule generated with the STNU pipeline is not feasible')
+
+                assert check_feasibility
 
                 start = time.time()
                 rcpsp = RCPSP_CP_Benchmark(capacity, true_durations, successors, needs)
