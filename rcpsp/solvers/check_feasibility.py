@@ -51,7 +51,7 @@ def check_precedence_schedule(start_times, finish_times, successors, min_lag=Non
 def check_duration_feasible(start_times, finish_times, durations):
     duration_feasible = True
     for (job, dur) in enumerate(durations):
-        if finish_times[job] - start_times[job] != dur:
+        if finish_times[job] - start_times[job] != dur or dur < 0:
             print(f'Infeasibility for job {job}')
             print(f'Start time {start_times[job]} and finish time: {finish_times[job]}, diff is {finish_times[job]-start_times[job]} and duration {durations[job]}')
             duration_feasible = False

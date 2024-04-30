@@ -1,7 +1,7 @@
 import json
 from classes.classes import ProductionPlan
 import numpy as np
-from solvers.RCPSP_CP import RCPSP_CP
+from rcpsp.solvers.RCPSP_CP import RCPSP_CP
 import pandas as pd
 """
 This is a development file for a rescheduling module in the simulator, in which we use the simulation

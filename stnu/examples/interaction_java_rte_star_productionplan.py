@@ -6,10 +6,9 @@ from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 from stnu.algorithms.call_java_dc_checking import run_dc_algorithm
 from stnu.algorithms.rte_star import rte_star
 from stnu.get_resource_chains_reservations import get_resource_chains, add_resource_chains
-from solvers.RCPSP_CP import RCPSP_CP
+from rcpsp.solvers.RCPSP_CP import RCPSP_CP
 import numpy as np
-from solvers.check_feasibility import check_feasibility, check_duration_feasible, check_resources_schedule, check_precedence_schedule
-import pandas as pd
+from rcpsp.solvers.check_feasibility import check_feasibility
 
 logger = classes.general.get_logger(__name__)
 collected_data = []

@@ -2,12 +2,12 @@ import json
 from classes.classes import ProductionPlan
 import classes.general
 from classes.stnu import STNU
-from solvers.check_feasibility import check_feasibility
+from rcpsp.solvers.check_feasibility import check_feasibility
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 from stnu.algorithms.call_java_dc_checking import run_dc_algorithm
 from stnu.algorithms.rte_star import rte_star
 from stnu.get_resource_chains_reservations import get_resource_chains, add_resource_chains
-from solvers.RCPSP_CP import RCPSP_CP
+from rcpsp.solvers.RCPSP_CP import RCPSP_CP
 import numpy as np
 import pandas as pd
 

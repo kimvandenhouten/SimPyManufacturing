@@ -1,6 +1,6 @@
 from classes.stnu import STNU
-from solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
-from solvers.check_feasibility import check_feasibility
+from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
+from rcpsp.solvers.check_feasibility import check_feasibility
 from stnu.get_resource_chains_reservations_benchmark import get_resource_chains, add_resource_chains
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 import numpy as np

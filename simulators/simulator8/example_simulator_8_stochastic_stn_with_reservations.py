@@ -6,7 +6,7 @@ from classes.operator import OperatorSTN
 from classes.simulator_8 import Simulator
 from stn.get_resource_chains_reservations import get_resource_chains, add_resource_chains
 from stn.get_compatibility_chains import get_compatibility_chains
-from solvers.RCPSP_CP import RCPSP_CP
+from rcpsp.solvers.RCPSP_CP import RCPSP_CP
 import copy
 """
 In this script we test the simulation that use the STN to run send activitites

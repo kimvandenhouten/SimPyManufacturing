@@ -5,7 +5,7 @@ from classes.stnu import STNU
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 
 from stnu.get_resource_chains_reservations import get_resource_chains, add_resource_chains
-from solvers.RCPSP_CP import RCPSP_CP
+from rcpsp.solvers.RCPSP_CP import RCPSP_CP
 
 """
 In this script we test the simulation that use the STNU together with the morris14 algorithm

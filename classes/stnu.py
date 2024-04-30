@@ -114,15 +114,19 @@ class STNU:
         return stnu
 
     @classmethod
-    def from_rcpsp_max_instance(cls, durations, temporal_constraints):
+    def from_rcpsp_max_instance(cls, durations, temporal_constraints, sink_source=1):
         stnu = cls(origin_horizon=False)
         for task, duration in enumerate(durations):
             task_start = stnu.add_node(f'{task}_{STNU.EVENT_START}')
 
-            if duration == 0:
-                logger.debug(f'This is a sink/source node from RCPSP/max')
+            if duration == 0 and sink_source == 1:
+                logger.debug(f'This is a sink/source node from RCPSP/max, we add only a start event')
                 #stnu.add_tight_constraint(task_start, task_finish, 0)
                 #stnu.set_ordinary_edge(task_finish, task_start, 0)
+            elif duration == 0 and sink_source == 2:
+                logger.debug(f'This is a sink/source node from RCPSP/max, we add both a start event and a finish event')
+                task_finish = stnu.add_node(f'{task}_{STNU.EVENT_FINISH}')
+                stnu.add_tight_constraint(task_start, task_finish, 0)
             else:
                 task_finish = stnu.add_node(f'{task}_{STNU.EVENT_FINISH}')
                 lower_bound = int(max(0, duration - np.sqrt(duration)))

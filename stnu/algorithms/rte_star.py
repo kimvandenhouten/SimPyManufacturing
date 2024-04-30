@@ -393,8 +393,10 @@ def update_time_windows_neighbors(source: int, execution: float, S: STNU, D: RTE
                 if W in D.f:
                     logger.debug(f'We have to do a check because {W} {S.translation_dict[W]} was already executed at {D.f[W]}')
                     if D.f[W] > execution + delta:
-                        raise ValueError(f'Invalid upper bound time window update ({execution + delta}) , already executed timepoint {W}. The edge from'
+                        raise ValueError(f'Invalid upper bound time window update ({execution + delta}), already executed timepoint {W}. The edge from'
                                          f' {S.translation_dict[source]} to {S.translation_dict[W]} with weight {delta} caused this issue')
+                if execution + delta < D.time_windows[W].lb:
+                    logger.debug(f'WARNING: due to edge from {S.translation_dict[source]} to {S.translation_dict[W]} with weight {delta} we get an UB smaller than the LB')
                 logger.debug(
                     f'Time window of {W} {S.translation_dict[W]} updated from [{D.time_windows[W].lb, D.time_windows[W].ub}] to [{D.time_windows[W].lb, execution + delta}]')
 
@@ -416,7 +418,8 @@ def update_time_windows_neighbors(source: int, execution: float, S: STNU, D: RTE
                         logger.debug(f'{(execution-gamma)}')
                         raise ValueError(f'Invalid lower bound time window update, already executed timepoint {U}. The edge from'
                                              f' {S.translation_dict[U]} to {S.translation_dict[source]}  with weight {gamma} caused this issue')
-
+                if execution - gamma > D.time_windows[U].ub:
+                    logger.debug(f'WARNING: due to edge {S.translation_dict[U]} to {S.translation_dict[source]}  with weight {gamma} we get a lb larger than the ub')
                 logger.debug(
                         f'Time window of {U} {S.translation_dict[U]} updated from [{D.time_windows[U].lb, D.time_windows[U].ub}] to [{execution-gamma, D.time_windows[U].ub}]')
                 D.time_windows[U].lb = execution - gamma
@@ -442,14 +445,9 @@ def get_enabled_tp(D: RTEdata, S: STNU):
                     continue
                 if weight < 0:
                     if suc_node not in D.f:
-                        #logger.debug(f'{tp} not enabled due to edge from {tp} ({S.translation_dict[tp]}) to {suc_node}'
-                                    # f' ({S.translation_dict[suc_node]}) with weight {weight} and label {edge_label}')
                         enabled = False
                 if weight == 0 and suc_node not in D.f:
                     enabled = False
-                    logger.debug(f'There is and edge with zero weight that possibly causes issues '
-                                 f'{(weight, suc_node, edge_type, edge_label)}, the edges goes '
-                                 f'from {S.translation_dict[tp]} to {S.translation_dict[suc_node]}')
 
         if enabled:
             enabled_tp.append(tp)

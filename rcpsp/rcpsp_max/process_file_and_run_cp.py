@@ -1,5 +1,5 @@
 from benchmark_rcpsp.rcpsp_max.process_file import parse_sch_file
-from solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
+from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
 import pandas as pd
 
 data = []

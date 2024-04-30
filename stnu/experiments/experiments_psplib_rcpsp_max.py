@@ -1,5 +1,5 @@
-from benchmark_rcpsp.rcpsp_max.process_file import parse_sch_file
-from solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
+from rcpsp.rcpsp_max.process_file import parse_sch_file
+from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
 import pandas as pd
 from stnu.algorithms.call_java_dc_checking import run_dc_algorithm
 from stnu.algorithms.rte_star import rte_star
@@ -9,19 +9,21 @@ from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
 import time
 import classes.general
 logger = classes.general.get_logger(__name__)
-from solvers.check_feasibility import check_feasibility_rcpsp_max
+from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
+import numpy as np
 sample_mode = "sample"
 data = []
-results_location = "stnu/experiments/results/rcpsp_max_results.csv"
+results_location = "stnu/experiments/results/rcpsp_max_results_python.csv"
 nr_samples = 10
 instance_folder = "j10"
 for instance_id in range(1, 271):
     logger.info(f'Start instance {instance_id}')
-    capacity, durations, needs, temporal_constraints = parse_sch_file(f'benchmark_rcpsp/rcpsp_max/{instance_folder}/PSP{instance_id}.SCH')
+    capacity, durations, needs, temporal_constraints = parse_sch_file(f'rcpsp/rcpsp_max/{instance_folder}/PSP{instance_id}.SCH')
     start = time.time()
     rcpsp_max = RCPSP_CP_Benchmark(capacity, durations, None, needs, temporal_constraints, "RCPSP_max")
     time_cp_solving = time.time() - start
     res, schedule = rcpsp_max.solve(time_limit=60)
+
     time_cp_solving = time.time() - start
 
     if res:
@@ -45,6 +47,7 @@ for instance_id in range(1, 271):
         if dc:
             # For i in nr_samples:
             for i in range(nr_samples):
+                np.random.seed(i)
                 # Sample a realisation for the contingent weights
                 sample = estnu.sample_contingent_weights()
                 logger.info(f'Sample that will be given to RTE_star: {sample}')
@@ -82,18 +85,18 @@ for instance_id in range(1, 271):
                             true_durations.append(0)
 
 
-
                     check_feasibility = check_feasibility_rcpsp_max(start_times, finish_times, true_durations, capacity, needs,
                                                temporal_constraints)
                     assert check_feasibility
                     logger.info(f'The makespan obtained with the STNU algorithm is {makespan_stnu}')
 
-
                     start = time.time()
                     rcpsp_max = RCPSP_CP_Benchmark(capacity, true_durations, None, needs, temporal_constraints, "RCPSP_max")
                     res, schedule = rcpsp_max.solve(time_limit=60)
+
                     time_perfect_information = time.time() - start
                     makespan_pi = max(schedule["end"].tolist())
+                    gap_pi = res.get_objective_gaps()[0]
                     assert makespan_pi <= makespan_stnu
                     logger.info(
                         f'makespan under perfect information is {makespan_pi}, makespan obtained with STNU is {makespan_stnu}, '
@@ -101,7 +104,7 @@ for instance_id in range(1, 271):
 
                     data.append({"instance_name": f'{instance_folder}_PSP_{instance_id}',
                                  "iteration": i, "makespan_stnu": makespan_stnu,
-                                 "makespan_lb": makespan_pi,
+                                 "makespan_lb": makespan_pi, "gap_pi": gap_pi,
                                  "time_initial_cp": time_cp_solving, "time_build_stnu": time_build_stnu,
                                  "time_dc_checking": time_dc_checking, "time_rte": time_rte,
                                  "time_cp_lb": time_perfect_information,
@@ -113,8 +116,8 @@ for instance_id in range(1, 271):
                     makespan_stnu = "inf"
 
                     logger.info(f'For some reason the RTE start could not finish')
-                    makespan_pi = "NotImplementedYet"
-                    time_perfect_information = "NotImplementedYet"
+                    makespan_pi = "NotApplicable"
+                    time_perfect_information = "NotApplicable"
 
                     data.append({"instance_name": f'{instance_folder}_PSP_{instance_id}',
                                  "iteration": i, "makespan_stnu": makespan_stnu,
