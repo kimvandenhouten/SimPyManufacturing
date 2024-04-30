@@ -84,7 +84,7 @@ for instance_id in range(1, 271):
                     else:
                         data.append({"instance": f"{instance_folder}/PSP{instance_id}",
                                      "status": "feasible_and_dc", "sample": sample, "rcpsp/max_feasible": False,
-                                     "makespan_pi": makespan_pi,"gap_pi": gap_pi
+                                     "makespan_pi": makespan_pi, "gap_pi": gap_pi
                                      })
                         data_df = pd.DataFrame(data=data)
                         data_df.to_csv(results_location)
