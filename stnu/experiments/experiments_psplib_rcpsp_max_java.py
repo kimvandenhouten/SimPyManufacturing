@@ -1,7 +1,7 @@
 from rcpsp.rcpsp_max.process_file import parse_sch_file
 from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
 import pandas as pd
-from stnu.algorithms.call_java_dc_checking import run_dc_algorithm, run_rte_algorithm
+from stnu.algorithms.call_java_cstnu_tool import run_dc_algorithm, run_rte_algorithm
 from stnu.get_resource_chains_reservations_benchmark import get_resource_chains, add_resource_chains
 from classes.stnu import STNU
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
@@ -43,7 +43,6 @@ for instance_id in range(1, 271):
                 # Read ESTNU xml file into Python object that was the output from the previous step
                 schedule = run_rte_algorithm(output_location)
                 if schedule:
-                    # TODO: compute makespan lower bound by computing perfect information optimum with CP solver
                     true_durations, start_times, finish_times = [], [], []
                     for (task, dur) in enumerate(durations):
                         start = schedule[f"{task}_{STNU.EVENT_START}"]

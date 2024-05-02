@@ -3,7 +3,7 @@ from classes.classes import ProductionPlan
 import classes.general
 from classes.stnu import STNU
 from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
-from stnu.algorithms.call_java_dc_checking import run_dc_algorithm
+from stnu.algorithms.call_java_cstnu_tool import run_dc_algorithm
 from stnu.algorithms.rte_star import rte_star
 from stnu.get_resource_chains_reservations import get_resource_chains, add_resource_chains
 from rcpsp.solvers.RCPSP_CP import RCPSP_CP
