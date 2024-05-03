@@ -14,16 +14,23 @@ data = []
 results_location = "stnu/experiments/results/rcpsp_max_results_java.csv"
 nr_samples = 1
 instance_folder = "j10"
-for instance_id in range(1, 271):
-    logger.debug(f'Start STNU pipeline with java for instance {instance_id}')
+
+
+def run_instance(instance_id):
     capacity, durations, needs, temporal_constraints = parse_sch_file(f'rcpsp/rcpsp_max/{instance_folder}/PSP{instance_id}.SCH')
+    row = {"instance": f"{instance_folder}/PSP{instance_id}", "status": "infeasible", "sample": 0,
+           "rcpsp/max_feasible": "NotApplicable"}
+    rows = []
+
     start = time.time()
     rcpsp_max = RCPSP_CP_Benchmark(capacity, durations, None, needs, temporal_constraints, "RCPSP_max")
     time_cp_solving = time.time() - start
     res, schedule = rcpsp_max.solve(time_limit=60)
     time_cp_solving = time.time() - start
 
-    if res:
+    if not res:
+        rows.append(row)
+    else:
         schedule = schedule.to_dict('records')
         start = time.time()
         resource_chains, resource_assignments = get_resource_chains(schedule, capacity, needs, complete=True)
@@ -38,8 +45,14 @@ for instance_id in range(1, 271):
         logger.debug(f'dc is {dc} and output location {output_location}')
         time_dc_checking = time.time() - start  # track time of DC-checking step
 
-        if dc:
+        if not dc:
+            row['status'] = "feasible_but_not_dc"
+            rows.append(row)
+        else:
             for sample in range(nr_samples):
+                # Construct a row dict to append to the list of rows at the end of each iteration
+                row = {"instance": f"{instance_folder}/PSP{instance_id}", "status": "feasible_and_dc_but_rte_error", "sample": sample,
+                       "rcpsp/max_feasible": "NotApplicable"}
                 # Read ESTNU xml file into Python object that was the output from the previous step
                 schedule = run_rte_algorithm(output_location)
                 if schedule:
@@ -72,39 +85,19 @@ for instance_id in range(1, 271):
                     assert makespan_pi <= makespan_rte_star
 
                     if check_feasibility:
-
-                        data.append({"instance": f"{instance_folder}/PSP{instance_id}",
-                                     "status": "feasible_and_dc", "sample": sample, "rcpsp/max_feasible": True,
+                        row.update({"status": "feasible_and_dc", "rcpsp/max_feasible": True,
                                      "makespan_rte_star": makespan_rte_star, "makespan_pi": makespan_pi,
                                      "gap_pi": gap_pi})
-                        data_df = pd.DataFrame(data=data)
-                        data_df.to_csv(results_location)
-
                     else:
-                        data.append({"instance": f"{instance_folder}/PSP{instance_id}",
-                                     "status": "feasible_and_dc", "sample": sample, "rcpsp/max_feasible": False,
-                                     "makespan_pi": makespan_pi, "gap_pi": gap_pi
-                                     })
-                        data_df = pd.DataFrame(data=data)
-                        data_df.to_csv(results_location)
+                        row.update({"status": "feasible_and_dc", "sample": sample, "rcpsp/max_feasible": False,
+                                     "makespan_pi": makespan_pi, "gap_pi": gap_pi})
 
-                else:
-                    data.append({"instance": f"{instance_folder}/PSP{instance_id}",
-                                 "status": "feasible_and_dc_but_rte_error",
-                                 "sample": sample, "rcpsp/max_feasible": "NotApplicable"})
-                    data_df = pd.DataFrame(data=data)
-                    data_df.to_csv(results_location)
-        else:
-            data.append({"instance": f"{instance_folder}/PSP{instance_id}",
-                         "status": "feasible_but_not_dc", "sample": 0, "rcpsp/max_feasible": "NotApplicable"})
-            data_df = pd.DataFrame(data=data)
-            data_df.to_csv(results_location)
-    else:
-        data.append({"instance": f"{instance_folder}/PSP{instance_id}",
-                     "status": "infeasible", "sample": 0, "rcpsp/max_feasible": "NotApplicable"})
-        data_df = pd.DataFrame(data=data)
-        data_df.to_csv(results_location)
+                rows.append(row)
+    return rows
 
 
-
-
+for instance_id in range(1, 271):
+    logger.debug(f'Start STNU pipeline with java for instance {instance_id}')
+    data += run_instance(instance_id)
+    data_df = pd.DataFrame(data=data)
+    data_df.to_csv(results_location)
