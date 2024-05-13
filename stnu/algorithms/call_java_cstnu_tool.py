@@ -116,7 +116,7 @@ def run_dc_algorithm(directory, file_name):
 
 def run_rte_algorithm(instance_location):
     schedule = CSTNUTool.run_rte(instance_location, RTEStrategy.FIRST_NODE_EARLY_EXECUTION_STRATEGY,
-                                 RTEStrategy.RANDOM_EXECUTION_STRATEGY)
+                                 RTEStrategy.LATE_EXECUTION_STRATEGY)
 
     if schedule:
         logger.debug(f"parsed schedule: {schedule}")

@@ -108,6 +108,8 @@ def rte_star(estnu: STNU, oracle="standard", sample=None):
 
         # Line 4: If decision returns fail
         if rte_decision.fail:
+            logger.debug("FAIL")
+            logger.debug(f'Schedule so far is {rte_data.f}')
             # Line 5: Return fail
             return False
 
@@ -123,6 +125,7 @@ def rte_star(estnu: STNU, oracle="standard", sample=None):
         # Line 8: If D=fail
         if rte_data is False:
             logger.debug("FAIL")
+            logger.debug(f'Schedule so far is {rte_data.f}')
             return False
 
     return rte_data
@@ -178,16 +181,23 @@ def rte_generate_decision(D: RTEdata):
         return delta
 
     # Line 10: Select any point V \in D.enabled_tp for which the intersection is not empty
+    # TODO return the time point V with the lowest possible exec. time
     found_v = None  # This will store the item V that meets your criteria
 
     logger.debug(f'for V in {D.enabled_tp}')
+    earliest_possible_exec = np.inf
+    logger.debug(f'earliest possible execution is initialized at {earliest_possible_exec}')
     for V in D.enabled_tp:
         # Check if the intersection of [glb(V), ub(V)] and [D.now, t_u] is not empty
-        logger.debug(f'V is {V} and glb[V] is {glb[V]} and ub[V] is {ub[V]} and now is {D.now} and tu is {t_u} ')
+        #logger.debug(f'V is {V} and glb[V] is {glb[V]} and ub[V] is {ub[V]} and now is {D.now} and tu is {t_u} ')
         if not (is_intersection_empty(glb[V], ub[V], D.now, t_u)):
             # If the condition does not hold, remember V and exit the loop
-            found_v = V
-            break
+            logger.debug(f'V {V} can be executed and has global lower bound {glb[V]}')
+            if glb[V] < earliest_possible_exec:
+                found_v = V
+                logger.debug(f'V {V} is now the best option with global lower bound {glb[V]}')
+                earliest_possible_exec = glb[found_v]
+                logger.debug(f'earliest possible execution is updated to {earliest_possible_exec}, by the way t_l is {t_l}')
 
     if found_v is None:
         raise ValueError(f'There is no found v')
@@ -315,6 +325,7 @@ def rte_oracle_sample(S: STNU, D: RTEdata, delta: RTEdecision, sample: dict):
     finish = {}
     t_c = np.inf  # Keep track of the earliest finishing contingent TP
     for (A, C, x, y) in active_links:
+        logger.debug(f'{(A, C, x, y)} has sample {sample[C]} and f[A] {f[A]} and f[C] {f[A] + sample[C]}')
         finish[C] = f[A] + sample[C]
         f_act_tp[C] = f[A]
         # Keep track of the earliest finishing contingent TP
@@ -374,6 +385,7 @@ def rte_update(S: STNU, D: RTEdata, delta: RTEdecision, observation: Observation
 
     # Line 9: Update D.now = rho
     D.now = observation.rho
+    logger.debug(f'Now is {D.now}')
 
     # Line 10: Return D
     return D
@@ -398,7 +410,8 @@ def update_time_windows_neighbors(source: int, execution: float, S: STNU, D: RTE
                 if execution + delta < D.time_windows[W].lb:
                     logger.debug(f'WARNING: due to edge from {S.translation_dict[source]} to {S.translation_dict[W]} with weight {delta} we get an UB smaller than the LB')
                 logger.debug(
-                    f'Time window of {W} {S.translation_dict[W]} updated from [{D.time_windows[W].lb, D.time_windows[W].ub}] to [{D.time_windows[W].lb, execution + delta}]')
+                    f'Time window of {W} {S.translation_dict[W]} updated from [{D.time_windows[W].lb, D.time_windows[W].ub}] to [{D.time_windows[W].lb, execution + delta}] due to edge from '
+                    f'{S.translation_dict[source]} to {S.translation_dict[W]} with weight {delta}')
 
                 D.time_windows[W].ub = execution + delta
 
@@ -419,9 +432,10 @@ def update_time_windows_neighbors(source: int, execution: float, S: STNU, D: RTE
                         raise ValueError(f'Invalid lower bound time window update, already executed timepoint {U}. The edge from'
                                              f' {S.translation_dict[U]} to {S.translation_dict[source]}  with weight {gamma} caused this issue')
                 if execution - gamma > D.time_windows[U].ub:
-                    logger.debug(f'WARNING: due to edge {S.translation_dict[U]} to {S.translation_dict[source]}  with weight {gamma} we get a lb larger than the ub')
+                    logger.debug(f'WARNING: due to edge {S.translation_dict[U]} to {S.translation_dict[source]} with weight {gamma} we get a lb larger than the ub')
                 logger.debug(
-                        f'Time window of {U} {S.translation_dict[U]} updated from [{D.time_windows[U].lb, D.time_windows[U].ub}] to [{execution-gamma, D.time_windows[U].ub}]')
+                        f'Time window of {U} {S.translation_dict[U]} updated from [{D.time_windows[U].lb, D.time_windows[U].ub}] to [{execution-gamma, D.time_windows[U].ub}]'
+                        f' due to edge {S.translation_dict[U]} to {S.translation_dict[source]}  with weight {gamma}')
                 D.time_windows[U].lb = execution - gamma
 
 
@@ -446,8 +460,10 @@ def get_enabled_tp(D: RTEdata, S: STNU):
                 if weight < 0:
                     if suc_node not in D.f:
                         enabled = False
+                        logger.debug(f'{tp} is not enabled because suc_node {suc_node} with weight {weight} not yet executed')
                 if weight == 0 and suc_node not in D.f:
                     enabled = False
+                    logger.debug(f'{tp} is not enabled because suc_node {suc_node} with weight 0 not yet executed')
 
         if enabled:
             enabled_tp.append(tp)

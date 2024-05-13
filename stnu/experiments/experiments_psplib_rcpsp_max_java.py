@@ -9,9 +9,10 @@ import time
 import classes.general
 logger = classes.general.get_logger(__name__)
 from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
+import numpy as np
 
 data = []
-results_location = "stnu/experiments/results/rcpsp_max_results_java.csv"
+results_location = "stnu/experiments/results/debugging_j10_late_oracle_java_instance_10.csv"
 nr_samples = 1
 instance_folder = "j10"
 
@@ -33,8 +34,8 @@ def run_instance(instance_id):
     else:
         schedule = schedule.to_dict('records')
         start = time.time()
-        resource_chains, resource_assignments = get_resource_chains(schedule, capacity, needs, complete=True)
-        stnu = STNU.from_rcpsp_max_instance(durations, temporal_constraints, sink_source=2)
+        resource_chains, resource_assignments = get_resource_chains(schedule, capacity, needs, complete=False)
+        stnu = STNU.from_rcpsp_max_instance(durations, temporal_constraints, sink_source=1)
         stnu = add_resource_chains(stnu, resource_chains)
         stnu_to_xml(stnu, f"example_rcpsp_max_stnu_java", "stnu/java_comparison/xml_files")
         time_build_stnu = time.time() - start # Track time to build up STNU
@@ -74,29 +75,34 @@ def run_instance(instance_id):
 
                     check_feasibility = check_feasibility_rcpsp_max(start_times, finish_times, true_durations, capacity, needs, temporal_constraints)
 
-                    start = time.time()
-                    rcpsp_max = RCPSP_CP_Benchmark(capacity, true_durations, None, needs, temporal_constraints,
-                                                   "RCPSP_max")
-                    res, schedule = rcpsp_max.solve(time_limit=60)
-
-                    time_perfect_information = time.time() - start
-                    makespan_pi = max(schedule["end"].tolist())
-                    gap_pi = res.get_objective_gaps()[0]
-                    assert makespan_pi <= makespan_rte_star
-
                     if check_feasibility:
-                        row.update({"status": "feasible_and_dc", "rcpsp/max_feasible": True,
-                                     "makespan_rte_star": makespan_rte_star, "makespan_pi": makespan_pi,
-                                     "gap_pi": gap_pi})
+                        start = time.time()
+                        rcpsp_max = RCPSP_CP_Benchmark(capacity, true_durations, None, needs, temporal_constraints,
+                                                       "RCPSP_max")
+                        res, schedule = rcpsp_max.solve(time_limit=60)
+
+                        time_perfect_information = time.time() - start
+                        makespan_pi = max(schedule["end"].tolist())
+                        gap_pi = res.get_objective_gaps()[0]
+                        if makespan_pi > makespan_rte_star:
+                            logger.info(f"WARNING: Makespan under perfect information is larger than rte star makespan")
+
+                        logger.info(
+                            f'makespan under perfect information is {makespan_pi}, makespan obtained with STNU is {makespan_rte_star}, '
+                            f'regret is {makespan_rte_star - makespan_pi}')
+                        row.update({"status": "feasible_and_dc", "sample": sample, "rcpsp/max_feasible": True,
+                                    "makespan_pi": makespan_pi, "makespan_rte_star": makespan_rte_star})
+
                     else:
+                        print(f'WARNING: feasibility check false')
                         row.update({"status": "feasible_and_dc", "sample": sample, "rcpsp/max_feasible": False,
-                                     "makespan_pi": makespan_pi, "gap_pi": gap_pi})
+                                     "makespan_rte_star": makespan_rte_star})
 
                 rows.append(row)
     return rows
 
 
-for instance_id in range(1, 271):
+for instance_id in [10]:
     logger.debug(f'Start STNU pipeline with java for instance {instance_id}')
     data += run_instance(instance_id)
     data_df = pd.DataFrame(data=data)

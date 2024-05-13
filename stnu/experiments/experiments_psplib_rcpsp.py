@@ -15,17 +15,17 @@ logger = classes.general.get_logger(__name__)
 nr_samples = 10
 
 data = []
-for instance_folder in [30]:
-    for a in range(1, 49):
-        for b in range(1, 11):
+for instance_folder in [30, 60, 90, 120]:
+    for a in range(1, 5):
+        for b in range(1, 5):
             # Read instance from PSPlib
             instance_name = f"j{instance_folder}{a}_{b}"
-            activities, precedence_relations, resources, durations, capacity, needs, successors = process_file(f"benchmark_rcpsp/rcpsp/j{instance_folder}/",f"{instance_name}.sm", sink_source=False)
+            activities, precedence_relations, resources, durations, capacity, needs, successors = process_file(f"rcpsp/rcpsp/j{instance_folder}/",f"{instance_name}.sm", sink_source=False)
 
             # Create RCPSP_CP_Benchmark Object to solve the CP model with these inputs
             start = time.time()
             rcpsp = RCPSP_CP_Benchmark(capacity, durations, successors, needs)
-            res, schedule = rcpsp.solve()  # Solve the CP model, res contains the CP results, schedule as Pandas DF
+            res, schedule = rcpsp.solve(time_limit=60)  # Solve the CP model, res contains the CP results, schedule as Pandas DF
             schedule = schedule.to_dict('records')
             time_cp_solving = time.time() - start
             # TODO: track time of first step
@@ -90,16 +90,17 @@ for instance_folder in [30]:
                 start = time.time()
                 rcpsp = RCPSP_CP_Benchmark(capacity, true_durations, successors, needs)
                 logger.info(len(rcpsp.durations))
-                res, schedule = rcpsp.solve()
+                res, schedule = rcpsp.solve(time_limit=60)
                 time_perfect_information = time.time() - start
+                gap_pi = res.get_objective_gaps()[0]
                 makespan_pi = max(schedule["end"].tolist())
                 assert makespan_pi <= makespan_stnu
                 logger.info(f'makespan under perfect information is {makespan_pi}, makespan obtained with STNU is {makespan_stnu}, '
                             f'regret is {makespan_stnu - makespan_pi}')
 
-                data.append({"instance_name": instance_name, "iteration": i, "makespan_stnu": makespan_stnu, "makespan_lb": makespan_pi,
+                data.append({"instance_name": instance_name, "iteration": i, "makespan_stnu": makespan_stnu, "makespan_lb": makespan_pi, "gap_pi": gap_pi,
                 "time_initial_cp": time_cp_solving, "time_build_stnu": time_build_stnu, "time_dc_checking": time_dc_checking, "time_rte": time_rte,
                 "time_cp_lb": time_perfect_information})
                 data_df = pd.DataFrame(data)
-                data_df.to_csv("stnu/experiments/results/rcpsp_stnu_more_instances_fromj609_1.csv")
+                data_df.to_csv("stnu/experiments/results/rcpsp_improved_rte_decision_with_gap.csv")
 

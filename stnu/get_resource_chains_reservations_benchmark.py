@@ -3,6 +3,16 @@ import numpy as np
 import classes.general
 logger = classes.general.get_logger(__name__)
 
+def remove_all_duplicates(tuples_list):
+    unique_tuples = []
+    seen = set()
+
+    for current_tuple in tuples_list:
+        if current_tuple not in seen:
+            unique_tuples.append(current_tuple)
+            seen.add(current_tuple)
+
+    return unique_tuples
 
 def get_resource_chains(schedule, capacity, resources, complete=False):
     # schedule is a list of dicts of this form:
@@ -62,7 +72,11 @@ def get_resource_chains(schedule, capacity, resources, complete=False):
                     successor = resource_activities[i]
                     resource_chains.append((predecessor["Task"],
                                             successor["Task"]))
-    return resource_chains, resource_assignment
+    print(resource_chains)
+    unique_tuples = remove_all_duplicates(resource_chains)
+    print(unique_tuples)
+    print(f'{len(resource_chains)} and {len(unique_tuples)}')
+    return unique_tuples, resource_assignment
 
 
 def add_resource_chains(stnu, resource_chains):

@@ -13,10 +13,10 @@ import pandas as pd
 
 logger = classes.general.get_logger(__name__)
 collected_data = []
-n_sim = 1
-for instance_size in [10]:
-    for instance_id in [1]:
-        for instance_type in [1]:
+n_sim = 10
+for instance_size in [10, 20]:
+    for instance_id in [1, 2, 3]:
+        for instance_type in [1, 2]:
             # Specify instance name
 
             instance_name = f"{instance_size}_{instance_id}_factory_1"

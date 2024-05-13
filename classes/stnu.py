@@ -3,8 +3,14 @@ from classes.classes import ProductionPlan, Product
 from classes.general import get_logger
 import re
 import numpy as np
-
+import enum
 logger = get_logger(__name__)
+
+
+class SampleStrategy(enum.Enum):
+    EARLY_EXECUTION_STRATEGY = enum.auto()
+    LATE_EXECUTION_STRATEGY = enum.auto()
+    RANDOM_EXECUTION_STRATEGY = enum.auto()
 
 class Edge:
     UC_LABEL = "UC"
@@ -129,7 +135,7 @@ class STNU:
                 stnu.add_tight_constraint(task_start, task_finish, 0)
             else:
                 task_finish = stnu.add_node(f'{task}_{STNU.EVENT_FINISH}')
-                lower_bound = int(max(0, duration - np.sqrt(duration)))
+                lower_bound = int(max(1, duration - np.sqrt(duration)))
                 upper_bound = int(duration + np.sqrt(duration))
                 stnu.add_contingent_link(task_start, task_finish, lower_bound, upper_bound)
 
@@ -479,11 +485,18 @@ class STNU:
 
         return negative_nodes
 
-    def sample_contingent_weights(self):
+    def sample_contingent_weights(self, strategy: SampleStrategy):
         sample = {}
         for (A, C) in self.contingent_links:
-            duration_sample = np.random.randint(self.contingent_links[(A, C)]["lc_value"],
-                                                self.contingent_links[(A, C)]["uc_value"])
-            sample[C] = duration_sample
+            if strategy == SampleStrategy.RANDOM_EXECUTION_STRATEGY:
+                duration_sample = np.random.randint(self.contingent_links[(A, C)]["lc_value"],
+                                                    self.contingent_links[(A, C)]["uc_value"])
+                sample[C] = duration_sample
+            elif strategy == SampleStrategy.LATE_EXECUTION_STRATEGY:
+                sample[C] = self.contingent_links[(A, C)]["uc_value"]
+            elif strategy == SampleStrategy.EARLY_EXECUTION_STRATEGY:
+                sample[C] = self.contingent_links[(A, C)]["lc_value"]
+            else:
+                raise NotImplemented
         return sample
 
