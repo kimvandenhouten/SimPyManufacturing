@@ -14,8 +14,8 @@ import pandas as pd
 logger = classes.general.get_logger(__name__)
 collected_data = []
 n_sim = 10
-results_location = f'stnu/experiments/results/results_DSM_instances_infeasible.csv'
-for (instance_size, instance_id) in [(20, 1), (40, 1), (40, 2), (40, 3), (40, 5)]:
+results_location = f'stnu/experiments/results/results_DSM_instances_with_DC_check.csv'
+for (instance_size, instance_id) in [(10, 1), (10, 2), (20, 1), (20, 2)]:
         for instance_type in [2]:
             # Specify instance name
 
@@ -62,6 +62,7 @@ for (instance_size, instance_id) in [(20, 1), (40, 1), (40, 2), (40, 3), (40, 5)
                         rte_data = rte_star(estnu, oracle="sample", sample=sample)
 
                         if rte_data:
+                            logger.info(f'The RTE* could finish')
                             # TODO: feasibility check on the output schedule
                             makespan_stnu = max(rte_data.f.values())
                             logger.info(f'The makespan obtained with the STNU algorithm is {makespan_stnu}')
@@ -114,6 +115,7 @@ for (instance_size, instance_id) in [(20, 1), (40, 1), (40, 2), (40, 3), (40, 5)
                             collected_data_df = pd.DataFrame(collected_data)
                             collected_data_df.to_csv(results_location)
                         else:
+                            logger.info(f'The RTE* could not finish')
                             collected_data.append(
                                 {"instance": instance_name, "instance_type": instance_type,
                                  "status": "feasible_and_dc_but_rte_error"})

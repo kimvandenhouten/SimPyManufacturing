@@ -77,9 +77,6 @@ def get_resource_chains(production_plan, earliest_start, complete=False):
                     successor = resource_activities[i]
                     resource_chains.append((predecessor["ProductIndex"], predecessor["Activity"],
                                             successor["ProductIndex"], successor["Activity"]))
-    print(f'resource chains found')
-    print(f'reource chains {resource_chains}')
-    print(f'resource assignment {resource_assignment}')
     return resource_chains, resource_assignment
 
 

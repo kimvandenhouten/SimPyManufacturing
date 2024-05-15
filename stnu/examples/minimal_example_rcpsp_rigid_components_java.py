@@ -12,14 +12,15 @@ from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
 import numpy as np
 
 data = []
-results_location = "stnu/experiments/results/debugging_j10_late_oracle_java_instance_10.csv"
+results_location = "stnu/experiments/results/debugging_minimal_example.csv"
 nr_samples = 1
 instance_folder = "j10"
 
 
-def run_instance(instance_id):
-    capacity, durations, needs, temporal_constraints = parse_sch_file(f'rcpsp/rcpsp_max/{instance_folder}/PSP{instance_id}.SCH')
-    row = {"instance": f"{instance_folder}/PSP{instance_id}", "status": "infeasible", "sample": 0,
+def run_minimal_example(capacity, durations, needs, temporal_constraints):
+
+
+    row = {"instance": f"minimal_example", "status": "infeasible", "sample": 0,
            "rcpsp/max_feasible": "NotApplicable"}
     rows = []
 
@@ -34,6 +35,7 @@ def run_instance(instance_id):
         schedule = schedule.to_dict('records')
         start = time.time()
         resource_chains, resource_assignments = get_resource_chains(schedule, capacity, needs, complete=False)
+
         stnu = STNU.from_rcpsp_max_instance(durations, temporal_constraints, sink_source=1)
         stnu = add_resource_chains(stnu, resource_chains)
         stnu_to_xml(stnu, f"example_rcpsp_max_stnu_java", "stnu/java_comparison/xml_files")
@@ -51,7 +53,7 @@ def run_instance(instance_id):
         else:
             for sample in range(nr_samples):
                 # Construct a row dict to append to the list of rows at the end of each iteration
-                row = {"instance": f"{instance_folder}/PSP{instance_id}", "status": "feasible_and_dc_but_rte_error", "sample": sample,
+                row = {"instance": "min_example", "status": "feasible_and_dc_but_rte_error", "sample": sample,
                        "rcpsp/max_feasible": "NotApplicable"}
                 # Read ESTNU xml file into Python object that was the output from the previous step
                 schedule = run_rte_algorithm(output_location)
@@ -101,8 +103,13 @@ def run_instance(instance_id):
     return rows
 
 
-for instance_id in [10]:
-    logger.debug(f'Start STNU pipeline with java for instance {instance_id}')
-    data += run_instance(instance_id)
-    data_df = pd.DataFrame(data=data)
-    data_df.to_csv(results_location)
+capacity = [3, 4, 5, 5, 5]
+durations = [0, 5, 3, 1, 4, 9, 3, 4, 7, 3, 4, 0]
+temporal_constraints = [(0, 0, 1), (1, 8, 2), (1, 11, 8), (1, 11, 7), (2, -2, 3), (3, 0, 5), (3, 0, 9), (4, 4, 6), (4, -4, 5), (5, 3, 10), (5, 9, 11), (5, -4, 4), (6, 3, 11), (7, 4, 11), (8, 7, 11), (9, 3, 11), (10, 4, 11)]
+needs = [[0, 0, 0, 0, 0], [0, 3, 3, 0, 0], [0, 0, 5, 0, 0], [0, 0, 5, 0, 0], [3, 4, 2, 2, 4], [0, 0, 2, 0, 0], [3, 0, 5, 0, 0], [0, 3, 3, 0, 0], [1, 0, 5, 4, 0], [3, 1, 2, 0, 1], [1, 2, 4, 2, 0], [0, 0, 0, 0, 0]]
+logger.debug(f'Start STNU pipeline with for minimal example with {capacity}, durations {durations}, needs {needs}, '
+             f'temporal_constraints {temporal_constraints}')
+
+data += run_minimal_example(capacity, durations, needs, temporal_constraints)
+data_df = pd.DataFrame(data=data)
+data_df.to_csv(results_location)
