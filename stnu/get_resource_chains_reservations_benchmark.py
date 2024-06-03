@@ -72,10 +72,7 @@ def get_resource_chains(schedule, capacity, resources, complete=False):
                     successor = resource_activities[i]
                     resource_chains.append((predecessor["Task"],
                                             successor["Task"]))
-    print(resource_chains)
     unique_tuples = remove_all_duplicates(resource_chains)
-    print(unique_tuples)
-    print(f'{len(resource_chains)} and {len(unique_tuples)}')
     return unique_tuples, resource_assignment
 
 

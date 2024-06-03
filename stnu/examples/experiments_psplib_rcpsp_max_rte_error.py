@@ -31,8 +31,6 @@ for instance_folder in ["j10"]:
             start = time.time()
             resource_chains, resource_assignments = get_resource_chains(schedule, capacity, needs, complete=False)
 
-
-
             for i, dur in enumerate(durations):
                 for (pred, lag, suc) in temporal_constraints:
                     if pred == i:
