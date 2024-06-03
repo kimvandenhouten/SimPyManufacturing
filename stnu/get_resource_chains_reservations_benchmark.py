@@ -87,7 +87,7 @@ def add_resource_chains(stnu, resource_chains):
         suc_idx_start = stnu.translation_dict_reversed[
             f"{succ_task}_{STN.EVENT_START}"]  # Get translation index from start of successor
 
-        # add interval constraint between predecessor and successor
+        # add constraint between predecessor and successor
         stnu.set_ordinary_edge(suc_idx_start, pred_idx_finish, 0)
 
     return stnu

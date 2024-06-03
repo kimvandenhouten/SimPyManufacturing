@@ -29,7 +29,24 @@ for instance_folder in ["j10"]:
         if res:
             schedule = schedule.to_dict('records')
             start = time.time()
-            resource_chains, resource_assignments = get_resource_chains(schedule, capacity, needs, complete=True)
+            resource_chains, resource_assignments = get_resource_chains(schedule, capacity, needs, complete=False)
+
+
+
+            for i, dur in enumerate(durations):
+                for (pred, lag, suc) in temporal_constraints:
+                    if pred == i:
+                        if lag >= 0:
+                            print(f'MIN LAG: The start of task {pred} + {lag} <= the start of task {suc}')
+                        else:
+                            print(f'MAX LAG: The start of task {pred} <= the start of task {suc} + {-lag}')
+                    if suc == i:
+                        print(f'LAG: the start of task {suc} >= the start of task {pred} + {lag}')
+
+                for (pred, suc) in resource_chains:
+                    if pred == i:
+                        print(f'The finish of task {pred} <= the start of task {suc}')
+
             stnu = STNU.from_rcpsp_max_instance(durations, temporal_constraints, sink_source=1)
             stnu = add_resource_chains(stnu, resource_chains)
             stnu_to_xml(stnu, f"example_rcpsp_max_stnu_python", "stnu/java_comparison/xml_files")

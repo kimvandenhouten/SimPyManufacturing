@@ -16,12 +16,16 @@ level = "DEBUG"
 
 [tool.logging.loggers."stnu.algorithms.rte_star"]
 # Module names containing dots must be fully enclosed in quotes.
-level = "INFO"
+level = "DEBUG"
 
 [tool.logging.loggers."stnu.algorithms.call_java_cstnu_tool"]
 # Module names containing dots must be fully enclosed in quotes.
 level = "DEBUG"
 
 [tool.logging.loggers."stnu.java_comparison"]
+# Module names containing dots must be fully enclosed in quotes.
+level = "WARNING"
+
+[tool.logging.loggers."rcpsp.solvers.check_feasibility"]
 # Module names containing dots must be fully enclosed in quotes.
 level = "WARNING"

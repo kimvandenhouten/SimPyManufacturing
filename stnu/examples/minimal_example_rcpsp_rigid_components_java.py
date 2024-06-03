@@ -107,6 +107,7 @@ capacity = [3, 4, 5, 5, 5]
 durations = [0, 5, 3, 1, 4, 9, 3, 4, 7, 3, 4, 0]
 temporal_constraints = [(0, 0, 1), (1, 8, 2), (1, 11, 8), (1, 11, 7), (2, -2, 3), (3, 0, 5), (3, 0, 9), (4, 4, 6), (4, -4, 5), (5, 3, 10), (5, 9, 11), (5, -4, 4), (6, 3, 11), (7, 4, 11), (8, 7, 11), (9, 3, 11), (10, 4, 11)]
 needs = [[0, 0, 0, 0, 0], [0, 3, 3, 0, 0], [0, 0, 5, 0, 0], [0, 0, 5, 0, 0], [3, 4, 2, 2, 4], [0, 0, 2, 0, 0], [3, 0, 5, 0, 0], [0, 3, 3, 0, 0], [1, 0, 5, 4, 0], [3, 1, 2, 0, 1], [1, 2, 4, 2, 0], [0, 0, 0, 0, 0]]
+
 logger.debug(f'Start STNU pipeline with for minimal example with {capacity}, durations {durations}, needs {needs}, '
              f'temporal_constraints {temporal_constraints}')
 

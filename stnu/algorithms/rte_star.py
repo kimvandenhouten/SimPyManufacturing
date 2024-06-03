@@ -108,8 +108,8 @@ def rte_star(estnu: STNU, oracle="standard", sample=None):
 
         # Line 4: If decision returns fail
         if rte_decision.fail:
-            logger.debug("FAIL")
-            logger.debug(f'Schedule so far is {rte_data.f}')
+            logger.info("DECISION FAIL")
+            logger.info(f'Schedule so far is {rte_data.f}')
             # Line 5: Return fail
             return False
 
@@ -124,8 +124,8 @@ def rte_star(estnu: STNU, oracle="standard", sample=None):
 
         # Line 8: If D=fail
         if rte_data is False:
-            logger.debug("FAIL")
-            logger.debug(f'Schedule so far is {rte_data.f}')
+            logger.info("UPDATE FAIL")
+            logger.info(f'Schedule so far is {rte_data.f}')
             return False
 
     return rte_data
@@ -408,7 +408,7 @@ def update_time_windows_neighbors(source: int, execution: float, S: STNU, D: RTE
                         raise ValueError(f'Invalid upper bound time window update ({execution + delta}), already executed timepoint {W}. The edge from'
                                          f' {S.translation_dict[source]} to {S.translation_dict[W]} with weight {delta} caused this issue')
                 if execution + delta < D.time_windows[W].lb:
-                    logger.debug(f'WARNING: due to edge from {S.translation_dict[source]} to {S.translation_dict[W]} with weight {delta} we get an UB smaller than the LB')
+                    logger.info(f'WARNING: due to edge from {S.translation_dict[source]} to {S.translation_dict[W]} with weight {delta} we get an UB smaller than the LB')
                 logger.debug(
                     f'Time window of {W} {S.translation_dict[W]} updated from [{D.time_windows[W].lb, D.time_windows[W].ub}] to [{D.time_windows[W].lb, execution + delta}] due to edge from '
                     f'{S.translation_dict[source]} to {S.translation_dict[W]} with weight {delta}')
@@ -429,10 +429,10 @@ def update_time_windows_neighbors(source: int, execution: float, S: STNU, D: RTE
                     logger.debug(f'We have to do a check because {U} {S.translation_dict[U]} was already executed at {D.f[U]}')
                     if D.f[U] < execution - gamma:
                         logger.debug(f'{(execution-gamma)}')
-                        raise ValueError(f'Invalid lower bound time window update, already executed timepoint {U}. The edge from'
+                        raise ValueError(f'Invalid lower bound time window to {execution-gamma}, already executed timepoint {U} at {D.f[U]}. The edge from'
                                              f' {S.translation_dict[U]} to {S.translation_dict[source]}  with weight {gamma} caused this issue')
                 if execution - gamma > D.time_windows[U].ub:
-                    logger.debug(f'WARNING: due to edge {S.translation_dict[U]} to {S.translation_dict[source]} with weight {gamma} we get a lb larger than the ub')
+                    logger.info(f'WARNING: due to edge {S.translation_dict[U]} to {S.translation_dict[source]} with weight {gamma} we get a lb larger than the ub')
                 logger.debug(
                         f'Time window of {U} {S.translation_dict[U]} updated from [{D.time_windows[U].lb, D.time_windows[U].ub}] to [{execution-gamma, D.time_windows[U].ub}]'
                         f' due to edge {S.translation_dict[U]} to {S.translation_dict[source]}  with weight {gamma}')
@@ -460,10 +460,10 @@ def get_enabled_tp(D: RTEdata, S: STNU):
                 if weight < 0:
                     if suc_node not in D.f:
                         enabled = False
-                        logger.debug(f'{tp} is not enabled because suc_node {suc_node} with weight {weight} not yet executed')
+                        logger.debug(f'{tp} {S.translation_dict[tp]} is not enabled because suc_node {suc_node} {S.translation_dict[suc_node]} with weight {weight} not yet executed')
                 if weight == 0 and suc_node not in D.f:
                     enabled = False
-                    logger.debug(f'{tp} is not enabled because suc_node {suc_node} with weight 0 not yet executed')
+                    logger.debug(f'{tp} {S.translation_dict[tp]} is not enabled because suc_node {suc_node} {S.translation_dict[suc_node]} with weight 0 not yet executed')
 
         if enabled:
             enabled_tp.append(tp)
@@ -483,7 +483,7 @@ def hxe_update(S: STNU, D: RTEdata, t: float, V: int):
     :return: D: updated RTE data structure
     """
     # Line 1: Add (V, t) to D.f
-    logger.debug(f'Update schedule node {V} that is {S.translation_dict[V]} scheduled at {t}')
+    logger.info(f'Update schedule node {V} that is {S.translation_dict[V]} scheduled at {t}')
     D.f[V] = t
 
     # Line 2: Remove (V, t) from D.u_x
@@ -523,7 +523,7 @@ def hce_update(S: STNU, D: RTEdata, rho: float, tau: list):
 
         # Line 2: Add (C, \rho) to D.f
         D.f[C] = rho
-        logger.debug(f'Update schedule node {C} that is {S.translation_dict[C]} scheduled at {rho}')
+        logger.info(f'Update schedule node {C} that is {S.translation_dict[C]} scheduled at {rho}')
 
         # Line 3: Remove C from D.U_c
         D.u_c.remove(C)

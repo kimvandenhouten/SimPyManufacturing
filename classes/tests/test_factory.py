@@ -24,16 +24,16 @@ class TestFactory(unittest.TestCase):
         fp = open('./resources-test/data_dist.json', 'r')
         factory = Factory(**json.load(fp))
 
-        self.assertNotEqual(factory.products[0].activities[0].distribution.sample(), None)
+        self.assertNotEqual(factory.products[0].activities[0].distribution.sample(1), None)
         self.assertEqual(isinstance(factory.products[0].activities[0].distribution, NormalDistribution), True)
 
-        self.assertNotEqual(factory.products[0].activities[1].distribution.sample(), None)
+        self.assertNotEqual(factory.products[0].activities[1].distribution.sample(1), None)
         self.assertEqual(isinstance(factory.products[0].activities[1].distribution, ExponentialDistribution), True)
 
-        self.assertNotEqual(factory.products[0].activities[2].distribution.sample(), None)
+        self.assertNotEqual(factory.products[0].activities[2].distribution.sample(1), None)
         self.assertEqual(isinstance(factory.products[0].activities[2].distribution, PoissonDistribution), True)
 
-        self.assertNotEqual(factory.products[0].activities[3].distribution.sample(), None)
+        self.assertNotEqual(factory.products[0].activities[3].distribution.sample(1), None)
         self.assertEqual(isinstance(factory.products[0].activities[3].distribution, LogNormalDistribution), True)
 
 

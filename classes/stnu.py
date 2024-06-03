@@ -1,9 +1,10 @@
 from bs4 import BeautifulSoup, Tag
 from classes.classes import ProductionPlan, Product
-from classes.general import get_logger
+
 import re
 import numpy as np
 import enum
+from classes.general import get_logger
 logger = get_logger(__name__)
 
 
@@ -107,7 +108,7 @@ class STNU:
             if duration == 0:
                 stnu.add_tight_constraint(task_start, task_finish, 0)
             else:
-                lower_bound = int(max(0, duration - np.sqrt(duration)))
+                lower_bound = int(max(1, duration - np.sqrt(duration)))
                 upper_bound = int(duration + np.sqrt(duration))
                 stnu.add_contingent_link(task_start, task_finish, lower_bound, upper_bound)
 

@@ -39,7 +39,7 @@ class Activity:
         self.set_distribution(distribution)
 
     def sample_processing_time(self):
-        return self.distribution.sample()
+        return self.distribution.sample(1)
 
     def sample_and_set_scenario(self):
         sample = self.sample_processing_time()

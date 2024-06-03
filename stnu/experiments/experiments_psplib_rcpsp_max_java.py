@@ -12,7 +12,7 @@ from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
 import numpy as np
 
 data = []
-results_location = "stnu/experiments/results/debugging_j10_late_oracle_java_instance_10.csv"
+results_location = "stnu/experiments/results/debugging_j10_late_oracle_java_instance_10_resource_chain=1.csv"
 nr_samples = 1
 instance_folder = "j10"
 

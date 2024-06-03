@@ -44,25 +44,16 @@ stnu = STNU(origin_horizon=False)
 source = stnu.add_node('0_start')
 s1 = stnu.add_node('1_start')
 f1 = stnu.add_node('1_finish')
-s2 = stnu.add_node('2_start')
-f2 = stnu.add_node('2_finish')
-s3 = stnu.add_node('3_start')
-f3 = stnu.add_node('3_finish')
 
 # Resource chains
-stnu.set_ordinary_edge(s3, f1, 0)
-stnu.set_ordinary_edge(s2, f3, 0)
+#stnu.set_ordinary_edge(s3, f1, 0)
 
 # Temporal constraints
 stnu.set_ordinary_edge(s1, source, 0)
-#stnu.set_ordinary_edge(s3, s2, 2)
-stnu.set_ordinary_edge(s2, s1, -8)
-stnu.set_ordinary_edge(source, s2, 9)
-stnu.set_ordinary_edge(s2, source, 0)
-stnu.set_ordinary_edge(source, s2, 0)
+#stnu.set_ordinary_edge(f1, source, 0)
+stnu.set_ordinary_edge(source, f1, 0)
 
 # Contingent links
 stnu.add_contingent_link(s1, f1, 2, 7)
-stnu.add_contingent_link(s2, f2, 1, 4)
-stnu.add_contingent_link(s3, f3, 1, 2)
+
 schedule = run_minimal_example(stnu)
