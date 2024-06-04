@@ -438,7 +438,8 @@ def update_time_windows_neighbors(source: int, execution: float, S: STNU, D: RTE
                         f' due to edge {S.translation_dict[U]} to {S.translation_dict[source]}  with weight {gamma}')
                 D.time_windows[U].lb = execution - gamma
 
-
+    for node in D.time_windows:
+        logger.info(f'Time window of {node} {S.translation_dict[node]} is now ({D.now}) [{D.time_windows[node].lb, D.time_windows[node].ub}]')
     return D
 
 
@@ -468,7 +469,7 @@ def get_enabled_tp(D: RTEdata, S: STNU):
         if enabled:
             enabled_tp.append(tp)
 
-    logger.debug(f'After update enabled tp will be {enabled_tp}')
+    logger.info(f'After update enabled tp will be {enabled_tp}')
 
     return enabled_tp
 
