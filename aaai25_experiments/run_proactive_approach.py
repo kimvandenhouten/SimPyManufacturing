@@ -7,9 +7,8 @@ from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
 import pandas as pd
 import numpy as np
 
-time_limit_saa = 120
+
 data_agg = []
-results_location = "aaai25_experiments/results/results_saa.csv"
 
 
 def run_saa_experiment(instance_folder, instance_id, nb_scenarios_saa, time_limit_saa, nb_scenarios_test):
@@ -127,10 +126,11 @@ def run_saa_experiment(instance_folder, instance_id, nb_scenarios_saa, time_limi
                     "test_sample_id": i,
                     "obj": np.inf,
                     "obj_pi": objective_pi,
-                    "rel_regret": rel_regret})
+                    "rel_regret": rel_regret,
+                    "time_limit_SAA": time_limit_saa})
 
             logger.debug(f'{sum(feasibilities)} feasible solutions found with SAA')
-            logger.debug(f'while solving with perfect infromation resulted in {sum(feasibilities_pi)} feasible solutions '
+            logger.debug(f'while solving with perfect information resulted in {sum(feasibilities_pi)} feasible solutions '
                   f'found with simulation')
             logger.debug(
                 f'average objective while ignoring the infeasible ones is {np.mean([i for i in objectives if i < np.inf])}')
@@ -139,12 +139,15 @@ def run_saa_experiment(instance_folder, instance_id, nb_scenarios_saa, time_limi
         return data
 
 
+results_location = "aaai25_experiments/results/results_saa_j30.csv"
 nb_scenarios_test = 50
+time_limit_saa = 10 * 60
 for nb_scenarios_saa in [10]:
-    for instance_folder in ["j10"]:
+    for instance_folder in ["j30"]:
         for instance_id in range(1, 271):
 
-            data_agg += run_saa_experiment(instance_folder, instance_id, nb_scenarios_saa, time_limit_saa, nb_scenarios_test)
+            data_agg += run_saa_experiment(instance_folder, instance_id, nb_scenarios_saa, time_limit_saa,
+                                           nb_scenarios_test)
             df = pd.DataFrame(data_agg)
             df.to_csv(results_location, index=False)
 

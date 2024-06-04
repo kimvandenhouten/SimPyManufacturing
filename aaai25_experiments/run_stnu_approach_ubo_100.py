@@ -13,7 +13,7 @@ from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
 import numpy as np
 
 data_agg = []
-results_location = "aaai25_experiments/results/results_stnu_j30.csv"
+
 
 
 def get_true_durations(estnu, rte_data, durations, sample):
@@ -39,9 +39,9 @@ def run_stnu_experiment(instance_folder, instance_id, nr_samples):
     logger.info(f'Start instance {instance_id}')
 
     # Read instance and set up deterministic RCPSP/max CP model and solve (this will be used for the resource chain)
-    capacity, durations, needs, temporal_constraints = parse_sch_file(f'rcpsp/rcpsp_max/{instance_folder}/PSP{instance_id}.SCH')
+    capacity, durations, needs, temporal_constraints = parse_sch_file(f'rcpsp/rcpsp_max/{instance_folder}/psp{instance_id}.sch')
     rcpsp_max = RCPSP_CP_Benchmark(capacity, durations, None, needs, temporal_constraints, "RCPSP_max")
-    res, schedule = rcpsp_max.solve(time_limit=60)
+    res, schedule = rcpsp_max.solve(time_limit=600)
 
     if res:
         # Build the STNU using the instance information and the resource chains
@@ -114,6 +114,7 @@ def run_stnu_experiment(instance_folder, instance_id, nr_samples):
             feasibility = False
 
     else:  # In this situation the STNU approach cannot find a schedule because the network was not DC
+        logger.info(f'We could not solve the initial deterministic CP {res.solve_status}')
         objective = np.inf
         feasibility = False
 
@@ -160,9 +161,10 @@ def run_stnu_experiment(instance_folder, instance_id, nr_samples):
     return data
 
 
-nb_scenarios_test = 50
-for instance_folder in ["j30"]:
-    for instance_id in range(1, 271):
+results_location = "aaai25_experiments/results/results_ubo100.csv"
+nb_scenarios_test = 2
+for instance_folder in ["ubo100"]:
+    for instance_id in range(1, 10):
         data_agg += run_stnu_experiment(instance_folder, instance_id, nb_scenarios_test)
         df = pd.DataFrame(data_agg)
         df.to_csv(results_location, index=False)
