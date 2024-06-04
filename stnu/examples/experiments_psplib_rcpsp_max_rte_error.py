@@ -15,7 +15,7 @@ import numpy as np
 
 logger = classes.general.get_logger(__name__)
 
-BUILD_FROM_RCPSP = False
+BUILD_FROM_RCPSP = True
 
 
 def rcpsp_to_stnu(capacity, durations, needs, temporal_constraints) -> STNU:
