@@ -1,10 +1,10 @@
 from bs4 import BeautifulSoup, Tag
 from classes.classes import ProductionPlan, Product
-
+from classes.general import get_logger
 import re
 import numpy as np
 import enum
-from classes.general import get_logger
+
 logger = get_logger(__name__)
 
 
@@ -12,6 +12,7 @@ class SampleStrategy(enum.Enum):
     EARLY_EXECUTION_STRATEGY = enum.auto()
     LATE_EXECUTION_STRATEGY = enum.auto()
     RANDOM_EXECUTION_STRATEGY = enum.auto()
+
 
 class Edge:
     UC_LABEL = "UC"
@@ -55,7 +56,8 @@ class STNU:
     ORIGIN_NAME = "ORIGIN"
     HORIZON_NAME = "HORIZON"
     nodes: set[int]
-    edges: dict[int, dict[int, float]]
+    removed_nodes: list[int]
+    edges: dict[int, dict[int, Edge]]
     index: int
     translation_dict: dict[int, str]
     translation_dict_reversed: dict[str, int]
@@ -67,6 +69,7 @@ class STNU:
         self.origin_horizon = origin_horizon
         # Set-up nodes and edges
         self.nodes = {self.ORIGIN_IDX, self.HORIZON_IDX} if origin_horizon else set()
+        self.removed_nodes = []
         self.node_types = [STNU.EXECUTABLE_TP, STNU.EXECUTABLE_TP] if origin_horizon else []
         self.edges = {node: {} for node in self.nodes}
 
@@ -77,8 +80,10 @@ class STNU:
         self.index = max(self.nodes) + 1 if origin_horizon else 0
 
         # We keep track of two translation dictionaries to connect indices to the events
-        self.translation_dict = {self.ORIGIN_IDX: self.ORIGIN_NAME, self.HORIZON_IDX: self.HORIZON_NAME} if origin_horizon else {}
-        self.translation_dict_reversed = {self.ORIGIN_NAME: self.ORIGIN_IDX, self.HORIZON_NAME: self.HORIZON_IDX} if origin_horizon else {}
+        self.translation_dict = {self.ORIGIN_IDX: self.ORIGIN_NAME,
+                                 self.HORIZON_IDX: self.HORIZON_NAME} if origin_horizon else {}
+        self.translation_dict_reversed = {self.ORIGIN_NAME: self.ORIGIN_IDX,
+                                          self.HORIZON_NAME: self.HORIZON_IDX} if origin_horizon else {}
 
         if origin_horizon:
             self.set_ordinary_edge(self.HORIZON_IDX, self.ORIGIN_IDX, 0)
@@ -128,8 +133,8 @@ class STNU:
 
             if duration == 0 and sink_source == 1:
                 logger.debug(f'This is a sink/source node from RCPSP/max, we add only a start event')
-                #stnu.add_tight_constraint(task_start, task_finish, 0)
-                #stnu.set_ordinary_edge(task_finish, task_start, 0)
+                # stnu.add_tight_constraint(task_start, task_finish, 0)
+                # stnu.set_ordinary_edge(task_finish, task_start, 0)
             elif duration == 0 and sink_source == 2:
                 logger.debug(f'This is a sink/source node from RCPSP/max, we add both a start event and a finish event')
                 task_finish = stnu.add_node(f'{task}_{STNU.EVENT_FINISH}')
@@ -256,7 +261,8 @@ class STNU:
                         if (node_to, node_from) in stnu.contingent_links:
                             stnu.contingent_links[(node_to, node_from)]["uc_value"] = -int(m['distance'])
                         else:
-                            stnu.contingent_links[(node_to, node_from)] = {'lc_value': 'lb', 'uc_value': -int(m['distance'])}
+                            stnu.contingent_links[(node_to, node_from)] = {'lc_value': 'lb',
+                                                                           'uc_value': -int(m['distance'])}
                     elif int(m['distance']) >= 0 and m['label_type'] == STNU.LC_LABEL:
                         stnu.node_types[node_from] = STNU.ACTIVATION_TP
                         stnu.node_types[node_to] = STNU.CONTINGENT_TP
@@ -266,7 +272,8 @@ class STNU:
                             stnu.contingent_links[(node_from, node_to)] = {'uc_value': 'ub',
                                                                            'lc_value': int(m['distance'])}
                     else:
-                        raise ValueError(f"Unexpected distance and label type combination for contingent edge {edge_id}")
+                        raise ValueError(
+                            f"Unexpected distance and label type combination for contingent edge {edge_id}")
             else:
                 raise ValueError(f"Edge {edge_id} has no value")
 
@@ -288,6 +295,19 @@ class STNU:
             self.set_ordinary_edge(node_idx, self.ORIGIN_IDX, 0)
             self.set_ordinary_edge(self.HORIZON_IDX, node_idx, 0)
         return node_idx
+
+    def remove_node(self, node_idx):
+        # Remove a certain node and corresponding edges from the dictionary
+        self.nodes.remove(node_idx)
+        self.removed_nodes.append(node_idx)
+
+        edge_dict = self.edges.pop(node_idx)
+        for key in edge_dict.keys():
+            self.edges[key].pop(node_idx)
+        assert not (any(node_idx in d for d in self.edges.values()))
+
+        description = self.translation_dict.pop(node_idx)
+        self.translation_dict_reversed.pop(description)
 
     def get_executable_time_points(self):
         return [node for node in self.nodes if self.node_types[node] in (STNU.EXECUTABLE_TP, STNU.ACTIVATION_TP)]
@@ -500,4 +520,3 @@ class STNU:
             else:
                 raise NotImplemented
         return sample
-

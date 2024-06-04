@@ -83,8 +83,8 @@ def write_graphml(filename, ncontingent, networktype, nedges, nvertices, name, e
 
 def stnu_to_xml(stnu, name_graph, directory):
     edges = []
-    for node_from in range(len(stnu.nodes)):
-        for node_to in range(len(stnu.nodes)):
+    for node_from in stnu.nodes:
+        for node_to in stnu.nodes:
             if node_to in stnu.edges[node_from]:
                 edge = stnu.edges[node_from][node_to]
                 node_from_str = stnu.translation_dict[node_from]
@@ -99,7 +99,7 @@ def stnu_to_xml(stnu, name_graph, directory):
                     edges.append((f'e{node_from_str}-{node_to_str}', node_from_str, node_to_str, "contingent", f'LC({label}):{edge.lc_weight}'))
 
     nodes = []
-    for node in range(0, len(stnu.nodes)):
+    for node in stnu.nodes:
         node_str = stnu.translation_dict[node]
         nodes.append((node_str, str(random.randint(40, 200)), str(random.randint(40, 200))))
 
