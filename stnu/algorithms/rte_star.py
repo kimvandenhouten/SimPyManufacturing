@@ -102,6 +102,7 @@ def rte_star(estnu: STNU, oracle="standard", sample=None):
 
     # Line 2: While either U_x (unexecuted executable timepoints) or U_c (unexecuted contingent timepoints) are non-empty
     while len(rte_data.u_c) + len(rte_data.u_x) > 0:
+        logger.info(f'At {rte_data.now} schedule so far is {rte_data.f}')
 
         # Line 3: Generate exec. decision (use rte_generate_decision)
         rte_decision = rte_generate_decision(rte_data)

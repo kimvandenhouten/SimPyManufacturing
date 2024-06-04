@@ -43,10 +43,11 @@ def run_rte(stnu_location, output_location=None):
         # Run RTE algorithm with alternative oracle and store makespan
         if sample_mode == "standard":
             rte_data = rte_star(estnu, oracle="standard")
-        else:
+        elif sample_mode == "sample":
             rte_data = rte_star(estnu, oracle="sample", sample=sample)
         if rte_data:
             logger.info(f'Final schedule is {rte_data.f}')
+            logger.info(f'{estnu.translation_dict}')
         else:
             logger.info(f'For some reason the RTE star could not finish')
             return True
@@ -55,18 +56,6 @@ def run_rte(stnu_location, output_location=None):
         print(f'The network is not dynamically controllable')
         return False
 
-
 sample_mode = "sample"
-mode = "run_dc"
-if mode == "run_dc": # here we would follow the regular pipeline
-    output_location = None
-# here we load in the editor output of this network using the dispatchablity alg (morris14)
-elif mode == "editor_morris_14_dispatchability":
-    output_location = "stnu/java_comparison/xml_files/minimal_example_rte_error_editor-output-d.stnu"
-# here we load in the editor output of this network using the controllability alg (morris14)
-elif mode == "editor_morris_14_controllability":
-    output_location = "stnu/java_comparison/xml_files/minimal_example_rte_error_editor-output-c.stnu"
-
-rte_error = run_rte(stnu_location='example_rcpsp_max_stnu_python',
-                    output_location=output_location)
+rte_error = run_rte(stnu_location='example_rcpsp_max_stnu_python')
 
