@@ -1,7 +1,7 @@
 import os
-from classes.stnu import STNU
+from temporal_networks.stnu import STNU
 
-dir = 'stnu/java_comparison/xml_files'
+dir = 'temporal_networks/cstnu_tool/xml_files'
 files = [f for f in os.listdir(dir) if f.endswith('.stnu')]
 for file_name in files:
     print(file_name)

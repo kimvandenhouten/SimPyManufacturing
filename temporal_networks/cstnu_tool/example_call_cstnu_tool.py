@@ -90,7 +90,7 @@ def main():
     ]
 
     for (file_name, dc) in file_list:
-        instance_location = os.path.abspath(f"stnu/java_comparison/xml_files/{file_name}")
+        instance_location = os.path.abspath(f"temporal_networks/cstnu_tool/xml_files/{file_name}")
         if not os.path.exists(instance_location):
             logger.warning(f"warning: could not find {instance_location}")
             continue
