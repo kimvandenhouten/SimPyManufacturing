@@ -45,88 +45,52 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <graph edgedefault="directed">
 <data key="nContingent">1</data>
 <data key="NetworkType">STNU</data>
-<data key="nEdges">14</data>
-<data key="nVertices">6</data>
-<data key="Name">output_estnu_python_hunsberger23.stnu</data>
+<data key="nEdges">6</data>
+<data key="nVertices">5</data>
+<data key="Name">input_hunsberger23.stnu</data>
 <node id="A">
-<data key="x">190</data>
-<data key="y">185</data>
+<data key="x">102</data>
+<data key="y">72</data>
 </node>
 <node id="C">
-<data key="x">179</data>
-<data key="y">56</data>
+<data key="x">100</data>
+<data key="y">188</data>
 </node>
 <node id="W">
-<data key="x">62</data>
-<data key="y">114</data>
+<data key="x">94</data>
+<data key="y">139</data>
 </node>
 <node id="X">
-<data key="x">61</data>
-<data key="y">122</data>
+<data key="x">42</data>
+<data key="y">139</data>
 </node>
 <node id="Y">
-<data key="x">94</data>
-<data key="y">94</data>
+<data key="x">116</data>
+<data key="y">107</data>
 </node>
-<node id="C_act">
-<data key="x">148</data>
-<data key="y">150</data>
-</node>
-<edge id="eA-W" source="A" target="W">
-<data key="Type">requirement</data>
-<data key="Value">-6</data>
+<edge id="eA-C" source="A" target="C">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(C):1</data>
 </edge>
-<edge id="eA-C_act" source="A" target="C_act">
-<data key="Type">requirement</data>
-<data key="Value">1</data>
+<edge id="eC-A" source="C" target="A">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(C):-10</data>
 </edge>
 <edge id="eC-W" source="C" target="W">
 <data key="Type">requirement</data>
 <data key="Value">-7</data>
 </edge>
-<edge id="eC-C_act" source="C" target="C_act">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(C):-9</data>
-</edge>
 <edge id="eX-C" source="X" target="C">
 <data key="Type">requirement</data>
 <data key="Value">3</data>
-</edge>
-<edge id="eX-W" source="X" target="W">
-<data key="Type">requirement</data>
-<data key="Value">-4</data>
 </edge>
 <edge id="eX-Y" source="X" target="Y">
 <data key="Type">requirement</data>
 <data key="Value">-2</data>
 </edge>
-<edge id="eX-C_act" source="X" target="C_act">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(C):-6</data>
-</edge>
 <edge id="eY-C" source="Y" target="C">
 <data key="Type">requirement</data>
 <data key="Value">1</data>
-</edge>
-<edge id="eY-W" source="Y" target="W">
-<data key="Type">requirement</data>
-<data key="Value">-6</data>
-</edge>
-<edge id="eY-C_act" source="Y" target="C_act">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(C):-8</data>
-</edge>
-<edge id="eC_act-A" source="C_act" target="A">
-<data key="Type">requirement</data>
-<data key="Value">-1</data>
-</edge>
-<edge id="eC_act-C" source="C_act" target="C">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(C):0</data>
-</edge>
-<edge id="eC_act-W" source="C_act" target="W">
-<data key="Type">requirement</data>
-<data key="Value">-7</data>
 </edge>
 </graph>
 </graphml>

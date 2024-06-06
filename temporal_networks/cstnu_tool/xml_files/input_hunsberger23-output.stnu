@@ -45,52 +45,96 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <graph edgedefault="directed">
 <data key="nContingent">1</data>
 <data key="NetworkType">STNU</data>
-<data key="nEdges">7</data>
-<data key="nVertices">4</data>
-<data key="Name">example_network.stnu</data>
+<data key="nEdges">16</data>
+<data key="nVertices">6</data>
+<data key="Name">input_hunsberger23.stnu</data>
 <node id="A">
-<data key="x">112.0</data>
-<data key="y">157.0</data>
+<data key="x">102.0</data>
+<data key="y">72.0</data>
+</node>
+<node id="W">
+<data key="x">94.0</data>
+<data key="y">139.0</data>
+</node>
+<node id="Y">
+<data key="x">116.0</data>
+<data key="y">107.0</data>
 </node>
 <node id="C">
-<data key="x">106.0</data>
-<data key="y">149.0</data>
+<data key="x">100.0</data>
+<data key="y">188.0</data>
 </node>
-<node id="B">
-<data key="x">172.0</data>
-<data key="y">59.0</data>
+<node id="X">
+<data key="x">42.0</data>
+<data key="y">139.0</data>
 </node>
 <node id="Z">
 <data key="x">10.0</data>
 <data key="y">10.0</data>
 </node>
-<edge id="B_Z" source="B" target="Z">
+<edge id="Y_Z" source="Y" target="Z">
 <data key="Type">derived</data>
 <data key="Value">0</data>
 </edge>
-<edge id="B-A" source="B" target="A">
-<data key="Type">derived</data>
-<data key="LabeledValue">UC(C):-4</data>
-</edge>
-<edge id="eB-C" source="B" target="C">
+<edge id="eY-C" source="Y" target="C">
 <data key="Type">requirement</data>
-<data key="Value">5</data>
+<data key="Value">1</data>
+</edge>
+<edge id="Y-A" source="Y" target="A">
+<data key="Type">derived</data>
+<data key="LabeledValue">UC(C):-9</data>
 </edge>
 <edge id="A_Z" source="A" target="Z">
 <data key="Type">derived</data>
 <data key="Value">0</data>
 </edge>
+<edge id="X-W" source="X" target="W">
+<data key="Type">derived</data>
+<data key="Value">-4</data>
+</edge>
+<edge id="A-W" source="A" target="W">
+<data key="Type">derived</data>
+<data key="Value">-6</data>
+</edge>
+<edge id="X-A" source="X" target="A">
+<data key="Type">derived</data>
+<data key="LabeledValue">UC(C):-7</data>
+</edge>
+<edge id="X_Z" source="X" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
 <edge id="eC-A" source="C" target="A">
 <data key="Type">contingent</data>
-<data key="LabeledValue">UC(C):-9</data>
+<data key="LabeledValue">UC(C):-10</data>
+</edge>
+<edge id="eC-W" source="C" target="W">
+<data key="Type">requirement</data>
+<data key="Value">-7</data>
+</edge>
+<edge id="Y-W" source="Y" target="W">
+<data key="Type">derived</data>
+<data key="Value">-6</data>
+</edge>
+<edge id="W_Z" source="W" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
 </edge>
 <edge id="C_Z" source="C" target="Z">
 <data key="Type">derived</data>
 <data key="Value">0</data>
 </edge>
+<edge id="eX-Y" source="X" target="Y">
+<data key="Type">requirement</data>
+<data key="Value">-2</data>
+</edge>
+<edge id="eX-C" source="X" target="C">
+<data key="Type">requirement</data>
+<data key="Value">3</data>
+</edge>
 <edge id="eA-C" source="A" target="C">
 <data key="Type">contingent</data>
-<data key="LabeledValue">LC(C):2</data>
+<data key="LabeledValue">LC(C):1</data>
 </edge>
 </graph>
 </graphml>

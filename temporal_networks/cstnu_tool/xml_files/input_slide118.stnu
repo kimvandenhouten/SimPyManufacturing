@@ -45,64 +45,32 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <graph edgedefault="directed">
 <data key="nContingent">1</data>
 <data key="NetworkType">STNU</data>
-<data key="nEdges">8</data>
-<data key="nVertices">6</data>
-<data key="Name">input_normal_form_hunsberger23.stnu</data>
+<data key="nEdges">3</data>
+<data key="nVertices">3</data>
+<data key="Name">input_slide118.stnu</data>
 <node id="A">
-<data key="x">120</data>
-<data key="y">161</data>
-</node>
-<node id="C">
-<data key="x">172</data>
-<data key="y">69</data>
-</node>
-<node id="W">
-<data key="x">41</data>
-<data key="y">189</data>
-</node>
-<node id="X">
-<data key="x">139</data>
+<data key="x">167</data>
 <data key="y">200</data>
 </node>
-<node id="Y">
-<data key="x">194</data>
-<data key="y">148</data>
+<node id="B">
+<data key="x">106</data>
+<data key="y">99</data>
 </node>
-<node id="C_act">
-<data key="x">185</data>
-<data key="y">124</data>
+<node id="C">
+<data key="x">170</data>
+<data key="y">112</data>
 </node>
-<edge id="eA-C_act" source="A" target="C_act">
-<data key="Type">requirement</data>
-<data key="Value">1</data>
+<edge id="eA-C" source="A" target="C">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(C):2</data>
 </edge>
-<edge id="eC-W" source="C" target="W">
+<edge id="eB-C" source="B" target="C">
 <data key="Type">requirement</data>
-<data key="Value">-7</data>
+<data key="Value">5</data>
 </edge>
-<edge id="eC-C_act" source="C" target="C_act">
+<edge id="eC-A" source="C" target="A">
 <data key="Type">contingent</data>
 <data key="LabeledValue">UC(C):-9</data>
-</edge>
-<edge id="eX-C" source="X" target="C">
-<data key="Type">requirement</data>
-<data key="Value">3</data>
-</edge>
-<edge id="eX-Y" source="X" target="Y">
-<data key="Type">requirement</data>
-<data key="Value">-2</data>
-</edge>
-<edge id="eY-C" source="Y" target="C">
-<data key="Type">requirement</data>
-<data key="Value">1</data>
-</edge>
-<edge id="eC_act-A" source="C_act" target="A">
-<data key="Type">requirement</data>
-<data key="Value">-1</data>
-</edge>
-<edge id="eC_act-C" source="C_act" target="C">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(C):0</data>
 </edge>
 </graph>
 </graphml>

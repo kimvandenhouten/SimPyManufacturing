@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
 xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <key id="nContingent" for="graph">
 <desc>Number of contingents in the graph</desc>
@@ -20,7 +20,7 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 </key>
 <key id="Name" for="graph">
 <desc>Graph Name</desc>
-<default> </default>
+<default></default>
 </key>
 <key id="x" for="node">
 <desc>The x coordinate for the visualization. A positive value.</desc>
@@ -36,69 +36,61 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 </key>
 <key id="Value" for="edge">
 <desc>Value for STN edge. Format: 'integer'</desc>
-<default> </default>
+<default></default>
 </key>
 <key id="LabeledValue" for="edge">
 <desc>Case Value. Format: 'LC(NodeName):integer' or 'UC(NodeName):integer'</desc>
-<default> </default>
+<default></default>
 </key>
 <graph edgedefault="directed">
-<data key="nContingent">2</data>
+<data key="nContingent">1</data>
 <data key="NetworkType">STNU</data>
-<data key="nEdges">8</data>
-<data key="nVertices">5</data>
-<data key="Name">input_normal_form_morris14.stnu</data>
+<data key="nEdges">7</data>
+<data key="nVertices">4</data>
+<data key="Name">input_slide118.stnu</data>
 <node id="A">
-<data key="x">50</data>
-<data key="y">140</data>
-</node>
-<node id="B">
-<data key="x">46</data>
-<data key="y">60</data>
+<data key="x">167.0</data>
+<data key="y">200.0</data>
 </node>
 <node id="C">
-<data key="x">163</data>
-<data key="y">91</data>
+<data key="x">170.0</data>
+<data key="y">112.0</data>
 </node>
-<node id="D">
-<data key="x">76</data>
-<data key="y">136</data>
+<node id="B">
+<data key="x">106.0</data>
+<data key="y">99.0</data>
 </node>
-<node id="E">
-<data key="x">89</data>
-<data key="y">141</data>
+<node id="Z">
+<data key="x">10.0</data>
+<data key="y">10.0</data>
 </node>
-<edge id="eA-B" source="A" target="B">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(B):0</data>
+<edge id="B_Z" source="B" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
 </edge>
-<edge id="eB-A" source="B" target="A">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(B):-2</data>
+<edge id="B-A" source="B" target="A">
+<data key="Type">derived</data>
+<data key="LabeledValue">UC(C):-4</data>
 </edge>
-<edge id="eB-D" source="B" target="D">
+<edge id="eB-C" source="B" target="C">
 <data key="Type">requirement</data>
-<data key="Value">1</data>
+<data key="Value">5</data>
 </edge>
-<edge id="eB-E" source="B" target="E">
-<data key="Type">requirement</data>
-<data key="Value">-2</data>
+<edge id="A_Z" source="A" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
 </edge>
-<edge id="eC-D" source="C" target="D">
+<edge id="eC-A" source="C" target="A">
 <data key="Type">contingent</data>
-<data key="LabeledValue">LC(D):0</data>
+<data key="LabeledValue">UC(C):-9</data>
 </edge>
-<edge id="eD-B" source="D" target="B">
-<data key="Type">requirement</data>
-<data key="Value">3</data>
+<edge id="C_Z" source="C" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
 </edge>
-<edge id="eD-C" source="D" target="C">
+<edge id="eA-C" source="A" target="C">
 <data key="Type">contingent</data>
-<data key="LabeledValue">UC(D):-3</data>
-</edge>
-<edge id="eE-B" source="E" target="B">
-<data key="Type">requirement</data>
-<data key="Value">4</data>
+<data key="LabeledValue">LC(C):2</data>
 </edge>
 </graph>
 </graphml>

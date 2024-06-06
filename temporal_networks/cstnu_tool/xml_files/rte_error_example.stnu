@@ -47,34 +47,34 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <data key="NetworkType">STNU</data>
 <data key="nEdges">9</data>
 <data key="nVertices">7</data>
-<data key="Name">example_rcpsp_max_stnu_python.stnu</data>
+<data key="Name">rte_error_example.stnu</data>
 <node id="1_start">
-<data key="x">121</data>
-<data key="y">142</data>
+<data key="x">146</data>
+<data key="y">72</data>
 </node>
 <node id="2_start">
-<data key="x">79</data>
-<data key="y">71</data>
+<data key="x">110</data>
+<data key="y">133</data>
 </node>
 <node id="2_finish">
-<data key="x">178</data>
-<data key="y">50</data>
+<data key="x">61</data>
+<data key="y">131</data>
 </node>
 <node id="3_start">
-<data key="x">161</data>
-<data key="y">52</data>
+<data key="x">102</data>
+<data key="y">106</data>
 </node>
 <node id="7_start">
-<data key="x">147</data>
-<data key="y">99</data>
+<data key="x">118</data>
+<data key="y">150</data>
 </node>
 <node id="7_finish">
-<data key="x">93</data>
-<data key="y">172</data>
+<data key="x">57</data>
+<data key="y">60</data>
 </node>
 <node id="10_start">
-<data key="x">82</data>
-<data key="y">133</data>
+<data key="x">49</data>
+<data key="y">112</data>
 </node>
 <edge id="e1_start-10_start" source="1_start" target="10_start">
 <data key="Type">requirement</data>

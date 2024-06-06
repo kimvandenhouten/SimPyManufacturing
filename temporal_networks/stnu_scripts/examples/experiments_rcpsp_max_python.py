@@ -1,19 +1,23 @@
 from rcpsp.rcpsp_max.process_file import parse_sch_file
 from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
-import pandas as pd
-from stnu.algorithms.call_java_cstnu_tool import run_dc_algorithm
-from stnu.algorithms.rte_star import rte_star
-from stnu.get_resource_chains_reservations_benchmark import get_resource_chains, add_resource_chains
-from classes.stnu import STNU, SampleStrategy
-from stnu.java_comparison.stnu_to_xml_function import stnu_to_xml
-import time
-import classes.general
-logger = classes.general.get_logger(__name__)
 from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
+from rcpsp.temporal_networks.stnu_rcpsp import RCPSP_STNU, get_resource_chains, add_resource_chains
+
+from temporal_networks.cstnu_tool.call_java_cstnu_tool import run_dc_algorithm
+from temporal_networks.rte_star import rte_star
+from temporal_networks.stnu import STNU, SampleStrategy
+from temporal_networks.cstnu_tool.stnu_to_xml_function import stnu_to_xml
+
+
+import time
+import general.logger
+logger = general.logger.get_logger(__name__)
+import pandas as pd
+
 import numpy as np
 
 data_agg = []
-
+results_location = "results.csv"
 
 
 def get_true_durations(estnu, rte_data, durations, sample):
@@ -36,23 +40,23 @@ def get_true_durations(estnu, rte_data, durations, sample):
 
 def run_stnu_experiment(instance_folder, instance_id, nr_samples):
     data = []
-    logger.info(f'Start instance {instance_id}')
+    logger.warning(f'Start instance {instance_id}')
 
     # Read instance and set up deterministic RCPSP/max CP model and solve (this will be used for the resource chain)
-    capacity, durations, needs, temporal_constraints = parse_sch_file(f'rcpsp/rcpsp_max/{instance_folder}/psp{instance_id}.sch')
+    capacity, durations, needs, temporal_constraints = parse_sch_file(f'rcpsp/rcpsp_max/{instance_folder}/PSP{instance_id}.SCH')
     rcpsp_max = RCPSP_CP_Benchmark(capacity, durations, None, needs, temporal_constraints, "RCPSP_max")
-    res, schedule = rcpsp_max.solve(time_limit=600)
+    res, schedule = rcpsp_max.solve(time_limit=60)
 
     if res:
         # Build the STNU using the instance information and the resource chains
         schedule = schedule.to_dict('records')
         resource_chains, resource_assignments = get_resource_chains(schedule, capacity, needs, complete=True)
-        stnu = STNU.from_rcpsp_max_instance(durations, temporal_constraints)
+        stnu = RCPSP_STNU.from_rcpsp_max_instance(durations, temporal_constraints)
         stnu = add_resource_chains(stnu, resource_chains)
-        stnu_to_xml(stnu, f"example_rcpsp_max_stnu", "stnu/java_comparison/xml_files")
+        stnu_to_xml(stnu, f"example_rcpsp_max_stnu", "temporal_networks/cstnu_tool/xml_files")
 
         # Run the DC algorithm using the Java CSTNU tool, the result is written to a xml file
-        dc, output_location = run_dc_algorithm("stnu/java_comparison/xml_files", f"example_rcpsp_max_stnu")
+        dc, output_location = run_dc_algorithm("temporal_networks/cstnu_tool/xml_files", f"example_rcpsp_max_stnu")
         logger.info(f'dc is {dc} and output location {output_location}')
 
         # Read ESTNU xml file into Python object that was the output from the previous step
@@ -90,7 +94,7 @@ def run_stnu_experiment(instance_folder, instance_id, nr_samples):
 
                 else:
                     objective = np.inf
-                    logger.info(f'For some reason the RTE start could not finish')
+                    logger.warning(f'For some reason the RTE start could not finish')
                     objective_pi = "NotImplemented"
                     rel_regret = "NotImplemented"
                     feasibility = False
@@ -114,7 +118,6 @@ def run_stnu_experiment(instance_folder, instance_id, nr_samples):
             feasibility = False
 
     else:  # In this situation the STNU approach cannot find a schedule because the network was not DC
-        logger.info(f'We could not solve the initial deterministic CP {res.solve_status}')
         objective = np.inf
         feasibility = False
 
@@ -161,10 +164,9 @@ def run_stnu_experiment(instance_folder, instance_id, nr_samples):
     return data
 
 
-results_location = "aaai25_experiments/results/results_ubo100.csv"
-nb_scenarios_test = 2
-for instance_folder in ["ubo100"]:
-    for instance_id in range(1, 10):
+nb_scenarios_test = 5
+for instance_folder in ["j10", "j30"]:
+    for instance_id in range(1, 271):
         data_agg += run_stnu_experiment(instance_folder, instance_id, nb_scenarios_test)
         df = pd.DataFrame(data_agg)
         df.to_csv(results_location, index=False)
