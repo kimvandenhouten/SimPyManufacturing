@@ -45,28 +45,32 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <graph edgedefault="directed">
 <data key="nContingent">1</data>
 <data key="NetworkType">STNU</data>
-<data key="nEdges">10</data>
-<data key="nVertices">5</data>
-<data key="Name">input_slide118.stnu</data>
+<data key="nEdges">17</data>
+<data key="nVertices">6</data>
+<data key="Name">output_estnu_python_minimized_example_factory.stnu</data>
 <node id="ORIGIN">
-<data key="x">135</data>
-<data key="y">114</data>
+<data key="x">185</data>
+<data key="y">80</data>
 </node>
 <node id="HORIZON">
-<data key="x">80</data>
-<data key="y">112</data>
+<data key="x">183</data>
+<data key="y">191</data>
 </node>
 <node id="A">
-<data key="x">70</data>
-<data key="y">40</data>
-</node>
-<node id="B">
-<data key="x">108</data>
-<data key="y">42</data>
+<data key="x">171</data>
+<data key="y">71</data>
 </node>
 <node id="C">
-<data key="x">140</data>
-<data key="y">179</data>
+<data key="x">95</data>
+<data key="y">183</data>
+</node>
+<node id="D">
+<data key="x">61</data>
+<data key="y">167</data>
+</node>
+<node id="E">
+<data key="x">195</data>
+<data key="y">57</data>
 </node>
 <edge id="eHORIZON-ORIGIN" source="HORIZON" target="ORIGIN">
 <data key="Type">requirement</data>
@@ -76,13 +80,21 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <data key="Type">requirement</data>
 <data key="Value">0</data>
 </edge>
-<edge id="eHORIZON-B" source="HORIZON" target="B">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
+<edge id="eHORIZON-A" source="HORIZON" target="A">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(C):-20</data>
 </edge>
 <edge id="eHORIZON-C" source="HORIZON" target="C">
 <data key="Type">requirement</data>
 <data key="Value">0</data>
+</edge>
+<edge id="eHORIZON-D" source="HORIZON" target="D">
+<data key="Type">requirement</data>
+<data key="Value">0</data>
+</edge>
+<edge id="eHORIZON-E" source="HORIZON" target="E">
+<data key="Type">requirement</data>
+<data key="Value">-5</data>
 </edge>
 <edge id="eA-ORIGIN" source="A" target="ORIGIN">
 <data key="Type">requirement</data>
@@ -90,15 +102,7 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 </edge>
 <edge id="eA-C" source="A" target="C">
 <data key="Type">contingent</data>
-<data key="LabeledValue">LC(C):2</data>
-</edge>
-<edge id="eB-ORIGIN" source="B" target="ORIGIN">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="eB-C" source="B" target="C">
-<data key="Type">requirement</data>
-<data key="Value">5</data>
+<data key="LabeledValue">LC(C):0</data>
 </edge>
 <edge id="eC-ORIGIN" source="C" target="ORIGIN">
 <data key="Type">requirement</data>
@@ -106,7 +110,35 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 </edge>
 <edge id="eC-A" source="C" target="A">
 <data key="Type">contingent</data>
-<data key="LabeledValue">UC(C):-9</data>
+<data key="LabeledValue">UC(C):-20</data>
+</edge>
+<edge id="eD-ORIGIN" source="D" target="ORIGIN">
+<data key="Type">requirement</data>
+<data key="Value">0</data>
+</edge>
+<edge id="eD-A" source="D" target="A">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(C):-20</data>
+</edge>
+<edge id="eD-C" source="D" target="C">
+<data key="Type">requirement</data>
+<data key="Value">0</data>
+</edge>
+<edge id="eD-E" source="D" target="E">
+<data key="Type">requirement</data>
+<data key="Value">-5</data>
+</edge>
+<edge id="eE-ORIGIN" source="E" target="ORIGIN">
+<data key="Type">requirement</data>
+<data key="Value">0</data>
+</edge>
+<edge id="eE-A" source="E" target="A">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(C):-12</data>
+</edge>
+<edge id="eE-D" source="E" target="D">
+<data key="Type">requirement</data>
+<data key="Value">8</data>
 </edge>
 </graph>
 </graphml>

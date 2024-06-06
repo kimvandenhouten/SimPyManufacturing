@@ -43,38 +43,38 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <default> </default>
 </key>
 <graph edgedefault="directed">
-<data key="nContingent">2</data>
+<data key="nContingent">1</data>
 <data key="NetworkType">STNU</data>
-<data key="nEdges">19</data>
+<data key="nEdges">22</data>
 <data key="nVertices">7</data>
-<data key="Name">input_morris14.stnu</data>
+<data key="Name">output_estnu_python_minimal_example_factory.stnu</data>
 <node id="ORIGIN">
-<data key="x">189</data>
-<data key="y">130</data>
+<data key="x">173</data>
+<data key="y">134</data>
 </node>
 <node id="HORIZON">
-<data key="x">121</data>
-<data key="y">169</data>
+<data key="x">133</data>
+<data key="y">73</data>
 </node>
 <node id="A">
-<data key="x">44</data>
-<data key="y">124</data>
-</node>
-<node id="B">
-<data key="x">130</data>
-<data key="y">165</data>
+<data key="x">119</data>
+<data key="y">42</data>
 </node>
 <node id="C">
-<data key="x">43</data>
-<data key="y">145</data>
+<data key="x">194</data>
+<data key="y">97</data>
 </node>
 <node id="D">
-<data key="x">66</data>
-<data key="y">144</data>
+<data key="x">68</data>
+<data key="y">75</data>
 </node>
 <node id="E">
-<data key="x">109</data>
-<data key="y">59</data>
+<data key="x">117</data>
+<data key="y">151</data>
+</node>
+<node id="C_act">
+<data key="x">104</data>
+<data key="y">195</data>
 </node>
 <edge id="eHORIZON-ORIGIN" source="HORIZON" target="ORIGIN">
 <data key="Type">requirement</data>
@@ -82,11 +82,7 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 </edge>
 <edge id="eHORIZON-A" source="HORIZON" target="A">
 <data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="eHORIZON-B" source="HORIZON" target="B">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
+<data key="Value">-15</data>
 </edge>
 <edge id="eHORIZON-C" source="HORIZON" target="C">
 <data key="Type">requirement</data>
@@ -98,59 +94,75 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 </edge>
 <edge id="eHORIZON-E" source="HORIZON" target="E">
 <data key="Type">requirement</data>
+<data key="Value">-5</data>
+</edge>
+<edge id="eHORIZON-C_act" source="HORIZON" target="C_act">
+<data key="Type">requirement</data>
 <data key="Value">0</data>
+</edge>
+<edge id="eHORIZON-C_act" source="HORIZON" target="C_act">
+<data key="Type">contingent</data>
+<data key="LabeledValue">UC(C):-5</data>
 </edge>
 <edge id="eA-ORIGIN" source="A" target="ORIGIN">
 <data key="Type">requirement</data>
 <data key="Value">0</data>
 </edge>
-<edge id="eA-B" source="A" target="B">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(B):0</data>
-</edge>
-<edge id="eB-ORIGIN" source="B" target="ORIGIN">
+<edge id="eA-C_act" source="A" target="C_act">
 <data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="eB-A" source="B" target="A">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(B):-2</data>
-</edge>
-<edge id="eB-D" source="B" target="D">
-<data key="Type">requirement</data>
-<data key="Value">1</data>
-</edge>
-<edge id="eB-E" source="B" target="E">
-<data key="Type">requirement</data>
-<data key="Value">-2</data>
+<data key="Value">15</data>
 </edge>
 <edge id="eC-ORIGIN" source="C" target="ORIGIN">
 <data key="Type">requirement</data>
 <data key="Value">0</data>
 </edge>
-<edge id="eC-D" source="C" target="D">
+<edge id="eC-C_act" source="C" target="C_act">
 <data key="Type">contingent</data>
-<data key="LabeledValue">LC(D):0</data>
+<data key="LabeledValue">UC(C):-5</data>
 </edge>
 <edge id="eD-ORIGIN" source="D" target="ORIGIN">
 <data key="Type">requirement</data>
 <data key="Value">0</data>
 </edge>
-<edge id="eD-B" source="D" target="B">
-<data key="Type">requirement</data>
-<data key="Value">3</data>
-</edge>
 <edge id="eD-C" source="D" target="C">
+<data key="Type">requirement</data>
+<data key="Value">0</data>
+</edge>
+<edge id="eD-E" source="D" target="E">
+<data key="Type">requirement</data>
+<data key="Value">-5</data>
+</edge>
+<edge id="eD-C_act" source="D" target="C_act">
 <data key="Type">contingent</data>
-<data key="LabeledValue">UC(D):-3</data>
+<data key="LabeledValue">UC(C):-5</data>
 </edge>
 <edge id="eE-ORIGIN" source="E" target="ORIGIN">
 <data key="Type">requirement</data>
 <data key="Value">0</data>
 </edge>
-<edge id="eE-B" source="E" target="B">
+<edge id="eE-A" source="E" target="A">
 <data key="Type">requirement</data>
-<data key="Value">4</data>
+<data key="Value">-12</data>
+</edge>
+<edge id="eE-D" source="E" target="D">
+<data key="Type">requirement</data>
+<data key="Value">8</data>
+</edge>
+<edge id="eE-C_act" source="E" target="C_act">
+<data key="Type">requirement</data>
+<data key="Value">3</data>
+</edge>
+<edge id="eC_act-ORIGIN" source="C_act" target="ORIGIN">
+<data key="Type">requirement</data>
+<data key="Value">0</data>
+</edge>
+<edge id="eC_act-A" source="C_act" target="A">
+<data key="Type">requirement</data>
+<data key="Value">-15</data>
+</edge>
+<edge id="eC_act-C" source="C_act" target="C">
+<data key="Type">contingent</data>
+<data key="LabeledValue">LC(C):0</data>
 </edge>
 </graph>
 </graphml>

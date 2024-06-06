@@ -13,7 +13,7 @@ def run_rte(stnu_location, output_location=None):
     if output_location is None:
         logger.info(f'Start DC checking algorithm from XML file {stnu_location}')
         # Run the DC algorithm using the Java CSTNU tool, the result is written to a xml file
-        dc, output_location = run_dc_algorithm("stnu/java_comparison/xml_files", stnu_location)
+        dc, output_location = run_dc_algorithm("temporal_networks/cstnu_tool/xml_files", stnu_location)
         logger.info(f'dc is {dc} and output location {output_location}')
 
         if not dc:
