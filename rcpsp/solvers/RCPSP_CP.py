@@ -2,7 +2,8 @@ import pandas as pd
 from docplex.cp.model import *
 import docplex.cp.solver as solver
 
-
+import general.logger
+logger = general.logger.get_logger(__name__)
 class RCPSP_CP:
     def __init__(self, instance):
         # convert to RCPSP instance
@@ -124,7 +125,7 @@ class RCPSP_CP:
         mdl.add_solver_callback(callback)
 
         # Solve model
-        print('Solving model...')
+        logger.info('Solving model...')
         res = mdl.solve(TimeLimit=time_limit, Workers=1, LogVerbosity="Quiet")
 
         data = []
@@ -141,7 +142,7 @@ class RCPSP_CP:
             if write:
                 data_df.to_csv(output_file)
         else:
-            print('WARNING: CP solver failed')
+            logger.info('WARNING: CP solver failed')
             data_df = None
 
         return res, callback, data_df
@@ -159,8 +160,8 @@ class RCPSP_CP:
             index = indices[0]
             durations[index] = true_duration
 
-        print(f'original deterministic durations {self.durations}')
-        print(f'               updated durations {durations}')
+        logger.info(f'original deterministic durations {self.durations}')
+        logger.info(f'               updated durations {durations}')
 
         demands = self.resources
         capacities = self.capacity
@@ -222,7 +223,7 @@ class RCPSP_CP:
         mdl.add_solver_callback(callback)
 
         # Solve model
-        print('Solving model...')
+        logger.info('Solving model...')
         res = mdl.solve(TimeLimit=time_limit, Workers=1)
 
         data = []

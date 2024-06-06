@@ -1,6 +1,6 @@
 import re
-
-
+import general.logger
+logger = general.logger.get_logger(__name__)
 def parse_sch_file(filename):
     with open(filename, 'r') as file:
         lines = file.readlines()
@@ -42,9 +42,9 @@ def parse_sch_file(filename):
     capacity = list(map(int, lines[-1].strip().split()))
 
     # Outputs for MiniZinc
-    print("Resource capacities:", capacity)
-    print("Durations:", durations)
-    print("Temporal relations:", temporal_relations)
-    print("Resource needs:",  needs)
+    logger.info("Resource capacities:", capacity)
+    logger.info("Durations:", durations)
+    logger.info("Temporal relations:", temporal_relations)
+    logger.info("Resource needs:",  needs)
 
     return capacity, durations, needs, temporal_relations

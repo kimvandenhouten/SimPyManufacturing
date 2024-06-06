@@ -6,7 +6,8 @@ import numpy as np
 from numpy import ndarray, dtype, signedinteger, long, bool_, int8, short, intc, unsignedinteger, uint8, ushort, uintc, \
     uintp
 from numpy._typing import _8Bit, _16Bit, _32Bit, _64Bit
-
+import general.logger
+logger = general.logger.get_logger(__name__)
 
 class RCPSP_CP_Benchmark:
     def __init__(self, capacity, durations, successors, needs, temporal_constraints=None, problem_type="RCPSP"):
@@ -52,7 +53,7 @@ class RCPSP_CP_Benchmark:
         mdl.add(minimize(max(end_of(t) for t in tasks)))
 
         # Solve model
-        print('Solving model...')
+        logger.info('Solving model...')
         res = mdl.solve(TimeLimit=time_limit, Workers=1, LogVerbosity="Quiet")
 
         data = []
@@ -65,7 +66,7 @@ class RCPSP_CP_Benchmark:
             if write:
                 data_df.to_csv(output_file)
         else:
-            print('WARNING: CP solver failed')
+            logger.info('WARNING: CP solver failed')
             data_df = None
 
         return res, data_df
@@ -126,7 +127,7 @@ class RCPSP_CP_Benchmark:
         if res:
             start_times = [res.get_var_solution(first_stage[i]).value for i in range(nb_tasks)]
         else:
-            print('WARNING: CP solver failed')
+            logger.warning('WARNING: CP solver failed')
             start_times = None
 
         return res, start_times

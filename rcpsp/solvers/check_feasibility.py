@@ -1,6 +1,6 @@
 import numpy as np
-import classes.general
-logger = classes.general.get_logger(__name__)
+import general.logger
+logger = general.logger.get_logger(__name__)
 
 def check_resources_schedule(earliest_start, durations, capacity, needs):
     num_resources = len(capacity)

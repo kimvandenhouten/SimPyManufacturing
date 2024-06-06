@@ -8,15 +8,15 @@ default_time_format = "%H:%M:%S"
 
 [tool.logging.root]
 # The root logger level holds for every module that doesn't have its own level.
-level = "DEBUG"
+level = "WARNING"
 
 [tool.logging.loggers."__main__"]
 # The special module __main__ is the script currently being executed.
-level = "DEBUG"
+level = "INFO"
 
 [tool.logging.loggers."stnu.algorithms.rte_star"]
 # Module names containing dots must be fully enclosed in quotes.
-level = "INFO"
+level = "WARNING"
 
 [tool.logging.loggers."stnu.algorithms.call_java_cstnu_tool"]
 # Module names containing dots must be fully enclosed in quotes.

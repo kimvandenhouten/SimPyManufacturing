@@ -1,11 +1,12 @@
 from rcpsp.rcpsp_max.process_file import parse_sch_file
 from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
-import time
-import classes.general
-logger = classes.general.get_logger(__name__)
 from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
+
 import pandas as pd
 import numpy as np
+
+import general.logger
+logger = general.logger.get_logger(__name__)
 
 
 data_agg = []
