@@ -196,8 +196,3 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
                 f'objective under perfect information is {objective_pi}, makespan obtained with STNU scheduling is {np.inf}, '
                 f'relative regret is {rel_regret}, and')
     return data
-
-SEED = 1
-data = []
-np.random.seed(SEED)
-nb_scenarios_test = 10

@@ -27,8 +27,12 @@ class RCPSP_CP_Benchmark:
     @classmethod
     def parsche_file(cls, directory, instance_folder, instance_id):
 
-        filename = f'{directory}/{instance_folder}/PSP{instance_id}.SCH'
-
+        if instance_folder[0] == "j":
+            filename = f'{directory}/{instance_folder}/PSP{instance_id}.SCH'
+        elif instance_folder[0:3] == "ubo":
+            filename = f'{directory}/{instance_folder}/psp{instance_id}.sch'
+        else:
+            raise ValueError(f"instance folder is not recognized ({instance_folder})")
 
         with open(filename, 'r') as file:
             lines = file.readlines()

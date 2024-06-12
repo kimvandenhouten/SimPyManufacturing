@@ -15,9 +15,9 @@ from experiments.aaai25_experiments.run_stnu_approach import run_stnu_experiment
 # GENERAL SETTINGS
 SEED = 1
 DIRECTORY_INSTANCES = 'rcpsp/rcpsp_max'
-INSTANCE_FOLDERS = ["j10"]
-INSTANCE_IDS = range(1, 11)
-nb_scenarios_test = 10
+INSTANCE_FOLDERS = ["ubo50"]
+INSTANCE_IDS = range(1, 5)
+nb_scenarios_test = 1
 
 # RUN REACTIVE EXPERIMENTS
 # Settings reactive approach
@@ -59,8 +59,8 @@ np.random.seed(SEED)
 
 # Run the experiments
 data = []
-for instance_folder in ["j10"]:
-    for instance_id in range(1, 10):
+for instance_folder in INSTANCE_FOLDERS:
+    for instance_id in INSTANCE_IDS:
         rcpsp_max = RCPSP_CP_Benchmark.parsche_file(DIRECTORY_INSTANCES, instance_folder, instance_id)
         test_durations_sample = rcpsp_max.sample_durations(nb_scenarios_test)
         data += run_stnu_experiment(rcpsp_max, test_durations_sample)

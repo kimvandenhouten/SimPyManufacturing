@@ -10,7 +10,7 @@ logger = get_logger(__name__)
 # TODO: synchronize this with other methods
 
 
-def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10, time_limit_pi=60):
+def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10, time_limit_pi=60, time_limit_initial=60):
 
     # Initialization
     durations = rcpsp_max.durations
@@ -26,7 +26,8 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
     # Find Initial Estimated Schedule
     logger.debug(f'Making initial schedule with durations {durations}')
 
-    estimated_result, estimated_makespan = rcpsp_max.solve_reactive(durations, scheduled_start_times, current_time)
+    estimated_result, estimated_makespan = rcpsp_max.solve_reactive(durations, scheduled_start_times, current_time,
+                                                                    time_limit=time_limit_initial)
     solver_calls += 1
 
     if estimated_result is None:
@@ -50,7 +51,7 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
                     next_completed_job = i
                     curr_time = real_completion_times[i]
                     completed_jobs.add(i)
-                    logger.debug(f'First decision moment is at {curr_time} when {i} finishes')
+                    logger.debug(f'Next decision moment is at {curr_time} when {i} finishes')
 
                     break
 
@@ -133,6 +134,7 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
             "method": "reactive",
             "time_limit_pi": time_limit_pi,
             "time_limit_rescheduling": time_limit_rescheduling,
+            "time_limit_initial": time_limit_initial,
             "solver_calls": solver_calls,
             "feasibility": feasibility,
             "feasibility_pi": feasibility_pi,

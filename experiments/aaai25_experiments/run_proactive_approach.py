@@ -28,7 +28,8 @@ def run_saa(rcpsp_max, nb_scenarios_saa, time_limit_saa):
         return res, start_times
 
 
-def evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenarios_saa, time_limit_saa):
+def evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenarios_saa, time_limit_saa=60,
+                 time_limit_pi=60):
 
     data = []
 
@@ -51,7 +52,7 @@ def evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenario
             objectives.append(objective)
 
             # Solve with perfect information
-            res, schedule = rcpsp_max.solve(duration_sample, time_limit=60)
+            res, schedule = rcpsp_max.solve(duration_sample, time_limit=time_limit_pi)
 
             if res:
                 feasibility_pi = True
@@ -115,7 +116,7 @@ def evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenario
                 f'Instance PSP{rcpsp_max.instance_id} with true durations {duration_sample} is INFEASIBLE')
             # Solve with perfect information
 
-            res, schedule = rcpsp_max.solve(duration_sample, time_limit=60)
+            res, schedule = rcpsp_max.solve(duration_sample, time_limit=time_limit_pi)
 
             if res:
                 feasibility_pi = True
@@ -146,6 +147,7 @@ def evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenario
                 "obj_pi": objective_pi,
                 "rel_regret": rel_regret,
                 "time_limit_SAA": time_limit_saa,
+                "time_limit_pi": time_limit_pi,
                 "feasibility": False,
                 "feasibility_pi": feasibility_pi,
                 "real_durations": duration_sample,
