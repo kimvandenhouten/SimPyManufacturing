@@ -14,6 +14,7 @@ import general
 
 logger = general.logger.get_logger(__name__)
 
+
 def get_start_and_finish(estnu, rte_data, num_tasks):
     """
     This function can be used to link the start times and finish times from the rte_dta
@@ -48,11 +49,12 @@ def get_true_durations(estnu, rte_data, num_tasks):
 def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time_limit_cp_stnu=60):
     data = []
     logger.debug(f'Start instance {rcpsp_max.instance_id}')
-
+    start_offline = time.time()
     # Read instance and set up deterministic RCPSP/max CP model and solve (this will be used for the resource chain)
     res, schedule = rcpsp_max.solve(time_limit=time_limit_cp_stnu)
 
     if res:
+
         # Build the STNU using the instance information and the resource chains
         schedule = schedule.to_dict('records')
         resource_chains, resource_assignments = get_resource_chains(schedule, rcpsp_max.capacity, rcpsp_max.needs,
@@ -68,10 +70,14 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
 
         # Read ESTNU xml file into Python object that was the output from the previous step
         estnu = STNU.from_graphml(output_location)
+        finish_offline = time.time()
+
+
         if dc:
             # For i in nr_samples:
+
             for sample_duration in test_durations_sample:
-               
+                start_online = time.time()
                 # Transform the sample_duration to a dictionary and find the correct ESTNU node indices
                 sample = {}
                 for task, duration in enumerate(sample_duration):
@@ -93,7 +99,9 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
 
                     feasibility = check_feasibility_rcpsp_max(start_times, finish_times, sample_duration, rcpsp_max.capacity, rcpsp_max.needs,
                                                rcpsp_max.temporal_constraints)
+
                     assert feasibility
+                    finish_online = time.time()
 
                     # Solve with perfect information
                     res, schedule = rcpsp_max.solve(sample_duration, time_limit=time_limit_pi)
@@ -109,11 +117,7 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
                     rel_regret = 100 * (objective - objective_pi) / objective_pi
 
                 else:
-                    objective = np.inf
-                    logger.warning(f'For some reason the RTE start could not finish')
-                    objective_pi = "NotImplemented"
-                    rel_regret = "NotImplemented"
-                    feasibility = False
+                    raise ValueError(f'For some reason the RTE could not finish')
 
                 # Store data
                 data.append({
@@ -128,7 +132,9 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
                     "feasibility_pi": feasibility_pi,
                     "rel_regret": rel_regret,
                     "real_durations": sample_duration,
-                    "start_times": start_times
+                    "start_times": start_times,
+                    "time_offline": finish_offline - start_offline,
+                    "time_online": finish_online - start_online
                 })
 
                 logger.debug(
@@ -144,6 +150,7 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
     else:  # In this situation the STNU approach cannot find a schedule because the initial CP is infeasible
         objective = np.inf
         feasibility = False
+        finish_offline = time.time()
 
     if objective == np.inf and feasibility == False:
         # For the situations that we did not find a feasible schedule we should still need to simulate and evaluate
@@ -189,7 +196,9 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
                 "feasibility": feasibility,
                 "feasibility_pi": feasibility_pi,
                 "real_durations": sample_duration,
-                "start_times": None
+                "start_times": None,
+                "time_offline": finish_offline - start_offline,
+                "time_online": 0
             })
 
             logger.debug(

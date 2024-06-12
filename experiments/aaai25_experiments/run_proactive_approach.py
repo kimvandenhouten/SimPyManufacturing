@@ -4,31 +4,33 @@ from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
 
 import pandas as pd
 import numpy as np
+import time
 
 import general.logger
 logger = general.logger.get_logger(__name__)
 
 
-data_agg = []
-
 
 # TODO: decouple the SAA approach and the evaluation approach?
 def run_saa(rcpsp_max, nb_scenarios_saa, time_limit_saa):
-        data = []
-        logger.debug(f'Start solving SAA instance {rcpsp_max.instance_id} with {nb_scenarios_saa} scenarios')
 
-        # TODO: implement the sampling strategy to sample scenarios
-        train_durations_sample = rcpsp_max.sample_durations(nb_scenarios_saa)
+    start_offline = time.time()
+    logger.debug(f'Start solving SAA instance {rcpsp_max.instance_id} with {nb_scenarios_saa} scenarios')
 
-        logger.debug(train_durations_sample)
+    # TODO: implement the sampling strategy to sample scenarios
+    train_durations_sample = rcpsp_max.sample_durations(nb_scenarios_saa)
 
-        # TODO: solve the SAA approach
-        res, start_times = rcpsp_max.solve_saa(train_durations_sample, time_limit_saa)
+    logger.debug(train_durations_sample)
 
-        return res, start_times
+    # TODO: solve the SAA approach
+    res, start_times = rcpsp_max.solve_saa(train_durations_sample, time_limit_saa)
+    finish_offline = time.time()
+    time_offline = finish_offline - start_offline
+
+    return res, start_times, time_offline
 
 
-def evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenarios_saa, time_limit_saa=60,
+def evaluate_saa(rcpsp_max, res, start_times, time_offline, test_durations_sample, nb_scenarios_saa, time_limit_saa=60,
                  time_limit_pi=60):
 
     data = []
@@ -44,12 +46,15 @@ def evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenario
         rel_regrets = []
 
         for i, duration_sample in enumerate(test_durations_sample):
+            start_online = time.time()
             finish_times = [start_times[i] + duration_sample[i] for i in range(len(duration_sample))]
             feasibility = check_feasibility_rcpsp_max(start_times, finish_times, duration_sample, rcpsp_max.capacity,
                                                       rcpsp_max.needs, rcpsp_max.temporal_constraints)
             feasibilities.append(feasibility)
             objective = max(finish_times) if feasibility else np.inf
             objectives.append(objective)
+
+            finish_online = time.time()
 
             # Solve with perfect information
             res, schedule = rcpsp_max.solve(duration_sample, time_limit=time_limit_pi)
@@ -100,7 +105,9 @@ def evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenario
                 "feasibility": feasibility,
                 "feasibility_pi": feasibility_pi,
                 "real_durations": duration_sample,
-                "start_times": start_times
+                "start_times": start_times,
+                "time_offline": time_offline,
+                "time_online": finish_online - start_online
             })
 
     else:
@@ -109,6 +116,7 @@ def evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenario
         rel_regrets = []
         logger.debug(f'SAA  did not find a solution, start times are {start_times}')
         for i, duration_sample in enumerate(test_durations_sample):
+
 
             feasibilities.append(False)
             objectives.append(np.inf)
@@ -151,7 +159,10 @@ def evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenario
                 "feasibility": False,
                 "feasibility_pi": feasibility_pi,
                 "real_durations": duration_sample,
-                "start_times": start_times
+                "start_times": start_times,
+                "time_offline": time_offline,
+                "time_online": 0
+
             })
 
         logger.debug(f'{sum(feasibilities)} feasible solutions found with SAA')

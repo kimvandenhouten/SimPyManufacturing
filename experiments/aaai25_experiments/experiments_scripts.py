@@ -9,15 +9,15 @@ from experiments.aaai25_experiments.run_reactive_approach import run_reactive_ap
 # Import proactive approach
 from experiments.aaai25_experiments.run_proactive_approach import run_saa, evaluate_saa
 
-# Improt stnu approach
+# Import STNU approach
 from experiments.aaai25_experiments.run_stnu_approach import run_stnu_experiment
 
 # GENERAL SETTINGS
 SEED = 1
 DIRECTORY_INSTANCES = 'rcpsp/rcpsp_max'
-INSTANCE_FOLDERS = ["ubo50"]
-INSTANCE_IDS = range(1, 5)
-nb_scenarios_test = 1
+INSTANCE_FOLDERS = ["j10", "j20", "j30", "ubo50", "ubo100"]
+INSTANCE_IDS = range(1, 11)
+nb_scenarios_test = 10
 
 # RUN REACTIVE EXPERIMENTS
 # Settings reactive approach
@@ -47,11 +47,11 @@ for instance_folder in INSTANCE_FOLDERS:
     for instance_id in INSTANCE_IDS:
         rcpsp_max = RCPSP_CP_Benchmark.parsche_file(DIRECTORY_INSTANCES, instance_folder, instance_id)
         test_durations_sample = rcpsp_max.sample_durations(nb_scenarios_test)
-        res, start_times = run_saa(rcpsp_max, nb_scenarios_saa, time_limit_saa)
-        data += evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenarios_saa, time_limit_saa)
+        res, start_times, time_offline = run_saa(rcpsp_max, nb_scenarios_saa, time_limit_saa)
+        data += evaluate_saa(rcpsp_max, res, start_times, time_offline, test_durations_sample, nb_scenarios_saa,
+                             time_limit_saa)
         data_df = pd.DataFrame(data)
         data_df.to_csv(f"experiments/aaai25_experiments/results/results_proactive_{instance_folder}.csv", index=False)
-
 
 # RUN STNU EXPERIMENTS
 # Settings stnu approach

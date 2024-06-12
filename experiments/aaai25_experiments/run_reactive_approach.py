@@ -5,6 +5,7 @@ from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
 from rcpsp.rcpsp_max.process_file import parse_sch_file
 from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
 from general.logger import get_logger
+import time
 
 logger = get_logger(__name__)
 # TODO: synchronize this with other methods
@@ -12,6 +13,7 @@ logger = get_logger(__name__)
 
 def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10, time_limit_pi=60, time_limit_initial=60):
 
+    start_offline = time.time()
     # Initialization
     durations = rcpsp_max.durations
     infeasible = False
@@ -28,6 +30,8 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
 
     estimated_result, estimated_makespan = rcpsp_max.solve_reactive(durations, scheduled_start_times, current_time,
                                                                     time_limit=time_limit_initial)
+    finish_offline = time.time()
+    start_online = time.time()
     solver_calls += 1
 
     if estimated_result is None:
@@ -83,6 +87,7 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
                 break
             logger.debug(f'Rescheduling leads to {estimated_result}')
 
+    finish_online = time.time()
     if infeasible:
         feasibility = False
         makespan = np.inf
@@ -100,6 +105,8 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
         assert check_feasibility
         makespan = estimated_makespan
         logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {real_durations} is FEASIBLE with makespan {makespan}')
+
+    finish = time.time()
 
     # Run the updated problem again
     logger.debug(f'Start scheduling under perfect information with processing times {durations} '
@@ -140,6 +147,8 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
             "feasibility_pi": feasibility_pi,
             "real_durations": real_durations,
             "start_times": start_times,
+            "time_offline": finish_offline - start_offline,
+            "time_online": finish_online - start_online
             }
 
     return [data]

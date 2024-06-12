@@ -20,12 +20,12 @@ level = "WARNING"
 
 [tool.logging.loggers."experiments.aaai25_experiments.run_proactive_approach"]
 # Module names containing dots must be fully enclosed in quotes.
-level = "DEBUG"
+level = "INFO"
 
 
 [tool.logging.loggers."experiments.aaai25_experiments.run_reactive_approach"]
 # Module names containing dots must be fully enclosed in quotes.
-level = "DEBUG"
+level = "INFO"
 
 [tool.logging.loggers."stnu.algorithms.call_java_cstnu_tool"]
 # Module names containing dots must be fully enclosed in quotes.
