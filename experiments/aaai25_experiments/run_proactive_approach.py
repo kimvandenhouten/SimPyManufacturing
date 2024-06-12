@@ -12,145 +12,157 @@ logger = general.logger.get_logger(__name__)
 data_agg = []
 
 
-def run_saa_experiment(instance_folder, instance_id, nb_scenarios_saa, time_limit_saa, nb_scenarios_test):
+# TODO: decouple the SAA approach and the evaluation approach?
+def run_saa(rcpsp_max, nb_scenarios_saa, time_limit_saa):
         data = []
-        logger.info(f'Start instance {instance_id}')
-        capacity, durations, needs, temporal_constraints = parse_sch_file(f'rcpsp/rcpsp_max/{instance_folder}/PSP{instance_id}.SCH')
-        
-        rcpsp_max = RCPSP_CP_Benchmark(capacity, durations, None, needs, temporal_constraints, "RCPSP_max")
+        logger.debug(f'Start solving SAA instance {rcpsp_max.instance_id} with {nb_scenarios_saa} scenarios')
 
         # TODO: implement the sampling strategy to sample scenarios
         train_durations_sample = rcpsp_max.sample_durations(nb_scenarios_saa)
+
         logger.debug(train_durations_sample)
 
         # TODO: solve the SAA approach
         res, start_times = rcpsp_max.solve_saa(train_durations_sample, time_limit_saa)
 
-        if res:
-            logger.debug(f'SAA found a solution, start times are {start_times}')
+        return res, start_times
 
-            # TODO: evaluate on test scenarios (simulation)
-            test_durations_sample = rcpsp_max.sample_durations(nb_scenarios_test)
 
-            feasibilities, objectives = [], []
-            feasibilities_pi, objectives_pi = [], []
-            rel_regrets = []
+def evaluate_saa(rcpsp_max, res, start_times, test_durations_sample, nb_scenarios_saa, time_limit_saa):
 
-            for i, duration_sample in enumerate(test_durations_sample):
-                finish_times = [start_times[i] + duration_sample[i] for i in range(len(duration_sample))]
-                feasibility = check_feasibility_rcpsp_max(start_times, finish_times, duration_sample, capacity, needs,
-                                            temporal_constraints)
-                feasibilities.append(feasibility)
-                objective = max(finish_times) if feasibility else np.inf
-                objectives.append(objective)
+    data = []
 
-                # Solve with perfect information
-                rcpsp_max = RCPSP_CP_Benchmark(capacity, duration_sample, None, needs, temporal_constraints, "RCPSP_max")
-                res, schedule = rcpsp_max.solve(time_limit=60)
+    if res:
+        logger.debug(f'SAA found a solution, start times are {start_times}')
 
-                if res:
-                    feasibility_pi = True
-                    objective_pi = max(schedule["end"].tolist())
-                    gap_pi = res.get_objective_gaps()[0]
-                else:
-                    feasibility_pi = False
-                    objective_pi = np.inf
+        # TODO: evaluate on test scenarios (simulation)
 
-                feasibilities_pi.append(feasibility_pi)
-                objectives_pi.append(objective_pi)
 
-                if objective < np.inf:
-                    rel_regret = 100 * (objective - objective_pi) / objective_pi
+        feasibilities, objectives = [], []
+        feasibilities_pi, objectives_pi = [], []
+        rel_regrets = []
 
-                if objective == np.inf:
-                    if objective_pi == np.inf:
-                        rel_regret = 0
-                    else:
-                        rel_regret = 100
+        for i, duration_sample in enumerate(test_durations_sample):
+            finish_times = [start_times[i] + duration_sample[i] for i in range(len(duration_sample))]
+            feasibility = check_feasibility_rcpsp_max(start_times, finish_times, duration_sample, rcpsp_max.capacity,
+                                                      rcpsp_max.needs, rcpsp_max.temporal_constraints)
+            feasibilities.append(feasibility)
+            objective = max(finish_times) if feasibility else np.inf
+            objectives.append(objective)
 
-                rel_regrets.append(rel_regret)
+            # Solve with perfect information
+            res, schedule = rcpsp_max.solve(duration_sample, time_limit=60)
 
+            if res:
+                feasibility_pi = True
+                objective_pi = max(schedule["end"].tolist())
+                gap_pi = res.get_objective_gaps()[0]
+            else:
+                feasibility_pi = False
+                objective_pi = np.inf
+
+            feasibilities_pi.append(feasibility_pi)
+            objectives_pi.append(objective_pi)
+
+            if objective < np.inf:
                 logger.info(
-                    f'objective under perfect information is {objective_pi}, makespan obtained with proactive schedule is {objective}, '
-                    f'regret is {rel_regret}, and')
+                    f'Instance PSP{rcpsp_max.instance_id} with true durations {duration_sample} is FEASIBLE with makespan {objective}')
+                rel_regret = 100 * (objective - objective_pi) / objective_pi
 
-                # Store data
-                data.append({
-                    "instance_name": f'{instance_folder}_{instance_id}',
-                    "method": "proactive",
-                    "nr_samples": nb_scenarios_saa,
-                    "test_sample_id": i,
-                    "obj": objective,
-                    "obj_pi": objective_pi,
-                    "rel_regret": rel_regret})
-            
-        else:
-            feasibilities, objectives = [], []
-            feasibilities_pi, objectives_pi = [], []
-            rel_regrets = []
-            logger.debug(f'SAA  did not find a solution, start times are {start_times}')
-            test_durations_sample = rcpsp_max.sample_durations(nb_scenarios_test)
-            for i, duration_sample in enumerate(test_durations_sample):
-
-                feasibilities.append(False)
-                objectives.append(np.inf)
-
-                # Solve with perfect information
-                rcpsp_max = RCPSP_CP_Benchmark(capacity, duration_sample, None, needs, temporal_constraints,
-                                               "RCPSP_max")
-                res, schedule = rcpsp_max.solve(time_limit=60)
-
-                if res:
-                    feasibility_pi = True
-                    objective_pi = max(schedule["end"].tolist())
-                    gap_pi = res.get_objective_gaps()[0]
-                else:
-                    feasibility_pi = False
-                    objective_pi = np.inf
+            if objective == np.inf:
 
                 if objective_pi == np.inf:
                     rel_regret = 0
+                    logger.info(
+                        f'Instance PSP{rcpsp_max.instance_id} with true durations {duration_sample} is INFEASIBLE')
                 else:
                     rel_regret = 100
+                    logger.info(
+                        f'Instance PSP{rcpsp_max.instance_id} with true durations {duration_sample} is INFEASIBLE under perfect information')
 
-                rel_regrets.append(rel_regret)
+            rel_regrets.append(rel_regret)
 
-                logger.info(
-                    f'objective under perfect information is {objective_pi}, makespan obtained with proactive schedule is {np.inf}, '
-                    f'regret is {rel_regret}, and')
+            logger.debug(f'objective under perfect information is {objective_pi}, makespan obtained with proactive schedule is {objective}, '
+                f'regret is {rel_regret}, and')
 
-                # Store data
-                data.append({
-                    "instance_name": f'{instance_folder}_{instance_id}',
-                    "method": "proactive",
-                    "nr_samples": nb_scenarios_saa,
-                    "test_sample_id": i,
-                    "obj": np.inf,
-                    "obj_pi": objective_pi,
-                    "rel_regret": rel_regret,
-                    "time_limit_SAA": time_limit_saa})
 
-            logger.debug(f'{sum(feasibilities)} feasible solutions found with SAA')
-            logger.debug(f'while solving with perfect information resulted in {sum(feasibilities_pi)} feasible solutions '
-                  f'found with simulation')
+            # Store data
+            data.append({
+                "instance_folder": rcpsp_max.instance_folder,
+                "instance_id": rcpsp_max.instance_id,
+                "method": "proactive",
+                "nr_samples": nb_scenarios_saa,
+                "obj": objective,
+                "obj_pi": objective_pi,
+                "rel_regret": rel_regret,
+                "time_limit_SAA": time_limit_saa,
+                "feasibility": feasibility,
+                "feasibility_pi": feasibility_pi,
+                "real_durations": duration_sample,
+                "start_times": start_times
+            })
+
+    else:
+        feasibilities, objectives = [], []
+        feasibilities_pi, objectives_pi = [], []
+        rel_regrets = []
+        logger.debug(f'SAA  did not find a solution, start times are {start_times}')
+        for i, duration_sample in enumerate(test_durations_sample):
+
+            feasibilities.append(False)
+            objectives.append(np.inf)
+            logger.info(
+                f'Instance PSP{rcpsp_max.instance_id} with true durations {duration_sample} is INFEASIBLE')
+            # Solve with perfect information
+
+            res, schedule = rcpsp_max.solve(duration_sample, time_limit=60)
+
+            if res:
+                feasibility_pi = True
+                objective_pi = max(schedule["end"].tolist())
+                gap_pi = res.get_objective_gaps()[0]
+            else:
+                feasibility_pi = False
+                objective_pi = np.inf
+
+            if objective_pi == np.inf:
+                rel_regret = 0
+            else:
+                rel_regret = 100
+
+            rel_regrets.append(rel_regret)
+
             logger.debug(
-                f'average objective while ignoring the infeasible ones is {np.mean([i for i in objectives if i < np.inf])}')
-            logger.debug(f'average rel regret (%) is {np.mean(rel_regrets)}')
+                f'objective under perfect information is {objective_pi}, makespan obtained with proactive schedule is {np.inf}, '
+                f'regret is {rel_regret}, and')
 
-        return data
+            # Store data
+            data.append({
+                "instance_folder": rcpsp_max.instance_folder,
+                "instance_id": rcpsp_max.instance_id,
+                "method": "proactive",
+                "nr_samples": nb_scenarios_saa,
+                "obj": np.inf,
+                "obj_pi": objective_pi,
+                "rel_regret": rel_regret,
+                "time_limit_SAA": time_limit_saa,
+                "feasibility": False,
+                "feasibility_pi": feasibility_pi,
+                "real_durations": duration_sample,
+                "start_times": start_times
+            })
+
+        logger.debug(f'{sum(feasibilities)} feasible solutions found with SAA')
+        logger.debug(f'while solving with perfect information resulted in {sum(feasibilities_pi)} feasible solutions '
+              f'found with simulation')
+        logger.debug(
+            f'average objective while ignoring the infeasible ones is {np.mean([i for i in objectives if i < np.inf])}')
+        logger.debug(f'average rel regret (%) is {np.mean(rel_regrets)}')
+
+    return data
 
 
-results_location = "aaai25_experiments/results/results_saa_j30.csv"
-nb_scenarios_test = 50
-time_limit_saa = 10 * 60
-for nb_scenarios_saa in [10]:
-    for instance_folder in ["j30"]:
-        for instance_id in range(1, 271):
 
-            data_agg += run_saa_experiment(instance_folder, instance_id, nb_scenarios_saa, time_limit_saa,
-                                           nb_scenarios_test)
-            df = pd.DataFrame(data_agg)
-            df.to_csv(results_location, index=False)
 
 
 

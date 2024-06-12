@@ -9,34 +9,18 @@ from general.logger import get_logger
 logger = get_logger(__name__)
 # TODO: synchronize this with other methods
 
-def randomize_real_durations(durations, distribution="uniform"):
-    random_durations =[]
-    for t in durations:
-        if t == 0:
-            random_durations.append(t)
-        elif distribution == "normal":
-            t = max(round(np.random.normal(t, t)), 1)
-            random_durations.append(t)
-        else:
-            t = max(np.random.randint(round(t - 1 * np.sqrt(t)), round(t + 1 * np.sqrt(t))), 1)
-            #t = max(np.random.randint(t - 2, t + 2), 1)
-            random_durations.append(t)
-    return random_durations
 
-
-def run_reactive_approach(instance_id, instance_folder, time_limit_rescheduling=10, time_limit_pi=60):
-
-    # Read information from RCPSP\max instance
-    capacity, det_durations, needs, temporal_constraints = parse_sch_file(f'rcpsp/rcpsp_max/{instance_folder}/PSP{instance_id}.SCH')
-    rcpsp_max = RCPSP_CP_Benchmark(capacity, det_durations, None, needs, temporal_constraints, "RCPSP_max")
+def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10, time_limit_pi=60):
 
     # Initialization
-    durations = det_durations
+    durations = rcpsp_max.durations
     infeasible = False
     current_time = 0
     solver_calls = 0
     scheduled_start_times = [-1 for i in range(len(durations))]
-    real_durations = randomize_real_durations(durations, distribution="uniform")
+
+    real_durations = duration_sample
+
     logger.debug(f'real durations is {real_durations}')
 
     # Find Initial Estimated Schedule
@@ -101,18 +85,20 @@ def run_reactive_approach(instance_id, instance_folder, time_limit_rescheduling=
     if infeasible:
         feasibility = False
         makespan = np.inf
-        logger.info(f'Instance {instance_id} PSP{instance_id} with true durations {real_durations} is INFEASIBLE')
+
     else:
         # TODO assert feasibility
         feasibility = True
         start_times = estimated_result
         finish_times = [start_times[i] + real_durations[i] for i in range(len(start_times))]
-        check_feasibility = check_feasibility_rcpsp_max(start_times, finish_times, real_durations, capacity, needs,
-                                                        temporal_constraints)
-        logger.info(f'Instance {instance_id} PSP{instance_id} with true durations {real_durations} is INFEASIBLE')
+
+        # TODO: model this in RCPSP_max object
+        check_feasibility = check_feasibility_rcpsp_max(start_times, finish_times, real_durations, rcpsp_max.capacity,
+                                                        rcpsp_max.needs, rcpsp_max.temporal_constraints)
+
         assert check_feasibility
         makespan = estimated_makespan
-        logger.info(f'Instance {instance_id} PSP{instance_id} with true durations {real_durations} is FEASIBLE with makespan {makespan}')
+        logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {real_durations} is FEASIBLE with makespan {makespan}')
 
     # Run the updated problem again
     logger.debug(f'Start scheduling under perfect information with processing times {durations} '
@@ -123,35 +109,38 @@ def run_reactive_approach(instance_id, instance_folder, time_limit_rescheduling=
 
     if result_pi is None:
         feasibility_pi = False
-        logger.debug(f'Result under perfect information is INFEASIBLE')
+
 
     else:
         feasibility_pi = True
         logger.debug(f'Result under perfect information is {result_pi} with makespan {makespan_pi}')
 
     if makespan == np.inf and makespan_pi == np.inf:
+        logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {real_durations} is INFEASIBLE under perfect information')
         relative_regret = 0
     elif makespan == np.inf and makespan_pi < np.inf:
+        logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {real_durations} is INFEASIBLE')
         relative_regret = 100
     else:
         relative_regret = 100 * (makespan - makespan_pi) / makespan_pi
 
     logger.debug(f'Relative regret (%) is {relative_regret}')
 
-    data = {"instance_folder": instance_folder, "instance_id": instance_id,
-            "sample": sample, "rel_regret": relative_regret,
-            "obj": makespan, "obj_pi": makespan_pi, "method": "reactive",
-            "real_durations": real_durations, "start_times": start_times,
-            "time_limit_pi": time_limit_pi, "time_limit_rescheduling": time_limit_rescheduling,
-            "solver_calls": solver_calls, "feasibility": feasibility, "feasibility_pi": feasibility_pi}
+    data = {"instance_folder": rcpsp_max.instance_folder,
+            "instance_id": rcpsp_max.instance_id,
+            "rel_regret": relative_regret,
+            "obj": makespan,
+            "obj_pi": makespan_pi,
+            "method": "reactive",
+            "time_limit_pi": time_limit_pi,
+            "time_limit_rescheduling": time_limit_rescheduling,
+            "solver_calls": solver_calls,
+            "feasibility": feasibility,
+            "feasibility_pi": feasibility_pi,
+            "real_durations": real_durations,
+            "start_times": start_times,
+            }
+
     return [data]
 
 
-data = []
-np.random.seed(1)
-instance_folder = "j10"
-for instance_id in range(1, 100):
-    for sample in range(10):
-        data += run_reactive_approach(instance_id, instance_folder)
-        data_df = pd.DataFrame(data)
-        data_df.to_csv(f'experiments/aaai25_experiments/results/results_resactive_{instance_folder}.csv')

@@ -1,6 +1,7 @@
 import re
 import general.logger
 logger = general.logger.get_logger(__name__)
+
 def parse_sch_file(filename):
     with open(filename, 'r') as file:
         lines = file.readlines()
