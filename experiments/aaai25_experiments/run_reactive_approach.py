@@ -110,7 +110,6 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
     if result_pi is None:
         feasibility_pi = False
 
-
     else:
         feasibility_pi = True
         logger.debug(f'Result under perfect information is {result_pi} with makespan {makespan_pi}')

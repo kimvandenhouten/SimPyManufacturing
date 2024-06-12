@@ -22,6 +22,7 @@ class RCPSP_CP_Benchmark:
         self.problem_type = problem_type
         self.instance_folder = instance_folder
         self.instance_id = instance_id
+        self.num_tasks = len(self.durations)
 
     @classmethod
     def parsche_file(cls, directory, instance_folder, instance_id):

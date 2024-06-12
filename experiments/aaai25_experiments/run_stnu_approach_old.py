@@ -1,3 +1,4 @@
+from rcpsp.rcpsp_max.process_file import parse_sch_file
 from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
 from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
 from rcpsp.temporal_networks.stnu_rcpsp import RCPSP_STNU, get_resource_chains, add_resource_chains
@@ -7,80 +8,66 @@ from temporal_networks.rte_star import rte_star
 from temporal_networks.stnu import STNU, SampleStrategy
 from temporal_networks.cstnu_tool.stnu_to_xml_function import stnu_to_xml
 
+
 import time
-import pandas as pd
-import numpy as np
-import general
-
+import general.logger
 logger = general.logger.get_logger(__name__)
+import pandas as pd
 
-def get_start_and_finish(estnu, rte_data, num_tasks):
-    """
-    This function can be used to link the start times and finish times from the rte_dta
-    to the RCPSP_max starts and finish times
-    """
+import numpy as np
+
+data_agg = []
+results_location = "results.csv"
+
+
+def get_true_durations(estnu, rte_data, durations, sample):
     true_durations, start_times, finish_times = [], [], []
-    for task in range(num_tasks):
-        if task > 0 and task < num_tasks - 1:
+    for (task, dur) in enumerate(durations):
+        if task > 0 and task < len(durations) - 1:
             node_idx_start = estnu.translation_dict_reversed[f'{task}_{STNU.EVENT_START}']
             node_idx_finish = estnu.translation_dict_reversed[f'{task}_{STNU.EVENT_FINISH}']
             start_times.append(rte_data.f[node_idx_start])
             finish_times.append(rte_data.f[node_idx_finish])
+            true_durations.append(sample[node_idx_finish])
         else:
             node_idx_start = estnu.translation_dict_reversed[f'{task}_{STNU.EVENT_START}']
             node_idx_finish = estnu.translation_dict_reversed[f'{task}_{STNU.EVENT_START}']
             start_times.append(rte_data.f[node_idx_start])
             finish_times.append(rte_data.f[node_idx_finish])
-    return start_times, finish_times
+            true_durations.append(0)
+    return true_durations, start_times, finish_times
 
 
-def get_true_durations(estnu, rte_data, num_tasks):
-    """
-    This function can be used to return the durations according to the RTE schedule
-    related to the RCPSP_max
-    """
-    start_times, finish_times = get_start_and_finish(estnu, rte_data, num_tasks)
-    true_durations = [finish_times[i] - start_times[i] for i in range(num_tasks)]
-
-    return true_durations
-
-
-def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time_limit_cp_stnu=60):
+def run_stnu_experiment(instance_folder, instance_id, nr_samples):
     data = []
-    logger.debug(f'Start instance {rcpsp_max.instance_id}')
+    logger.warning(f'Start instance {instance_id}')
 
     # Read instance and set up deterministic RCPSP/max CP model and solve (this will be used for the resource chain)
-    res, schedule = rcpsp_max.solve(time_limit=time_limit_cp_stnu)
+    capacity, durations, needs, temporal_constraints = parse_sch_file(f'rcpsp/rcpsp_max/{instance_folder}/PSP{instance_id}.SCH')
+    rcpsp_max = RCPSP_CP_Benchmark(capacity, durations, None, needs, temporal_constraints, "RCPSP_max")
+    res, schedule = rcpsp_max.solve(time_limit=60)
 
     if res:
         # Build the STNU using the instance information and the resource chains
         schedule = schedule.to_dict('records')
-        resource_chains, resource_assignments = get_resource_chains(schedule, rcpsp_max.capacity, rcpsp_max.needs,
-                                                                    complete=True)
-        stnu = RCPSP_STNU.from_rcpsp_max_instance(rcpsp_max.durations, rcpsp_max.temporal_constraints)
+        resource_chains, resource_assignments = get_resource_chains(schedule, capacity, needs, complete=True)
+        stnu = RCPSP_STNU.from_rcpsp_max_instance(durations, temporal_constraints)
         stnu = add_resource_chains(stnu, resource_chains)
         stnu_to_xml(stnu, f"example_rcpsp_max_stnu", "temporal_networks/cstnu_tool/xml_files")
 
         # Run the DC algorithm using the Java CSTNU tool, the result is written to a xml file
-        dc, output_location = run_dc_algorithm("temporal_networks/cstnu_tool/xml_files",
-                                               f"example_rcpsp_max_stnu")
-        logger.debug(f'dc is {dc} and output location {output_location}')
+        dc, output_location = run_dc_algorithm("temporal_networks/cstnu_tool/xml_files", f"example_rcpsp_max_stnu")
+        logger.info(f'dc is {dc} and output location {output_location}')
 
         # Read ESTNU xml file into Python object that was the output from the previous step
         estnu = STNU.from_graphml(output_location)
         if dc:
             # For i in nr_samples:
-            for sample_duration in test_durations_sample:
-               
-                # Transform the sample_duration to a dictionary and find the correct ESTNU node indices
-                sample = {}
-                for task, duration in enumerate(sample_duration):
-                    if 0 >= task or task >= len(sample_duration) - 1:  # skip the source and sink node
-                        continue
-                    find_contingent_node = estnu.translation_dict_reversed[f'{task}_{STNU.EVENT_FINISH}']
-                    sample[find_contingent_node] = duration
-
-                logger.debug(f'Sample dict that will be given to RTE star is {sample_duration}')
+            for i in range(nr_samples):
+                np.random.seed(i)
+                # Sample a realisation for the contingent weights
+                sample = estnu.sample_contingent_weights(strategy=SampleStrategy.RANDOM_EXECUTION_STRATEGY)
+                logger.info(f'Sample that will be given to RTE_star: {sample}')
 
                 # Run RTE algorithm with alternative oracle and store makespan
                 rte_data = rte_star(estnu, oracle="sample", sample=sample)
@@ -89,22 +76,19 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
                     objective = max(rte_data.f.values())
 
                     # Obtain true durations and start and finish times and verify feasibility
-                    start_times, finish_times = get_start_and_finish(estnu, rte_data, rcpsp_max.num_tasks)
-
-                    feasibility = check_feasibility_rcpsp_max(start_times, finish_times, sample_duration, rcpsp_max.capacity, rcpsp_max.needs,
-                                               rcpsp_max.temporal_constraints)
+                    true_durations, start_times, finish_times = get_true_durations(estnu, rte_data, durations, sample)
+                    feasibility = check_feasibility_rcpsp_max(start_times, finish_times, true_durations, capacity, needs,
+                                               temporal_constraints)
                     assert feasibility
 
                     # Solve with perfect information
-                    res, schedule = rcpsp_max.solve(sample_duration, time_limit=time_limit_pi)
+                    rcpsp_max = RCPSP_CP_Benchmark(capacity, true_durations, None, needs, temporal_constraints, "RCPSP_max")
+                    res, schedule = rcpsp_max.solve(time_limit=60)
 
                     if res:
                         objective_pi = max(schedule["end"].tolist())
-                        feasibility_pi = True
                     else:
-                        feasibility_pi = False
                         objective_pi = np.inf
-                        logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {sample_duration} is INFEASIBLE under perfect information')
                     assert objective_pi <= objective
                     rel_regret = 100 * (objective - objective_pi) / objective_pi
 
@@ -120,54 +104,44 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
                     "instance_folder": rcpsp_max.instance_folder,
                     "instance_id": rcpsp_max.instance_id,
                     "method": "STNU",
-                    "time_limit_pi": time_limit_pi,
-                    "time_limit_cp_stnu": time_limit_cp_stnu,
+                    "test_sample_id": i,
                     "obj": objective,
                     "obj_pi": objective_pi,
-                    "feasibility": feasibility,
-                    "feasibility_pi": feasibility_pi,
-                    "rel_regret": rel_regret,
-                    "real_durations": sample_duration,
-                    "start_times": start_times
-                })
+                    "rel_regret": rel_regret})
 
-                logger.debug(
+                logger.info(
                     f'objective under perfect information is {objective_pi}, makespan obtained with STNU scheduling is {objective}, '
                     f'relative regret is {rel_regret}, and')
-                logger.info(
-                    f'Instance PSP{rcpsp_max.instance_id} with true durations {sample_duration} is FEASIBLE with makespan {objective}')
 
         else:  # In this situation the STNU approach cannot find a schedule because the network was not DC
+            print(f'The network is not dynamically controllable')
             objective = np.inf
             feasibility = False
 
-    else:  # In this situation the STNU approach cannot find a schedule because the initial CP is infeasible
+    else:  # In this situation the STNU approach cannot find a schedule because the network was not DC
         objective = np.inf
         feasibility = False
 
     if objective == np.inf and feasibility == False:
-        # For the situations that we did not find a feasible schedule we should still need to simulate and evaluate
+        # For the situations that we did not find a feasibile schedule we should still need to simulate and evaluate
         # perfect information schedules.
         feasibilities, objectives = [], []
         rel_regrets = []
+        test_durations_sample = rcpsp_max.sample_durations(nr_samples)
 
-        # TODO: this is sort of double now
-        for i, sample_duration in enumerate(test_durations_sample):
+        for i, duration_sample in enumerate(test_durations_sample):
             feasibilities.append(False)
             objectives.append(np.inf)
 
             # Solve with perfect information
-            res, schedule = rcpsp_max.solve(sample_duration, time_limit=time_limit_pi)
+            rcpsp_max = RCPSP_CP_Benchmark(capacity, duration_sample, None, needs, temporal_constraints,
+                                           "RCPSP_max")
+            res, schedule = rcpsp_max.solve(time_limit=60)
 
             if res:
                 objective_pi = max(schedule["end"].tolist())
-                feasibility_pi = True
-                logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {sample_duration} is INFEASIBLE')
             else:
                 objective_pi = np.inf
-                feasibility_pi = False
-                logger.info(
-                    f'Instance PSP{rcpsp_max.instance_id} with true durations {sample_duration} is INFEASIBLE under perfect information')
 
             if objective_pi == np.inf:
                 rel_regret = 0
@@ -181,23 +155,20 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
                 "instance_folder": rcpsp_max.instance_folder,
                 "instance_id": rcpsp_max.instance_id,
                 "method": "STNU",
-                "time_limit_pi": time_limit_pi,
-                "time_limit_cp_stnu": time_limit_cp_stnu,
+                "test_sample_id": i,
                 "obj": np.inf,
                 "obj_pi": objective_pi,
-                "rel_regret": rel_regret,
-                "feasibility": feasibility,
-                "feasibility_pi": feasibility_pi,
-                "real_durations": sample_duration,
-                "start_times": None
-            })
+                "rel_regret": rel_regret})
 
-            logger.debug(
+            logger.info(
                 f'objective under perfect information is {objective_pi}, makespan obtained with STNU scheduling is {np.inf}, '
                 f'relative regret is {rel_regret}, and')
     return data
 
-SEED = 1
-data = []
-np.random.seed(SEED)
+
 nb_scenarios_test = 10
+for instance_folder in ["j10"]:
+    for instance_id in range(1, 2):
+        data_agg += run_stnu_experiment(instance_folder, instance_id, nb_scenarios_test)
+        df = pd.DataFrame(data_agg)
+        df.to_csv(results_location, index=False)
