@@ -3,14 +3,37 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-for instance_folder in ["j10", "j30"]:
+for instance_folder in ["j10", "j20", "j30", "ubo50", "ubo100"]:
     # Read the CSV files into DataFrames
-    df1 = pd.read_csv(f'aaai25_experiments/results/results_saa_{instance_folder}.csv')
-    df2 = pd.read_csv(f'aaai25_experiments/results/results_stnu_{instance_folder}.csv')
-    df3 = pd.read_csv(f'aaai25_experiments/results/reactive_approach_{instance_folder}.csv')
+    df = pd.read_csv(f'experiments/aaai25_experiments/results/results_proactive_{instance_folder}.csv')
+    print(f'Number of experiments {instance_folder} proactive {len(df)}')
+    df = df[df['obj_pi'] != np.inf]
+    print(f'Number of pi feasible instances {instance_folder} proactive {len(df)}')
+
+    df = pd.read_csv(f'experiments/aaai25_experiments/results/results_stnu_{instance_folder}.csv')
+    print(f'Number of experiments {instance_folder} stnu {len(df)}')
+    df = df[df['obj_pi'] != np.inf]
+    print(f'Number of pi feasible instances {instance_folder} stnu {len(df)}')
+    df = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv')
+    print(f'Number of experiments {instance_folder} reactive {len(df)}')
+    df = df[df['obj_pi'] != np.inf]
+    print(f'Number of pi feasible instances {instance_folder} reactive {len(df)}')
+
+
+for instance_folder in ["j10", "j20", "j30", "ubo50", "ubo100"]:
+    # Read the CSV files into DataFrames
+    df1 = pd.read_csv(f'experiments/aaai25_experiments/results/results_proactive_{instance_folder}.csv')
+    df2 = pd.read_csv(f'experiments/aaai25_experiments/results/results_stnu_{instance_folder}.csv')
+    df3 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv')
     # Combine the DataFrames
     combined_df = pd.concat([df1, df2, df3])
+    combined_df['total_time'] = combined_df['time_offline'] + combined_df['time_online']
+    print(3*50*10)
+    print(f'Total number of experiments for instance folder {instance_folder} {len(combined_df)}')
 
+    # Remove the instances for which the PI problem was infeasible
+    combined_df = combined_df[combined_df['obj_pi'] != np.inf]
+    print(f'Total number of experiments after removing non-pi-feasible instances {len(combined_df)}')
 
     print(len(combined_df))
     combined_df['rel_regret'] = pd.to_numeric(combined_df['rel_regret'], errors='coerce')
@@ -24,26 +47,65 @@ for instance_folder in ["j10", "j30"]:
     ).reset_index()
 
     # Save the aggregated results to a new CSV file (optional)
-    aggregated_df.to_csv(f'aaai25_experiments/results/aggregated_results_{instance_folder}.csv', index=False)
+    aggregated_df.to_csv(f'experiments/aaai25_experiments/results/aggregated_results_{instance_folder}.csv',
+                         index=False)
+
+    # Group by "instance" and "method" and calculate the average "rel_regret"
+    combined_df_only_feasible = combined_df[combined_df['obj'] != np.inf]
+    combined_df_only_feasible = combined_df_only_feasible[combined_df_only_feasible['obj'] != np.inf]
+    aggregated_df = combined_df_only_feasible.groupby(['instance_id', 'method', 'real_durations']).agg(
+        rel_regret=('rel_regret', 'mean'),
+    ).reset_index()
+
+    # Save the aggregated results to a new CSV file (optional)
+    aggregated_df.to_csv(f'experiments/aaai25_experiments/results/aggregated_results_per_instance_{instance_folder}.csv', index=False)
 
     # Print the aggregated DataFrame
     print(aggregated_df)
 
-    # Plotting the results
+    # Plotting the results on relative regret
     plt.figure(figsize=(12, 6))
     plt.rcParams.update({'font.size': 20})
-    sns.barplot(x='method', y='rel_regret', data=combined_df)
-
-    # Adding titles and labels
+    sns.boxplot(x='method', y='rel_regret', data=combined_df)
     plt.title(f'RCPSP\max {instance_folder} Relative Regret')
     plt.xlabel('Method')
     plt.ylabel('Average Relative Regret')
-
-    # Display the plot
-    plt.legend(title='Method')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig(f'aaai25_experiments/results/relative_regret_{instance_folder}.png')
+    plt.savefig(f'experiments/aaai25_experiments/figures/relative_regret_{instance_folder}.png')
+
+    # Plotting the results on offline runtime
+    plt.figure(figsize=(12, 6))
+    plt.rcParams.update({'font.size': 20})
+    sns.boxplot(x='method', y='time_offline', data=combined_df)
+    plt.title(f'RCPSP\max {instance_folder} time offline')
+    plt.xlabel('Method')
+    plt.ylabel('Time offline (seconds)')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(f'experiments/aaai25_experiments/figures/time_offline_{instance_folder}.png')
+
+    # Plotting the results on online runtime
+    plt.figure(figsize=(12, 6))
+    plt.rcParams.update({'font.size': 20})
+    sns.boxplot(x='method', y='time_online', data=combined_df)
+    plt.title(f'RCPSP\max {instance_folder} time online')
+    plt.xlabel('Method')
+    plt.ylabel('Time offline (seconds)')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(f'experiments/aaai25_experiments/figures/time_online_{instance_folder}.png')
+
+    # Plotting the results on total time
+    plt.figure(figsize=(12, 6))
+    plt.rcParams.update({'font.size': 20})
+    sns.boxplot(x='method', y='total_time', data=combined_df)
+    plt.title(f'RCPSP\max {instance_folder} total time')
+    plt.xlabel('Method')
+    plt.ylabel('Total time (seconds)')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(f'experiments/aaai25_experiments/figures/total_time_{instance_folder}.png')
 
     filtered_df = combined_df[combined_df['obj'] != np.inf]
     print(filtered_df)
@@ -51,7 +113,8 @@ for instance_folder in ["j10", "j30"]:
         obj_count=('obj', 'count'),
     ).reset_index()
 
-    print(aggregated_df)
+    aggregated_df.to_csv(
+        f'experiments/aaai25_experiments/results/feasible_solutions_{instance_folder}.csv', index=False)
 
     # Plotting the results
     plt.figure(figsize=(12, 6))
@@ -59,33 +122,35 @@ for instance_folder in ["j10", "j30"]:
 
     # Adding titles and labels
     plt.title(f'RCPSP\max {instance_folder} Feasible Solutions')
-    plt.xlabel('Method')
     plt.ylabel('Count feasible objectives')
 
     # Display the plot
     plt.legend(title='Method')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig(f'aaai25_experiments/results/feasible_solutions_{instance_folder}.png')
+    plt.savefig(f'experiments/aaai25_experiments/figures/feasible_solutions_{instance_folder}.png')
 
+    # Plot total time not including the infeasible ones
+    plt.figure(figsize=(12, 6))
+    plt.rcParams.update({'font.size': 20})
+    sns.boxplot(x='method', y='total_time', data=filtered_df)
+    plt.title(f'RCPSP\max {instance_folder} total time filtered')
+    plt.xlabel('Method')
+    plt.ylabel('Total time (seconds)')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(f'experiments/aaai25_experiments/figures/total_time_{instance_folder}_filtered.png')
 
-# Plot relative regret when not including the infeasible ones:
-filtered_df = combined_df[combined_df['obj'] != np.inf]
-aggregated_df = filtered_df.groupby(['method']).agg(
-    rel_regret=('rel_regret', 'mean'),
-).reset_index()
-
-# Plotting the results
-plt.figure(figsize=(12, 6))
-sns.barplot(x='method', y='rel_regret', data=filtered_df)
-
-# Adding titles and labels
-plt.title(f'RCPSP\max {instance_folder} Rel Regret on Feasible Solutions')
-plt.xlabel('Instance')
-plt.ylabel('Relative regret on feasible solutions')
-
-# Display the plot
-plt.legend(title='Method')
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.savefig(f'aaai25_experiments/results/filtered_relative_regret_{instance_folder}.png')
+    # Plot relative regret when not including the infeasible ones:
+    filtered_df = combined_df[combined_df['obj'] != np.inf]
+    aggregated_df = filtered_df.groupby(['method']).agg(
+        rel_regret=('rel_regret', 'mean'),
+    ).reset_index()
+    plt.figure(figsize=(12, 6))
+    sns.boxplot(x='method', y='rel_regret', data=filtered_df)
+    plt.title(f'RCPSP\max {instance_folder} Rel Regret on Feasible Solutions')
+    plt.xlabel('Instance')
+    plt.ylabel('Relative regret on feasible solutions')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(f'experiments/aaai25_experiments/figures/filtered_relative_regret_{instance_folder}.png')
