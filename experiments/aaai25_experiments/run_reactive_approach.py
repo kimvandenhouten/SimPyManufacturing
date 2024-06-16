@@ -11,11 +11,17 @@ logger = get_logger(__name__)
 # TODO: synchronize this with other methods
 
 
-def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10, time_limit_pi=60, time_limit_initial=60):
+def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10, time_limit_pi=60,
+                          time_limit_initial=60, mode="mean"):
 
     start_offline = time.time()
     # Initialization
-    durations = rcpsp_max.durations
+    if mode == "mean":
+        durations = rcpsp_max.durations
+    elif mode == "robust":
+        durations = rcpsp_max.get_bound()
+    else:
+        raise NotImplementedError
     infeasible = False
     current_time = 0
     solver_calls = 0
@@ -148,7 +154,8 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
             "real_durations": real_durations,
             "start_times": start_times,
             "time_offline": finish_offline - start_offline,
-            "time_online": finish_online - start_online
+            "time_online": finish_online - start_online,
+            "mode": mode
             }
 
     return [data]

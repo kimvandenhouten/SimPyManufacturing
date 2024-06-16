@@ -16,12 +16,13 @@ from experiments.aaai25_experiments.run_stnu_approach import run_stnu_experiment
 SEED = 1
 DIRECTORY_INSTANCES = 'rcpsp/rcpsp_max'
 INSTANCE_FOLDERS = ["ubo50", "ubo100"]
-INSTANCE_IDS = range(11, 91)
+INSTANCE_IDS = range(1, 91)
 nb_scenarios_test = 1
 
 proactive = False
-reactive = False
-stnu = True
+reactive = True
+stnu = False
+
 
 if reactive:
     # RUN REACTIVE EXPERIMENTS
@@ -36,9 +37,10 @@ if reactive:
             test_durations_samples = rcpsp_max.sample_durations(nb_scenarios_test)
 
             for duration_sample in test_durations_samples:
-                data += run_reactive_approach(rcpsp_max, duration_sample)
+                data += run_reactive_approach(rcpsp_max, duration_sample, time_limit_pi=10,
+                                              time_limit_initial=10, mode="upper_bound")
                 data_df = pd.DataFrame(data)
-                data_df.to_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv', index=False)
+                data_df.to_csv(f'experiments/aaai25_experiments/robust_experiments/results__robust_reactive_{instance_folder}.csv', index=False)
 
 
 if proactive:

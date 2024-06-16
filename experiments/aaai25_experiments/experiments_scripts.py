@@ -15,8 +15,8 @@ from experiments.aaai25_experiments.run_stnu_approach import run_stnu_experiment
 # GENERAL SETTINGS
 SEED = 1
 DIRECTORY_INSTANCES = 'rcpsp/rcpsp_max'
-INSTANCE_FOLDERS = ["j10", "j20", "j30"]
-INSTANCE_IDS = range(1, 51)
+INSTANCE_FOLDERS = ["ubo50", "ubo100"]
+INSTANCE_IDS = range(1, 91)
 nb_scenarios_test = 10
 
 # RUN REACTIVE EXPERIMENTS

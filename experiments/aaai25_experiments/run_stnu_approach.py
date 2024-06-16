@@ -46,12 +46,20 @@ def get_true_durations(estnu, rte_data, num_tasks):
     return true_durations
 
 
-def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time_limit_cp_stnu=60):
+def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time_limit_cp_stnu=60, mode="mean"):
     data = []
     logger.debug(f'Start instance {rcpsp_max.instance_id}')
     start_offline = time.time()
+
+    upper_bound = rcpsp_max.get_bound()
+
     # Read instance and set up deterministic RCPSP/max CP model and solve (this will be used for the resource chain)
-    res, schedule = rcpsp_max.solve(time_limit=time_limit_cp_stnu)
+    if mode == "mean":
+        res, schedule = rcpsp_max.solve(time_limit=time_limit_cp_stnu)
+    elif mode == "robust":
+        res, schedule = rcpsp_max.solve(upper_bound, time_limit=time_limit_cp_stnu)
+    else:
+        raise NotImplementedError(f'')
 
     if res:
 
@@ -75,7 +83,6 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
 
         if dc:
             # For i in nr_samples:
-
             for sample_duration in test_durations_sample:
                 start_online = time.time()
                 # Transform the sample_duration to a dictionary and find the correct ESTNU node indices
@@ -134,7 +141,8 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
                     "real_durations": sample_duration,
                     "start_times": start_times,
                     "time_offline": finish_offline - start_offline,
-                    "time_online": finish_online - start_online
+                    "time_online": finish_online - start_online,
+                    "mode": mode
                 })
 
                 logger.debug(
@@ -198,7 +206,8 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
                 "real_durations": sample_duration,
                 "start_times": None,
                 "time_offline": finish_offline - start_offline,
-                "time_online": 0
+                "time_online": 0,
+                "mode": mode
             })
 
             logger.debug(

@@ -78,7 +78,7 @@ class RCPSP_CP_Benchmark:
 
         return rcpsp_max
 
-    def solve(self, durations=None, time_limit=None, write=False, output_file="results.csv"):
+    def solve(self, durations=None, time_limit=None, write=False, output_file="results.csv", mode="Quiet"):
 
         # Set durations to self.durations if no input vector is given
         durations = self.durations if durations is None else durations
@@ -113,7 +113,11 @@ class RCPSP_CP_Benchmark:
 
         # Solve model
         logger.info('Solving model...')
-        res = mdl.solve(TimeLimit=time_limit, Workers=1, LogVerbosity="Quiet")
+
+        if mode == "Quiet":
+            res = mdl.solve(TimeLimit=time_limit, Workers=1, LogVerbosity="Quiet")
+        else:
+            res = mdl.solve(TimeLimit=time_limit, Workers=1)
 
         data = []
         if res:
@@ -246,6 +250,19 @@ class RCPSP_CP_Benchmark:
 
         return res, start_times
 
+    def get_bound(self, mode="upper_bound"):
+        scenario = []
+        for duration in self.durations:
+            if duration == 0:
+                scenario.append(0)
+            else:
+                if mode == "lower_bound":
+                    bound = int(max(1, duration - np.sqrt(duration)))
+                else:
+                    bound = int(duration + np.sqrt(duration))
+                scenario.append(bound)
+        return scenario
+
     def sample_durations(self, nb_scenarios=1):
         scenarios = []
         for _ in range(nb_scenarios):
@@ -261,4 +278,6 @@ class RCPSP_CP_Benchmark:
             scenarios.append(scenario)
 
         return scenarios
+
+
 
