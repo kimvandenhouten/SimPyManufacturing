@@ -44,23 +44,37 @@ def get_true_durations(estnu, rte_data, num_tasks):
     return true_durations
 
 
-def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time_limit_cp_stnu=60, mode="mean"):
-    data = []
+def run_stnu(rcpsp_max, time_limit_cp_stnu=60, mode="mean"):
+    data_dict = {
+        "instance_folder": rcpsp_max.instance_folder,
+        "instance_id": rcpsp_max.instance_id,
+        "method": "STNU",
+        "time_limit_cp_stnu": time_limit_cp_stnu,
+        "can_build_stnu": None,
+        "dc": None,
+        "obj": None,
+        "feasibility": None,
+        "real_durations": None,
+        "start_times": None,
+        "time_offline": None,
+        "time_online": None,
+        "mode": mode
+    }
+
     logger.debug(f'Start instance {rcpsp_max.instance_id}')
     start_offline = time.time()
-
-    upper_bound = rcpsp_max.get_bound()
 
     # Read instance and set up deterministic RCPSP/max CP model and solve (this will be used for the resource chain)
     if mode == "mean":
         res, schedule = rcpsp_max.solve(time_limit=time_limit_cp_stnu)
     elif mode == "robust":
+        upper_bound = rcpsp_max.get_bound()
         res, schedule = rcpsp_max.solve(upper_bound, time_limit=time_limit_cp_stnu)
     else:
         raise NotImplementedError(f'')
 
     if res:
-
+        data_dict['can_build_stnu'] = True
         # Build the STNU using the instance information and the resource chains
         schedule = schedule.to_dict('records')
         resource_chains, resource_assignments = get_resource_chains(schedule, rcpsp_max.capacity, rcpsp_max.needs,
@@ -77,138 +91,58 @@ def run_stnu_experiment(rcpsp_max, test_durations_sample, time_limit_pi=60, time
         # Read ESTNU xml file into Python object that was the output from the previous step
         estnu = STNU.from_graphml(output_location)
         finish_offline = time.time()
+        data_dict['time_offline'] = finish_offline - start_offline
+    else:
+        estnu = None
+        dc = False
+
+    data_dict['dc'] = dc
+    return dc, estnu, data_dict
 
 
+def evaluate_stnu(dc, estnu, sample_duration, rcpsp_max, data_dict):
+    data_dict['real_durations'] = sample_duration
+    data_dict['obj'] = np.inf
+    data_dict['feasibility'] = False
+    data_dict['time_online'] = 0
+    feasibility = False
+    if estnu is not None:
         if dc:
-            # For i in nr_samples:
-            for sample_duration in test_durations_sample:
-                start_online = time.time()
-                # Transform the sample_duration to a dictionary and find the correct ESTNU node indices
-                sample = {}
-                for task, duration in enumerate(sample_duration):
-                    if 0 >= task or task >= len(sample_duration) - 1:  # skip the source and sink node
-                        continue
-                    find_contingent_node = estnu.translation_dict_reversed[f'{task}_{STNU.EVENT_FINISH}']
-                    sample[find_contingent_node] = duration
+            start_online = time.time()
+            # Transform the sample_duration to a dictionary and find the correct ESTNU node indices
+            sample = {}
+            for task, duration in enumerate(sample_duration):
+                if 0 >= task or task >= len(sample_duration) - 1:  # skip the source and sink node
+                    continue
+                find_contingent_node = estnu.translation_dict_reversed[f'{task}_{STNU.EVENT_FINISH}']
+                sample[find_contingent_node] = duration
 
-                logger.debug(f'Sample dict that will be given to RTE star is {sample_duration}')
+            logger.debug(f'Sample dict that will be given to RTE star is {sample_duration}')
 
-                # Run RTE algorithm with alternative oracle and store makespan
-                rte_data = rte_star(estnu, oracle="sample", sample=sample)
 
-                if rte_data:
-                    objective = max(rte_data.f.values())
+            # Run RTE algorithm with alternative oracle and store makespan
+            rte_data = rte_star(estnu, oracle="sample", sample=sample)
 
-                    # Obtain true durations and start and finish times and verify feasibility
-                    start_times, finish_times = get_start_and_finish(estnu, rte_data, rcpsp_max.num_tasks)
+            if rte_data:
+                objective = max(rte_data.f.values())
 
-                    feasibility = check_feasibility_rcpsp_max(start_times, finish_times, sample_duration, rcpsp_max.capacity, rcpsp_max.needs,
-                                               rcpsp_max.temporal_constraints)
+                # Obtain true durations and start and finish times and verify feasibility
+                start_times, finish_times = get_start_and_finish(estnu, rte_data, rcpsp_max.num_tasks)
 
-                    assert feasibility
-                    finish_online = time.time()
-
-                    # Solve with perfect information
-                    res, schedule = rcpsp_max.solve(sample_duration, time_limit=time_limit_pi)
-
-                    if res:
-                        objective_pi = max(schedule["end"].tolist())
-                        feasibility_pi = True
-                    else:
-                        feasibility_pi = False
-                        objective_pi = np.inf
-                        logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {sample_duration} is INFEASIBLE under perfect information')
-                    assert objective_pi <= objective
-                    rel_regret = 100 * (objective - objective_pi) / objective_pi
-
-                else:
-                    raise ValueError(f'For some reason the RTE could not finish')
-
-                # Store data
-                data.append({
-                    "instance_folder": rcpsp_max.instance_folder,
-                    "instance_id": rcpsp_max.instance_id,
-                    "method": "STNU",
-                    "time_limit_pi": time_limit_pi,
-                    "time_limit_cp_stnu": time_limit_cp_stnu,
-                    "obj": objective,
-                    "obj_pi": objective_pi,
-                    "feasibility": feasibility,
-                    "feasibility_pi": feasibility_pi,
-                    "rel_regret": rel_regret,
-                    "real_durations": sample_duration,
-                    "start_times": start_times,
-                    "time_offline": finish_offline - start_offline,
-                    "time_online": finish_online - start_online,
-                    "mode": mode
-                })
-
-                logger.debug(
-                    f'objective under perfect information is {objective_pi}, makespan obtained with STNU scheduling is {objective}, '
-                    f'relative regret is {rel_regret}, and')
+                feasibility = check_feasibility_rcpsp_max(start_times, finish_times, sample_duration, rcpsp_max.capacity, rcpsp_max.needs,
+                                           rcpsp_max.temporal_constraints)
+                finish_online = time.time()
+                data_dict['obj'] = objective
+                data_dict['feasibility'] = feasibility
+                data_dict['start_times'] = start_times
+                data_dict['time_online'] = finish_online - start_online
                 logger.info(
                     f'Instance PSP{rcpsp_max.instance_id} with true durations {sample_duration} is FEASIBLE with makespan {objective}')
-
-        else:  # In this situation the STNU approach cannot find a schedule because the network was not DC
-            objective = np.inf
-            feasibility = False
-
-    else:  # In this situation the STNU approach cannot find a schedule because the initial CP is infeasible
-        objective = np.inf
-        feasibility = False
-        finish_offline = time.time()
-
-    if objective == np.inf and feasibility == False:
-        # For the situations that we did not find a feasible schedule we should still need to simulate and evaluate
-        # perfect information schedules.
-        feasibilities, objectives = [], []
-        rel_regrets = []
-
-        # TODO: this is sort of double now
-        for i, sample_duration in enumerate(test_durations_sample):
-            feasibilities.append(False)
-            objectives.append(np.inf)
-
-            # Solve with perfect information
-            res, schedule = rcpsp_max.solve(sample_duration, time_limit=time_limit_pi)
-
-            if res:
-                objective_pi = max(schedule["end"].tolist())
-                feasibility_pi = True
-                logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {sample_duration} is INFEASIBLE')
             else:
-                objective_pi = np.inf
-                feasibility_pi = False
-                logger.info(
-                    f'Instance PSP{rcpsp_max.instance_id} with true durations {sample_duration} is INFEASIBLE under perfect information')
+                raise ValueError(f'For some reason the RTE could not finish')
+    if not feasibility:
+        logger.info(
+            f'Instance PSP{rcpsp_max.instance_id} with true durations {sample_duration} is INFEASIBLE')
 
-            if objective_pi == np.inf:
-                rel_regret = 0
-            else:
-                rel_regret = 100
+    return [data_dict]
 
-            rel_regrets.append(rel_regret)
-
-            # Store data
-            data.append({
-                "instance_folder": rcpsp_max.instance_folder,
-                "instance_id": rcpsp_max.instance_id,
-                "method": "STNU",
-                "time_limit_pi": time_limit_pi,
-                "time_limit_cp_stnu": time_limit_cp_stnu,
-                "obj": np.inf,
-                "obj_pi": objective_pi,
-                "rel_regret": rel_regret,
-                "feasibility": feasibility,
-                "feasibility_pi": feasibility_pi,
-                "real_durations": sample_duration,
-                "start_times": None,
-                "time_offline": finish_offline - start_offline,
-                "time_online": 0,
-                "mode": mode
-            })
-
-            logger.debug(
-                f'objective under perfect information is {objective_pi}, makespan obtained with STNU scheduling is {np.inf}, '
-                f'relative regret is {rel_regret}, and')
-    return data
