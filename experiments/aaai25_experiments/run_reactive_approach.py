@@ -82,6 +82,7 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
             durations[next_completed_job] = new_duration
 
             # Run the updated problem again
+            # TODO:
             logger.debug(
                 f'Start rescheduling procedure with processing times {durations} and scheduled start times {scheduled_start_times}')
             estimated_result, estimated_makespan = rcpsp_max.solve_reactive(durations, scheduled_start_times,
