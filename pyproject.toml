@@ -8,7 +8,7 @@ default_time_format = "%H:%M:%S"
 
 [tool.logging.root]
 # The root logger level holds for every module that doesn't have its own level.
-level = "DEBUG"
+level = "WARNING"
 
 [tool.logging.loggers."__main__"]
 # The special module __main__ is the script currently being executed.

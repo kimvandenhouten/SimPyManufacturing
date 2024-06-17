@@ -56,8 +56,8 @@ def run_stnu(rcpsp_max, time_limit_cp_stnu=60, mode="mean"):
         "feasibility": None,
         "real_durations": None,
         "start_times": None,
-        "time_offline": None,
-        "time_online": None,
+        "time_offline": np.inf,
+        "time_online": np.inf,
         "mode": mode
     }
 
@@ -104,7 +104,7 @@ def evaluate_stnu(dc, estnu, sample_duration, rcpsp_max, data_dict):
     data_dict['real_durations'] = sample_duration
     data_dict['obj'] = np.inf
     data_dict['feasibility'] = False
-    data_dict['time_online'] = 0
+    data_dict['time_online'] = np.inf
     feasibility = False
     if estnu is not None:
         if dc:
