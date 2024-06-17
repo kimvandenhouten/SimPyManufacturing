@@ -1,6 +1,6 @@
-from benchmark_rcpsp.rcpsp_max.process_file import parse_sch_file
-from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
 import pandas as pd
+from rcpsp.rcpsp_max.process_file import parse_sch_file
+from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
 
 data = []
 for instance_id in range(1, 271):

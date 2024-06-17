@@ -1,4 +1,5 @@
 import os
+
 from temporal_networks.stnu import STNU
 
 dir = 'temporal_networks/cstnu_tool/xml_files'

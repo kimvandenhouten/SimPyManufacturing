@@ -1,7 +1,8 @@
-from temporal_networks.stnu import STNU
 import general.logger
+from temporal_networks.stnu import STNU
+
 logger = general.logger.get_logger(__name__)
-import numpy as np
+
 
 class RCPSP_STNU(STNU):
     def __init__(self, origin_horizon=True):

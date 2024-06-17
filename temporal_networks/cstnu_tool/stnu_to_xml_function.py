@@ -1,7 +1,6 @@
+import random
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
-from temporal_networks.stnu import STNU
-import random
 
 
 def prettify(element):

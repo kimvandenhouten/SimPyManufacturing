@@ -1,7 +1,6 @@
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
-import numpy as np
 
 for instance_folder in ["j10", "j30"]:
     # Read the CSV files into DataFrames

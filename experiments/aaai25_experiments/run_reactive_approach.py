@@ -1,11 +1,9 @@
-import sys
-import numpy as np
-import pandas as pd
-from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
-from rcpsp.rcpsp_max.process_file import parse_sch_file
-from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
-from general.logger import get_logger
 import time
+
+import numpy as np
+
+from general.logger import get_logger
+from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
 
 logger = get_logger(__name__)
 # TODO: synchronize this with other methods

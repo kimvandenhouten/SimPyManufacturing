@@ -1,7 +1,6 @@
-import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
+import pandas as pd
 
 for instance_id in range(1, 51):
     for instance_folder in ["j10", "j20", "j30"]:

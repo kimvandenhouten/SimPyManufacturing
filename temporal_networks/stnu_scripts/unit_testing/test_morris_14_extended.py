@@ -1,4 +1,5 @@
 import unittest
+
 from temporal_networks.dc_checking import determine_dc
 from temporal_networks.stnu import STNU
 

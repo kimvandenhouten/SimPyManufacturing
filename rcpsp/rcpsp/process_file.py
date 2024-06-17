@@ -1,9 +1,4 @@
-# Imports
-import os
-
-
 def process_file(directory, filename, sink_source=True):
-
     with open(directory+filename) as file:
         # Initialization
         activities = list()  # contrary to the file, activities start at 0 (as that is the dummy activity)

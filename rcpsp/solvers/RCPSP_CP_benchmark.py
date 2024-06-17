@@ -1,12 +1,9 @@
-from typing import List, Any
-
+import numpy as np
 import pandas as pd
 from docplex.cp.model import *
-import numpy as np
-from numpy import ndarray, dtype, signedinteger, long, bool_, int8, short, intc, unsignedinteger, uint8, ushort, uintc, \
-    uintp
-from numpy._typing import _8Bit, _16Bit, _32Bit, _64Bit
+
 import general.logger
+
 logger = general.logger.get_logger(__name__)
 
 

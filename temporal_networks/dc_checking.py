@@ -1,4 +1,3 @@
-from random import randint
 from copy import deepcopy
 import heapq
 
@@ -6,6 +5,7 @@ from typing import Any, List
 from temporal_networks.stnu import STNU, Edge
 
 import general.logger
+
 logger = general.logger.get_logger(__name__)
 
 

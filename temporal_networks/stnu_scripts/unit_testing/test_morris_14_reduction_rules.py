@@ -1,4 +1,5 @@
 import unittest
+
 from temporal_networks.dc_checking import apply_reduction_rule
 from temporal_networks.stnu import STNU
 

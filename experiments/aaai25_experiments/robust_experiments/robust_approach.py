@@ -1,11 +1,12 @@
 # Import
 import numpy as np
 import pandas as pd
+
+import general
+from general.logger import get_logger
 from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
 from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
-import general
 
-from general.logger import get_logger
 logger = general.logger.get_logger(__name__)
 
 # Import reactive approach

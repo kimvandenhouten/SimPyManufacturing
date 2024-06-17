@@ -2,9 +2,10 @@ import enum
 import os
 import re
 import subprocess
-import classes.general
 
-logger = classes.general.get_logger(__name__)
+import general.logger
+
+logger = general.logger.get_logger(__name__)
 
 
 class DCAlgorithm(enum.Enum):

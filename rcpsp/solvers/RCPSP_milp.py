@@ -1,12 +1,7 @@
 # This is a sample Python script.
 import numpy as np
-from pyomo.environ import *
-import matplotlib.pyplot as plt
 import pandas as pd
-from IPython.display import display, HTML
-import matplotlib.pyplot as plt
-import gurobipy as gp
-from gurobipy import GRB
+from pyomo.environ import *
 
 
 class RCPSP:

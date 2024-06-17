@@ -1,15 +1,16 @@
+import time
+
+import pandas as pd
+
+import general.logger
 from rcpsp.rcpsp_max.process_file import parse_sch_file
 from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
 from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
 from rcpsp.temporal_networks.stnu_rcpsp import RCPSP_STNU, get_resource_chains, add_resource_chains
-
 from temporal_networks.cstnu_tool.call_java_cstnu_tool import run_dc_algorithm, run_rte_algorithm
-from temporal_networks.stnu import STNU
 from temporal_networks.cstnu_tool.stnu_to_xml_function import stnu_to_xml
+from temporal_networks.stnu import STNU
 
-import pandas as pd
-import time
-import general.logger
 logger = general.logger.get_logger(__name__)
 
 

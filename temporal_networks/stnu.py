@@ -1,11 +1,11 @@
-from bs4 import BeautifulSoup, Tag
-
-
-import re
-import numpy as np
 import enum
+import re
+
+import numpy as np
+from bs4 import BeautifulSoup
 
 import general.logger
+
 logger = general.logger.get_logger(__name__)
 
 

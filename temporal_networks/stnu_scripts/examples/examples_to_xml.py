@@ -1,6 +1,6 @@
 from temporal_networks.cstnu_tool.stnu_to_xml_function import stnu_to_xml
-from temporal_networks.stnu import STNU
 from temporal_networks.dc_checking import convert_to_normal_form, determine_dc
+from temporal_networks.stnu import STNU
 
 # Example Hunsberger slide 118 (controllable)
 name = "slide118"

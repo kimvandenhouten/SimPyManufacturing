@@ -1,9 +1,11 @@
+import docplex.cp.solver as solver
 import pandas as pd
 from docplex.cp.model import *
-import docplex.cp.solver as solver
 
 import general.logger
+
 logger = general.logger.get_logger(__name__)
+
 class RCPSP_CP:
     def __init__(self, instance):
         # convert to RCPSP instance

@@ -1,5 +1,6 @@
-from temporal_networks.stn import STN
 import numpy as np
+
+from temporal_networks.stn import STN
 
 
 def get_resource_chains(production_plan, earliest_start, complete=False):

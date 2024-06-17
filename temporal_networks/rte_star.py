@@ -1,9 +1,11 @@
 
-from temporal_networks.stnu import STNU, Edge
-import numpy as np
 import random
-import typing
+
+import numpy as np
+
 import general.logger
+from temporal_networks.stnu import STNU
+
 logger = general.logger.get_logger(__name__)
 
 

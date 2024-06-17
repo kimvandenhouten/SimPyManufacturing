@@ -1,10 +1,10 @@
+import numpy as np
+
+import general.logger
 from temporal_networks.cstnu_tool.call_java_cstnu_tool import run_dc_algorithm
 from temporal_networks.rte_star import rte_star
 from temporal_networks.stnu import STNU, SampleStrategy
 
-import numpy as np
-
-import general.logger
 logger = general.logger.get_logger(__name__)
 
 

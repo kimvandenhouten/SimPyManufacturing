@@ -1,4 +1,5 @@
 import unittest
+
 from temporal_networks.dc_checking import convert_to_normal_form
 from temporal_networks.stnu import STNU
 
