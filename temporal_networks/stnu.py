@@ -142,9 +142,8 @@ class STNU:
             value = edge.find(key='Value')
             labeled_value = edge.find(key='LabeledValue')
 
-            # FIXME: is this a problem?
             if value and labeled_value:
-                logger.warning(f"Edge {edge_id} has both unlabeled and labeled value")
+                logger.debug(f"Edge {edge_id} has both unlabeled and labeled value")
             if value:
                 value = value.text.strip()
                 if edge_type not in ('requirement', 'derived'):

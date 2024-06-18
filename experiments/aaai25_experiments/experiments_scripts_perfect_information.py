@@ -9,8 +9,8 @@ logger = get_logger(__name__)
 # GENERAL SETTINGS
 SEED = 1
 DIRECTORY_INSTANCES = 'rcpsp/rcpsp_max'
-INSTANCE_FOLDERS = ["j10", "j20", "j30", "ubo50", "ubo100"]
-INSTANCE_IDS = range(1, 91)
+INSTANCE_FOLDERS = ["ubo50", "ubo100"]
+INSTANCE_IDS = range(1, 51)
 nb_scenarios_test = 10
 perfect_information = True
 
@@ -18,7 +18,6 @@ perfect_information = True
 if perfect_information:
     # Settings perfect information
     time_limit = 10
-
 
     # Start solving the instances with perfect information
     for instance_folder in INSTANCE_FOLDERS:

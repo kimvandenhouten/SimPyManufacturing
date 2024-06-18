@@ -9,8 +9,7 @@ logger = get_logger(__name__)
 # TODO: synchronize this with other methods
 
 
-def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10, time_limit_pi=60,
-                          time_limit_initial=60, mode="mean"):
+def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10, time_limit_initial=60, mode="mean"):
 
     start_offline = time.time()
     # Initialization
@@ -96,6 +95,9 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
     if infeasible:
         feasibility = False
         makespan = np.inf
+        logger.info(
+            f'Instance PSP{rcpsp_max.instance_id} is INFEASIBLE with true durations {real_durations} ')
+
 
     else:
         # TODO assert feasibility
@@ -109,47 +111,16 @@ def run_reactive_approach(rcpsp_max, duration_sample, time_limit_rescheduling=10
 
         assert check_feasibility
         makespan = estimated_makespan
-        logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {real_durations} is FEASIBLE with makespan {makespan}')
-
-    finish = time.time()
-
-    # Run the updated problem again
-    logger.debug(f'Start scheduling under perfect information with processing times {durations} '
-                 f'which should match {real_durations}')
-    current_time = 0
-    scheduled_start_times = [-1 for i in range(len(durations))]
-    result_pi, makespan_pi = rcpsp_max.solve_reactive(durations, scheduled_start_times, current_time, time_limit=time_limit_pi)
-
-    if result_pi is None:
-        feasibility_pi = False
-
-    else:
-        feasibility_pi = True
-        logger.debug(f'Result under perfect information is {result_pi} with makespan {makespan_pi}')
-
-    if makespan == np.inf and makespan_pi == np.inf:
-        logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {real_durations} is INFEASIBLE under perfect information')
-        relative_regret = 0
-    elif makespan == np.inf and makespan_pi < np.inf:
-        logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {real_durations} is INFEASIBLE')
-        relative_regret = 100
-    else:
-        relative_regret = 100 * (makespan - makespan_pi) / makespan_pi
-
-    logger.debug(f'Relative regret (%) is {relative_regret}')
+        logger.info(f'Instance PSP{rcpsp_max.instance_id} is FEASIBLE with makespan {makespan} with true durations {real_durations} ')
 
     data = {"instance_folder": rcpsp_max.instance_folder,
             "instance_id": rcpsp_max.instance_id,
-            "rel_regret": relative_regret,
             "obj": makespan,
-            "obj_pi": makespan_pi,
             "method": "reactive",
-            "time_limit_pi": time_limit_pi,
             "time_limit_rescheduling": time_limit_rescheduling,
             "time_limit_initial": time_limit_initial,
             "solver_calls": solver_calls,
             "feasibility": feasibility,
-            "feasibility_pi": feasibility_pi,
             "real_durations": real_durations,
             "start_times": start_times,
             "time_offline": finish_offline - start_offline,

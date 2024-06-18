@@ -1,5 +1,5 @@
 import time
-
+import copy
 import numpy as np
 
 import general.logger
@@ -45,6 +45,7 @@ def run_saa(rcpsp_max, nb_scenarios_saa, time_limit_saa):
 
 def evaluate_saa(rcpsp_max, data_dict, duration_sample):
 
+    data_dict = copy.deepcopy(data_dict)
     start_times = data_dict['start_times']
     data_dict['real_durations'] = duration_sample
     feasibility = False
@@ -64,9 +65,9 @@ def evaluate_saa(rcpsp_max, data_dict, duration_sample):
         data_dict["feasibility"] = feasibility
 
     if feasibility:
-        logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {duration_sample} is FEASIBLE with makespan {objective}')
+        logger.info(f'Instance PSP{rcpsp_max.instance_id} is FEASIBLE with makespan {objective} with true durations {duration_sample} ')
     else:
-        logger.info(f'Instance PSP{rcpsp_max.instance_id} with true durations {duration_sample} is INFEASIBLE')
+        logger.info(f'Instance PSP{rcpsp_max.instance_id} is INFEASIBLE with true durations {duration_sample} ')
     return [data_dict]
 
 

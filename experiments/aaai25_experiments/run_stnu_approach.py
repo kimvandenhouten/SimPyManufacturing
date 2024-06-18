@@ -1,5 +1,5 @@
 import time
-
+import copy
 import numpy as np
 
 import general
@@ -45,6 +45,7 @@ def get_true_durations(estnu, rte_data, num_tasks):
 
 
 def run_stnu(rcpsp_max, time_limit_cp_stnu=60, mode="mean"):
+
     data_dict = {
         "instance_folder": rcpsp_max.instance_folder,
         "instance_id": rcpsp_max.instance_id,
@@ -101,6 +102,7 @@ def run_stnu(rcpsp_max, time_limit_cp_stnu=60, mode="mean"):
 
 
 def evaluate_stnu(dc, estnu, sample_duration, rcpsp_max, data_dict):
+    data_dict = copy.deepcopy(data_dict)
     data_dict['real_durations'] = sample_duration
     data_dict['obj'] = np.inf
     data_dict['feasibility'] = False
@@ -137,12 +139,12 @@ def evaluate_stnu(dc, estnu, sample_duration, rcpsp_max, data_dict):
                 data_dict['start_times'] = start_times
                 data_dict['time_online'] = finish_online - start_online
                 logger.info(
-                    f'Instance PSP{rcpsp_max.instance_id} with true durations {sample_duration} is FEASIBLE with makespan {objective}')
+                    f'Instance PSP{rcpsp_max.instance_id} is FEASIBLE with makespan {objective} with true durations {sample_duration}')
             else:
                 raise ValueError(f'For some reason the RTE could not finish')
     if not feasibility:
         logger.info(
-            f'Instance PSP{rcpsp_max.instance_id} with true durations {sample_duration} is INFEASIBLE')
+            f'Instance PSP{rcpsp_max.instance_id} is INFEASIBLE with true durations {sample_duration}')
 
     return [data_dict]
 
