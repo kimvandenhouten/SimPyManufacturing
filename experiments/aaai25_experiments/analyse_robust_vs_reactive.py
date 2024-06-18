@@ -22,14 +22,14 @@ logger = get_logger(__name__)
 # GENERAL SETTINGS
 SEED = 1
 DIRECTORY_INSTANCES = 'rcpsp/rcpsp_max'
-INSTANCE_FOLDERS = ["j10", "j20", "j30", "ubo50", "ubo100"]
-INSTANCE_IDS = range(1, 51)
-nb_scenarios_test = 10
+INSTANCE_FOLDERS = ["ubo100"]
+INSTANCE_IDS = range(4, 5)
+nb_scenarios_test = 1
 perfect_information = False
 reactive = True
 proactive = False
 stnu = False
-robust = False
+robust = True
 
 
 def check_pi_feasible(instance_folder, instance_id, sample_index, duration_sample):
@@ -58,7 +58,7 @@ def check_pi_feasible(instance_folder, instance_id, sample_index, duration_sampl
 if robust:
     # RUN REACTIVE EXPERIMENTS
     # Settings robust approach
-    time_limit_robust = 60
+    time_limit_robust = 30
 
     # Run the experiments
     for instance_folder in INSTANCE_FOLDERS:
@@ -74,8 +74,8 @@ if robust:
                 if pi_feasible:
                     data += evaluate_robust(rcpsp_max, duration_sample, data_dict)
                     data_df = pd.DataFrame(data)
-                    data_df.to_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv',
-                                   index=False)
+                    #data_df.to_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv',
+                                  # index=False)
                 else:
                     logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: we can skip the robust approach')
 
@@ -85,9 +85,9 @@ if reactive:
     # Settings reactive approach
     time_limit_initial = 30
     time_limit_rescheduling = 2
-
-    mode = "quantile_0.9"
-
+    #mode = "quantile_0.75"
+    #mode = "mean"
+    mode = "robust"
     # Run the experiments
     for instance_folder in INSTANCE_FOLDERS:
         data = []
@@ -102,7 +102,7 @@ if reactive:
                     data += run_reactive_approach(rcpsp_max, duration_sample, time_limit_initial=time_limit_initial,
                                                   time_limit_rescheduling=time_limit_rescheduling, mode=mode)
                     data_df = pd.DataFrame(data)
-                    data_df.to_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_{mode}.csv', index=False)
+                    #data_df.to_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}.csv', index=False)
                 else:
                     logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: We can skip the reactive approach')
 
@@ -126,7 +126,7 @@ if proactive:
                 if pi_feasible:
                     data += evaluate_saa(rcpsp_max, data_dict, duration_sample)
                     data_df = pd.DataFrame(data)
-                    data_df.to_csv(f"experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}.csv", index=False)
+                    ##data_df.to_csv(f"experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}.csv", index=False)
                 else:
                     logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: We can skip the proactive approach')
 
@@ -149,7 +149,7 @@ if stnu:
                 if pi_feasible:
                     data += evaluate_stnu(dc, estnu, duration_sample, rcpsp_max, data_dict)
                     df = pd.DataFrame(data)
-                    df.to_csv(f"experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}.csv", index=False)
+                    #df.to_csv(f"experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}.csv", index=False)
                 else:
                     logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: We can skip the STNU approach')
 

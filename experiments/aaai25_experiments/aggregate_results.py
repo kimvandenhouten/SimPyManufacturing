@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-for instance_folder in ["j10", "j20", "j30", "ubo50"]:
+for instance_folder in ["j10", "j20"]:
     # Read the CSV files into DataFrames
     df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
     print(f'Number of experiments {instance_folder} robust {len(df)}')
@@ -14,17 +14,17 @@ for instance_folder in ["j10", "j20", "j30", "ubo50"]:
     print(f'Number of experiments {instance_folder} stnu {len(df)}')
     df = df[df['obj'] != np.inf]
     print(f'Number of feasible instances {instance_folder} stnu {len(df)}')
-    df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}.csv')
+    df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_quantile_0.9.csv')
     print(f'Number of experiments {instance_folder} reactive {len(df)}')
     df = df[df['obj'] != np.inf]
     print(f'Number of feasible instances {instance_folder} reactive {len(df)}')
 
 
-for instance_folder in ["j10", "j20", "j30", "ubo50"]:
+for instance_folder in ["j10", "j20"]:
     # Read the CSV files into DataFrames
     df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
     #df2 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}.csv')
-    df3 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}.csv')
+    df3 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_quantile_0.9.csv')
     #df4 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}.csv')
     # Combine the DataFrames
     combined_df = pd.concat([df1, df3], ignore_index=True)
@@ -34,13 +34,13 @@ for instance_folder in ["j10", "j20", "j30", "ubo50"]:
 
     # Remove the instances for which the PI problem was infeasible
     #combined_df = combined_df[combined_df['obj_pi'] != np.inf]
-    print(f'Total number of experiments after removing non-pi-feasible instances {len(combined_df)}')
+    #print(f'Total number of experiments after removing non-pi-feasible instances {len(combined_df)}')
 
     print(len(combined_df))
-
+    combined_df = combined_df[combined_df['instance_id'] < 37]
     # Group by "instance" and "method" and calculate the average "rel_regret"
     aggregated_df = combined_df.groupby(['method']).agg(
-        rel_regret=('obj', 'mean'),
+        obj=('obj', 'mean'),
     ).reset_index()
 
     # Save the aggregated results to a new CSV file (optional)

@@ -8,20 +8,27 @@ from scipy.stats import ttest_ind
 
 data = []
 # Load data from a CSV file
-for instance_folder in ["j10", "j20", "j30", "ubo50"]:
+for instance_folder in ["j10", "j20", "j30"]:
     # Read the CSV files into DataFrames
     df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
-    df2 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}.csv')
+    df2 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_quantile_0.9.csv')
     #df3 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv')
     data = data + [df1, df2]
     # Combine the DataFrames
 
 data = pd.concat(data, ignore_index=True)
 
+objectives = data["obj"].tolist()
+objectives = [i for i in objectives if i < np.inf]
+inf_value = max(objectives) * 1.25
+print(inf_value)
+data.replace([np.inf], inf_value, inplace=True)
+print(data["obj"].tolist())
+
 data['total_time'] = data['time_offline'] + data['time_online']
     # TODO: PI is not niet goed geimplementeerd
     #data = data[data['obj_pi'] != np.inf]
-    #data.replace(["inf"], 99999, inplace=True)
+
 
 
 # List of all methods
@@ -53,15 +60,22 @@ for problem in data['instance_folder'].unique():
         data2 = domain_data[domain_data['method'] == method2]
 
         # Wilcoxon rank-sum test for 'obj'
-        print(f'first list with length {len(data1["obj"].tolist())} is {data1["obj"].tolist()}')
-        print(f'first list with length {len(data2["obj"].tolist())} is {data2["obj"].tolist()}')
+        data1_list = data1["obj"].tolist()
+        print(f'{method1} list with length {len(data1_list)} is {data1_list}')
+        inf_count = sum(1 for item in data1_list if item == inf_value)
+        print(f'number of inf in {method1}: {inf_count}')
+
+        data2_list = data2["obj"].tolist()
+        print(f'{method2} list with length {len(data2_list)} is {data2_list}')
+        inf_count = sum(1 for item in data2_list if item == inf_value)
+        print(f'number of inf in {method2}: {inf_count}')
 
         stat_obj, p_obj = ranksums(data1['obj'], data2['obj'])
         print(f'stat_obj: {stat_obj}, p_obj is {p_obj}')
 
         # Wilcoxon rank-sum test for 'total_time'
         stat_time, p_time = ranksums(data1['total_time'], data2['total_time'])
-        print(f'stat_total_time: {stat_time}, p_obj is {p_time}')
+        print(f'stat_total_time: {stat_time}, p_time is {p_time}')
 
         # Store results
         test_results[problem][(method1, method2)] = {
@@ -74,7 +88,7 @@ for problem in data['instance_folder'].unique():
         data2_list = data2["obj"].tolist()
         double_hits_indices = []
         for i in range(len(data1_list)):
-            if data1_list[i] < np.inf and data2_list[i] < np.inf:
+            if data1_list[i] < inf_value and data2_list[i] < inf_value:
                 #print(f'Double hit for {data1_list[i]} and {data2_list[i]}')
                 double_hits_indices.append(i)
         print(f'number of double hits {len(double_hits_indices)}')
@@ -151,6 +165,7 @@ for problem, results in test_results.items():
                 print(f"  {metric.capitalize()}: {better} performs significantly better.")
             else:
                 print(f"  {metric.capitalize()}: No significant difference.")
+
 
 # Go through results to form partial orders based on p-values
 for problem, results in test_results_double_hits.items():
