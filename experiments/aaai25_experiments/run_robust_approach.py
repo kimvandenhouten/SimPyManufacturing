@@ -9,7 +9,7 @@ import copy
 logger = general.logger.get_logger(__name__)
 
 
-def run_robust(rcpsp_max, time_limit=60):
+def run_robust_offline(rcpsp_max, time_limit=60):
     # Initialize data
     data_dict = {
         "instance_folder": rcpsp_max.instance_folder,
@@ -42,7 +42,7 @@ def run_robust(rcpsp_max, time_limit=60):
     return data_dict
 
 
-def evaluate_robust(rcpsp_max, duration_sample, data_dict):
+def run_robust_online(rcpsp_max, duration_sample, data_dict):
     """
     Evaluate the robust approach
     """

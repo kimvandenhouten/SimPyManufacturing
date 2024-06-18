@@ -5,16 +5,16 @@ from rcpsp.solvers.RCPSP_CP_benchmark import RCPSP_CP_Benchmark
 import ast
 
 # Import reactive approach
-from experiments.aaai25_experiments.run_reactive_approach import run_reactive_approach
+from experiments.aaai25_experiments.run_reactive_approach import run_reactive_offline, run_reactive_online
 
 # Import proactive approach
 from experiments.aaai25_experiments.run_proactive_approach import run_saa, evaluate_saa
 
 # Import STNU approach
-from experiments.aaai25_experiments.run_stnu_approach import run_stnu, evaluate_stnu
+from experiments.aaai25_experiments.run_stnu_approach import run_stnu_offline, run_stnu_online
 
 # Import robust approach
-from experiments.aaai25_experiments.run_robust_approach import run_robust, evaluate_robust
+from experiments.aaai25_experiments.run_robust_approach import run_robust_offline, run_robust_online
 
 from general.logger import get_logger
 logger = get_logger(__name__)
@@ -22,7 +22,7 @@ logger = get_logger(__name__)
 # GENERAL SETTINGS
 SEED = 1
 DIRECTORY_INSTANCES = 'rcpsp/rcpsp_max'
-INSTANCE_FOLDERS = ["j10", "j20", "j30", "ubo50", "ubo100"]
+INSTANCE_FOLDERS = ["j10", "j20", "j30"]
 INSTANCE_IDS = range(1, 51)
 nb_scenarios_test = 10
 perfect_information = False
@@ -68,11 +68,11 @@ if robust:
             rcpsp_max = RCPSP_CP_Benchmark.parsche_file(DIRECTORY_INSTANCES, instance_folder, instance_id)
             test_durations_samples = rcpsp_max.sample_durations(nb_scenarios_test)
 
-            data_dict = run_robust(rcpsp_max, time_limit_robust)
+            data_dict = run_robust_offline(rcpsp_max, time_limit_robust)
             for i, duration_sample in enumerate(test_durations_samples):
                 pi_feasible = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
                 if pi_feasible:
-                    data += evaluate_robust(rcpsp_max, duration_sample, data_dict)
+                    data += run_robust_online(rcpsp_max, duration_sample, data_dict)
                     data_df = pd.DataFrame(data)
                     data_df.to_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv',
                                    index=False)
@@ -86,7 +86,7 @@ if reactive:
     time_limit_initial = 30
     time_limit_rescheduling = 2
 
-    mode = "quantile_0.9"
+    mode = "mean"
 
     # Run the experiments
     for instance_folder in INSTANCE_FOLDERS:
@@ -99,8 +99,8 @@ if reactive:
             for i, duration_sample in enumerate(test_durations_samples):
                 pi_feasible = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
                 if pi_feasible:
-                    data += run_reactive_approach(rcpsp_max, duration_sample, time_limit_initial=time_limit_initial,
-                                                  time_limit_rescheduling=time_limit_rescheduling, mode=mode)
+                    data_dict = run_reactive_offline(rcpsp_max, time_limit_initial, mode)
+                    data += run_reactive_online(rcpsp_max, duration_sample, data_dict, time_limit_rescheduling)
                     data_df = pd.DataFrame(data)
                     data_df.to_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_{mode}.csv', index=False)
                 else:
@@ -142,12 +142,12 @@ if stnu:
             rcpsp_max = RCPSP_CP_Benchmark.parsche_file(DIRECTORY_INSTANCES, instance_folder, instance_id)
             np.random.seed(SEED)
             test_durations_samples = rcpsp_max.sample_durations(nb_scenarios_test)
-            dc, estnu, data_dict = run_stnu(rcpsp_max, time_limit_cp_stnu=time_limit_cp_stnu, mode="robust")
+            dc, estnu, data_dict = run_stnu_offline(rcpsp_max, time_limit_cp_stnu=time_limit_cp_stnu, mode="robust")
 
             for i, duration_sample in enumerate(test_durations_samples):
                 pi_feasible = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
                 if pi_feasible:
-                    data += evaluate_stnu(dc, estnu, duration_sample, rcpsp_max, data_dict)
+                    data += run_stnu_online(dc, estnu, duration_sample, rcpsp_max, data_dict)
                     df = pd.DataFrame(data)
                     df.to_csv(f"experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}.csv", index=False)
                 else:

@@ -66,9 +66,10 @@ def run_reactive_online(rcpsp_max, duration_sample, data_dict, time_limit_resche
     data_dict = copy.deepcopy(data_dict)
     data_dict["time_limit_rescheduling"] = time_limit_rescheduling
     real_durations = duration_sample
+    data_dict["real_durations"] = duration_sample
 
     logger.debug(f'real durations is {real_durations}')
-
+    infeasible = True
     if data_dict["estimated_start_times"] is not None:
         estimated_start_times = data_dict["estimated_start_times"]
 
@@ -155,11 +156,11 @@ def run_reactive_online(rcpsp_max, duration_sample, data_dict, time_limit_resche
         logger.info(f'Instance PSP{rcpsp_max.instance_id} is FEASIBLE with makespan {makespan} with true durations {real_durations} ')
         logger.info(f'With {solver_calls} solver calls')
 
-    data_dict["time_online"] = finish_online - start_online
+        data_dict["time_online"] = finish_online - start_online
+
     data_dict["feasibility"] = feasibility
     data_dict["start_times"] = start_times
     data_dict["obj"] = makespan
-
 
     return [data_dict]
 

@@ -12,6 +12,7 @@ for instance_folder in ["j10", "j20", "j30"]:
     # Read the CSV files into DataFrames
     df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
     df2 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_quantile_0.9.csv')
+    #df3 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_mean.csv')
     #df3 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv')
     data = data + [df1, df2]
     # Combine the DataFrames

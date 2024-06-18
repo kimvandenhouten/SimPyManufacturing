@@ -44,7 +44,7 @@ def get_true_durations(estnu, rte_data, num_tasks):
     return true_durations
 
 
-def run_stnu(rcpsp_max, time_limit_cp_stnu=60, mode="mean"):
+def run_stnu_offline(rcpsp_max, time_limit_cp_stnu=60, mode="mean"):
 
     data_dict = {
         "instance_folder": rcpsp_max.instance_folder,
@@ -101,7 +101,7 @@ def run_stnu(rcpsp_max, time_limit_cp_stnu=60, mode="mean"):
     return dc, estnu, data_dict
 
 
-def evaluate_stnu(dc, estnu, sample_duration, rcpsp_max, data_dict):
+def run_stnu_online(dc, estnu, sample_duration, rcpsp_max, data_dict):
     data_dict = copy.deepcopy(data_dict)
     data_dict['real_durations'] = sample_duration
     data_dict['obj'] = np.inf
