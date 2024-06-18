@@ -3,62 +3,59 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-for instance_folder in ["j10", "j20", "j30", "ubo50", "ubo100"]:
+for instance_folder in ["j10", "j20", "j30", "ubo50"]:
     # Read the CSV files into DataFrames
-    df = pd.read_csv(f'experiments/aaai25_experiments/results/results_proactive_{instance_folder}.csv')
-    print(f'Number of experiments {instance_folder} proactive {len(df)}')
-    df = df[df['obj_pi'] != np.inf]
-    print(f'Number of pi feasible instances {instance_folder} proactive {len(df)}')
+    df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
+    print(f'Number of experiments {instance_folder} robust {len(df)}')
+    df = df[df['obj'] != np.inf]
+    print(f'Number of feasible instances {instance_folder} robust {len(df)}')
 
-    df = pd.read_csv(f'experiments/aaai25_experiments/results/results_stnu_{instance_folder}.csv')
+    df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}.csv')
     print(f'Number of experiments {instance_folder} stnu {len(df)}')
-    df = df[df['obj_pi'] != np.inf]
-    print(f'Number of pi feasible instances {instance_folder} stnu {len(df)}')
-    df = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv')
+    df = df[df['obj'] != np.inf]
+    print(f'Number of feasible instances {instance_folder} stnu {len(df)}')
+    df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}.csv')
     print(f'Number of experiments {instance_folder} reactive {len(df)}')
-    df = df[df['obj_pi'] != np.inf]
-    print(f'Number of pi feasible instances {instance_folder} reactive {len(df)}')
+    df = df[df['obj'] != np.inf]
+    print(f'Number of feasible instances {instance_folder} reactive {len(df)}')
 
 
-for instance_folder in ["j10", "j20", "j30", "ubo50", "ubo100"]:
+for instance_folder in ["j10", "j20", "j30", "ubo50"]:
     # Read the CSV files into DataFrames
-    df1 = pd.read_csv(f'experiments/aaai25_experiments/results/results_proactive_{instance_folder}.csv')
-    df2 = pd.read_csv(f'experiments/aaai25_experiments/results/results_stnu_{instance_folder}.csv')
-    df3 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv')
+    df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
+    #df2 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}.csv')
+    df3 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}.csv')
+    #df4 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}.csv')
     # Combine the DataFrames
-    combined_df = pd.concat([df1, df2, df3])
+    combined_df = pd.concat([df1, df3], ignore_index=True)
     combined_df['total_time'] = combined_df['time_offline'] + combined_df['time_online']
-    print(3*50*10)
+
     print(f'Total number of experiments for instance folder {instance_folder} {len(combined_df)}')
 
     # Remove the instances for which the PI problem was infeasible
-    combined_df = combined_df[combined_df['obj_pi'] != np.inf]
+    #combined_df = combined_df[combined_df['obj_pi'] != np.inf]
     print(f'Total number of experiments after removing non-pi-feasible instances {len(combined_df)}')
 
     print(len(combined_df))
-    combined_df['rel_regret'] = pd.to_numeric(combined_df['rel_regret'], errors='coerce')
-    print(len(combined_df))
-    combined_df = combined_df.dropna(subset=['rel_regret'])
 
-    print(len(combined_df))
     # Group by "instance" and "method" and calculate the average "rel_regret"
     aggregated_df = combined_df.groupby(['method']).agg(
-        rel_regret=('rel_regret', 'mean'),
+        rel_regret=('obj', 'mean'),
     ).reset_index()
 
     # Save the aggregated results to a new CSV file (optional)
-    aggregated_df.to_csv(f'experiments/aaai25_experiments/results/aggregated_results_{instance_folder}.csv',
+    aggregated_df.to_csv(f'experiments/aaai25_experiments/results/new_aggregated_results_{instance_folder}.csv',
                          index=False)
 
     # Group by "instance" and "method" and calculate the average "rel_regret"
     combined_df_only_feasible = combined_df[combined_df['obj'] != np.inf]
     combined_df_only_feasible = combined_df_only_feasible[combined_df_only_feasible['obj'] != np.inf]
     aggregated_df = combined_df_only_feasible.groupby(['instance_id', 'method', 'real_durations']).agg(
-        rel_regret=('rel_regret', 'mean'),
+        rel_regret=('obj', 'mean'),
     ).reset_index()
 
     # Save the aggregated results to a new CSV file (optional)
-    aggregated_df.to_csv(f'experiments/aaai25_experiments/results/aggregated_results_per_instance_{instance_folder}.csv', index=False)
+    aggregated_df.to_csv(f'experiments/aaai25_experiments/results/new_aggregated_results_per_instance_{instance_folder}.csv', index=False)
 
     # Print the aggregated DataFrame
     print(aggregated_df)
@@ -66,13 +63,13 @@ for instance_folder in ["j10", "j20", "j30", "ubo50", "ubo100"]:
     # Plotting the results on relative regret
     plt.figure(figsize=(12, 6))
     plt.rcParams.update({'font.size': 20})
-    sns.boxplot(x='method', y='rel_regret', data=combined_df)
-    plt.title(f'RCPSP\max {instance_folder} Relative Regret')
+    sns.boxplot(x='method', y='obj', data=combined_df)
+    plt.title(f'RCPSP\max {instance_folder} Objective')
     plt.xlabel('Method')
-    plt.ylabel('Average Relative Regret')
+    plt.ylabel('Average Objective (Makespan)')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig(f'experiments/aaai25_experiments/figures/relative_regret_{instance_folder}.png')
+    plt.savefig(f'experiments/aaai25_experiments/figures/objective_{instance_folder}.png')
 
     # Plotting the results on offline runtime
     plt.figure(figsize=(12, 6))
@@ -144,13 +141,13 @@ for instance_folder in ["j10", "j20", "j30", "ubo50", "ubo100"]:
     # Plot relative regret when not including the infeasible ones:
     filtered_df = combined_df[combined_df['obj'] != np.inf]
     aggregated_df = filtered_df.groupby(['method']).agg(
-        rel_regret=('rel_regret', 'mean'),
+        obj=('obj', 'mean'),
     ).reset_index()
     plt.figure(figsize=(12, 6))
-    sns.boxplot(x='method', y='rel_regret', data=filtered_df)
-    plt.title(f'RCPSP\max {instance_folder} Rel Regret on Feasible Solutions')
+    sns.boxplot(x='method', y='obj', data=filtered_df)
+    plt.title(f'RCPSP\max {instance_folder} Objective on Feasible Solutions')
     plt.xlabel('Instance')
-    plt.ylabel('Relative regret on feasible solutions')
+    plt.ylabel('Objective on feasible solutions')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig(f'experiments/aaai25_experiments/figures/filtered_relative_regret_{instance_folder}.png')
+    plt.savefig(f'experiments/aaai25_experiments/figures/filtered_objective_{instance_folder}.png')

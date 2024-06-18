@@ -6,16 +6,19 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from scipy.stats import ttest_ind
 
-
+data = []
 # Load data from a CSV file
-for instance_folder in ["j20"]:
+for instance_folder in ["j10", "j20", "j30", "ubo50"]:
     # Read the CSV files into DataFrames
-    df1 = pd.read_csv(f'experiments/aaai25_experiments/results/results_proactive_{instance_folder}.csv')
-    df2 = pd.read_csv(f'experiments/aaai25_experiments/results/results_stnu_{instance_folder}.csv')
-    df3 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv')
+    df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
+    df2 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}.csv')
+    #df3 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv')
+    data = data + [df1, df2]
     # Combine the DataFrames
-    data = pd.concat([df1, df2, df3])
-    data['total_time'] = data['time_offline'] + data['time_online']
+
+data = pd.concat(data, ignore_index=True)
+
+data['total_time'] = data['time_offline'] + data['time_online']
     # TODO: PI is not niet goed geimplementeerd
     #data = data[data['obj_pi'] != np.inf]
     #data.replace(["inf"], 99999, inplace=True)
@@ -26,7 +29,6 @@ for instance_folder in ["j20"]:
 G = nx.DiGraph()
 methods = data['method'].unique()
 G.add_nodes_from(methods)
-
 
 # Generate all possible pairs of methods
 method_pairs = list(itertools.combinations(methods, 2))
