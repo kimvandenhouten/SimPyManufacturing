@@ -20,12 +20,12 @@ logger = get_logger(__name__)
 # GENERAL SETTINGS
 SEED = 1
 DIRECTORY_INSTANCES = 'rcpsp/rcpsp_max'
-INSTANCE_FOLDERS = ["j10", "j20", "j30", "ubo50"]
-INSTANCE_IDS = range(1, 50)
-nb_scenarios_test = 1
+INSTANCE_FOLDERS = ["j10"]
+INSTANCE_IDS = range(1, 20)
+nb_scenarios_test = 5
 perfect_information = False
-reactive = False
-proactive = False
+reactive = True
+proactive = True
 stnu = True
 
 
@@ -49,16 +49,21 @@ def check_pi_feasible(instance_folder, instance_id, sample_index, duration_sampl
         real_duration = ast.literal_eval(real_duration)
         logger.debug(f'pi duration {real_duration} and duration sample is {duration_sample}')
         assert real_duration == duration_sample
-    return feasible
+
+    if feasible:
+        obj_pi = filtered_df['obj_value'].to_list()[0]
+    else:
+        obj_pi = np.inf
+    return feasible, obj_pi
 
 
 if reactive:
     # RUN REACTIVE EXPERIMENTS
     # Settings reactive approach
-    time_limit_initial = 30
+    time_limit_initial = 60
     time_limit_rescheduling = 2
 
-    mode = "robust"
+    mode = "quantile_0.9"
 
     # Run the experiments
     for instance_folder in INSTANCE_FOLDERS:
@@ -69,12 +74,13 @@ if reactive:
             test_durations_samples = rcpsp_max.sample_durations(nb_scenarios_test)
 
             for i, duration_sample in enumerate(test_durations_samples):
-                pi_feasible = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
+                pi_feasible, obj_pi = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
                 if pi_feasible:
                     data_dict = run_reactive_offline(rcpsp_max, time_limit_initial, mode)
+                    data_dict["obj_pi"] = obj_pi
                     data += run_reactive_online(rcpsp_max, duration_sample, data_dict, time_limit_rescheduling)
                     data_df = pd.DataFrame(data)
-                    data_df.to_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_{mode}.csv', index=False)
+                    data_df.to_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}_{mode}.csv', index=False)
                 else:
                     logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: We can skip the reactive approach')
 
@@ -83,7 +89,7 @@ if proactive:
     # Settings proactive approach
     nb_scenarios_saa = 10
 
-    for (mode, time_limit) in [("robust", 60), ("quantile_0.9", 60)]:
+    for (mode, time_limit) in [("quantile_0.9", 60)]:
         # Run the experiments
         for instance_folder in INSTANCE_FOLDERS:
             data = []
@@ -94,11 +100,12 @@ if proactive:
                 data_dict = run_proactive_offline(rcpsp_max, time_limit, mode, nb_scenarios_saa)
 
                 for i, duration_sample in enumerate(test_durations_samples):
-                    pi_feasible = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
+                    pi_feasible, obj_pi = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
+                    data_dict["obj_pi"] = obj_pi
                     if pi_feasible:
                         data += run_proactive_online(rcpsp_max, duration_sample, data_dict)
                         data_df = pd.DataFrame(data)
-                        data_df.to_csv(f"experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}_{mode}.csv", index=False)
+                        data_df.to_csv(f"experiments/aaai25_experiments/results/results_proactive_{instance_folder}_{mode}.csv", index=False)
                     else:
                         logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: We can skip the proactive approach')
 
@@ -106,7 +113,6 @@ if stnu:
     # RUN STNU EXPERIMENTS
     # Settings stnu approach
     time_limit_cp_stnu = 60
-    mode = "quantile_0.9"
 
     # Run the experiments
     for mode in ["robust"]:
@@ -119,11 +125,13 @@ if stnu:
                 dc, estnu, data_dict = run_stnu_offline(rcpsp_max, time_limit_cp_stnu=time_limit_cp_stnu, mode=mode)
 
                 for i, duration_sample in enumerate(test_durations_samples):
-                    pi_feasible = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
+                    pi_feasible, obj_pi = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
+                    print(f'Note that the pi objective is {obj_pi}')
+                    data_dict["obj_pi"] = obj_pi
                     if pi_feasible:
                         data += run_stnu_online(dc, estnu, duration_sample, rcpsp_max, data_dict)
                         df = pd.DataFrame(data)
-                        #df.to_csv(f"experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}_{mode}_{time_limit_cp_stnu}.csv", index=False)
+                        df.to_csv(f"experiments/aaai25_experiments/results/results_stnu_{instance_folder}_{mode}.csv", index=False)
                     else:
                         logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: We can skip the STNU approach')
 

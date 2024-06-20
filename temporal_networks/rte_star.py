@@ -481,7 +481,6 @@ def get_enabled_tp(D: RTEdata, S: STNU):
                         logger.debug(f'{tp} {S.translation_dict[tp]} is not '
                                      f'{suc_node} {S.translation_dict[suc_node]} with weight 0 not yet executed')
 
-
         if enabled:
             enabled_tp.append(tp)
 

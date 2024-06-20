@@ -5,20 +5,28 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 from scipy.stats import ttest_ind
+import ast
 
 data = []
 # Compare two methods based on quality
 for instance_folder in ["j10"]:
     # Read the CSV files into DataFrames
-    df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}_robust.csv')
-    #df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}_quantile_0.9.csv')
-    df2 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_quantile_0.9.csv')
+    df1 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}_quantile_0.9.csv')
+    df2 = pd.read_csv(f'experiments/aaai25_experiments/results/results_proactive_{instance_folder}_quantile_0.9.csv')
+    df3 = pd.read_csv(f'experiments/aaai25_experiments/results/results_stnu_{instance_folder}_robust.csv')
     #df3 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv')
-    data = data + [df1, df2]
+    data = data + [df1, df2, df3]
     # Combine the DataFrames
 
+
 data = pd.concat(data, ignore_index=True)
-objectives = data["obj"].tolist()
+
+data['rel_regret'] = (data['obj'] - data['obj_pi']) / data['obj_pi']
+
+print(f'regret')
+print(f'data relative regret {data["rel_regret"].tolist()}')
+
+objectives = data["rel_regret"].tolist()
 objectives = [i for i in objectives if i < np.inf]
 inf_value = max(objectives) * 1.5
 data.replace([np.inf], inf_value, inplace=True)
@@ -51,8 +59,8 @@ for problem in data['instance_folder'].unique():
         data1 = domain_data[domain_data['method'] == method1]
         data2 = domain_data[domain_data['method'] == method2]
 
-        data1_list = data1["obj"].tolist()
-        data2_list = data2["obj"].tolist()
+        data1_list = data1["rel_regret"].tolist()
+        data2_list = data2["rel_regret"].tolist()
 
         # Remove infeasible by both methods
         at_least_one_feasible_indices = []
@@ -68,7 +76,7 @@ for problem in data['instance_folder'].unique():
         data2_at_least_one_feasible = data2_at_least_one_feasible.reset_index(drop=True)
 
         # Wilcoxon rank-sum test for 'obj'
-        data1_list = data1_at_least_one_feasible["obj"].tolist()
+        data1_list = data1_at_least_one_feasible["rel_regret"].tolist()
         print(f'{method1} list with length {len(data1_list)} is {data1_list}')
         inf_count = sum(1 for item in data1_list if item == inf_value)
         print(f'number of inf in {method1}: {inf_count}')
@@ -88,8 +96,8 @@ for problem in data['instance_folder'].unique():
         }
 
         # Now we will only use double hits.
-        data1_list = data1["obj"].tolist()
-        data2_list = data2["obj"].tolist()
+        data1_list = data1["rel_regret"].tolist()
+        data2_list = data2["rel_regret"].tolist()
 
         double_hits_indices = []
         for i in range(len(data1_list)):
@@ -115,15 +123,21 @@ for problem in data['instance_folder'].unique():
         print(test_results_double_hits)
 
         # Now do the magnitude test on the double hits
-        data1_list = data1_double_hits["obj"].tolist()
-        data2_list = data2_double_hits["obj"].tolist()
+        data1_list = data1_double_hits["rel_regret"].tolist()
+        data2_list = data2_double_hits["rel_regret"].tolist()
 
         normalized_data1 = []
         normalized_data2 = []
         for i in range(len(data1_list)):
             mean = (data1_list[i] + data2_list[i]) / 2
-            normalized_data1.append(data1_list[i] / mean)
-            normalized_data2.append(data2_list[i] / mean)
+            if mean > 0:
+                normalized_data1.append(data1_list[i] / mean)
+                normalized_data2.append(data2_list[i] / mean)
+            else:
+                normalized_data1.append(1)
+                normalized_data2.append(1)
+        print(f'normalized data 1 {normalized_data1}')
+        print(f'normalized data 2 {normalized_data2}')
 
         stat_obj, p_obj = ttest_ind(normalized_data1, normalized_data2)
 
@@ -135,7 +149,7 @@ for problem in data['instance_folder'].unique():
         for i in range(len(data1_list)):
             if data1_list[i] == data2_list[i]:
                 ties += 1
-                print(f'WARNING THIS IS A TIE, EXCLUDE FROM TEST')
+                #print(f'WARNING THIS IS A TIE, EXCLUDE FROM TEST')
             else:
                 num_trials += 1
                 if data1_list[i] < data2_list[i]:
@@ -161,7 +175,7 @@ alpha_proportion = 0.05
 
 
 # Go through results to form partial orders based on p-values
-print(f'\n >> Pairwise comparison of Wilcoxon Matched-Pairs Rank-Sum Test with alpha {alpha_consistent}')
+print(f'\n >> Pairwise comparison of Wilcoxon Matched-Pairs Rank-Sum Test with alpha {alpha_consistent}\n')
 
 for problem, results in test_results.items():
     print(f"Problem Domain: {problem}")
@@ -175,9 +189,9 @@ for problem, results in test_results.items():
                 else:
                     better = pair[1]
 
-                print(f"  {metric.capitalize()}: {better} performs significantly better.")
+                print(f"  {metric.capitalize()}: {better} performs significantly better.\n")
             else:
-                print(f"  {metric.capitalize()}: No significant difference.")
+                print(f"  {metric.capitalize()}: No significant difference.\n")
 
 print(f'\n >> Pairwise comparison of Wilcoxon Matched-Pairs Rank-Sum Test with alpha {alpha_consistent} on double hits\n')
 
@@ -216,9 +230,7 @@ for problem, results in test_results_proportion.items():
             else:
                 print(f"  Double hits magnitude:  {metric.capitalize()}: No significant difference.")
 
-
 print(f'\n >> Pair-wise t-test, on double hits, and alpha {alpha_magnitude}\n')
-
 
 # Go through results to form partial orders based on p-values
 for problem, results in test_results_magnitude.items():

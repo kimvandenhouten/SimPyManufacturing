@@ -138,7 +138,7 @@ def run_reactive_online(rcpsp_max, duration_sample, data_dict, time_limit_resche
         feasibility, start_times = False, None
         makespan = np.inf
         logger.info(
-            f'Instance PSP{rcpsp_max.instance_id} is INFEASIBLE with true durations {real_durations} ')
+            f'{rcpsp_max.instance_folder}_PSP{rcpsp_max.instance_id} is INFEASIBLE with true durations {real_durations} ')
         data_dict["time_offline"] = np.inf
 
     else:
@@ -153,7 +153,7 @@ def run_reactive_online(rcpsp_max, duration_sample, data_dict, time_limit_resche
 
         assert check_feasibility
         makespan = max(finish_times)
-        logger.info(f'Instance PSP{rcpsp_max.instance_id} is FEASIBLE with makespan {makespan} with true durations {real_durations} ')
+        logger.info(f'{rcpsp_max.instance_folder}_PSP{rcpsp_max.instance_id} is FEASIBLE with makespan {makespan} with true durations {real_durations} ')
         logger.info(f'With {solver_calls} solver calls')
 
         data_dict["time_online"] = finish_online - start_online
