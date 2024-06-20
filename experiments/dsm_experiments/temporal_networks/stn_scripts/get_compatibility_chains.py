@@ -1,4 +1,7 @@
+import numpy as np
+
 from temporal_networks.stn import STN
+
 
 def get_compatibility_chains(stn, productionplan, cp_output):
 
