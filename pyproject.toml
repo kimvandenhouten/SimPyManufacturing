@@ -26,6 +26,10 @@ level = "INFO"
 # Module names containing dots must be fully enclosed in quotes.
 level = "INFO"
 
+[tool.logging.loggers."temporal_networks.rte_star"]
+# Module names containing dots must be fully enclosed in quotes.
+level = "WARNING"
+
 [tool.logging.loggers."experiments.aaai25_experiments.run_robust_approach"]
 # Module names containing dots must be fully enclosed in quotes.
 level = "INFO"

@@ -43,458 +43,262 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <default> </default>
 </key>
 <graph edgedefault="directed">
-<data key="nContingent">10</data>
+<data key="nContingent">30</data>
 <data key="NetworkType">STNU</data>
-<data key="nEdges">90</data>
-<data key="nVertices">22</data>
+<data key="nEdges">1</data>
+<data key="nVertices">62</data>
 <data key="Name">example_rcpsp_max_stnu_python.stnu</data>
 <node id="0_start">
-<data key="x">166</data>
-<data key="y">120</data>
-</node>
-<node id="1_start">
-<data key="x">100</data>
+<data key="x">79</data>
 <data key="y">200</data>
 </node>
+<node id="1_start">
+<data key="x">71</data>
+<data key="y">103</data>
+</node>
 <node id="1_finish">
-<data key="x">62</data>
-<data key="y">139</data>
+<data key="x">79</data>
+<data key="y">65</data>
 </node>
 <node id="2_start">
-<data key="x">190</data>
-<data key="y">146</data>
+<data key="x">126</data>
+<data key="y">131</data>
 </node>
 <node id="2_finish">
-<data key="x">185</data>
-<data key="y">111</data>
+<data key="x">60</data>
+<data key="y">149</data>
 </node>
 <node id="3_start">
-<data key="x">99</data>
-<data key="y">58</data>
+<data key="x">63</data>
+<data key="y">148</data>
 </node>
 <node id="3_finish">
-<data key="x">40</data>
-<data key="y">77</data>
+<data key="x">63</data>
+<data key="y">102</data>
 </node>
 <node id="4_start">
-<data key="x">121</data>
-<data key="y">165</data>
+<data key="x">165</data>
+<data key="y">136</data>
 </node>
 <node id="4_finish">
-<data key="x">98</data>
-<data key="y">108</data>
+<data key="x">179</data>
+<data key="y">138</data>
 </node>
 <node id="5_start">
-<data key="x">197</data>
-<data key="y">150</data>
-</node>
-<node id="5_finish">
-<data key="x">168</data>
-<data key="y">160</data>
-</node>
-<node id="6_start">
-<data key="x">164</data>
-<data key="y">65</data>
-</node>
-<node id="6_finish">
-<data key="x">183</data>
-<data key="y">80</data>
-</node>
-<node id="7_start">
-<data key="x">189</data>
-<data key="y">116</data>
-</node>
-<node id="7_finish">
-<data key="x">123</data>
-<data key="y">110</data>
-</node>
-<node id="8_start">
-<data key="x">162</data>
-<data key="y">65</data>
-</node>
-<node id="8_finish">
-<data key="x">52</data>
+<data key="x">163</data>
 <data key="y">172</data>
 </node>
-<node id="9_start">
-<data key="x">156</data>
-<data key="y">144</data>
+<node id="5_finish">
+<data key="x">100</data>
+<data key="y">41</data>
 </node>
-<node id="9_finish">
-<data key="x">127</data>
-<data key="y">139</data>
+<node id="6_start">
+<data key="x">46</data>
+<data key="y">121</data>
 </node>
-<node id="10_start">
-<data key="x">155</data>
-<data key="y">189</data>
+<node id="6_finish">
+<data key="x">121</data>
+<data key="y">61</data>
 </node>
-<node id="10_finish">
-<data key="x">125</data>
-<data key="y">183</data>
+<node id="7_start">
+<data key="x">94</data>
+<data key="y">185</data>
 </node>
-<node id="11_start">
-<data key="x">58</data>
+<node id="7_finish">
+<data key="x">193</data>
+<data key="y">95</data>
+</node>
+<node id="8_start">
+<data key="x">178</data>
 <data key="y">151</data>
 </node>
-<edge id="e1_start-0_start" source="1_start" target="0_start">
+<node id="8_finish">
+<data key="x">47</data>
+<data key="y">126</data>
+</node>
+<node id="9_start">
+<data key="x">101</data>
+<data key="y">142</data>
+</node>
+<node id="9_finish">
+<data key="x">169</data>
+<data key="y">60</data>
+</node>
+<node id="10_start">
+<data key="x">130</data>
+<data key="y">77</data>
+</node>
+<node id="10_finish">
+<data key="x">197</data>
+<data key="y">109</data>
+</node>
+<node id="11_start">
+<data key="x">159</data>
+<data key="y">135</data>
+</node>
+<node id="11_finish">
+<data key="x">111</data>
+<data key="y">119</data>
+</node>
+<node id="12_start">
+<data key="x">194</data>
+<data key="y">150</data>
+</node>
+<node id="12_finish">
+<data key="x">144</data>
+<data key="y">43</data>
+</node>
+<node id="13_start">
+<data key="x">161</data>
+<data key="y">179</data>
+</node>
+<node id="13_finish">
+<data key="x">119</data>
+<data key="y">45</data>
+</node>
+<node id="14_start">
+<data key="x">49</data>
+<data key="y">65</data>
+</node>
+<node id="14_finish">
+<data key="x">119</data>
+<data key="y">145</data>
+</node>
+<node id="15_start">
+<data key="x">96</data>
+<data key="y">41</data>
+</node>
+<node id="15_finish">
+<data key="x">173</data>
+<data key="y">77</data>
+</node>
+<node id="16_start">
+<data key="x">103</data>
+<data key="y">148</data>
+</node>
+<node id="16_finish">
+<data key="x">43</data>
+<data key="y">75</data>
+</node>
+<node id="17_start">
+<data key="x">64</data>
+<data key="y">178</data>
+</node>
+<node id="17_finish">
+<data key="x">138</data>
+<data key="y">91</data>
+</node>
+<node id="18_start">
+<data key="x">87</data>
+<data key="y">176</data>
+</node>
+<node id="18_finish">
+<data key="x">111</data>
+<data key="y">175</data>
+</node>
+<node id="19_start">
+<data key="x">123</data>
+<data key="y">176</data>
+</node>
+<node id="19_finish">
+<data key="x">57</data>
+<data key="y">43</data>
+</node>
+<node id="20_start">
+<data key="x">167</data>
+<data key="y">166</data>
+</node>
+<node id="20_finish">
+<data key="x">113</data>
+<data key="y">154</data>
+</node>
+<node id="21_start">
+<data key="x">133</data>
+<data key="y">134</data>
+</node>
+<node id="21_finish">
+<data key="x">47</data>
+<data key="y">148</data>
+</node>
+<node id="22_start">
+<data key="x">101</data>
+<data key="y">42</data>
+</node>
+<node id="22_finish">
+<data key="x">158</data>
+<data key="y">71</data>
+</node>
+<node id="23_start">
+<data key="x">129</data>
+<data key="y">180</data>
+</node>
+<node id="23_finish">
+<data key="x">101</data>
+<data key="y">167</data>
+</node>
+<node id="24_start">
+<data key="x">55</data>
+<data key="y">123</data>
+</node>
+<node id="24_finish">
+<data key="x">70</data>
+<data key="y">193</data>
+</node>
+<node id="25_start">
+<data key="x">40</data>
+<data key="y">57</data>
+</node>
+<node id="25_finish">
+<data key="x">94</data>
+<data key="y">199</data>
+</node>
+<node id="26_start">
+<data key="x">71</data>
+<data key="y">79</data>
+</node>
+<node id="26_finish">
+<data key="x">71</data>
+<data key="y">74</data>
+</node>
+<node id="27_start">
+<data key="x">131</data>
+<data key="y">135</data>
+</node>
+<node id="27_finish">
+<data key="x">54</data>
+<data key="y">89</data>
+</node>
+<node id="28_start">
+<data key="x">92</data>
+<data key="y">168</data>
+</node>
+<node id="28_finish">
+<data key="x">133</data>
+<data key="y">179</data>
+</node>
+<node id="29_start">
+<data key="x">117</data>
+<data key="y">48</data>
+</node>
+<node id="29_finish">
+<data key="x">155</data>
+<data key="y">76</data>
+</node>
+<node id="30_start">
+<data key="x">78</data>
+<data key="y">184</data>
+</node>
+<node id="30_finish">
+<data key="x">130</data>
+<data key="y">42</data>
+</node>
+<node id="31_start">
+<data key="x">139</data>
+<data key="y">159</data>
+</node>
+<edge id="e15_start-20_start" source="15_start" target="20_start">
 <data key="Type">requirement</data>
 <data key="Value">0</data>
-</edge>
-<edge id="e1_start-1_finish" source="1_start" target="1_finish">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(1_finish):4</data>
-</edge>
-<edge id="e1_start-4_finish" source="1_start" target="4_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e1_start-5_finish" source="1_start" target="5_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e1_start-9_start" source="1_start" target="9_start">
-<data key="Type">requirement</data>
-<data key="Value">56</data>
-</edge>
-<edge id="e1_start-10_start" source="1_start" target="10_start">
-<data key="Type">requirement</data>
-<data key="Value">22</data>
-</edge>
-<edge id="e1_finish-1_start" source="1_finish" target="1_start">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(1_finish):-9</data>
-</edge>
-<edge id="e2_start-0_start" source="2_start" target="0_start">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e2_start-2_finish" source="2_start" target="2_finish">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(2_finish):4</data>
-</edge>
-<edge id="e2_start-7_start" source="2_start" target="7_start">
-<data key="Type">requirement</data>
-<data key="Value">49</data>
-</edge>
-<edge id="e2_start-10_start" source="2_start" target="10_start">
-<data key="Type">requirement</data>
-<data key="Value">79</data>
-</edge>
-<edge id="e2_finish-2_start" source="2_finish" target="2_start">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(2_finish):-9</data>
-</edge>
-<edge id="e3_start-0_start" source="3_start" target="0_start">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e3_start-2_finish" source="3_start" target="2_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e3_start-3_finish" source="3_start" target="3_finish">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(3_finish):3</data>
-</edge>
-<edge id="e3_start-5_finish" source="3_start" target="5_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e3_start-7_start" source="3_start" target="7_start">
-<data key="Type">requirement</data>
-<data key="Value">40</data>
-</edge>
-<edge id="e3_finish-3_start" source="3_finish" target="3_start">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(3_finish):-8</data>
-</edge>
-<edge id="e4_start-0_start" source="4_start" target="0_start">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e4_start-4_finish" source="4_start" target="4_finish">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(4_finish):6</data>
-</edge>
-<edge id="e4_start-7_start" source="4_start" target="7_start">
-<data key="Type">requirement</data>
-<data key="Value">70</data>
-</edge>
-<edge id="e4_start-9_start" source="4_start" target="9_start">
-<data key="Type">requirement</data>
-<data key="Value">51</data>
-</edge>
-<edge id="e4_finish-4_start" source="4_finish" target="4_start">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(4_finish):-13</data>
-</edge>
-<edge id="e5_start-0_start" source="5_start" target="0_start">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e5_start-5_finish" source="5_start" target="5_finish">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(5_finish):1</data>
-</edge>
-<edge id="e5_start-10_start" source="5_start" target="10_start">
-<data key="Type">requirement</data>
-<data key="Value">57</data>
-</edge>
-<edge id="e5_finish-5_start" source="5_finish" target="5_start">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(5_finish):-2</data>
-</edge>
-<edge id="e6_start-1_start" source="6_start" target="1_start">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e6_start-2_start" source="6_start" target="2_start">
-<data key="Type">requirement</data>
-<data key="Value">-10</data>
-</edge>
-<edge id="e6_start-2_finish" source="6_start" target="2_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e6_start-3_start" source="6_start" target="3_start">
-<data key="Type">requirement</data>
-<data key="Value">3</data>
-</edge>
-<edge id="e6_start-3_finish" source="6_start" target="3_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e6_start-4_finish" source="6_start" target="4_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e6_start-6_finish" source="6_start" target="6_finish">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(6_finish):6</data>
-</edge>
-<edge id="e6_start-10_start" source="6_start" target="10_start">
-<data key="Type">requirement</data>
-<data key="Value">48</data>
-</edge>
-<edge id="e6_finish-6_start" source="6_finish" target="6_start">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(6_finish):-12</data>
-</edge>
-<edge id="e7_start-1_start" source="7_start" target="1_start">
-<data key="Type">requirement</data>
-<data key="Value">-9</data>
-</edge>
-<edge id="e7_start-1_finish" source="7_start" target="1_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e7_start-2_start" source="7_start" target="2_start">
-<data key="Type">requirement</data>
-<data key="Value">-9</data>
-</edge>
-<edge id="e7_start-2_finish" source="7_start" target="2_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e7_start-3_start" source="7_start" target="3_start">
-<data key="Type">requirement</data>
-<data key="Value">-13</data>
-</edge>
-<edge id="e7_start-3_finish" source="7_start" target="3_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e7_start-4_start" source="7_start" target="4_start">
-<data key="Type">requirement</data>
-<data key="Value">-3</data>
-</edge>
-<edge id="e7_start-4_finish" source="7_start" target="4_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e7_start-5_start" source="7_start" target="5_start">
-<data key="Type">requirement</data>
-<data key="Value">-2</data>
-</edge>
-<edge id="e7_start-5_finish" source="7_start" target="5_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e7_start-6_finish" source="7_start" target="6_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e7_start-7_finish" source="7_start" target="7_finish">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(7_finish):2</data>
-</edge>
-<edge id="e7_finish-7_start" source="7_finish" target="7_start">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(7_finish):-6</data>
-</edge>
-<edge id="e8_start-1_start" source="8_start" target="1_start">
-<data key="Type">requirement</data>
-<data key="Value">-7</data>
-</edge>
-<edge id="e8_start-1_finish" source="8_start" target="1_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e8_start-2_start" source="8_start" target="2_start">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e8_start-2_finish" source="8_start" target="2_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e8_start-3_start" source="8_start" target="3_start">
-<data key="Type">requirement</data>
-<data key="Value">-15</data>
-</edge>
-<edge id="e8_start-3_finish" source="8_start" target="3_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e8_start-4_finish" source="8_start" target="4_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e8_start-5_start" source="8_start" target="5_start">
-<data key="Type">requirement</data>
-<data key="Value">-2</data>
-</edge>
-<edge id="e8_start-5_finish" source="8_start" target="5_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e8_start-8_finish" source="8_start" target="8_finish">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(8_finish):4</data>
-</edge>
-<edge id="e8_finish-8_start" source="8_finish" target="8_start">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(8_finish):-9</data>
-</edge>
-<edge id="e9_start-1_start" source="9_start" target="1_start">
-<data key="Type">requirement</data>
-<data key="Value">-16</data>
-</edge>
-<edge id="e9_start-1_finish" source="9_start" target="1_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e9_start-2_start" source="9_start" target="2_start">
-<data key="Type">requirement</data>
-<data key="Value">-12</data>
-</edge>
-<edge id="e9_start-2_finish" source="9_start" target="2_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e9_start-3_start" source="9_start" target="3_start">
-<data key="Type">requirement</data>
-<data key="Value">-8</data>
-</edge>
-<edge id="e9_start-3_finish" source="9_start" target="3_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e9_start-4_start" source="9_start" target="4_start">
-<data key="Type">requirement</data>
-<data key="Value">-10</data>
-</edge>
-<edge id="e9_start-4_finish" source="9_start" target="4_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e9_start-5_finish" source="9_start" target="5_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e9_start-6_finish" source="9_start" target="6_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e9_start-7_finish" source="9_start" target="7_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e9_start-8_finish" source="9_start" target="8_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e9_start-9_finish" source="9_start" target="9_finish">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(9_finish):6</data>
-</edge>
-<edge id="e9_start-10_finish" source="9_start" target="10_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e9_finish-9_start" source="9_finish" target="9_start">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(9_finish):-13</data>
-</edge>
-<edge id="e10_start-1_finish" source="10_start" target="1_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e10_start-2_finish" source="10_start" target="2_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e10_start-3_finish" source="10_start" target="3_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e10_start-4_start" source="10_start" target="4_start">
-<data key="Type">requirement</data>
-<data key="Value">-20</data>
-</edge>
-<edge id="e10_start-4_finish" source="10_start" target="4_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e10_start-6_start" source="10_start" target="6_start">
-<data key="Type">requirement</data>
-<data key="Value">7</data>
-</edge>
-<edge id="e10_start-6_finish" source="10_start" target="6_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e10_start-7_finish" source="10_start" target="7_finish">
-<data key="Type">requirement</data>
-<data key="Value">0</data>
-</edge>
-<edge id="e10_start-10_finish" source="10_start" target="10_finish">
-<data key="Type">contingent</data>
-<data key="LabeledValue">LC(10_finish):6</data>
-</edge>
-<edge id="e10_finish-10_start" source="10_finish" target="10_start">
-<data key="Type">contingent</data>
-<data key="LabeledValue">UC(10_finish):-12</data>
-</edge>
-<edge id="e11_start-6_start" source="11_start" target="6_start">
-<data key="Type">requirement</data>
-<data key="Value">-9</data>
-</edge>
-<edge id="e11_start-7_start" source="11_start" target="7_start">
-<data key="Type">requirement</data>
-<data key="Value">-4</data>
-</edge>
-<edge id="e11_start-8_start" source="11_start" target="8_start">
-<data key="Type">requirement</data>
-<data key="Value">-7</data>
-</edge>
-<edge id="e11_start-9_start" source="11_start" target="9_start">
-<data key="Type">requirement</data>
-<data key="Value">-10</data>
-</edge>
-<edge id="e11_start-10_start" source="11_start" target="10_start">
-<data key="Type">requirement</data>
-<data key="Value">-9</data>
 </edge>
 </graph>
 </graphml>

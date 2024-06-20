@@ -9,12 +9,12 @@ import copy
 logger = general.logger.get_logger(__name__)
 
 
-def run_robust_offline(rcpsp_max, time_limit=60):
+def run_robust_offline(rcpsp_max, time_limit=60, mode="robust"):
     # Initialize data
     data_dict = {
         "instance_folder": rcpsp_max.instance_folder,
         "instance_id": rcpsp_max.instance_id,
-        "method": "robust",
+        "method": f"robust_{mode}",
         "time_limit": time_limit,
         "feasibility": False,
         "obj": np.inf,
@@ -26,9 +26,17 @@ def run_robust_offline(rcpsp_max, time_limit=60):
 
     start_offline = time.time()
     # Solve very conservative schedule
-    upper_bound = rcpsp_max.get_bound()
-    logger.debug(f'Start solving upper bound schedule {upper_bound}')
-    res, data = rcpsp_max.solve(upper_bound, time_limit=time_limit, mode="Quiet")
+    if mode == "robust":
+        durations = rcpsp_max.get_bound()
+        logger.debug(f'Start solving upper bound schedule {durations}')
+    elif mode == "quantile_0.9":
+        lb = rcpsp_max.get_bound(mode="lower_bound")
+        ub = rcpsp_max.get_bound(mode="upper_bound")
+        durations = [int(lb[i] + 0.9 * (ub[i] - lb[i] + 1) - 1) for i in range(len(lb))]
+
+        res, data = rcpsp_max.solve(durations, time_limit=time_limit, mode="Quiet")
+    else:
+        raise NotImplementedError
 
     if res:
         start_times = data['start'].tolist()

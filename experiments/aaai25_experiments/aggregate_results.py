@@ -3,14 +3,14 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-for instance_folder in ["j10", "j20"]:
+for instance_folder in ["j10", "j20", "j30", "ubo50", "ubo100"]:
     # Read the CSV files into DataFrames
     df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
     print(f'Number of experiments {instance_folder} robust {len(df)}')
     df = df[df['obj'] != np.inf]
     print(f'Number of feasible instances {instance_folder} robust {len(df)}')
 
-    df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}.csv')
+    df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}_robust.csv')
     print(f'Number of experiments {instance_folder} stnu {len(df)}')
     df = df[df['obj'] != np.inf]
     print(f'Number of feasible instances {instance_folder} stnu {len(df)}')
@@ -20,14 +20,16 @@ for instance_folder in ["j10", "j20"]:
     print(f'Number of feasible instances {instance_folder} reactive {len(df)}')
 
 
-for instance_folder in ["j10", "j20"]:
+for instance_folder in ["ubo50"]:
     # Read the CSV files into DataFrames
-    df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
-    #df2 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}.csv')
-    df3 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_quantile_0.9.csv')
+    df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}_robust.csv')
+    df2 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}_quantile_0.9_60.csv')
+    df3 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}_robust.csv')
+    df4 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_quantile_0.9_60.csv')
+    df5 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}_quantile_0.9.csv')
     #df4 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}.csv')
     # Combine the DataFrames
-    combined_df = pd.concat([df1, df3], ignore_index=True)
+    combined_df = pd.concat([df1, df2, df4, df3, df5], ignore_index=True)
     combined_df['total_time'] = combined_df['time_offline'] + combined_df['time_online']
 
     print(f'Total number of experiments for instance folder {instance_folder} {len(combined_df)}')
@@ -122,7 +124,6 @@ for instance_folder in ["j10", "j20"]:
     plt.ylabel('Count feasible objectives')
 
     # Display the plot
-    plt.legend(title='Method')
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.savefig(f'experiments/aaai25_experiments/figures/feasible_solutions_{instance_folder}.png')

@@ -8,13 +8,11 @@ import ast
 from experiments.aaai25_experiments.run_reactive_approach import run_reactive_offline, run_reactive_online
 
 # Import proactive approach
-from experiments.aaai25_experiments.run_proactive_approach import run_saa, evaluate_saa
+from experiments.aaai25_experiments.run_proactive_approach import run_proactive_offline, run_proactive_online
 
 # Import STNU approach
 from experiments.aaai25_experiments.run_stnu_approach import run_stnu_offline, run_stnu_online
 
-# Import robust approach
-from experiments.aaai25_experiments.run_robust_approach import run_robust_offline, run_robust_online
 
 from general.logger import get_logger
 logger = get_logger(__name__)
@@ -22,14 +20,13 @@ logger = get_logger(__name__)
 # GENERAL SETTINGS
 SEED = 1
 DIRECTORY_INSTANCES = 'rcpsp/rcpsp_max'
-INSTANCE_FOLDERS = ["j10", "j20", "j30"]
-INSTANCE_IDS = range(1, 51)
-nb_scenarios_test = 10
+INSTANCE_FOLDERS = ["j10", "j20", "j30", "ubo50"]
+INSTANCE_IDS = range(1, 50)
+nb_scenarios_test = 1
 perfect_information = False
-reactive = True
+reactive = False
 proactive = False
-stnu = False
-robust = False
+stnu = True
 
 
 def check_pi_feasible(instance_folder, instance_id, sample_index, duration_sample):
@@ -55,38 +52,13 @@ def check_pi_feasible(instance_folder, instance_id, sample_index, duration_sampl
     return feasible
 
 
-if robust:
-    # RUN REACTIVE EXPERIMENTS
-    # Settings robust approach
-    time_limit_robust = 60
-
-    # Run the experiments
-    for instance_folder in INSTANCE_FOLDERS:
-        data = []
-        for instance_id in INSTANCE_IDS:
-            np.random.seed(SEED)
-            rcpsp_max = RCPSP_CP_Benchmark.parsche_file(DIRECTORY_INSTANCES, instance_folder, instance_id)
-            test_durations_samples = rcpsp_max.sample_durations(nb_scenarios_test)
-
-            data_dict = run_robust_offline(rcpsp_max, time_limit_robust)
-            for i, duration_sample in enumerate(test_durations_samples):
-                pi_feasible = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
-                if pi_feasible:
-                    data += run_robust_online(rcpsp_max, duration_sample, data_dict)
-                    data_df = pd.DataFrame(data)
-                    data_df.to_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv',
-                                   index=False)
-                else:
-                    logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: we can skip the robust approach')
-
-
 if reactive:
     # RUN REACTIVE EXPERIMENTS
     # Settings reactive approach
     time_limit_initial = 30
     time_limit_rescheduling = 2
 
-    mode = "mean"
+    mode = "robust"
 
     # Run the experiments
     for instance_folder in INSTANCE_FOLDERS:
@@ -110,46 +82,48 @@ if proactive:
     # RUN PROACTIVE EXPERIMENTS
     # Settings proactive approach
     nb_scenarios_saa = 10
-    time_limit_saa = 600
 
-    # Run the experiments
-    for instance_folder in INSTANCE_FOLDERS:
-        data = []
-        for instance_id in INSTANCE_IDS:
-            np.random.seed(SEED)
-            rcpsp_max = RCPSP_CP_Benchmark.parsche_file(DIRECTORY_INSTANCES, instance_folder, instance_id)
-            test_durations_samples = rcpsp_max.sample_durations(nb_scenarios_test)
-            data_dict = run_saa(rcpsp_max, nb_scenarios_saa, time_limit_saa)
+    for (mode, time_limit) in [("robust", 60), ("quantile_0.9", 60)]:
+        # Run the experiments
+        for instance_folder in INSTANCE_FOLDERS:
+            data = []
+            for instance_id in INSTANCE_IDS:
+                np.random.seed(SEED)
+                rcpsp_max = RCPSP_CP_Benchmark.parsche_file(DIRECTORY_INSTANCES, instance_folder, instance_id)
+                test_durations_samples = rcpsp_max.sample_durations(nb_scenarios_test)
+                data_dict = run_proactive_offline(rcpsp_max, time_limit, mode, nb_scenarios_saa)
 
-            for i, duration_sample in enumerate(test_durations_samples):
-                pi_feasible = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
-                if pi_feasible:
-                    data += evaluate_saa(rcpsp_max, data_dict, duration_sample)
-                    data_df = pd.DataFrame(data)
-                    data_df.to_csv(f"experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}.csv", index=False)
-                else:
-                    logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: We can skip the proactive approach')
+                for i, duration_sample in enumerate(test_durations_samples):
+                    pi_feasible = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
+                    if pi_feasible:
+                        data += run_proactive_online(rcpsp_max, duration_sample, data_dict)
+                        data_df = pd.DataFrame(data)
+                        data_df.to_csv(f"experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}_{mode}.csv", index=False)
+                    else:
+                        logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: We can skip the proactive approach')
 
 if stnu:
     # RUN STNU EXPERIMENTS
     # Settings stnu approach
-    time_limit_cp_stnu = 30
+    time_limit_cp_stnu = 60
+    mode = "quantile_0.9"
 
     # Run the experiments
-    for instance_folder in INSTANCE_FOLDERS:
-        data = []
-        for instance_id in INSTANCE_IDS:
-            rcpsp_max = RCPSP_CP_Benchmark.parsche_file(DIRECTORY_INSTANCES, instance_folder, instance_id)
-            np.random.seed(SEED)
-            test_durations_samples = rcpsp_max.sample_durations(nb_scenarios_test)
-            dc, estnu, data_dict = run_stnu_offline(rcpsp_max, time_limit_cp_stnu=time_limit_cp_stnu, mode="robust")
+    for mode in ["robust"]:
+        for instance_folder in INSTANCE_FOLDERS:
+            data = []
+            for instance_id in INSTANCE_IDS:
+                rcpsp_max = RCPSP_CP_Benchmark.parsche_file(DIRECTORY_INSTANCES, instance_folder, instance_id)
+                np.random.seed(SEED)
+                test_durations_samples = rcpsp_max.sample_durations(nb_scenarios_test)
+                dc, estnu, data_dict = run_stnu_offline(rcpsp_max, time_limit_cp_stnu=time_limit_cp_stnu, mode=mode)
 
-            for i, duration_sample in enumerate(test_durations_samples):
-                pi_feasible = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
-                if pi_feasible:
-                    data += run_stnu_online(dc, estnu, duration_sample, rcpsp_max, data_dict)
-                    df = pd.DataFrame(data)
-                    df.to_csv(f"experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}.csv", index=False)
-                else:
-                    logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: We can skip the STNU approach')
+                for i, duration_sample in enumerate(test_durations_samples):
+                    pi_feasible = check_pi_feasible(instance_folder, instance_id, i, duration_sample)
+                    if pi_feasible:
+                        data += run_stnu_online(dc, estnu, duration_sample, rcpsp_max, data_dict)
+                        df = pd.DataFrame(data)
+                        #df.to_csv(f"experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}_{mode}_{time_limit_cp_stnu}.csv", index=False)
+                    else:
+                        logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: We can skip the STNU approach')
 

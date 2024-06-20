@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
+<key id="nContingent" for="graph">
+<desc>Number of contingents in the graph</desc>
+<default>0</default>
+</key>
+<key id="NetworkType" for="graph">
+<desc>Network Type</desc>
+<default>CSTNU</default>
+</key>
+<key id="nEdges" for="graph">
+<desc>Number of edges in the graph</desc>
+<default>0</default>
+</key>
+<key id="nVertices" for="graph">
+<desc>Number of vertices in the graph</desc>
+<default>0</default>
+</key>
+<key id="Name" for="graph">
+<desc>Graph Name</desc>
+<default></default>
+</key>
+<key id="x" for="node">
+<desc>The x coordinate for the visualization. A positive value.</desc>
+<default>0</default>
+</key>
+<key id="y" for="node">
+<desc>The y coordinate for the visualization. A positive value.</desc>
+<default>0</default>
+</key>
+<key id="Type" for="edge">
+<desc>Type: Possible values: contingent|requirement|derived|internal.</desc>
+<default>requirement</default>
+</key>
+<key id="Value" for="edge">
+<desc>Value for STN edge. Format: 'integer'</desc>
+<default></default>
+</key>
+<key id="LabeledValue" for="edge">
+<desc>Case Value. Format: 'LC(NodeName):integer' or 'UC(NodeName):integer'</desc>
+<default></default>
+</key>
+<graph edgedefault="directed">
+<data key="nContingent">0</data>
+<data key="NetworkType">STNU</data>
+<data key="nEdges">63</data>
+<data key="nVertices">63</data>
+<data key="Name">example_rcpsp_max_stnu_python.stnu</data>
+<node id="0_start">
+<data key="x">161.0</data>
+<data key="y">150.0</data>
+</node>
+<node id="17_start">
+<data key="x">92.0</data>
+<data key="y">108.0</data>
+</node>
+<node id="29_finish">
+<data key="x">67.0</data>
+<data key="y">121.0</data>
+</node>
+<node id="13_start">
+<data key="x">186.0</data>
+<data key="y">63.0</data>
+</node>
+<node id="25_finish">
+<data key="x">156.0</data>
+<data key="y">167.0</data>
+</node>
+<node id="25_start">
+<data key="x">164.0</data>
+<data key="y">191.0</data>
+</node>
+<node id="4_finish">
+<data key="x">127.0</data>
+<data key="y">85.0</data>
+</node>
+<node id="5_start">
+<data key="x">127.0</data>
+<data key="y">175.0</data>
+</node>
+<node id="29_start">
+<data key="x">197.0</data>
+<data key="y">110.0</data>
+</node>
+<node id="12_finish">
+<data key="x">190.0</data>
+<data key="y">78.0</data>
+</node>
+<node id="30_start">
+<data key="x">112.0</data>
+<data key="y">186.0</data>
+</node>
+<node id="13_finish">
+<data key="x">129.0</data>
+<data key="y">88.0</data>
+</node>
+<node id="8_finish">
+<data key="x">168.0</data>
+<data key="y">83.0</data>
+</node>
+<node id="9_start">
+<data key="x">166.0</data>
+<data key="y">125.0</data>
+</node>
+<node id="12_start">
+<data key="x">144.0</data>
+<data key="y">68.0</data>
+</node>
+<node id="9_finish">
+<data key="x">181.0</data>
+<data key="y">106.0</data>
+</node>
+<node id="18_start">
+<data key="x">48.0</data>
+<data key="y">145.0</data>
+</node>
+<node id="30_finish">
+<data key="x">131.0</data>
+<data key="y">55.0</data>
+</node>
+<node id="20_start">
+<data key="x">71.0</data>
+<data key="y">72.0</data>
+</node>
+<node id="28_finish">
+<data key="x">43.0</data>
+<data key="y">104.0</data>
+</node>
+<node id="14_start">
+<data key="x">68.0</data>
+<data key="y">139.0</data>
+</node>
+<node id="24_start">
+<data key="x">180.0</data>
+<data key="y">140.0</data>
+</node>
+<node id="26_start">
+<data key="x">71.0</data>
+<data key="y">92.0</data>
+</node>
+<node id="24_finish">
+<data key="x">77.0</data>
+<data key="y">155.0</data>
+</node>
+<node id="28_start">
+<data key="x">67.0</data>
+<data key="y">165.0</data>
+</node>
+<node id="26_finish">
+<data key="x">106.0</data>
+<data key="y">108.0</data>
+</node>
+<node id="16_start">
+<data key="x">73.0</data>
+<data key="y">69.0</data>
+</node>
+<node id="16_finish">
+<data key="x">181.0</data>
+<data key="y">62.0</data>
+</node>
+<node id="17_finish">
+<data key="x">165.0</data>
+<data key="y">99.0</data>
+</node>
+<node id="18_finish">
+<data key="x">46.0</data>
+<data key="y">106.0</data>
+</node>
+<node id="19_finish">
+<data key="x">179.0</data>
+<data key="y">67.0</data>
+</node>
+<node id="23_finish">
+<data key="x">92.0</data>
+<data key="y">57.0</data>
+</node>
+<node id="20_finish">
+<data key="x">85.0</data>
+<data key="y">63.0</data>
+</node>
+<node id="21_start">
+<data key="x">193.0</data>
+<data key="y">89.0</data>
+</node>
+<node id="23_start">
+<data key="x">123.0</data>
+<data key="y">105.0</data>
+</node>
+<node id="22_finish">
+<data key="x">52.0</data>
+<data key="y">187.0</data>
+</node>
+<node id="21_finish">
+<data key="x">142.0</data>
+<data key="y">101.0</data>
+</node>
+<node id="22_start">
+<data key="x">111.0</data>
+<data key="y">72.0</data>
+</node>
+<node id="15_start">
+<data key="x">102.0</data>
+<data key="y">41.0</data>
+</node>
+<node id="2_finish">
+<data key="x">92.0</data>
+<data key="y">179.0</data>
+</node>
+<node id="19_start">
+<data key="x">121.0</data>
+<data key="y">117.0</data>
+</node>
+<node id="27_finish">
+<data key="x">118.0</data>
+<data key="y">49.0</data>
+</node>
+<node id="6_finish">
+<data key="x">160.0</data>
+<data key="y">170.0</data>
+</node>
+<node id="7_start">
+<data key="x">118.0</data>
+<data key="y">42.0</data>
+</node>
+<node id="27_start">
+<data key="x">99.0</data>
+<data key="y">66.0</data>
+</node>
+<node id="31_start">
+<data key="x">143.0</data>
+<data key="y">175.0</data>
+</node>
+<node id="15_finish">
+<data key="x">124.0</data>
+<data key="y">180.0</data>
+</node>
+<node id="14_finish">
+<data key="x">56.0</data>
+<data key="y">200.0</data>
+</node>
+<node id="10_start">
+<data key="x">180.0</data>
+<data key="y">62.0</data>
+</node>
+<node id="Z">
+<data key="x">10.0</data>
+<data key="y">10.0</data>
+</node>
+<node id="11_start">
+<data key="x">123.0</data>
+<data key="y">177.0</data>
+</node>
+<node id="11_finish">
+<data key="x">123.0</data>
+<data key="y">59.0</data>
+</node>
+<node id="10_finish">
+<data key="x">142.0</data>
+<data key="y">60.0</data>
+</node>
+<node id="1_finish">
+<data key="x">146.0</data>
+<data key="y">121.0</data>
+</node>
+<node id="3_finish">
+<data key="x">142.0</data>
+<data key="y">192.0</data>
+</node>
+<node id="8_start">
+<data key="x">78.0</data>
+<data key="y">79.0</data>
+</node>
+<node id="7_finish">
+<data key="x">79.0</data>
+<data key="y">160.0</data>
+</node>
+<node id="6_start">
+<data key="x">50.0</data>
+<data key="y">199.0</data>
+</node>
+<node id="5_finish">
+<data key="x">58.0</data>
+<data key="y">100.0</data>
+</node>
+<node id="1_start">
+<data key="x">137.0</data>
+<data key="y">84.0</data>
+</node>
+<node id="2_start">
+<data key="x">49.0</data>
+<data key="y">76.0</data>
+</node>
+<node id="4_start">
+<data key="x">55.0</data>
+<data key="y">80.0</data>
+</node>
+<node id="3_start">
+<data key="x">173.0</data>
+<data key="y">160.0</data>
+</node>
+<edge id="15_finish_Z" source="15_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="28_finish_Z" source="28_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="18_start_Z" source="18_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="23_finish_Z" source="23_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="25_start_Z" source="25_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="14_start_Z" source="14_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="8_start_Z" source="8_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="0_start_Z" source="0_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="22_start_Z" source="22_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="11_start_Z" source="11_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="30_finish_Z" source="30_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="10_start_Z" source="10_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="5_start_Z" source="5_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="24_finish_Z" source="24_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="8_finish_Z" source="8_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="3_start_Z" source="3_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="29_finish_Z" source="29_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="3_finish_Z" source="3_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="30_start_Z" source="30_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="28_start_Z" source="28_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="1_finish_Z" source="1_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="26_finish_Z" source="26_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="15_start_Z" source="15_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="6_finish_Z" source="6_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="29_start_Z" source="29_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="31_start_Z" source="31_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="10_finish_Z" source="10_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="4_start_Z" source="4_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="23_start_Z" source="23_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="4_finish_Z" source="4_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="9_finish_Z" source="9_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="27_start_Z" source="27_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="21_finish_Z" source="21_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="13_start_Z" source="13_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="9_start_Z" source="9_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="6_start_Z" source="6_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="16_start_Z" source="16_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="12_finish_Z" source="12_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="18_finish_Z" source="18_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="2_start_Z" source="2_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="17_finish_Z" source="17_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="24_start_Z" source="24_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="13_finish_Z" source="13_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="26_start_Z" source="26_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="5_finish_Z" source="5_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="12_start_Z" source="12_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="17_start_Z" source="17_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="16_finish_Z" source="16_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="22_finish_Z" source="22_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="19_finish_Z" source="19_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="27_finish_Z" source="27_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="11_finish_Z" source="11_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="21_start_Z" source="21_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="e15_start-20_start" source="15_start" target="20_start">
+<data key="Type">requirement</data>
+<data key="Value">0</data>
+</edge>
+<edge id="19_start_Z" source="19_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="14_finish_Z" source="14_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="7_finish_Z" source="7_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="25_finish_Z" source="25_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="7_start_Z" source="7_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="2_finish_Z" source="2_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="20_start_Z" source="20_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="20_finish_Z" source="20_finish" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+<edge id="1_start_Z" source="1_start" target="Z">
+<data key="Type">derived</data>
+<data key="Value">0</data>
+</edge>
+</graph>
+</graphml>

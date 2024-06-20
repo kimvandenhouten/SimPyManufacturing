@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
+<key id="nContingent" for="graph">
+<desc>Number of contingents in the graph</desc>
+<default>0</default>
+</key>
+<key id="NetworkType" for="graph">
+<desc>Network Type</desc>
+<default>CSTNU</default>
+</key>
+<key id="nEdges" for="graph">
+<desc>Number of edges in the graph</desc>
+<default>0</default>
+</key>
+<key id="nVertices" for="graph">
+<desc>Number of vertices in the graph</desc>
+<default>0</default>
+</key>
+<key id="Name" for="graph">
+<desc>Graph Name</desc>
+<default> </default>
+</key>
+<key id="x" for="node">
+<desc>The x coordinate for the visualization. A positive value.</desc>
+<default>0</default>
+</key>
+<key id="y" for="node">
+<desc>The y coordinate for the visualization. A positive value.</desc>
+<default>0</default>
+</key>
+<key id="Type" for="edge">
+<desc>Type: Possible values: contingent|requirement|derived|internal.</desc>
+<default>requirement</default>
+</key>
+<key id="Value" for="edge">
+<desc>Value for STN edge. Format: 'integer'</desc>
+<default> </default>
+</key>
+<key id="LabeledValue" for="edge">
+<desc>Case Value. Format: 'LC(NodeName):integer' or 'UC(NodeName):integer'</desc>
+<default> </default>
+</key>
+<graph edgedefault="directed">
+<data key="nContingent">30</data>
+<data key="NetworkType">STNU</data>
+<data key="nEdges">2</data>
+<data key="nVertices">62</data>
+<data key="Name">rte_error_kim_with_nodes.stnu</data>
+<node id="0_start">
+<data key="x">195</data>
+<data key="y">79</data>
+</node>
+<node id="1_start">
+<data key="x">195</data>
+<data key="y">131</data>
+</node>
+<node id="1_finish">
+<data key="x">154</data>
+<data key="y">159</data>
+</node>
+<node id="2_start">
+<data key="x">60</data>
+<data key="y">116</data>
+</node>
+<node id="2_finish">
+<data key="x">154</data>
+<data key="y">128</data>
+</node>
+<node id="3_start">
+<data key="x">94</data>
+<data key="y">150</data>
+</node>
+<node id="3_finish">
+<data key="x">98</data>
+<data key="y">130</data>
+</node>
+<node id="4_start">
+<data key="x">153</data>
+<data key="y">114</data>
+</node>
+<node id="4_finish">
+<data key="x">107</data>
+<data key="y">91</data>
+</node>
+<node id="5_start">
+<data key="x">195</data>
+<data key="y">69</data>
+</node>
+<node id="5_finish">
+<data key="x">147</data>
+<data key="y">105</data>
+</node>
+<node id="6_start">
+<data key="x">59</data>
+<data key="y">103</data>
+</node>
+<node id="6_finish">
+<data key="x">179</data>
+<data key="y">138</data>
+</node>
+<node id="7_start">
+<data key="x">171</data>
+<data key="y">96</data>
+</node>
+<node id="7_finish">
+<data key="x">113</data>
+<data key="y">107</data>
+</node>
+<node id="8_start">
+<data key="x">42</data>
+<data key="y">126</data>
+</node>
+<node id="8_finish">
+<data key="x">186</data>
+<data key="y">62</data>
+</node>
+<node id="9_start">
+<data key="x">169</data>
+<data key="y">136</data>
+</node>
+<node id="9_finish">
+<data key="x">42</data>
+<data key="y">187</data>
+</node>
+<node id="10_start">
+<data key="x">86</data>
+<data key="y">75</data>
+</node>
+<node id="10_finish">
+<data key="x">122</data>
+<data key="y">176</data>
+</node>
+<node id="11_start">
+<data key="x">176</data>
+<data key="y">88</data>
+</node>
+<node id="11_finish">
+<data key="x">183</data>
+<data key="y">149</data>
+</node>
+<node id="12_start">
+<data key="x">194</data>
+<data key="y">176</data>
+</node>
+<node id="12_finish">
+<data key="x">79</data>
+<data key="y">55</data>
+</node>
+<node id="13_start">
+<data key="x">70</data>
+<data key="y">57</data>
+</node>
+<node id="13_finish">
+<data key="x">106</data>
+<data key="y">162</data>
+</node>
+<node id="14_start">
+<data key="x">181</data>
+<data key="y">160</data>
+</node>
+<node id="14_finish">
+<data key="x">160</data>
+<data key="y">162</data>
+</node>
+<node id="15_start">
+<data key="x">195</data>
+<data key="y">69</data>
+</node>
+<node id="15_finish">
+<data key="x">165</data>
+<data key="y">61</data>
+</node>
+<node id="16_start">
+<data key="x">137</data>
+<data key="y">196</data>
+</node>
+<node id="16_finish">
+<data key="x">174</data>
+<data key="y">73</data>
+</node>
+<node id="17_start">
+<data key="x">188</data>
+<data key="y">47</data>
+</node>
+<node id="17_finish">
+<data key="x">167</data>
+<data key="y">131</data>
+</node>
+<node id="18_start">
+<data key="x">178</data>
+<data key="y">74</data>
+</node>
+<node id="18_finish">
+<data key="x">129</data>
+<data key="y">74</data>
+</node>
+<node id="19_start">
+<data key="x">111</data>
+<data key="y">127</data>
+</node>
+<node id="19_finish">
+<data key="x">66</data>
+<data key="y">136</data>
+</node>
+<node id="20_start">
+<data key="x">121</data>
+<data key="y">189</data>
+</node>
+<node id="20_finish">
+<data key="x">200</data>
+<data key="y">193</data>
+</node>
+<node id="21_start">
+<data key="x">165</data>
+<data key="y">192</data>
+</node>
+<node id="21_finish">
+<data key="x">144</data>
+<data key="y">145</data>
+</node>
+<node id="22_start">
+<data key="x">71</data>
+<data key="y">82</data>
+</node>
+<node id="22_finish">
+<data key="x">79</data>
+<data key="y">163</data>
+</node>
+<node id="23_start">
+<data key="x">108</data>
+<data key="y">191</data>
+</node>
+<node id="23_finish">
+<data key="x">185</data>
+<data key="y">130</data>
+</node>
+<node id="24_start">
+<data key="x">164</data>
+<data key="y">171</data>
+</node>
+<node id="24_finish">
+<data key="x">132</data>
+<data key="y">149</data>
+</node>
+<node id="25_start">
+<data key="x">40</data>
+<data key="y">166</data>
+</node>
+<node id="25_finish">
+<data key="x">114</data>
+<data key="y">152</data>
+</node>
+<node id="26_start">
+<data key="x">78</data>
+<data key="y">59</data>
+</node>
+<node id="26_finish">
+<data key="x">41</data>
+<data key="y">191</data>
+</node>
+<node id="27_start">
+<data key="x">121</data>
+<data key="y">73</data>
+</node>
+<node id="27_finish">
+<data key="x">186</data>
+<data key="y">187</data>
+</node>
+<node id="28_start">
+<data key="x">60</data>
+<data key="y">176</data>
+</node>
+<node id="28_finish">
+<data key="x">193</data>
+<data key="y">121</data>
+</node>
+<node id="29_start">
+<data key="x">105</data>
+<data key="y">123</data>
+</node>
+<node id="29_finish">
+<data key="x">155</data>
+<data key="y">88</data>
+</node>
+<node id="30_start">
+<data key="x">54</data>
+<data key="y">119</data>
+</node>
+<node id="30_finish">
+<data key="x">194</data>
+<data key="y">165</data>
+</node>
+<node id="31_start">
+<data key="x">74</data>
+<data key="y">183</data>
+</node>
+<edge id="e15_start-20_start" source="15_start" target="20_start">
+<data key="Type">requirement</data>
+<data key="Value">0</data>
+</edge>
+<edge id="e20_start-15_start" source="20_start" target="15_start">
+<data key="Type">requirement</data>
+<data key="Value">0</data>
+</edge>
+</graph>
+</graphml>

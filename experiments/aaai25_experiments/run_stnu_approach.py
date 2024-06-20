@@ -49,7 +49,7 @@ def run_stnu_offline(rcpsp_max, time_limit_cp_stnu=60, mode="mean"):
     data_dict = {
         "instance_folder": rcpsp_max.instance_folder,
         "instance_id": rcpsp_max.instance_id,
-        "method": "STNU",
+        "method": f"STNU_{mode}",
         "time_limit_cp_stnu": time_limit_cp_stnu,
         "can_build_stnu": None,
         "dc": None,
@@ -67,12 +67,20 @@ def run_stnu_offline(rcpsp_max, time_limit_cp_stnu=60, mode="mean"):
 
     # Read instance and set up deterministic RCPSP/max CP model and solve (this will be used for the resource chain)
     if mode == "mean":
-        res, schedule = rcpsp_max.solve(time_limit=time_limit_cp_stnu)
+        lb = rcpsp_max.get_bound(mode="lower_bound")
+        ub = rcpsp_max.get_bound(mode="upper_bound")
+        durations = [int((lb[i] + ub[i]) / 2) for i in range(rcpsp_max.num_tasks)]
     elif mode == "robust":
-        upper_bound = rcpsp_max.get_bound()
-        res, schedule = rcpsp_max.solve(upper_bound, time_limit=time_limit_cp_stnu)
+        durations = rcpsp_max.get_bound(mode="upper_bound")
+        logger.info(f'Upper bound used for making the STNU is {durations}')
+    elif mode == "quantile_0.9":
+        lb = rcpsp_max.get_bound(mode="lower_bound")
+        ub = rcpsp_max.get_bound(mode="upper_bound")
+        durations = [int(lb[i] + 0.9 * (ub[i] - lb[i] + 1) - 1) for i in range(len(lb))]
     else:
-        raise NotImplementedError(f'')
+        raise NotImplementedError(f'Mode {mode} not recognized')
+
+    res, schedule = rcpsp_max.solve(durations, time_limit=time_limit_cp_stnu)
 
     if res:
         data_dict['can_build_stnu'] = True
@@ -108,6 +116,7 @@ def run_stnu_online(dc, estnu, sample_duration, rcpsp_max, data_dict):
     data_dict['feasibility'] = False
     data_dict['time_online'] = np.inf
     feasibility = False
+    logger.info(f'{rcpsp_max.instance_folder}_PSP{rcpsp_max.instance_id} STNU {data_dict["mode"]} is dc {dc} ')
     if estnu is not None:
         if dc:
             start_online = time.time()
@@ -120,7 +129,6 @@ def run_stnu_online(dc, estnu, sample_duration, rcpsp_max, data_dict):
                 sample[find_contingent_node] = duration
 
             logger.debug(f'Sample dict that will be given to RTE star is {sample_duration}')
-
 
             # Run RTE algorithm with alternative oracle and store makespan
             rte_data = rte_star(estnu, oracle="sample", sample=sample)
@@ -139,12 +147,13 @@ def run_stnu_online(dc, estnu, sample_duration, rcpsp_max, data_dict):
                 data_dict['start_times'] = start_times
                 data_dict['time_online'] = finish_online - start_online
                 logger.info(
-                    f'Instance PSP{rcpsp_max.instance_id} is FEASIBLE with makespan {objective} with true durations {sample_duration}')
+                    f'{rcpsp_max.instance_folder}_PSP{rcpsp_max.instance_id} is FEASIBLE with makespan {objective} with true durations {sample_duration}')
             else:
-                raise ValueError(f'For some reason the RTE could not finish')
+                raise ValueError(f'WARNING: for some reason the RTE could not finish')
+                data_dict['warning'] = "RTE_error"
     if not feasibility:
         logger.info(
-            f'Instance PSP{rcpsp_max.instance_id} is INFEASIBLE with true durations {sample_duration}')
+            f'{rcpsp_max.instance_folder}_PSP{rcpsp_max.instance_id} is INFEASIBLE with true durations {sample_duration}')
 
     return [data_dict]
 

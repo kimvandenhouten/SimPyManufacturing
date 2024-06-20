@@ -8,13 +8,14 @@ from scipy.stats import ttest_ind
 
 data = []
 # Load data from a CSV file
-for instance_folder in ["j10", "j20", "j30"]:
+for instance_folder in ["j10"]:
     # Read the CSV files into DataFrames
-    df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
+    df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}_robust.csv')
     df2 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_quantile_0.9.csv')
-    #df3 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_mean.csv')
+    df3 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
+    df4 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}_quantile_0.9.csv')
     #df3 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv')
-    data = data + [df1, df2]
+    data = data + [df1, df2, df3, df4]
     # Combine the DataFrames
 
 data = pd.concat(data, ignore_index=True)
@@ -27,10 +28,6 @@ data.replace([np.inf], inf_value, inplace=True)
 print(data["obj"].tolist())
 
 data['total_time'] = data['time_offline'] + data['time_online']
-    # TODO: PI is not niet goed geimplementeerd
-    #data = data[data['obj_pi'] != np.inf]
-
-
 
 # List of all methods
 # Initialize a directed graph
@@ -146,7 +143,7 @@ for problem in data['instance_folder'].unique():
 
 
 # Significance level
-alpha_consistent = 0.001
+alpha_consistent = 0.05
 alpha_magnitude = 0.05
 # Go through results to form partial orders based on p-values
 for problem, results in test_results.items():

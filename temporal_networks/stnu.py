@@ -34,9 +34,14 @@ class Edge:
 
     def set_labeled_weight(self, labeled_weight, label, label_type):
         if label_type == self.UC_LABEL:
+            if self.uc_weight is not None:
+                logger.warning(f'WARNING: we are overwriting UC edge with weight {self.uc_weight} and label {self.uc_label}')
             self.uc_weight = labeled_weight
             self.uc_label = label
         elif label_type == self.LC_LABEL:
+            if self.lc_weight is not None:
+                logger.warning(
+                    f'WARNING: we are overwriting LC edge with weight {self.lc_weight} and label {self.lc_label}')
             self.lc_weight = labeled_weight
             self.lc_label = label
         else:
@@ -143,7 +148,7 @@ class STNU:
             labeled_value = edge.find(key='LabeledValue')
 
             if value and labeled_value:
-                logger.debug(f"Edge {edge_id} has both unlabeled and labeled value")
+                logger.info(f"Edge {edge_id} has both unlabeled and labeled value")
             if value:
                 value = value.text.strip()
                 if edge_type not in ('requirement', 'derived'):
@@ -155,7 +160,7 @@ class STNU:
             if labeled_value:
                 labeled_value = labeled_value.text.strip()
                 if edge_type not in ('contingent', 'derived'):
-                    logger.debug(f"WARNING: Unexpected edge type {edge_type} for labeled edge {edge_id}")
+                    logger.warning(f"WARNING: Unexpected edge type {edge_type} for labeled edge {edge_id}")
                 m = lv_pattern.match(labeled_value)
                 if not m:
                     raise ValueError(f"Unexpected value {labeled_value} for {edge_type} edge {edge_id}")

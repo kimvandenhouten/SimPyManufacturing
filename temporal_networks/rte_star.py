@@ -128,7 +128,6 @@ def rte_star(estnu: STNU, oracle="standard", sample=None):
         # Line 8: If D=fail
         if rte_data is False:
             logger.info("UPDATE FAIL")
-            logger.info(f'Schedule so far is {rte_data.f}')
             return False
 
     return rte_data
@@ -371,6 +370,7 @@ def rte_update(S: STNU, D: RTEdata, delta: RTEdecision, observation: Observation
     if observation.rho == np.inf:
         # Line 2: Return fail
         logger.debug('fail')
+        logger.info(f'rte data ux is {D.u_x}')
         return False
 
     # Line 3: If delta = wait, or delta = (t,V) and rho < t:
@@ -447,7 +447,7 @@ def update_time_windows_neighbors(source: int, execution: float, S: STNU, D: RTE
 
 
 def get_enabled_tp(D: RTEdata, S: STNU):
-    # Fixme: we can use previously enabled tp, no need to do it over again
+    # TODO: we can use previously enabled tp, no need to do it over again
     logger.debug(f'Unexecuted timepoints are {D.u_x}')
     logger.debug(f'First enabled tp is {D.enabled_tp}')
     enabled_tp = []
@@ -464,10 +464,23 @@ def get_enabled_tp(D: RTEdata, S: STNU):
                 if weight < 0:
                     if suc_node not in D.f:
                         enabled = False
-                        logger.debug(f'{tp} {S.translation_dict[tp]} is not enabled because suc_node {suc_node} {S.translation_dict[suc_node]} with weight {weight} not yet executed')
+                        logger.debug(f'{tp} {S.translation_dict[tp]} is not enabled because suc_node {suc_node}'
+                                     f' {S.translation_dict[suc_node]} with weight {weight} not yet executed')
                 if weight == 0 and suc_node not in D.f:
-                    enabled = False
-                    logger.debug(f'{tp} {S.translation_dict[tp]} is not enabled because suc_node {suc_node} {S.translation_dict[suc_node]} with weight 0 not yet executed')
+                    # This is an edge with weight zero, we first need to check whether it is a rigid component or not
+                    rigid_component = False
+                    if S.edges[suc_node].get(tp, False):
+                        edge = S.edges[suc_node][tp]
+                        if edge.weight == 0:
+                            logger.debug(f'Rigid component detected between {tp} {S.translation_dict[tp]}'
+                                           f' and {suc_node} {S.translation_dict[suc_node]}')
+                            rigid_component = True
+
+                    if rigid_component is False:
+                        enabled = False
+                        logger.debug(f'{tp} {S.translation_dict[tp]} is not '
+                                     f'{suc_node} {S.translation_dict[suc_node]} with weight 0 not yet executed')
+
 
         if enabled:
             enabled_tp.append(tp)

@@ -8,69 +8,87 @@ from rcpsp.solvers.check_feasibility import check_feasibility_rcpsp_max
 logger = general.logger.get_logger(__name__)
 
 
-def run_saa(rcpsp_max, nb_scenarios_saa, time_limit_saa):
-
-    # Initialize results dict.
+def run_proactive_offline(rcpsp_max, time_limit=60, mode="robust", nb_scenarios_saa=10):
+    # Initialize data
     data_dict = {
         "instance_folder": rcpsp_max.instance_folder,
         "instance_id": rcpsp_max.instance_id,
-        "method": "proactive",
-        "nr_samples": nb_scenarios_saa,
-        "obj": np.inf,
-        "time_limit_SAA": time_limit_saa,
+        "method": f"proactive_{mode}",
+        "time_limit": time_limit,
         "feasibility": False,
-        "real_durations": None,
-        "start_times": None,
+        "obj": np.inf,
         "time_offline": np.inf,
-        "time_online": np.inf
+        "time_online": np.inf,
+        "start_times": None,
+        "real_durations": None,
+        "mode": mode
     }
 
     start_offline = time.time()
-    logger.debug(f'Start solving SAA instance {rcpsp_max.instance_id} with {nb_scenarios_saa} scenarios')
+    # Solve very conservative schedule
+    if mode == "robust":
+        # Solve with the upper bounds the deterministic model
+        durations = rcpsp_max.get_bound()
+        logger.debug(f'Start solving upper bound schedule {durations}')
+        res, data = rcpsp_max.solve(durations, time_limit=time_limit, mode="Quiet")
+        if res:
+            start_times = data['start'].tolist()
 
-    # Sample scenarios for Sample Average Approximation
-    train_durations_sample = rcpsp_max.sample_durations(nb_scenarios_saa)
+    elif mode == "quantile_0.9":
+        # Solve with the 0.9 quantile the deterministic model
+        lb = rcpsp_max.get_bound(mode="lower_bound")
+        ub = rcpsp_max.get_bound(mode="upper_bound")
+        durations = [int(lb[i] + 0.9 * (ub[i] - lb[i] + 1) - 1) for i in range(len(lb))]
+        res, data = rcpsp_max.solve(durations, time_limit=time_limit, mode="Quiet")
+        if res:
+            start_times = data['start'].tolist()
 
-    logger.debug(train_durations_sample)
+    elif mode == "SAA":
+        # Sample scenarios for Sample Average Approximation and solve
+        train_durations_sample = rcpsp_max.sample_durations(nb_scenarios_saa)
+        res, start_times = rcpsp_max.solve_saa(train_durations_sample, time_limit)
 
-    #  Solve the SAA approach
-    res, start_times = rcpsp_max.solve_saa(train_durations_sample, time_limit_saa)
-    finish_offline = time.time()
+    else:
+        raise NotImplementedError
+
     if res:
-        data_dict['time_offline'] = finish_offline - start_offline
-        data_dict['start_times'] = start_times
+        logger.debug(f'Robust start times are {start_times}')
+        data_dict["start_times"] = start_times
+        data_dict["time_offline"] = time.time() - start_offline
+
+    else:
+        logger.debug(f'No robust schedule exists')
 
     return data_dict
 
 
-def evaluate_saa(rcpsp_max, data_dict, duration_sample):
-
+def run_proactive_online(rcpsp_max, duration_sample, data_dict):
+    """
+    Evaluate the robust approach
+    """
+    infeasible = True
     data_dict = copy.deepcopy(data_dict)
-    start_times = data_dict['start_times']
-    data_dict['real_durations'] = duration_sample
-    feasibility = False
-
+    data_dict["real_durations"] = duration_sample
+    start_times = data_dict["start_times"]
     if start_times is not None:
-        logger.debug(f'SAA found a solution, start times are {start_times}')
-
-        # Evaluate on duration sample
         start_online = time.time()
-        finish_times = [start_times[i] + duration_sample[i] for i in range(len(duration_sample))]
-        feasibility = check_feasibility_rcpsp_max(start_times, finish_times, duration_sample, rcpsp_max.capacity,
-                                                  rcpsp_max.needs, rcpsp_max.temporal_constraints)
-        objective = max(finish_times) if feasibility else np.inf
+        # Check feasibility
+        finish_times = [start_times[i] + duration_sample[i] for i in range(len(start_times))]
+        check_feasibility = check_feasibility_rcpsp_max(start_times, finish_times, duration_sample, rcpsp_max.capacity,
+                                    rcpsp_max.needs, rcpsp_max.temporal_constraints)
         finish_online = time.time()
-        data_dict["time_online"] = finish_online - start_online
-        data_dict["obj"] = objective
-        data_dict["feasibility"] = feasibility
+        if check_feasibility:
+            logger.info(f'{rcpsp_max.instance_folder}_PSP{rcpsp_max.instance_id} FEASIBLE with makespan {max(finish_times)} with sample {duration_sample}')
+            data_dict["feasibility"] = True
+            data_dict["time_online"] = finish_online - start_online
+            data_dict["obj"] = max(finish_times)
+            infeasible = False
 
-    if feasibility:
-        logger.info(f'Instance PSP{rcpsp_max.instance_id} is FEASIBLE with makespan {objective} with true durations {duration_sample} ')
-    else:
-        logger.info(f'Instance PSP{rcpsp_max.instance_id} is INFEASIBLE with true durations {duration_sample} ')
+    if infeasible:
+        logger.info(
+            f'{rcpsp_max.instance_folder}_PSP{rcpsp_max.instance_id} INFEASIBLE with sample {duration_sample}')
+
     return [data_dict]
-
-
 
 
 
