@@ -9,7 +9,7 @@ import ast
 
 data = []
 # Compare two methods based on quality
-for instance_folder in ["j10"]:
+for instance_folder in ["j10", "j20", "j30", "ubo50", "ubo100"]:
     # Read the CSV files into DataFrames
     df1 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}_quantile_0.9.csv')
     df2 = pd.read_csv(f'experiments/aaai25_experiments/results/results_proactive_{instance_folder}_quantile_0.9.csv')

@@ -20,9 +20,9 @@ logger = get_logger(__name__)
 # GENERAL SETTINGS
 SEED = 1
 DIRECTORY_INSTANCES = 'rcpsp/rcpsp_max'
-INSTANCE_FOLDERS = ["j10"]
-INSTANCE_IDS = range(1, 20)
-nb_scenarios_test = 5
+INSTANCE_FOLDERS = ["j10", "j20", "j30", "ubo50", "ubo100"]
+INSTANCE_IDS = range(1, 50)
+nb_scenarios_test = 10
 perfect_information = False
 reactive = True
 proactive = True
@@ -32,7 +32,6 @@ stnu = True
 def check_pi_feasible(instance_folder, instance_id, sample_index, duration_sample):
     df = pd.read_csv(f'experiments/aaai25_experiments/results/results_pi_{instance_folder}.csv')
     filtered_df = df[(df['instance_id'] == instance_id) & (df['sample'] == sample_index)]
-
     assert len(filtered_df) == 1
 
     solve_result = filtered_df["solver_status"].tolist()[0]
