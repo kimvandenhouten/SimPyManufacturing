@@ -1,0 +1,29 @@
+[tool.cstnutool]
+# The location of the CSTNUTool JAR file to run. If not specified, we will look for CSTNU-Tool.jar in the project root.
+jar_location = ""
+# Location of logging properties to use when running the CSTNUTool
+logging_properties = "temporal_networks/cstnu_tool/logging.properties"
+
+[tool.logging]
+version = 1
+incremental = true
+
+[tool.logging.formatters.formatter]
+format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+default_time_format = "%H:%M:%S"
+
+[tool.logging.root]
+# The root logger level holds for every module that doesn't have its own level.
+level = "WARNING"
+
+[tool.logging.loggers."__main__"]
+# The special module __main__ is the script currently being executed.
+level = "INFO"
+
+[tool.logging.loggers."stnu.algorithms.rte_star"]
+# Module names containing dots must be fully enclosed in quotes.
+level = "WARNING"
+
+[tool.logging.loggers."classes.stnu"]
+# Module names containing dots must be fully enclosed in quotes.
+level = "WARNING"
