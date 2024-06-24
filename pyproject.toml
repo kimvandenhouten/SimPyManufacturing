@@ -53,3 +53,9 @@ level = "WARNING"
 [tool.logging.loggers."classes.stnu"]
 # Module names containing dots must be fully enclosed in quotes.
 level = "WARNING"
+
+[tool.cstnutool]
+# The location of the CSTNUTool JAR file to run. If not specified, we will look for CSTNU-Tool.jar in the project root.
+jar_location = "/Users/kimvandenhouten/Documents/PhD/Repositories/CstnuTool-4.12-ai4b.io/CSTNU-Tool-4.12-ai4b.io.jar"
+# Location of logging properties to use when running the CSTNUTool
+logging_properties = "temporal_networks/cstnu_tool/logging.properties"

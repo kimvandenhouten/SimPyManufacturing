@@ -4,6 +4,7 @@ import re
 import subprocess
 
 import general.logger
+from general.config import Config
 
 logger = general.logger.get_logger(__name__)
 
@@ -28,25 +29,27 @@ class RTEStrategy(enum.Enum):
 
 
 class CSTNUTool:
-    JAR_LOCATION = None
+    jar_location = Config.get("tool", "cstnutool", "jar_location")
+    if not jar_location:
+        jar_location = "CSTNU-Tool.jar"
 
-    if os.path.exists("/Users/kimvandenhouten"):
-        JAR_LOCATION = "/Users/kimvandenhouten/Documents/PhD/Repositories/CstnuTool-4.12-ai4b.io/CSTNU-Tool-4.12-ai4b.io.jar"
-    elif os.path.exists("/home/leon"):
-        JAR_LOCATION = "/home/leon/Projects/CstnuTool-4.12-ai4b.io/CSTNU-Tool-4.12-ai4b.io.jar"
+    logging_properties = Config.get("tool", "cstnutool", "logging_properties")
 
-    if not JAR_LOCATION or not os.path.exists(JAR_LOCATION):
+    if not os.path.exists(jar_location):
         raise Exception("Could not find CSTNUTool")
 
     @classmethod
     def _run_java(cls, java_class: str, arguments: list[str]) -> subprocess.CompletedProcess[str]:
-        cmd = [
-            'java', '-cp', cls.JAR_LOCATION,
-            java_class,
-        ]
+        cmd = ['java', '-cp', cls.jar_location]
+        if cls.logging_properties:
+            cmd.append(f'-Djava.util.logging.config.file={cls.logging_properties}')
+        cmd.append(java_class)
         cmd += arguments
 
-        res = subprocess.run(cmd, capture_output=True, text=True)
+        try:
+            res = subprocess.run(cmd, capture_output=True, text=True)
+        except FileNotFoundError:
+            raise Exception("Could not find java")
 
         if res.stderr:
             logger.error("ERROR")

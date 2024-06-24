@@ -1,14 +1,12 @@
-import logging
 import logging.config
 import sys
 
-import tomli as tomllib
+from general.config import Config
 
 
 def get_logger(name):
     if not getattr(get_logger, 'configured', False):
-        with open("pyproject.toml", "rb") as f:
-            config = tomllib.load(f).get("tool", {}).get("logging", {})
+        config = Config.get("tool", "logging")
         if not config:
             raise KeyError("No logging configuration found")
 
