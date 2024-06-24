@@ -25,8 +25,8 @@ INSTANCE_IDS = range(1, 50)
 nb_scenarios_test = 10
 perfect_information = False
 reactive = True
-proactive = True
-stnu = True
+proactive = False
+stnu = False
 
 
 def check_pi_feasible(instance_folder, instance_id, sample_index, duration_sample):

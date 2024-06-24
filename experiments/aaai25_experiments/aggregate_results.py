@@ -5,22 +5,30 @@ import seaborn as sns
 
 for instance_folder in ["j10", "j20", "j30", "ubo50", "ubo100"]:
     # Read the CSV files into DataFrames
-    df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_robust_{instance_folder}.csv')
-    print(f'Number of experiments {instance_folder} robust {len(df)}')
+    df = pd.read_csv(f'experiments/aaai25_experiments/results/results_proactive_{instance_folder}_quantile_0.9.csv')
+    print(f'Number of experiments {instance_folder} proactive {len(df)}')
     df = df[df['obj'] != np.inf]
     print(f'Number of feasible instances {instance_folder} robust {len(df)}')
+    nr_proactive = len(df)
 
-    df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}_robust.csv')
+    df = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}_quantile_0.9.csv')
+    print(f'Number of experiments {instance_folder} reactive {len(df)}')
+    df = df[df['obj'] != np.inf]
+    print(f'Number of feasible instances {instance_folder} reactive {len(df)} ')
+    nr_reactive = len(df)
+
+    df = pd.read_csv(f'experiments/aaai25_experiments/results/results_stnu_{instance_folder}_robust.csv')
     print(f'Number of experiments {instance_folder} stnu {len(df)}')
     df = df[df['obj'] != np.inf]
     print(f'Number of feasible instances {instance_folder} stnu {len(df)}')
-    df = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_reactive_{instance_folder}_quantile_0.9.csv')
-    print(f'Number of experiments {instance_folder} reactive {len(df)}')
-    df = df[df['obj'] != np.inf]
-    print(f'Number of feasible instances {instance_folder} reactive {len(df)}')
+    nr_stnu = len(df)
+
+    print(f'Overleaf: {instance_folder} & {nr_proactive} & {nr_reactive} & {nr_stnu}')
 
 
-for instance_folder in ["ubo50"]:
+
+
+for instance_folder in []:
     # Read the CSV files into DataFrames
     df1 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_proactive_{instance_folder}_robust.csv')
     df2 = pd.read_csv(f'experiments/aaai25_experiments/results/new_results_stnu_{instance_folder}_quantile_0.9_60.csv')

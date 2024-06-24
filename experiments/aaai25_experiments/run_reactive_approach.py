@@ -50,12 +50,11 @@ def run_reactive_offline(rcpsp_max, time_limit_initial=60, mode="mean"):
 
     # Find Initial Estimated Schedule
     logger.debug(f'Making initial schedule with durations {durations}')
-
-    estimated_start_times, estimated_makespan = rcpsp_max.solve_reactive(durations, scheduled_start_times, current_time,
-                                                                         time_limit=time_limit_initial)
-    finish_offline = time.time()
-    if estimated_start_times is not None:
-        data_dict["estimated_start_times"] = estimated_start_times
+    res, data = rcpsp_max.solve(durations, time_limit=time_limit_initial, mode="Quiet")
+    if res:
+        start_times = data['start'].tolist()
+        finish_offline = time.time()
+        data_dict["estimated_start_times"] = start_times
         data_dict["time_offline"] = finish_offline - start_offline
 
     return data_dict
