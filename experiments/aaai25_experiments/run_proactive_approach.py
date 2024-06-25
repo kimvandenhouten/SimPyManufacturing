@@ -26,19 +26,40 @@ def run_proactive_offline(rcpsp_max, time_limit=60, mode="robust", nb_scenarios_
 
     start_offline = time.time()
     # Solve very conservative schedule
+    lb = rcpsp_max.get_bound(mode="lower_bound")
+    ub = rcpsp_max.get_bound(mode="upper_bound")
+
     if mode == "robust":
-        # Solve with the upper bounds the deterministic model
-        durations = rcpsp_max.get_bound()
+        durations = ub
+        logger.debug(f'Start solving upper bound schedule {durations}')
+        res, data = rcpsp_max.solve(durations, time_limit=time_limit, mode="Quiet")
+        if res:
+            start_times = data['start'].tolist()
+
+    elif mode == "quantile_0.25":
+        durations = [int(lb[i] + 0.25 * (ub[i] - lb[i] + 1) - 1) for i in range(len(lb))]
+        logger.debug(f'Start solving upper bound schedule {durations}')
+        res, data = rcpsp_max.solve(durations, time_limit=time_limit, mode="Quiet")
+        if res:
+            start_times = data['start'].tolist()
+
+    elif mode == "quantile_0.75":
+        durations = [int(lb[i] + 0.75 * (ub[i] - lb[i] + 1) - 1) for i in range(len(lb))]
+        logger.debug(f'Start solving upper bound schedule {durations}')
+        res, data = rcpsp_max.solve(durations, time_limit=time_limit, mode="Quiet")
+        if res:
+            start_times = data['start'].tolist()
+
+    elif mode == "quantile_0.5":
+        durations = [int(lb[i] + 0.5 * (ub[i] - lb[i] + 1) - 1) for i in range(len(lb))]
         logger.debug(f'Start solving upper bound schedule {durations}')
         res, data = rcpsp_max.solve(durations, time_limit=time_limit, mode="Quiet")
         if res:
             start_times = data['start'].tolist()
 
     elif mode == "quantile_0.9":
-        # Solve with the 0.9 quantile the deterministic model
-        lb = rcpsp_max.get_bound(mode="lower_bound")
-        ub = rcpsp_max.get_bound(mode="upper_bound")
         durations = [int(lb[i] + 0.9 * (ub[i] - lb[i] + 1) - 1) for i in range(len(lb))]
+        logger.debug(f'Start solving upper bound schedule {durations}')
         res, data = rcpsp_max.solve(durations, time_limit=time_limit, mode="Quiet")
         if res:
             start_times = data['start'].tolist()
@@ -46,6 +67,14 @@ def run_proactive_offline(rcpsp_max, time_limit=60, mode="robust", nb_scenarios_
     elif mode == "SAA":
         # Sample scenarios for Sample Average Approximation and solve
         train_durations_sample = rcpsp_max.sample_durations(nb_scenarios_saa)
+        res, start_times = rcpsp_max.solve_saa(train_durations_sample, time_limit)
+
+    elif mode == "SAA_smart":
+        # Sample scenarios for Sample Average Approximation and solve
+        train_durations_sample = []
+        for quantile in [0.1, 0.25, 0.5, 0.75, 0.9]:
+            durations = [int(lb[i] + quantile * (ub[i] - lb[i] + 1) - 1) for i in range(len(lb))]
+            train_durations_sample.append(durations)
         res, start_times = rcpsp_max.solve_saa(train_durations_sample, time_limit)
 
     else:

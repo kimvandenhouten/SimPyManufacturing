@@ -24,8 +24,8 @@ INSTANCE_FOLDERS = ["j10", "j20", "j30", "ubo50", "ubo100"]
 INSTANCE_IDS = range(1, 50)
 nb_scenarios_test = 10
 perfect_information = False
-reactive = True
-proactive = False
+reactive = False
+proactive = True
 stnu = False
 
 
@@ -86,9 +86,9 @@ if reactive:
 if proactive:
     # RUN PROACTIVE EXPERIMENTS
     # Settings proactive approach
-    nb_scenarios_saa = 10
+    nb_scenarios_saa = 4
 
-    for (mode, time_limit) in [("quantile_0.9", 60)]:
+    for (mode, time_limit) in [("SAA_smart", 60*3)]:
         # Run the experiments
         for instance_folder in INSTANCE_FOLDERS:
             data = []
