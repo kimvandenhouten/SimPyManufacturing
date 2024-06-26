@@ -15,8 +15,8 @@ for instance_folder in ["j10", "j20", "j30", "ubo50", "ubo100"]:
     df1 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}_quantile_0.9.csv')
     df2 = pd.read_csv(f'experiments/aaai25_experiments/results/results_proactive_{instance_folder}_quantile_0.9.csv')
     df3 = pd.read_csv(f'experiments/aaai25_experiments/results/results_stnu_{instance_folder}_robust.csv')
-    #df3 = pd.read_csv(f'experiments/aaai25_experiments/results/results_reactive_{instance_folder}.csv')
-    data = data + [df1, df2, df3]
+    df4 = pd.read_csv(f'experiments/aaai25_experiments/results/results_proactive_{instance_folder}_SAA_smart.csv')
+    data = data + [df1, df2, df3, df4]
     # Combine the DataFrames
 
 
@@ -26,18 +26,33 @@ objectives = data["time_online"].tolist()
 objectives = [i for i in objectives if i < np.inf]
 inf_value = max(objectives) * 5
 data.replace([np.inf], inf_value, inplace=True)
-print(data["time_online"].tolist())
-
-methods = ["STNU_robust", "reactive_quantile_0.9", "proactive_quantile_0.9"]
 
 
-method_pairs = [("proactive_quantile_0.9", "STNU_robust"), ("proactive_quantile_0.9", "reactive_quantile_0.9"),
-                ("STNU_robust", "reactive_quantile_0.9")]
+methods = ["proactive_quantile_0.9", "STNU_robust", "reactive_quantile_0.9", "proactive_SAA_smart"]
 
 
-#method_pairs = [("reactive_quantile_0.9", "STNU_robust"), ("reactive_quantile_0.9", "proactive_quantile_0.9"),
-               # ("proactive_quantile_0.9", "STNU_robust")]
+method_pairs = [("proactive_quantile_0.9", "proactive_SAA_smart"),("proactive_quantile_0.9", "STNU_robust"),
+                ("proactive_SAA_smart", "STNU_robust"), ("proactive_quantile_0.9", "reactive_quantile_0.9"),
+                ("proactive_SAA_smart", "reactive_quantile_0.9"), ("STNU_robust", "reactive_quantile_0.9")]
 
+
+method_pairs_problems = {}
+for prob in ["j10", "j20", "j30"]:
+    method_pairs_problems[prob] = method_pairs
+
+method_pairs = [("proactive_SAA_smart", "proactive_quantile_0.9"),("proactive_quantile_0.9", "STNU_robust"),
+                ("proactive_SAA_smart", "STNU_robust"), ("proactive_quantile_0.9", "reactive_quantile_0.9"),
+                ("proactive_SAA_smart", "reactive_quantile_0.9"), ("STNU_robust", "reactive_quantile_0.9")]
+
+
+for prob in ["ubo50", "ubo100"]:
+    method_pairs_problems[prob] = method_pairs
+
+
+trans_dict = {"STNU_robust": "stnu",
+              "reactive_quantile_0.9": "reactive",
+              "proactive_quantile_0.9": "proactive$_{0.9}$",
+               "proactive_SAA_smart": "proactive$_{SAA}$"}
 
 # Dictionary to store test results
 test_results = {}
@@ -52,7 +67,7 @@ for problem in data['instance_folder'].unique():
     test_results_proportion[problem] = {}
     # Filter data for the current problem domain
     domain_data = data[data['instance_folder'] == problem]
-
+    method_pairs = method_pairs_problems[problem]
     for (method1, method2) in method_pairs:
         test_results[problem][(method1, method2)] = {}
 
@@ -84,16 +99,28 @@ for problem in data['instance_folder'].unique():
         inf_count = sum(1 for item in data2_list if item == inf_value)
 
         # TODO: what we could do before running this test is excluding all the double failures
-        res = wilcoxon(data1_at_least_one_feasible['time_online'], data2_at_least_one_feasible['time_online'], method="approx")
+        res = wilcoxon(data1_at_least_one_feasible['time_online'], data2_at_least_one_feasible['time_online'],
+                       method="approx", zero_method="pratt")
 
         differences = np.array(data1_at_least_one_feasible['time_online'].tolist()) - np.array(data2_at_least_one_feasible['time_online'].tolist())
         import scipy
         ranks = scipy.stats.rankdata([abs(x) for x in differences])
-        signed_ranks = [rank if diff > 0 else -rank for diff, rank in zip(differences, ranks)]
+        signed_ranks = []
+        for diff, rank in zip(differences, ranks):
+            # Pratt method ignores zero ranks, although there were included in the ranking process
+            if diff > 0:
+                signed_ranks.append(rank)
+            elif diff < 0:
+                signed_ranks.append(-rank)
 
         # Sum of positive and negative ranks
         sum_positive_ranks = sum(rank for rank in signed_ranks if rank > 0)
         sum_negative_ranks = sum(-rank for rank in signed_ranks if rank < 0)
+
+        if sum_positive_ranks > sum_negative_ranks:
+            print(f'{method2} is probably better')
+        else:
+            print(f'{method1} is probably better')
 
         stat_obj = res.statistic
         p_obj = res.pvalue
@@ -123,7 +150,7 @@ for problem in data['instance_folder'].unique():
         data2_double_hits = data2_double_hits.reset_index(drop=True)
 
         # Do the Wilcoxon rank-sum tests on doulbe hits only
-        res = wilcoxon(data1_double_hits['time_online'], data2_double_hits['time_online'], method="approx")
+        res = wilcoxon(data1_double_hits['time_online'], data2_double_hits['time_online'], method="approx", zero_method="pratt")
         stat_obj = res.statistic
         p_obj = res.pvalue
         z_obj = res.zstatistic
@@ -186,31 +213,35 @@ alpha_magnitude = 0.05
 alpha_proportion = 0.05
 
 rows = []
-method_pairs_to_header = [f"{pair[0]}-{pair[1]}" for pair in method_pairs]
 
-header = ["set"] + method_pairs_to_header
-rows.append(header)
 for problem in data['instance_folder'].unique():
     print(f'\nStart evaluation for new problem set {problem}')
-    new_row = [problem]
+
     # Obtain Wilcoxon-stats and make overleaf cell
+    method_pairs = method_pairs_problems[problem]
+    method_pairs_to_header = [f"{trans_dict[pair[0]]}-{trans_dict[pair[1]]}" for pair in method_pairs]
+    header = [problem] + method_pairs_to_header
+    rows.append(header)
+
+    new_row = [""]
     for pair in method_pairs:
         result = test_results[problem][(pair[0], pair[1])]['obj']
 
         if result['p-value'] < alpha_consistent:
             if result['sum_pos_ranks'] > result['sum_neg_ranks']:
                 better = pair[1]
+                print(f'WARNING pair[1] is better {pair[1]}')
             else:
                 better = pair[0]
 
             print(
-                f"Wilcoxon objective: {better} performs significantly better with z-stat {np.round(result['z-statistic'], 3)} and p-value "
+                f"Wilcoxon objective {pair}: {better} performs significantly better with z-stat {np.round(result['z-statistic'], 3)} and p-value "
                 f"{result['p-value']}")
             overleaf_string = f"[{result['n_pairs']}] {np.round(result['z-statistic'], 3)} (*)"
             print(f"Overleaf string: {overleaf_string}")
         else:
             print(
-                f"Wilcoxon objective: No significant difference with z-stat {np.round(result['z-statistic'], 3)} and p-value "
+                f"Wilcoxon objective {pair}: No significant difference with z-stat {np.round(result['z-statistic'], 3)} and p-value "
                 f"{result['p-value']}.")
             overleaf_string = f"[{result['n_pairs']}] {np.round(result['z-statistic'], 3)} ({np.round(result['p-value'], 3)})"
             print(f"Overleaf string: {overleaf_string}")
@@ -226,6 +257,7 @@ for problem in data['instance_folder'].unique():
                 better = pair[0]
             else:
                 better = pair[1]
+                print(f'WARNING pair[1] is better {pair[1]}')
             print(f"  There is a significant proportion of wins in objective {better} "
                   f"performs significantly better with proportion {result['sample_proportion']} and p-value "
                   f"{result['p-value']} and z-value {np.round(result['z-statistic'], 3)}.")
@@ -247,13 +279,14 @@ print(latex_code)
 
 
 rows = []
-method_pairs_to_header = [f"{pair[0]}-{pair[1]}" for pair in method_pairs]
 
-header = ["set"] + method_pairs_to_header
-rows.append(header)
 for problem in data['instance_folder'].unique():
+    method_pairs = method_pairs_problems[problem]
+    method_pairs_to_header = [f"{trans_dict[pair[0]]}-{trans_dict[pair[1]]}" for pair in method_pairs]
+    header = [problem] + method_pairs_to_header
+    rows.append(header)
     print(f'\nStart evaluation for new problem set {problem}')
-    new_row_1 = [problem]
+    new_row_1 = [""]
     new_row_2 = [""]
     new_row_3 = [""]
     # Obtain Wilcoxon-stats and make overleaf cell
@@ -264,11 +297,12 @@ for problem in data['instance_folder'].unique():
                 better = pair[0]
             else:
                 better = pair[1]
+                print(f'warning the second is better {pair[1]}')
             print(f"Double hits magnitude: {better} performs significantly better with"
                   f" stat {np.round(result['statistic'], 3)} and p-value {result['p-value']}.")
             overleaf_1 = f"[{result['n_pairs']}] {np.round(result['statistic'], 3)} (*) "
-            overleaf_2 = f"{pair[0]}: {np.round(result['mean_method1'], 2)}"
-            overleaf_3 = f"{pair[1]}: {np.round(result['mean_method2'], 2)}"
+            overleaf_2 = f"{trans_dict[pair[0]]}: {np.round(result['mean_method1'], 2)}"
+            overleaf_3 = f"{trans_dict[pair[1]]}: {np.round(result['mean_method2'], 2)}"
             print(overleaf_1)
             print(overleaf_2)
             print(overleaf_3)
@@ -277,8 +311,8 @@ for problem in data['instance_folder'].unique():
             print(f"Double hits magnitude: No significant difference. With stat"
                   f" {np.round(result['statistic'], 3)} and p-value {result['p-value']}")
             overleaf_1 = f"[{result['n_pairs']}] {np.round(result['statistic'], 3)} ({result['p-value']})"
-            overleaf_2 = f"{pair[0]}: {np.round(result['mean_method1'], 2)}"
-            overleaf_3 = f"{pair[1]}: {np.round(result['mean_method2'], 2)}"
+            overleaf_2 = f"{trans_dict[pair[0]]}: {np.round(result['mean_method1'], 2)}"
+            overleaf_3 = f"{trans_dict[pair[1]]}: {np.round(result['mean_method2'], 2)}"
             print(overleaf_1)
             print(overleaf_2)
             print(overleaf_3)

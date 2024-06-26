@@ -20,8 +20,8 @@ logger = get_logger(__name__)
 # GENERAL SETTINGS
 SEED = 1
 DIRECTORY_INSTANCES = 'rcpsp/rcpsp_max'
-INSTANCE_FOLDERS = ["j10", "j20", "j30", "ubo50", "ubo100"]
-INSTANCE_IDS = range(1, 50)
+INSTANCE_FOLDERS = ["ubo100"]
+INSTANCE_IDS = range(4, 5)
 nb_scenarios_test = 10
 perfect_information = False
 reactive = False
@@ -104,7 +104,7 @@ if proactive:
                     if pi_feasible:
                         data += run_proactive_online(rcpsp_max, duration_sample, data_dict)
                         data_df = pd.DataFrame(data)
-                        data_df.to_csv(f"experiments/aaai25_experiments/results/results_proactive_{instance_folder}_{mode}.csv", index=False)
+                        data_df.to_csv(f"experiments/aaai25_experiments/results/results_proactive_{instance_folder}_{mode}_{time_limit}.csv", index=False)
                     else:
                         logger.info(f'Instance {rcpsp_max.instance_folder}PSP{rcpsp_max.instance_id}, sample {i}: We can skip the proactive approach')
 
