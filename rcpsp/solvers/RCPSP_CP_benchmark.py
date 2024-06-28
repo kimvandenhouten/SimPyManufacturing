@@ -247,20 +247,20 @@ class RCPSP_CP_Benchmark:
 
         return res, start_times
 
-    def get_bound(self, mode="upper_bound"):
+    def get_bound(self, mode="upper_bound", noise_factor=1):
         scenario = []
         for duration in self.durations:
             if duration == 0:
                 scenario.append(0)
             else:
                 if mode == "lower_bound":
-                    bound = int(max(1, duration - np.sqrt(duration)))
+                    bound = int(max(1, duration - noise_factor * np.sqrt(duration)))
                 else:
-                    bound = int(duration + np.sqrt(duration))
+                    bound = int(duration + noise_factor * np.sqrt(duration))
                 scenario.append(bound)
         return scenario
 
-    def sample_durations(self, nb_scenarios=1):
+    def sample_durations(self, nb_scenarios=1, noise_factor=1):
         scenarios = []
         for _ in range(nb_scenarios):
             scenario = []
@@ -268,8 +268,8 @@ class RCPSP_CP_Benchmark:
                 if duration == 0:
                     scenario.append(0)
                 else:
-                    lower_bound = int(max(1, duration - np.sqrt(duration)))
-                    upper_bound = int(duration + np.sqrt(duration))
+                    lower_bound = int(max(1, duration - noise_factor * np.sqrt(duration)))
+                    upper_bound = int(duration + noise_factor * np.sqrt(duration))
                     duration_sample = np.random.randint(lower_bound, upper_bound)
                     scenario.append(duration_sample)
             scenarios.append(scenario)
